@@ -1,8 +1,18 @@
 
+import 'dart:convert';
+
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_admin_web/framework/common/local_str.dart';
+import 'package:flutter_admin_web/framework/dataprovider/data_provider.dart';
+import 'package:flutter_admin_web/framework/dataprovider/helper/local_database_helper.dart';
+import 'package:flutter_admin_web/framework/repository/SplashRepository/model/mobileGetLearningPortalInfoResponse.dart';
+import 'package:flutter_admin_web/framework/repository/SplashRepository/model/mobileGetNativeMenusResponse.dart';
+import 'package:flutter_admin_web/framework/repository/SplashRepository/splash_repositry_builder.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:flutter_admin_web/controllers/navigation_controller.dart';
 import 'package:flutter_admin_web/framework/bloc/app/bloc/app_bloc.dart';
@@ -52,6 +62,7 @@ import 'package:flutter_admin_web/ui/profile/profile_page.dart';
 import 'package:flutter_admin_web/ui/progressReport/progress_report.dart';
 import 'package:flutter_admin_web/ui/splash/splash_screen.dart';
 import 'package:flutter_admin_web/utils/my_print.dart';
+import 'package:http/http.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -129,6 +140,113 @@ class _ActBaseState extends State<ActBase> {
 
   // var flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
   String urlTolaunch = '';
+
+  bool isDrawerOpened = false;
+  Timestamp? lastUpdatedTime, lastGlobalConfigurationUpdated;
+  bool isLoading = false, isGlobalConfigurationLoading = false;
+  DocumentReference documentReference = FirebaseFirestore.instance.collection('admin').doc("upgradedenterprise");
+  final LocalDataProvider _localHelper = LocalDataProvider(localDataProviderType: LocalDataProviderType.hive);
+
+
+  void onlineSync(){
+    documentReference.snapshots().listen(listenToChangeInData);
+  }
+
+  Future<void> listenToChangeInData(DocumentSnapshot event) async {
+    Map<String,dynamic>? data = {};
+    data = event.data() as Map<String, dynamic>?;
+    isDrawerOpened = data!["is_drawer_opened"];
+    if(isDrawerOpened){
+      NavigationController().actbaseScaffoldKey.currentState?.openDrawer();
+    } else {
+      NavigationController().actbaseScaffoldKey.currentState?.closeDrawer();
+    }
+    if(lastUpdatedTime != null){
+      if(!lastUpdatedTime!.toDate().isAtSameMomentAs(data["last_menus_updated"].toDate())){
+        setState((){
+          isLoading = true;
+        });
+        lastUpdatedTime = data["last_menus_updated"];
+        print("date : ${lastUpdatedTime!.toDate().isAtSameMomentAs(data["last_menus_updated"].toDate())}");
+        // api call
+        // Response mobileGetNativeMenusResponseStr =
+        Response? mobileGetNativeMenusResponse = await SplashRepositoryBuilder.repository().getMobileGetNativeMenus();
+        String mobileGetNativeMenusResponseStr = mobileGetNativeMenusResponse?.body ?? "{}";
+        // developer.log(
+        //     "mobileGetNativeMenusResponseStr:$mobileGetNativeMenusResponseStr");
+        MobileGetNativeMenusResponse mobileNativeMenusResponse = mobileGetNativeMenusResponseFromJson(mobileGetNativeMenusResponseStr);
+        appBloc.setNativeMenusModal(mobileNativeMenusResponse);
+        List<NativeMenuModel> tempListNativeModel = appBloc.listNativeModel.where((element) => element.contextmenuId == selectedmenu).toList();
+        appBarTitle = tempListNativeModel.first.displayname;
+        // appBarTitle = appBloc.listNativeModel.;
+        setState((){
+          isLoading = false;
+        });
+      }
+    } else {
+      lastUpdatedTime = data["last_menus_updated"];
+      print("date in else");
+    }
+
+    if(lastGlobalConfigurationUpdated != null){
+
+      if(!lastGlobalConfigurationUpdated!.toDate().isAtSameMomentAs(data["last_global_configuration_updated"].toDate())){
+        setState((){
+          isGlobalConfigurationLoading = true;
+        });
+        lastGlobalConfigurationUpdated = data["last_global_configuration_updated"];
+        await getAndSetGlobalConfiguration();
+        setState((){
+          isGlobalConfigurationLoading = false;
+        });
+      }
+
+    } else {
+      lastGlobalConfigurationUpdated = data["last_global_configuration_updated"];
+      // await getAndSetGlobalConfiguration();
+    }
+
+  }
+
+  Future<void> getAndSetGlobalConfiguration() async {
+    String language = await sharePrefGetString(sharedPref_AppLocale);
+    print("Language:$language");
+    if (language.isEmpty) {
+      language = "en-us";
+      await sharePrefSaveString(sharedPref_AppLocale, language);
+    }
+    try {
+      Response? mobileGetLearningPortalInfoResponse = await SplashRepositoryBuilder.repository().getMobileGetLearningPortalInfo();
+      MobileGetLearningPortalInfoResponse mobileGetLearningPortalInfoResponseModel = mobileGetLearningPortalInfoResponseFromJson(mobileGetLearningPortalInfoResponse?.body ?? "{}");
+      appBloc.setUiSettingFromMobileGetLearningPortalInfo(mobileGetLearningPortalInfoResponseModel);
+
+
+      Response? mobileTinCanConfigurationsResponse = await SplashRepositoryBuilder.repository().getMobileTinCanConfigurations();
+      await _localHelper.localService(
+        enumLocalDatabaseOperation: LocalDatabaseOperation.create,
+        table: table_splash,
+        values: {
+          mobileTinCanConfigurationsKey: mobileTinCanConfigurationsResponse?.body ?? "{}",
+        },
+      );
+
+      Response? getJsonfileResponse =
+      await SplashRepositoryBuilder.repository().getLanguageJsonFile(language);
+
+
+      Map<String, dynamic> jsonData = json.decode(getJsonfileResponse?.body ?? "{}");
+
+      LocalStr localStr = LocalStr.fromJson(jsonData);
+      Locale appLocale = Locale(language);
+      ChangeLangState(appLocale: appLocale, localstr: localStr);
+
+      MyPrint.logOnConsole("GetLanguageJsonFile Response:${getJsonfileResponse?.body}");
+    } catch (e){
+      print("Error in the getAndSetGlobalConfiguration:$e");
+    }
+
+  }
+
   refresh() {
     setState(() {
 //all the reload processes
@@ -1139,6 +1257,7 @@ class _ActBaseState extends State<ActBase> {
     profileBloc.add(GetProfileInfo());
     detailsBloc = MyLearningDetailsBloc(
         myLearningRepository: MyLearningRepositoryBuilder.repository());
+    onlineSync();
   }
 
   @override
@@ -1562,39 +1681,52 @@ class _ActBaseState extends State<ActBase> {
       }
     }
 
-    return WillPopScope(
-      onWillPop: () async {
-        if (_selectedDrawerIndex == 0) {
-          return true;
-        } else {
-          //Navigator.of(context).pushReplacementNamed(route_actbase);
-          return false;
-        }
-      },
-      child: BlocConsumer(
-        bloc: appBloc,
-        listener: (context, state) {
-          if (state is ProfileImageState) {
-            print('imageurll_bloc ${appBloc.imageUrl}');
-            setState(() {
-              userimageUrl = appBloc.imageUrl;
-            });
-          }
-        },
-        builder: (context, state) => Scaffold(
-          key: NavigationController().actbaseScaffoldKey,
-          backgroundColor: Colors.white,
-          appBar: getAppBar(),
-          body: SafeArea(
-            child: Container(
-              key: _drawerKey,
-              child: _setContainer(_selectedDrawerIndex, _currentBottomMenuIndex, true, selectedmenu),
+    return Stack(
+      children: [
+        WillPopScope(
+          onWillPop: () async {
+            if (_selectedDrawerIndex == 0) {
+              return true;
+            }
+            else {
+              //Navigator.of(context).pushReplacementNamed(route_actbase);
+              return false;
+            }
+          },
+          child: BlocConsumer(
+            bloc: appBloc,
+            listener: (context, state) {
+              if (state is ProfileImageState) {
+                print('imageurll_bloc ${appBloc.imageUrl}');
+                setState(() {
+                  userimageUrl = appBloc.imageUrl;
+                });
+              }
+            },
+            builder: (context, state) => Scaffold(
+              key: NavigationController().actbaseScaffoldKey,
+              backgroundColor: Colors.white,
+              appBar: getAppBar(),
+              body: SafeArea(
+                child: Container(
+                  key: _drawerKey,
+                  child: _setContainer(_selectedDrawerIndex, _currentBottomMenuIndex, true, selectedmenu),
+                ),
+              ),
+              onDrawerChanged: (bool val){
+                documentReference.update({"is_drawer_opened":val});
+              },
+              drawer: getDrawer(useMobileLayout, drawerOptions),
+              bottomNavigationBar: getBottomNavigationBar(bottomOptions),
             ),
           ),
-          drawer: getDrawer(useMobileLayout, drawerOptions),
-          bottomNavigationBar: getBottomNavigationBar(bottomOptions),
         ),
-      ),
+        isGlobalConfigurationLoading
+            ? Container(
+            color: Colors.black.withOpacity(0.3),
+            child: SpinKitFadingCircle(color: Colors.green,))
+            : Container()
+      ],
     );
   }
 
@@ -1989,7 +2121,55 @@ class _ActBaseState extends State<ActBase> {
   }
 
   Widget getDrawer(bool useMobileLayout, List<Widget> drawerOptions) {
-    return Builder(
+    return Stack(
+      children: [
+        Builder(
+          builder: (context) => Container(
+            width: MediaQuery.of(context).size.width * (useMobileLayout ? 0.7 : 0.4),
+            color: Colors.white,
+            child: SafeArea(
+              child: Stack(children: <Widget>[
+              isLoading ? SpinKitFadingCircle(color: Colors.green,) : Column(
+                  children: <Widget>[
+                    DrawerHeaderWidget(
+                      signOutFunc: signOutFunc,
+                    ),
+                    SizedBox(
+                      height: ScreenUtil().setWidth(10),
+                    ),
+                    Expanded(
+                      child: BlocConsumer<ProfileBloc, ProfileState>(
+                          bloc: profileBloc,
+                          listener: (context, state) {},
+                          builder: (context, state) {
+                            if (state.status == Status.COMPLETED) {
+                              if (isMenuExists()) {
+                                _addMessageMenu(drawerOptions, context);
+                                appBloc.uiSettingModel.setIsMsgMenuExist(true);
+                              }
+                            }
+                            return Container(
+                              color: Color(int.parse(
+                                  "0xFF${appBloc.uiSettingModel.menuBGColor.substring(1, 7).toUpperCase()}")),
+                              child: ListView.builder(
+                                itemCount: drawerOptions.length,
+                                itemBuilder: (context, pos) {
+                                  return drawerOptions[pos];
+                                },
+                              ),
+                            );
+                          }),
+                    ),
+                  ],
+                ),
+                // ? SpinKitFadingCircle(color: Colors.blue,):Container()
+              ]),
+            ),
+          ),
+        ),
+      ],
+    );
+    /*return Builder(
       builder: (context) => Container(
         width: MediaQuery.of(context).size.width * (useMobileLayout ? 0.7 : 0.4),
         color: Colors.white,
@@ -2032,7 +2212,7 @@ class _ActBaseState extends State<ActBase> {
           ),
         ),
       ),
-    );
+    );*/
   }
 
   Widget? getBottomNavigationBar(List<BottomNavigationBarItem> bottomOptions) {
