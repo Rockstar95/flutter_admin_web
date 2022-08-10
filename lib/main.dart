@@ -5,27 +5,54 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_admin_web/framework/helpers/ApiEndpoints.dart';
+import 'package:flutter_admin_web/utils/my_print.dart';
 import 'package:flutter_downloader/flutter_downloader.dart';
 import 'package:flutter_admin_web/controllers/notification_controller.dart';
 import 'package:flutter_admin_web/ui/appModule/app.dart';
 import 'package:flutter_admin_web/ui/common/log_util.dart';
 
+// ?site=https://upgradedenterprise.instancy.com/
+// ?site=https://learning.instancy.com/
+// ?site=https://tfr.franklincoveysa.co.za/
+// ?site=https://enterprisedemo.instancy.com/
+
+// ?site=https://upgradedenterprise.instancy.com&authToken=eaaf0fa5-d6b4-4553-91f2-8cc1defb50f8
+
 void main() async {
-  HttpOverrides.global = MyHttpOverrides();
-  WidgetsFlutterBinding.ensureInitialized();
-
-  // Set orientation
-  await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
-
-  SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
-    statusBarColor: Colors.transparent,
-    statusBarBrightness: Brightness.light,
-  ));
+  MyPrint.printOnConsole("Void Main called");
 
   await runZoned<Future<void>>(() async {
-    LogUtil().printLog(message: 'Showing main');
+    HttpOverrides.global = MyHttpOverrides();
     WidgetsFlutterBinding.ensureInitialized();
-    //await FlutterDownloader.initialize();
+
+    String myurl = Uri.base.toString();
+    print("My Url:${myurl}");
+    print("Query Parameters:${Uri.base.queryParameters}");
+    print("Site Type:${Uri.base.queryParameters['site'].runtimeType}");
+    print("Site Url:${Uri.base.queryParameters['site']}");
+
+    dynamic site = Uri.base.queryParameters['site'];
+    dynamic authToken = Uri.base.queryParameters['authToken'];
+
+    if(authToken is String && authToken.isNotEmpty){
+      ApiEndpoints.authToken = authToken;
+    }
+
+    if(site is String && site.isNotEmpty && (site.startsWith("http://") || site.startsWith("https://"))) {
+      ApiEndpoints.mainSiteURL = site;
+    }
+
+    // Set orientation
+    await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
+
+    SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
+      statusBarColor: Colors.transparent,
+      statusBarBrightness: Brightness.light,
+    ));
+
+    LogUtil().printLog(message: 'Showing main');
+
     await Firebase.initializeApp(
       options: const FirebaseOptions(
         apiKey: "AIzaSyAmLZF_hQ_YZPK81xK5duPt-j8eaDIgs-k",
@@ -47,11 +74,11 @@ void main() async {
     await NotificationController().initializeNotification();
 
     //For Upgraded Enterprise Site
-    runApp(const App(
+    runApp(App(
       // mainSiteUrl: "https://upgradedenterprise.instancy.com/",
-      mainSiteUrl: "https://upgradedenterprise.instancy.com/",
+      mainSiteUrl: site is String && site.isNotEmpty ? site : "https://upgradedenterprise.instancy.com/",
       appAuthURL: "https://masterapilive.instancy.com/api/",
-      appWebApiUrl: "https://upgradedenterpriseapi.instancy.com/api/",
+      appWebApiUrl: site is String && site.isNotEmpty ? "" : "https://upgradedenterpriseapi.instancy.com/api/",
       splashScreenLogo: "assets/images/playgroundlogo.png",
     ));
   },

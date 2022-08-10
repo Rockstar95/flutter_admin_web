@@ -110,7 +110,7 @@ class AppBloc extends Bloc<AppEvent, AppState> {
           MyPrint.logOnConsole("mobileGetLearningPortalInfoResponsStr:${mobileGetLearningPortalInfoResponsStr}");
 
           MobileGetLearningPortalInfoResponse mobileGetLearningPortalInfoResponse = mobileGetLearningPortalInfoResponseFromJson(
-            mobileGetLearningPortalInfoResponsStr.isNotEmpty ? mobileGetLearningPortalInfoResponsStr : "{}"
+            mobileGetLearningPortalInfoResponsStr.isNotEmpty && mobileGetLearningPortalInfoResponsStr != "null" ? mobileGetLearningPortalInfoResponsStr : "{}"
           );
           setUiSettingFromMobileGetLearningPortalInfo(mobileGetLearningPortalInfoResponse);
           uiSettingModel.setappname('in');

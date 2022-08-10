@@ -3,7 +3,7 @@ import 'package:http/http.dart';
 
 abstract class AuthRepository {
   Future<bool> doLogin(String username, String password, String mobileSiteUrl,
-      String downloadContent, String siteId, bool isFromSignup);
+      String downloadContent, String siteId, bool isFromSignup, {bool isEncrypted = false});
 
   Future<bool> gSignIn();
 

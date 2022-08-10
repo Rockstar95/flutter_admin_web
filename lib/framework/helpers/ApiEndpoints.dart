@@ -8,10 +8,11 @@ class ApiEndpoints {
   //static String mainSiteURL = "https://qaseac.instancy.com/";
   //static String mainSiteURL = "https://enterprisedemo.instancy.com/";
   static String mainSiteURL = "https://upgradedenterprise.instancy.com/";
+  static String authToken = "eaaf0fa5-d6b4-4553-91f2-8cc1defb50f8";
   // //static String mainSiteURL = "https://learning.instancy.com/";
   // //static String mainSiteURL = "https://enterprisedemo.instancy.net/";
 
-  // //static String mainSiteURL = "https://enterprisedemo.instancy.net/";
+  // //static String mainSiteURL = "https://entmobileGetLearningPortalInfoResponseerprisedemo.instancy.net/";
   // //static String appAuthURL = "https://newazureplatform.instancy.com/api/";
   static String appAuthURL = "https://masterapilive.instancy.com/api/";
 
@@ -105,6 +106,9 @@ class ApiEndpoints {
 
   static String apiGetLoginDetails(String authKey, String siteId) =>
       "${strBaseUrl}MobileLMS/SocialLogin?authKey=$authKey&siteId=$siteId";
+
+  static String apiGetUserCredentials() => "${strBaseUrl}User/GetUserCredentials";
+  static String apiGetGenericSiteMetaData() => "${strBaseUrl}Generic/GetSubSiteMetaDataBasedOnAuthKey";
 
   //Forgot password
   static String getUesrStatusAPI(String email, String siteUrl) =>

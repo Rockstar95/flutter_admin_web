@@ -446,6 +446,35 @@ class RestClient {
     return response;
   }
 
+  static Future<Response?> postMethodWithoutToken(String endpoint, Map<String, dynamic> data,)async{
+    Response? response;
+    Map<String, String> headers = {
+      //"content-type": "multipart/form-data",
+      'Content-Type': 'application/json',
+      // "ClientURL": ApiEndpoints.mainSiteURL,
+      ApiEndpoints.allowfromExternalHostKey: 'allow',
+    };
+    print('Url:$endpoint');
+    print('Header:$headers');
+    print('data:$data');
+    try {
+      // endpoint += "?";
+      // queryParameters.forEach((key, value) {
+      //   endpoint += "$key=$value&";
+      // });
+      // endpoint = endpoint.substring(0, endpoint.length - 1);
+      print("Final Endpoint:$endpoint");
+
+      response = await  post(Uri.parse(endpoint), body: jsonEncode(data), headers: headers);
+
+      print("Response Status:${response.statusCode}, Body:${response.body}");
+    } catch (e, s) {
+      print("Error in RestClient.postMethodWithoutToken():$e}");
+      print(s);
+    }
+    return response;
+  }
+
   static Future<Response?> uploadFilesData(String endpoint, Map<String, String> data, {List<MultipartFile> files = const [], Map<String, String> fileNamesPaths = const {}}) async {
     Response? response;
     var token = await sharePrefGetString(sharedPref_bearer);

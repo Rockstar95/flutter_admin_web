@@ -4,6 +4,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_admin_web/utils/my_print.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -242,12 +243,12 @@ class _LoginPageState extends State<LoginPage> {
     //   }
     // });
 
-    _firebaseMessaging.getToken().then((String? token) {
-      assert(token != null);
-      setState(() {
-        _homeScreenText = token ?? "";
-      });
-      print("fcm token $_homeScreenText");
+    _firebaseMessaging.getToken(vapidKey: 'BH7mCZr5oMSu4K8m3FSj37tmj4Ccq00s1Hd9C_1XbohIvnraXJmUQHedddY3Vs_lKpxxhKOiPPU35fuBO4k7JF4').then((String? token) {
+      _homeScreenText = token ?? "";
+      /*if(mounted) {
+        setState(() {});
+      }*/
+      MyPrint.printOnConsole("fcm token $_homeScreenText");
     });
 
     if (widget.isAutologin) {
