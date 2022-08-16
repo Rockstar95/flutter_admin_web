@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_admin_web/utils/my_print.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
@@ -31,7 +32,7 @@ class EditQuestion extends StatefulWidget {
 
 class _EditQuestionState extends State<EditQuestion>
     with SingleTickerProviderStateMixin {
-  GlobalKey<ScaffoldState> _scaffoldkey = new GlobalKey<ScaffoldState>();
+  final GlobalKey<ScaffoldState> _scaffoldkey = GlobalKey<ScaffoldState>();
   final _formKey = GlobalKey<FormState>();
   final scaffoldKey = GlobalKey<ScaffoldState>();
 
@@ -62,10 +63,9 @@ class _EditQuestionState extends State<EditQuestion>
       });
     }
 
-    askTheExpertBloc = new AskTheExpertBloc(
-        askTheExpertRepository: AskTheExpertRepositoryBuilder.repository());
+    askTheExpertBloc = AskTheExpertBloc(askTheExpertRepository: AskTheExpertRepositoryBuilder.repository());
 
-    print("File Name:${widget.questionList.userQuestionImage}");
+    MyPrint.printOnConsole("File Name:${widget.questionList.userQuestionImage}");
     askTheExpertBloc.fileName = widget.questionList.userQuestionImage.isNotEmpty
         ? widget.questionList.userQuestionImage
         : "";
@@ -112,18 +112,18 @@ class _EditQuestionState extends State<EditQuestion>
             "0xFF${appBloc.uiSettingModel.appBGColor.substring(1, 7).toUpperCase()}")),
         child: Stack(
           children: <Widget>[
-            Divider(
+            const Divider(
               height: 2,
               color: Colors.black87,
             ),
-            new Column(
+            Column(
               children: [
-                new Expanded(
+                Expanded(
                   child: SingleChildScrollView(
                     child: mainWidget(context, itemWidth, itemHeight),
                   ),
                 ),
-                new Padding(
+                Padding(
                     padding: const EdgeInsets.only(
                         top: 0.0, left: 10.0, right: 10.0, bottom: 20.0),
                     child: createQuestionButton())
@@ -136,27 +136,27 @@ class _EditQuestionState extends State<EditQuestion>
   }
 
   Widget mainWidget(BuildContext context, double itemWidth, double itemHeight) {
-    return new Column(
+    return Column(
       children: [
-        new Padding(
+        Padding(
             padding: const EdgeInsets.only(top: 0.0, left: 10.0, right: 10.0),
-            child: new Form(
+            child: Form(
                 key: _formKey,
                 child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
                       Padding(
-                        padding: EdgeInsets.only(
+                        padding: const EdgeInsets.only(
                             top: 20, left: 5.0, right: 10.0, bottom: 10.0),
-                        child: new Text(
+                        child: Text(
                           'Question',
-                          style: new TextStyle(
+                          style: TextStyle(
                               fontSize: 18.0,
                               color: Color(int.parse(
                                   "0xFF${appBloc.uiSettingModel.appTextColor.substring(1, 7).toUpperCase()}"))),
                         ),
                       ),
-                      new TextFormField(
+                      TextFormField(
                         style: TextStyle(
                             fontSize: 14.h,
                             color: InsColor(appBloc).appTextColor),
@@ -171,16 +171,16 @@ class _EditQuestionState extends State<EditQuestion>
                           hintStyle:
                               TextStyle(color: InsColor(appBloc).appTextColor),
                           hintText: 'Enter your question here..',
-                          contentPadding: new EdgeInsets.symmetric(
+                          contentPadding: const EdgeInsets.symmetric(
                               vertical: 35.0, horizontal: 20.0),
-                          enabledBorder: OutlineInputBorder(
+                          enabledBorder: const OutlineInputBorder(
                             borderRadius: BorderRadius.all(Radius.circular(5)),
                             borderSide: BorderSide(
                               color: Color(0xFFDADCE0),
                             ),
                           ),
                           focusedBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.all(Radius.circular(5.0)),
+                            borderRadius: const BorderRadius.all(Radius.circular(5.0)),
                             borderSide: BorderSide(
                               color: Color(int.parse("0xFF${appBloc.uiSettingModel.appTextColor.substring(1, 7).toUpperCase()}")),
                               width: 1,
@@ -190,55 +190,53 @@ class _EditQuestionState extends State<EditQuestion>
                         ),
                       ),
                       Padding(
-                        padding: EdgeInsets.only(
+                        padding: const EdgeInsets.only(
                             top: 20, left: 5.0, right: 10.0, bottom: 10.0),
-                        child: new Text(
+                        child: Text(
                           'Description(Optional)',
-                          style: new TextStyle(
+                          style: TextStyle(
                               fontSize: 18.0,
                               color: Color(int.parse(
                                   "0xFF${appBloc.uiSettingModel.appTextColor.substring(1, 7).toUpperCase()}"))),
                         ),
                       ),
-                      Container(
-                        child: new ConstrainedBox(
-                          constraints: BoxConstraints(
-                            maxHeight: 400.0,
-                          ),
-                          child: TextFormField(
-                            style: TextStyle(
-                                fontSize: 14.h,
+                      ConstrainedBox(
+                        constraints: const BoxConstraints(
+                          maxHeight: 400.0,
+                        ),
+                        child: TextFormField(
+                          style: TextStyle(
+                              fontSize: 14.h,
+                              color: InsColor(appBloc).appTextColor),
+                          focusNode: reqFocusDescription,
+                          controller: ctrQuestionDesc,
+                          textInputAction: TextInputAction.next,
+                          onSaved: (val) => ctrQuestionDesc.text = val ?? "",
+                          onChanged: (val) {
+                            setState(() {});
+                          },
+                          decoration: InputDecoration(
+                            hintStyle: TextStyle(
                                 color: InsColor(appBloc).appTextColor),
-                            focusNode: reqFocusDescription,
-                            controller: ctrQuestionDesc,
-                            textInputAction: TextInputAction.next,
-                            onSaved: (val) => ctrQuestionDesc.text = val ?? "",
-                            onChanged: (val) {
-                              setState(() {});
-                            },
-                            decoration: InputDecoration(
-                              hintStyle: TextStyle(
-                                  color: InsColor(appBloc).appTextColor),
-                              hintText: 'Enter your description here..',
-                              contentPadding: new EdgeInsets.symmetric(
-                                  vertical: 45.0, horizontal: 20.0),
-                              enabledBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.all(Radius.circular(5)),
-                                borderSide: BorderSide(
-                                  color: Color(0xFFDADCE0),
-                                ),
+                            hintText: 'Enter your description here..',
+                            contentPadding: const EdgeInsets.symmetric(
+                                vertical: 45.0, horizontal: 20.0),
+                            enabledBorder: const OutlineInputBorder(
+                              borderRadius: BorderRadius.all(Radius.circular(5)),
+                              borderSide: BorderSide(
+                                color: Color(0xFFDADCE0),
                               ),
-                              focusedBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.all(Radius.circular(5.0)),
-                                borderSide: BorderSide(
-                                  color: Color(int.parse("0xFF${appBloc.uiSettingModel.appTextColor.substring(1, 7).toUpperCase()}")),
-                                  width: 1,
-                                ),
-                              ),
-                              border: OutlineInputBorder(borderRadius: BorderRadius.circular(5.0)),
                             ),
-                            maxLines: null,
+                            focusedBorder: OutlineInputBorder(
+                              borderRadius: const BorderRadius.all(Radius.circular(5.0)),
+                              borderSide: BorderSide(
+                                color: Color(int.parse("0xFF${appBloc.uiSettingModel.appTextColor.substring(1, 7).toUpperCase()}")),
+                                width: 1,
+                              ),
+                            ),
+                            border: OutlineInputBorder(borderRadius: BorderRadius.circular(5.0)),
                           ),
+                          maxLines: null,
                         ),
                       ),
                       Padding(
@@ -263,12 +261,12 @@ class _EditQuestionState extends State<EditQuestion>
                                         "0xFF${appBloc.uiSettingModel.appTextColor.substring(1, 7).toUpperCase()}"))
                                     .withOpacity(0.5)),
                             child: SizedBox(
+                              width: MediaQuery.of(context).size.width,
                               child: Text(
                                 titleSelectCategory,
                                 style: TextStyle(
                                     color: InsColor(appBloc).appTextColor),
                               ),
-                              width: MediaQuery.of(context).size.width,
                             ),
                             onPressed: () {
                               moveSkillCategory();
@@ -287,53 +285,53 @@ class _EditQuestionState extends State<EditQuestion>
         bloc: askTheExpertBloc,
         listener: (context, state) {},
         builder: (context, state) {
-          return new Container(
-            padding: EdgeInsets.only(top: 20.0),
-            child: new Column(
+          return Container(
+            padding: const EdgeInsets.only(top: 20.0),
+            child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Padding(
+                const Padding(
                   padding: EdgeInsets.only(
                       top: 20, left: 5.0, right: 10.0, bottom: 10.0),
-                  child: new Text(
+                  child: Text(
                     'Support Documents (Optional)',
-                    style: new TextStyle(
+                    style: TextStyle(
                       fontSize: 18.0,
                       color: Colors.grey,
                     ),
                   ),
                 ),
-                new Container(
+                SizedBox(
                   width: useMobileLayout
                       ? double.infinity
                       : MediaQuery.of(context).size.width / 3,
                   child: MaterialButton(
                       onPressed: () => {
-                            askTheExpertBloc.filePath.isEmpty
-                                ? askTheExpertBloc.add(OpenFileExplorerTopicEvent(FileType.image))
+                            askTheExpertBloc.fileBytes == null
+                                ? askTheExpertBloc.add(const OpenFileExplorerTopicEvent(FileType.image))
                                 : null
                           },
                       minWidth: MediaQuery.of(context).size.width,
                       disabledColor: Color(int.parse("0xFF${appBloc.uiSettingModel.appButtonBgColor.substring(1, 7).toUpperCase()}")).withOpacity(0.5),
-                      color: askTheExpertBloc.filePath.isNotEmpty
+                      color: askTheExpertBloc.fileBytes != null
                           ? Colors.grey
                           : Color(int.parse("0xFF${appBloc.uiSettingModel.appButtonBgColor.substring(1, 7).toUpperCase()}")),
+                      textColor: Color(int.parse("0xFF${appBloc.uiSettingModel.appButtonTextColor.substring(1, 7).toUpperCase()}")),
                       child: Text(
                         'Upload File',
                         style: TextStyle(color: Color(int.parse("0xFF${appBloc.uiSettingModel.appButtonTextColor.substring(1, 7).toUpperCase()}"))),
-                      ),
-                      textColor: Color(int.parse("0xFF${appBloc.uiSettingModel.appButtonTextColor.substring(1, 7).toUpperCase()}"))),
+                      )),
                 ),
                 Visibility(
-                  visible: (askTheExpertBloc.filePath.isNotEmpty),
-                  child: Container(
+                  visible: (askTheExpertBloc.fileBytes != null),
+                  child: SizedBox(
                     width: useMobileLayout
                         ? double.infinity
                         : MediaQuery.of(context).size.width / 2,
                     child: Padding(
-                      padding: EdgeInsets.only(
+                      padding: const EdgeInsets.only(
                           top: 20.0, left: 5.0, right: 10.0, bottom: 10.0),
-                      child: new Row(
+                      child: Row(
                         children: [
                           Icon(
                             Icons.description,
@@ -341,24 +339,24 @@ class _EditQuestionState extends State<EditQuestion>
                           ),
                           Expanded(
                             child: Padding(
-                                padding: EdgeInsets.only(
+                                padding: const EdgeInsets.only(
                                   left: 20.0,
                                 ),
-                                child: new Column(
+                                child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    new Text(
+                                    Text(
                                       askTheExpertBloc.fileName,
-                                      style: new TextStyle(
+                                      style: TextStyle(
                                           fontSize: 16.0,
                                           color: InsColor(appBloc).appTextColor,
                                           fontWeight: FontWeight.normal),
                                     ),
-                                    new Text(
-                                      askTheExpertBloc.filePath.isNotEmpty && File(askTheExpertBloc.filePath).existsSync()
-                                          ? (File(askTheExpertBloc.filePath).lengthSync() / 1024).toStringAsFixed(0) + 'kb'
+                                    Text(
+                                      askTheExpertBloc.fileBytes != null
+                                          ? '${(askTheExpertBloc.fileBytes!.length / 1024).toStringAsFixed(0)}kb'
                                           : '',
-                                      style: new TextStyle(
+                                      style: TextStyle(
                                           fontSize: 12.0,
                                           color: InsColor(appBloc).appTextColor,
                                           fontWeight: FontWeight.normal),
@@ -366,11 +364,11 @@ class _EditQuestionState extends State<EditQuestion>
                                   ],
                                 )),
                           ),
-                          new IconButton(
+                          IconButton(
                               onPressed: () {
                                 setState(() {
                                   askTheExpertBloc.fileName = "";
-                                  askTheExpertBloc.filePath = "";
+                                  askTheExpertBloc.fileBytes = null;
                                 });
                               },
                               icon: Icon(
@@ -398,14 +396,14 @@ class _EditQuestionState extends State<EditQuestion>
             flutterToast.showToast(
                 child: CommonToast(displaymsg: 'Question Edited successfully'),
                 gravity: ToastGravity.BOTTOM,
-                toastDuration: Duration(seconds: 4));
+                toastDuration: const Duration(seconds: 4));
           } else if (state.status == Status.ERROR) {
             flutterToast.showToast(
               child: CommonToast(
                 displaymsg: state.message,
               ),
               gravity: ToastGravity.BOTTOM,
-              toastDuration: Duration(seconds: 2),
+              toastDuration: const Duration(seconds: 2),
             );
           }
         }
@@ -425,9 +423,9 @@ class _EditQuestionState extends State<EditQuestion>
         } else {
           return Container(
             alignment: Alignment.bottomCenter,
-            child: new Row(
+            child: Row(
               children: [
-                new Expanded(
+                Expanded(
                     child: MaterialButton(
                         onPressed: () => {
                               validateAddQuestionForm(),
@@ -438,14 +436,14 @@ class _EditQuestionState extends State<EditQuestion>
                             .withOpacity(0.5),
                         color: Color(int.parse(
                             "0xFF${appBloc.uiSettingModel.appButtonBgColor.substring(1, 7).toUpperCase()}")),
+                        textColor: Color(int.parse(
+                            "0xFF${appBloc.uiSettingModel.appButtonTextColor.substring(1, 7).toUpperCase()}")),
                         child: Text(
                           'Submit question',
                           style: TextStyle(
                               color: Color(int.parse(
                                   "0xFF${appBloc.uiSettingModel.appButtonTextColor.substring(1, 7).toUpperCase()}"))),
-                        ),
-                        textColor: Color(int.parse(
-                            "0xFF${appBloc.uiSettingModel.appButtonTextColor.substring(1, 7).toUpperCase()}")))),
+                        ))),
               ],
             ),
           );
@@ -455,7 +453,7 @@ class _EditQuestionState extends State<EditQuestion>
   }
 
   void validateAddQuestionForm() {
-    var filepath = askTheExpertBloc.filePath;
+    var filebytes = askTheExpertBloc.fileBytes;
     var fileName = askTheExpertBloc.fileName;
     var descriptionVar = ctrQuestionDesc.text;
     var titleNameVar = ctrQuestion.text;
@@ -464,7 +462,7 @@ class _EditQuestionState extends State<EditQuestion>
       flutterToast.showToast(
         child: CommonToast(displaymsg: 'Please enter question'),
         gravity: ToastGravity.BOTTOM,
-        toastDuration: Duration(seconds: 4),
+        toastDuration: const Duration(seconds: 4),
       );
       return;
     }
@@ -475,8 +473,8 @@ class _EditQuestionState extends State<EditQuestion>
         titleNameVar,
         descriptionVar,
         fileName,
-        filepath,
         fileName,
+        filebytes,
         titleSelectCategory,
         updateSelectedCatId(),
         widget.questionList.questionID,
@@ -494,7 +492,7 @@ class _EditQuestionState extends State<EditQuestion>
   }
 
   String formatString(List x) {
-    if (x.length == 0) {
+    if (x.isEmpty) {
       return 'Select Skill';
     }
     String formatted = '';
@@ -507,12 +505,12 @@ class _EditQuestionState extends State<EditQuestion>
   String updateSelectedCatId() {
     List<String> selectedCategoryID = [];
 
-    skillCategoriesListLocal.length > 0
+    skillCategoriesListLocal.isNotEmpty
         ? skillCategoriesListLocal.forEach((element) {
-            selectedCategoryID.add('${element.skillID}');
+            selectedCategoryID.add(element.skillID);
           })
         : selectedCategoryID.clear();
-    print('selectedCategoryID ${formatString(selectedCategoryID)}');
+    MyPrint.printOnConsole('selectedCategoryID ${formatString(selectedCategoryID)}');
 
     //updateInformation(formatString(selectedCategoryID));
 
@@ -522,12 +520,12 @@ class _EditQuestionState extends State<EditQuestion>
   String updateSkillCategoryTitle() {
     List<String> selectedCategoryID = [];
 
-    skillCategoriesListLocal.length > 0
+    skillCategoriesListLocal.isNotEmpty
         ? skillCategoriesListLocal.forEach((element) {
-            selectedCategoryID.add('${element.preferrenceTitle}');
+            selectedCategoryID.add(element.preferrenceTitle);
           })
         : selectedCategoryID.clear();
-    print('selectedCategoryID ${formatString(selectedCategoryID)}');
+    MyPrint.printOnConsole('selectedCategoryID ${formatString(selectedCategoryID)}');
 
     updateInformation(formatString(selectedCategoryID));
 

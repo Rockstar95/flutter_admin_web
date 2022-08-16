@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:typed_data';
 
 import 'package:http/http.dart';
 import 'package:flutter_admin_web/framework/common/constants.dart';
@@ -58,8 +59,8 @@ class AskTheExpertRepositoryPublic extends AskTheExpertRepository {
       String userQuestion = "",
       String userQuestionDesc = "",
       String userUploadedImageName = "",
-      String filePath = "",
       String fileName = "",
+      Uint8List? fileBytes,
       String skills = "",
       String selectedSkillIds = "",
       int editQueID = 0,
@@ -72,14 +73,11 @@ class AskTheExpertRepositoryPublic extends AskTheExpertRepository {
       var strLanguage = await sharePrefGetString(sharedPref_AppLocale);
 
       print("File name:$fileName");
-      print("File Path:$filePath");
+      print("File Path:$fileBytes");
 
-      if (filePath != '') {
-        //final file = await dio.MultipartFile.fromFile(filePath, filename: fileName);
-        File file = File(filePath);
+      if (fileBytes != null) {
         List<MultipartFile> files = [
-          MultipartFile("Image", file.openRead(), file.lengthSync(),
-              filename: fileName)
+          MultipartFile.fromBytes("Image", fileBytes, filename: fileName)
         ];
         //MultipartFile(field, stream, length)
         //List<MultipartFile> files = [];
@@ -97,7 +95,7 @@ class AskTheExpertRepositoryPublic extends AskTheExpertRepository {
           'skills': skills,
           'SeletedSkillIds': selectedSkillIds,
           'EditQueID': editQueID.toString(),
-          'IsRemoveEditimage': isRemoveEditImage.toString()
+          'IsRemoveEditimage': isRemoveEditImage.toString(),
         };
         response = await RestClient.uploadFilesData(
             ApiEndpoints.addNewQuestion(), formData,
@@ -194,7 +192,7 @@ class AskTheExpertRepositoryPublic extends AskTheExpertRepository {
       String userCommentImage = "",
       int commentStatus = 0,
       bool isRemoveCommentImage = false,
-      String filePath = "",
+      Uint8List? fileBytes,
       String fileName = ""}) async {
     Response? response;
     try {
@@ -202,12 +200,9 @@ class AskTheExpertRepositoryPublic extends AskTheExpertRepository {
       var strSiteID = await sharePrefGetString(sharedPref_siteid);
       var strLanguage = await sharePrefGetString(sharedPref_AppLocale);
 
-      if (filePath.isNotEmpty) {
-        //final file = await dio.MultipartFile.fromFile(filePath, filename: fileName);
-        File file = File(filePath);
+      if (fileBytes != null) {
         List<MultipartFile> files = [
-          MultipartFile("Image", file.openRead(), file.lengthSync(),
-              filename: fileName)
+          MultipartFile.fromBytes("Image", fileBytes, filename: fileName)
         ];
         //List<MultipartFile> files = [MultipartFile("userCommentImage", file.openRead(), file.lengthSync())];
 
@@ -384,7 +379,7 @@ class AskTheExpertRepositoryPublic extends AskTheExpertRepository {
       int responseID = 0,
       int questionID = 0,
       bool isRemoveEditImage = false,
-      String filePath = "",
+      Uint8List? fileBytes,
       String fileName = ""}) async {
     // TODO: implement addAnswer
     Response? response;
@@ -395,12 +390,9 @@ class AskTheExpertRepositoryPublic extends AskTheExpertRepository {
 
       //print("***** :"+UserName+": "+UserEmail+" : "+response+" : ")
 
-      if (filePath != '') {
-        //final file = await dio.MultipartFile.fromFile(filePath, filename: fileName);
-        File file = File(filePath);
+      if (fileBytes != null) {
         List<MultipartFile> files = [
-          MultipartFile("Image", file.openRead(), file.lengthSync(),
-              filename: fileName)
+          MultipartFile.fromBytes("Image", fileBytes, filename: fileName)
         ];
 
         Map<String, String> formData = {

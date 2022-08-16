@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 import 'package:equatable/equatable.dart';
 import 'package:file_picker/file_picker.dart';
 
@@ -7,8 +9,8 @@ abstract class WikiUploadEvent extends Equatable {
 
 class PostWikiUploadEvent extends WikiUploadEvent {
   final bool isUrl;
-  final String filepath,
-      title,
+  final Uint8List? fileBytes;
+  final String title,
       shortDesc,
       localeID,
       keywords,
@@ -22,9 +24,9 @@ class PostWikiUploadEvent extends WikiUploadEvent {
       cMSGroupId,
       orgUnitID;
 
-  PostWikiUploadEvent({
+  const PostWikiUploadEvent({
     this.isUrl = false,
-    this.filepath = "",
+    this.fileBytes,
     this.title = "",
     this.shortDesc = "",
     this.localeID = "",
@@ -43,7 +45,6 @@ class PostWikiUploadEvent extends WikiUploadEvent {
   @override
   List<Object> get props => [
         isUrl,
-        filepath,
         mediaTypeID,
         objectTypeID,
         title,
@@ -63,10 +64,9 @@ class PostWikiUploadEvent extends WikiUploadEvent {
 class OpenFileExplorerEvent extends WikiUploadEvent {
   final FileType pickingType;
 
-  OpenFileExplorerEvent(this.pickingType);
+  const OpenFileExplorerEvent(this.pickingType);
 
   @override
-  // TODO: implement props
   List<Object> get props => [pickingType];
 }
 
@@ -77,7 +77,7 @@ class GetWikiCategoriesEvent extends WikiUploadEvent {
   final String locale;
   final String strType;
 
-  GetWikiCategoriesEvent(
+  const GetWikiCategoriesEvent(
       {this.intUserID = 0,
       this.intSiteID = 0,
       this.intComponentID = 0,

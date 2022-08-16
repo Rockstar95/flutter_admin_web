@@ -19,7 +19,7 @@ import 'package:flutter_admin_web/ui/common/common_toast.dart';
 class EditAnswerComment extends StatefulWidget {
   final CommentList table;
 
-  EditAnswerComment(this.table);
+  const EditAnswerComment(this.table);
 
   @override
   _EditAnswerCommentState createState() => _EditAnswerCommentState();
@@ -27,7 +27,7 @@ class EditAnswerComment extends StatefulWidget {
 
 class _EditAnswerCommentState extends State<EditAnswerComment>
     with SingleTickerProviderStateMixin {
-  GlobalKey<ScaffoldState> _scaffoldkey = new GlobalKey<ScaffoldState>();
+  final GlobalKey<ScaffoldState> _scaffoldkey = GlobalKey<ScaffoldState>();
   final _formKey = GlobalKey<FormState>();
   final scaffoldKey = GlobalKey<ScaffoldState>();
 
@@ -45,8 +45,7 @@ class _EditAnswerCommentState extends State<EditAnswerComment>
     super.initState();
     ctrComment.text = widget.table.commentDescription;
 
-    askTheExpertBloc = new AskTheExpertBloc(
-        askTheExpertRepository: AskTheExpertRepositoryBuilder.repository());
+    askTheExpertBloc = AskTheExpertBloc(askTheExpertRepository: AskTheExpertRepositoryBuilder.repository());
 
     askTheExpertBloc.fileName = widget.table.commentImage != ''
         ? widget.table.commentImage.split('/').reversed.first
@@ -94,18 +93,18 @@ class _EditAnswerCommentState extends State<EditAnswerComment>
             "0xFF${appBloc.uiSettingModel.appBGColor.substring(1, 7).toUpperCase()}")),
         child: Stack(
           children: <Widget>[
-            Divider(
+            const Divider(
               height: 2,
               color: Colors.black87,
             ),
-            new Column(
+            Column(
               children: [
-                new Expanded(
+                Expanded(
                   child: SingleChildScrollView(
                     child: mainWidget(context, itemWidth, itemHeight),
                   ),
                 ),
-                new Padding(
+                Padding(
                     padding: const EdgeInsets.only(
                         top: 0.0, left: 10.0, right: 10.0, bottom: 20.0),
                     child: createAnswerButton())
@@ -118,27 +117,27 @@ class _EditAnswerCommentState extends State<EditAnswerComment>
   }
 
   Widget mainWidget(BuildContext context, double itemWidth, double itemHeight) {
-    return new Column(
+    return Column(
       children: [
-        new Padding(
+        Padding(
             padding: const EdgeInsets.only(top: 0.0, left: 10.0, right: 10.0),
-            child: new Form(
+            child: Form(
                 key: _formKey,
                 child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
                       Padding(
-                        padding: EdgeInsets.only(
+                        padding: const EdgeInsets.only(
                             top: 20, left: 5.0, right: 10.0, bottom: 10.0),
-                        child: new Text(
+                        child: Text(
                           'Comment',
-                          style: new TextStyle(
+                          style: TextStyle(
                               fontSize: 18.0,
                               color: Color(int.parse(
                                   "0xFF${appBloc.uiSettingModel.appTextColor.substring(1, 7).toUpperCase()}"))),
                         ),
                       ),
-                      new TextFormField(
+                      TextFormField(
                         style: TextStyle(
                             color: InsColor(appBloc).appTextColor,
                             fontSize: 14.h),
@@ -154,16 +153,16 @@ class _EditAnswerCommentState extends State<EditAnswerComment>
                           hintStyle: TextStyle(
                             color: InsColor(appBloc).appTextColor,
                           ),
-                          contentPadding: new EdgeInsets.symmetric(
+                          contentPadding: const EdgeInsets.symmetric(
                               vertical: 45.0, horizontal: 20.0),
-                          enabledBorder: OutlineInputBorder(
+                          enabledBorder: const OutlineInputBorder(
                             borderRadius: BorderRadius.all(Radius.circular(5)),
                             borderSide: BorderSide(
                               color: Color(0xFFDADCE0),
                             ),
                           ),
                           focusedBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.all(Radius.circular(5.0)),
+                            borderRadius: const BorderRadius.all(Radius.circular(5.0)),
                             borderSide: BorderSide(
                               color: Color(int.parse("0xFF${appBloc.uiSettingModel.appTextColor.substring(1, 7).toUpperCase()}")),
                               width: 1,
@@ -185,52 +184,52 @@ class _EditAnswerCommentState extends State<EditAnswerComment>
         bloc: askTheExpertBloc,
         listener: (context, state) {},
         builder: (context, state) {
-          return new Container(
-            padding: EdgeInsets.only(top: 20.0),
-            child: new Column(
+          return Container(
+            padding: const EdgeInsets.only(top: 20.0),
+            child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Padding(
-                  padding: EdgeInsets.only(
+                  padding: const EdgeInsets.only(
                       top: 20, left: 5.0, right: 10.0, bottom: 10.0),
-                  child: new Text(
+                  child: Text(
                     'Support Documents (Optional)',
-                    style: new TextStyle(
+                    style: TextStyle(
                       fontSize: 18.0,
                       color: Color(int.parse(
                           "0xFF${appBloc.uiSettingModel.appTextColor.substring(1, 7).toUpperCase()}")),
                     ),
                   ),
                 ),
-                new Container(
+                Container(
                   width: useMobileLayout
                       ? double.infinity
                       : MediaQuery.of(context).size.width / 3,
                   child: MaterialButton(
                       onPressed: () => {
-                            askTheExpertBloc.filePath.isEmpty
-                                ? askTheExpertBloc.add(OpenFileExplorerTopicEvent(FileType.image))
+                            askTheExpertBloc.fileBytes == null
+                                ? askTheExpertBloc.add(const OpenFileExplorerTopicEvent(FileType.image))
                                 : null
                           },
                       minWidth: MediaQuery.of(context).size.width,
                       disabledColor: Color(int.parse("0xFF${appBloc.uiSettingModel.appButtonBgColor.substring(1, 7).toUpperCase()}")).withOpacity(0.5),
                       color: Color(int.parse("0xFF${appBloc.uiSettingModel.appButtonBgColor.substring(1, 7).toUpperCase()}")),
+                      textColor: Color(int.parse("0xFF${appBloc.uiSettingModel.appButtonTextColor.substring(1, 7).toUpperCase()}")),
                       child: Text(
                         'Upload File',
                         style: TextStyle(color: Color(int.parse("0xFF${appBloc.uiSettingModel.appButtonTextColor.substring(1, 7).toUpperCase()}"))),
-                      ),
-                      textColor: Color(int.parse("0xFF${appBloc.uiSettingModel.appButtonTextColor.substring(1, 7).toUpperCase()}"))),
+                      )),
                 ),
                 Visibility(
-                  visible: (askTheExpertBloc.filePath.isNotEmpty),
+                  visible: (askTheExpertBloc.fileBytes != null),
                   child: Container(
                     width: useMobileLayout
                         ? double.infinity
                         : MediaQuery.of(context).size.width / 2,
                     child: Padding(
-                      padding: EdgeInsets.only(
+                      padding: const EdgeInsets.only(
                           top: 20.0, left: 5.0, right: 10.0, bottom: 10.0),
-                      child: new Row(
+                      child: Row(
                         children: [
                           Icon(
                             Icons.description,
@@ -238,25 +237,25 @@ class _EditAnswerCommentState extends State<EditAnswerComment>
                           ),
                           Expanded(
                             child: Padding(
-                                padding: EdgeInsets.only(
+                                padding: const EdgeInsets.only(
                                   left: 20.0,
                                 ),
-                                child: new Column(
+                                child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    new Text(
+                                    Text(
                                       askTheExpertBloc.fileName,
-                                      style: new TextStyle(
+                                      style: TextStyle(
                                           fontSize: 16.0,
                                           color: Color(int.parse(
                                               "0xFF${appBloc.uiSettingModel.appTextColor.substring(1, 7).toUpperCase()}")),
                                           fontWeight: FontWeight.normal),
                                     ),
-                                    new Text(
-                                      askTheExpertBloc.filePath.isNotEmpty && File(askTheExpertBloc.filePath).existsSync()
-                                          ? (File(askTheExpertBloc.filePath).lengthSync() / 1024).toStringAsFixed(0) + 'kb'
+                                    Text(
+                                      askTheExpertBloc.fileBytes != null
+                                          ? (askTheExpertBloc.fileBytes!.length / 1024).toStringAsFixed(0) + 'kb'
                                           : '',
-                                      style: new TextStyle(
+                                      style: TextStyle(
                                           fontSize: 12.0,
                                           color: Color(int.parse(
                                               "0xFF${appBloc.uiSettingModel.appTextColor.substring(1, 7).toUpperCase()}")),
@@ -265,11 +264,11 @@ class _EditAnswerCommentState extends State<EditAnswerComment>
                                   ],
                                 )),
                           ),
-                          new IconButton(
+                          IconButton(
                               onPressed: () {
                                 setState(() {
                                   askTheExpertBloc.fileName = "";
-                                  askTheExpertBloc.filePath = "";
+                                  askTheExpertBloc.fileBytes = null;
                                 });
                               },
                               icon: Icon(Icons.delete,
@@ -295,14 +294,14 @@ class _EditAnswerCommentState extends State<EditAnswerComment>
             flutterToast.showToast(
                 child: CommonToast(displaymsg: 'Comment Edited successfully'),
                 gravity: ToastGravity.BOTTOM,
-                toastDuration: Duration(seconds: 4));
+                toastDuration: const Duration(seconds: 4));
           } else if (state.status == Status.ERROR) {
             flutterToast.showToast(
               child: CommonToast(
                 displaymsg: state.data,
               ),
               gravity: ToastGravity.BOTTOM,
-              toastDuration: Duration(seconds: 2),
+              toastDuration: const Duration(seconds: 2),
             );
           }
         }
@@ -320,9 +319,9 @@ class _EditAnswerCommentState extends State<EditAnswerComment>
         } else {
           return Container(
             alignment: Alignment.bottomCenter,
-            child: new Row(
+            child: Row(
               children: [
-                new Expanded(
+                Expanded(
                     child: MaterialButton(
                         onPressed: () => {
                               validateAddCommentForm(widget.table),
@@ -333,9 +332,9 @@ class _EditAnswerCommentState extends State<EditAnswerComment>
                             .withOpacity(0.5),
                         color: Color(int.parse(
                             "0xFF${appBloc.uiSettingModel.appButtonBgColor.substring(1, 7).toUpperCase()}")),
-                        child: Text('Submit'),
                         textColor: Color(int.parse(
-                            "0xFF${appBloc.uiSettingModel.appButtonTextColor.substring(1, 7).toUpperCase()}")))),
+                            "0xFF${appBloc.uiSettingModel.appButtonTextColor.substring(1, 7).toUpperCase()}")),
+                        child: const Text('Submit'))),
               ],
             ),
           );
@@ -345,7 +344,7 @@ class _EditAnswerCommentState extends State<EditAnswerComment>
   }
 
   void validateAddCommentForm(CommentList table) {
-    var filepath = askTheExpertBloc.filePath;
+    var filebytes = askTheExpertBloc.fileBytes;
     var fileName = askTheExpertBloc.fileName;
 
     var titleNameVar = ctrComment.text;
@@ -354,7 +353,7 @@ class _EditAnswerCommentState extends State<EditAnswerComment>
       flutterToast.showToast(
         child: CommonToast(displaymsg: 'Please enter comment'),
         gravity: ToastGravity.BOTTOM,
-        toastDuration: Duration(seconds: 4),
+        toastDuration: const Duration(seconds: 4),
       );
       return;
     }
@@ -366,7 +365,7 @@ class _EditAnswerCommentState extends State<EditAnswerComment>
         fileName,
         0,
         false,
-        filepath,
+        filebytes,
         fileName));
   }
 }

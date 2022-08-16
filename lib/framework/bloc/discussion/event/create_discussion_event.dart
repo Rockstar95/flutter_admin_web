@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 import 'package:equatable/equatable.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter_admin_web/framework/repository/Discussion/model/discussion_main_home_request.dart';
@@ -43,7 +45,7 @@ class CreateDiscussionForumEvent extends CreateDiscussionEvent {
   final bool allowShare;
   final bool isPrivate;
   final bool allowPinTopic;
-  final String filePath;
+  final Uint8List? fileBytes;
   final String fileName;
 
   CreateDiscussionForumEvent(
@@ -65,7 +67,7 @@ class CreateDiscussionForumEvent extends CreateDiscussionEvent {
       this.allowShare = false,
       this.isPrivate = false,
       this.allowPinTopic = false,
-      this.filePath = "",
+      this.fileBytes,
       this.fileName = ""});
 
   @override
@@ -88,7 +90,6 @@ class CreateDiscussionForumEvent extends CreateDiscussionEvent {
         allowShare,
         isPrivate,
         allowPinTopic,
-        filePath,
         fileName
       ];
 }

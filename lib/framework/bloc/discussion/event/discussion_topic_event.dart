@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 import 'package:equatable/equatable.dart';
 import 'package:file_picker/file_picker.dart';
 
@@ -60,17 +62,17 @@ class UploadAttachmentEvent extends DiscussionTopicEvent {
   final String replyID;
   final bool isTopic;
   final String fileName;
-  final String filePath;
+  final Uint8List? fileBytes;
 
   UploadAttachmentEvent(
       {this.topicID = "",
       this.replyID = "",
       this.isTopic = false,
       this.fileName = "",
-      this.filePath = ""});
+      this.fileBytes});
 
   @override
-  List<Object> get props => [topicID, replyID, isTopic, fileName, filePath];
+  List<Object> get props => [topicID, replyID, isTopic, fileName];
 }
 
 class EditTopicEvent extends DiscussionTopicEvent {

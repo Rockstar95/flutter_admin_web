@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:typed_data';
 
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/services.dart';
@@ -18,7 +19,7 @@ class FeedbackBloc extends Bloc<FeedbackEvent, FeedbackState> {
   List<PlatformFile> _paths = [];
   String _extension = "";
   bool _multiPick = false;
-  String filePath = '';
+  Uint8List? fileBytes;
 
   FeedbackRepository feedbackRepository;
 
@@ -86,7 +87,7 @@ class FeedbackBloc extends Bloc<FeedbackEvent, FeedbackState> {
         yield OpenFileExplorerState.loading('Please wait');
         fileName = await openFileExplorer(event.pickingType);
         yield OpenFileExplorerState.completed(fileName: fileName);
-        print('file name here $fileName $filePath');
+        print('file name here $fileName $fileBytes');
       }
       if (event is GetFeedbackResponseEvent) {
         yield GetFeedbackResponseState.loading('Please wait ');
@@ -158,10 +159,7 @@ class FeedbackBloc extends Bloc<FeedbackEvent, FeedbackState> {
       fileName = file != null
           ? file.name.replaceAll('(', ' ').replaceAll(')', '')
           : '';
-      filePath = file != null
-          ? (file.path ?? "")
-          : '';
-      filePath = filePath.trim();
+      fileBytes = file.bytes;
     }
     return fileName;
   }

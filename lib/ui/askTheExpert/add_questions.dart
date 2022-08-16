@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_admin_web/utils/my_print.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
@@ -21,12 +22,14 @@ import 'package:flutter_admin_web/ui/common/common_toast.dart';
 import '../common/outline_button.dart';
 
 class AddQuestion extends StatefulWidget {
+  const AddQuestion({Key? key}) : super(key: key);
+
   @override
   _AddQuestionState createState() => _AddQuestionState();
 }
 
 class _AddQuestionState extends State<AddQuestion> with SingleTickerProviderStateMixin {
-  GlobalKey<ScaffoldState> _scaffoldkey = new GlobalKey<ScaffoldState>();
+  final GlobalKey<ScaffoldState> _scaffoldkey = GlobalKey<ScaffoldState>();
   final _formKey = GlobalKey<FormState>();
   final scaffoldKey = GlobalKey<ScaffoldState>();
 
@@ -47,7 +50,7 @@ class _AddQuestionState extends State<AddQuestion> with SingleTickerProviderStat
   void initState() {
     super.initState();
 
-    askTheExpertBloc = new AskTheExpertBloc(
+    askTheExpertBloc = AskTheExpertBloc(
         askTheExpertRepository: AskTheExpertRepositoryBuilder.repository());
   }
 
@@ -92,14 +95,14 @@ class _AddQuestionState extends State<AddQuestion> with SingleTickerProviderStat
             //   height: 2,
             //   color: Colors.black87,
             // ),
-            new Column(
+            Column(
               children: [
-                new Expanded(
+                Expanded(
                   child: SingleChildScrollView(
                     child: mainWidget(context, itemWidth, itemHeight),
                   ),
                 ),
-                new Padding(
+                Padding(
                     padding: const EdgeInsets.only(
                         top: 0.0, left: 10.0, right: 10.0, bottom: 8.0),
                     child: createQuestionButton())
@@ -112,26 +115,26 @@ class _AddQuestionState extends State<AddQuestion> with SingleTickerProviderStat
   }
 
   Widget mainWidget(BuildContext context, double itemWidth, double itemHeight) {
-    return new Column(
+    return Column(
       children: [
-        new Padding(
+        Padding(
           padding: const EdgeInsets.only(top: 0.0, left: 10.0, right: 10.0),
-          child: new Form(
+          child: Form(
             key: _formKey,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
                 Padding(
-                  padding: EdgeInsets.only(
+                  padding: const EdgeInsets.only(
                       top: 20, left: 5.0, right: 10.0, bottom: 10.0),
-                  child: new Text(
+                  child: Text(
                     'Question*',
-                    style: new TextStyle(
+                    style: TextStyle(
                         fontSize: 14.0,
                         color: AppColors.getAppTextColor()),
                   ),
                 ),
-                new TextFormField(
+                TextFormField(
                   style: TextStyle(
                     color: AppColors.getAppTextColor(),
                   ),
@@ -146,21 +149,21 @@ class _AddQuestionState extends State<AddQuestion> with SingleTickerProviderStat
                     setState(() {});
                   },
                   decoration: InputDecoration(
-                    contentPadding: EdgeInsets.symmetric(horizontal: 20).copyWith(top: 20,bottom: 20),
+                    contentPadding: const EdgeInsets.symmetric(horizontal: 20).copyWith(top: 20,bottom: 20),
                     hintStyle: TextStyle(
                       color: Color(int.parse(
                               "0xFF${appBloc.uiSettingModel.appTextColor.substring(1, 7).toUpperCase()}"))
                           .withOpacity(0.7),
                     ),
                     hintText: 'Enter your question here..',
-                    enabledBorder: OutlineInputBorder(
+                    enabledBorder: const OutlineInputBorder(
                       borderRadius: BorderRadius.all(Radius.circular(5)),
                       borderSide: BorderSide(
                         color: Color(0xFFDADCE0),
                       ),
                     ),
                     focusedBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.all(Radius.circular(5.0)),
+                      borderRadius: const BorderRadius.all(Radius.circular(5.0)),
                       borderSide: BorderSide(
                         color: Color(int.parse("0xFF${appBloc.uiSettingModel.appTextColor.substring(1, 7).toUpperCase()}")),
                         width: 1,
@@ -170,52 +173,50 @@ class _AddQuestionState extends State<AddQuestion> with SingleTickerProviderStat
                   ),
                 ),
                 Padding(
-                  padding: EdgeInsets.only(
+                  padding: const EdgeInsets.only(
                       top: 20, left: 5.0, right: 10.0, bottom: 10.0),
-                  child: new Text(
+                  child: Text(
                     'Description',
-                    style: new TextStyle(
+                    style: TextStyle(
                         fontSize: 14.0,
                         color: AppColors.getAppTextColor()),
                   ),
                 ),
-                Container(
-                  child: TextFormField(
-                    style: TextStyle(
-                      color: AppColors.getAppTextColor(),
+                TextFormField(
+                  style: TextStyle(
+                    color: AppColors.getAppTextColor(),
+                  ),
+                  minLines: 7,
+                  maxLines: 7,
+                  focusNode: reqFocusDescription,
+                  controller: ctrQuestionDesc,
+                  textInputAction: TextInputAction.next,
+                  onSaved: (val) => ctrQuestionDesc.text = val ?? "",
+                  onChanged: (val) {
+                    setState(() {});
+                  },
+                  decoration: InputDecoration(
+                    contentPadding: const EdgeInsets.symmetric(horizontal: 20).copyWith(top: 20,bottom: 20),
+                    hintStyle: TextStyle(
+                      color: Color(int.parse(
+                              "0xFF${appBloc.uiSettingModel.appTextColor.substring(1, 7).toUpperCase()}"))
+                          .withOpacity(0.7),
                     ),
-                    minLines: 7,
-                    maxLines: 7,
-                    focusNode: reqFocusDescription,
-                    controller: ctrQuestionDesc,
-                    textInputAction: TextInputAction.next,
-                    onSaved: (val) => ctrQuestionDesc.text = val ?? "",
-                    onChanged: (val) {
-                      setState(() {});
-                    },
-                    decoration: InputDecoration(
-                      contentPadding: EdgeInsets.symmetric(horizontal: 20).copyWith(top: 20,bottom: 20),
-                      hintStyle: TextStyle(
-                        color: Color(int.parse(
-                                "0xFF${appBloc.uiSettingModel.appTextColor.substring(1, 7).toUpperCase()}"))
-                            .withOpacity(0.7),
+                    hintText: 'Enter your description here..',
+                    enabledBorder: const OutlineInputBorder(
+                      borderRadius: BorderRadius.all(Radius.circular(5)),
+                      borderSide: BorderSide(
+                        color: Color(0xFFDADCE0),
                       ),
-                      hintText: 'Enter your description here..',
-                      enabledBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.all(Radius.circular(5)),
-                        borderSide: BorderSide(
-                          color: Color(0xFFDADCE0),
-                        ),
-                      ),
-                      focusedBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.all(Radius.circular(5.0)),
-                        borderSide: BorderSide(
-                          color: Color(int.parse("0xFF${appBloc.uiSettingModel.appTextColor.substring(1, 7).toUpperCase()}")),
-                          width: 1,
-                        ),
-                      ),
-                      border: OutlineInputBorder(borderRadius: BorderRadius.circular(5.0)),
                     ),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: const BorderRadius.all(Radius.circular(5.0)),
+                      borderSide: BorderSide(
+                        color: Color(int.parse("0xFF${appBloc.uiSettingModel.appTextColor.substring(1, 7).toUpperCase()}")),
+                        width: 1,
+                      ),
+                    ),
+                    border: OutlineInputBorder(borderRadius: BorderRadius.circular(5.0)),
                   ),
                 ),
                 Padding(
@@ -224,7 +225,7 @@ class _AddQuestionState extends State<AddQuestion> with SingleTickerProviderStat
                   child: Text(
                     "Skills*",
                     textAlign: TextAlign.left,
-                    style: new TextStyle(
+                    style: TextStyle(
                         fontSize: 14.0,
                         color: AppColors.getAppTextColor()),
                   ),
@@ -234,6 +235,7 @@ class _AddQuestionState extends State<AddQuestion> with SingleTickerProviderStat
                     child: OutlineButton(
                       border: Border.all(color: Colors.grey.shade500),
                       child: SizedBox(
+                        width: MediaQuery.of(context).size.width,
                         child: Padding(
                           padding: const EdgeInsets.symmetric(vertical: 15.0),
                           child: Row(
@@ -254,7 +256,6 @@ class _AddQuestionState extends State<AddQuestion> with SingleTickerProviderStat
                             ],
                           ),
                         ),
-                        width: MediaQuery.of(context).size.width,
                       ),
                       onPressed: () {
                         moveSkillCategory();
@@ -276,58 +277,58 @@ class _AddQuestionState extends State<AddQuestion> with SingleTickerProviderStat
       bloc: askTheExpertBloc,
       listener: (context, state) {},
       builder: (context, state) {
-        return new Container(
-          padding: EdgeInsets.only(top: 20.0),
-          child: new Column(
+        return Container(
+          padding: const EdgeInsets.only(top: 20.0),
+          child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Padding(
-                padding: EdgeInsets.only(
+                padding: const EdgeInsets.only(
                     top: 20, left: 5.0, right: 10.0, bottom: 10.0),
-                child: new Text(
+                child: Text(
                   'Attachments',
-                  style: new TextStyle(
+                  style: TextStyle(
                       fontSize: 14.0,
                       color: AppColors.getAppTextColor()),
                 ),
               ),
               Padding(
-                padding: EdgeInsets.only(left: 5.0, right: 5.0),
-                child: new Container(
+                padding: const EdgeInsets.only(left: 5.0, right: 5.0),
+                child: SizedBox(
                   width: useMobileLayout
                       ? double.infinity
                       : MediaQuery.of(context).size.width / 3,
                   child: MaterialButton(
-                  padding: EdgeInsets.symmetric(vertical: 13),
+                  padding: const EdgeInsets.symmetric(vertical: 13),
                       onPressed: () => {
                             askTheExpertBloc.isFirstLoading = false,
-                            askTheExpertBloc.filePath.isEmpty
-                                ? askTheExpertBloc.add(OpenFileExplorerTopicEvent(FileType.image))
+                            askTheExpertBloc.fileBytes != null
+                                ? askTheExpertBloc.add(const OpenFileExplorerTopicEvent(FileType.image))
                                 : null
                           },
                       minWidth: MediaQuery.of(context).size.width,
                       disabledColor: Color(int.parse("0xFF${appBloc.uiSettingModel.appButtonBgColor.substring(1, 7).toUpperCase()}")).withOpacity(0.5),
-                      color: askTheExpertBloc.filePath.isNotEmpty
+                      color: askTheExpertBloc.fileBytes != null
                           ? Colors.grey
                           :  AppColors.getAppButtonBGColor(),
+                      textColor:  AppColors.getAppButtonTextColor(),
                       child: Text(
                         'Upload File',
                         style: TextStyle(
                             color: AppColors.getAppButtonTextColor()),
-                      ),
-                      textColor:  AppColors.getAppButtonTextColor()),
+                      )),
                 ),
               ),
               Visibility(
-                visible: (askTheExpertBloc.filePath.isNotEmpty),
-                child: Container(
+                visible: (askTheExpertBloc.fileBytes != null),
+                child: SizedBox(
                   width: useMobileLayout
                       ? double.infinity
                       : MediaQuery.of(context).size.width / 2,
                   child: Padding(
-                    padding: EdgeInsets.only(
+                    padding: const EdgeInsets.only(
                         top: 20.0, left: 5.0, right: 10.0, bottom: 10.0),
-                    child: new Row(
+                    child: Row(
                       children: [
                         Icon(
                           Icons.description,
@@ -335,24 +336,24 @@ class _AddQuestionState extends State<AddQuestion> with SingleTickerProviderStat
                         ),
                         Expanded(
                           child: Padding(
-                              padding: EdgeInsets.only(
+                              padding: const EdgeInsets.only(
                                 left: 20.0,
                               ),
-                              child: new Column(
+                              child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  new Text(
+                                  Text(
                                     askTheExpertBloc.fileName,
-                                    style: new TextStyle(
+                                    style: TextStyle(
                                         fontSize: 16.0,
                                         color: InsColor(appBloc).appTextColor,
                                         fontWeight: FontWeight.normal),
                                   ),
-                                  new Text(
-                                    askTheExpertBloc.filePath.isNotEmpty && File(askTheExpertBloc.filePath).existsSync()
-                                        ? (File(askTheExpertBloc.filePath).lengthSync() / 1024).toStringAsFixed(0) + 'kb'
+                                  Text(
+                                    askTheExpertBloc.fileBytes != null
+                                        ? ('${askTheExpertBloc.fileBytes!.length.toStringAsFixed(0)}kb')
                                         : '',
-                                    style: new TextStyle(
+                                    style: TextStyle(
                                         fontSize: 12.0,
                                         color: InsColor(appBloc).appTextColor,
                                         fontWeight: FontWeight.normal),
@@ -360,11 +361,11 @@ class _AddQuestionState extends State<AddQuestion> with SingleTickerProviderStat
                                 ],
                               )),
                         ),
-                        new IconButton(
+                        IconButton(
                             onPressed: () {
                               setState(() {
                                 askTheExpertBloc.fileName = "";
-                                askTheExpertBloc.filePath = "";
+                                askTheExpertBloc.fileBytes = null;
                               });
                             },
                             icon: Icon(Icons.delete,
@@ -391,22 +392,21 @@ class _AddQuestionState extends State<AddQuestion> with SingleTickerProviderStat
             flutterToast.showToast(
                 child: CommonToast(displaymsg: 'Question Added successfully'),
                 gravity: ToastGravity.BOTTOM,
-                toastDuration: Duration(seconds: 4));
+                toastDuration: const Duration(seconds: 4));
           } else if (state.status == Status.ERROR) {
             flutterToast.showToast(
               child: CommonToast(
                 displaymsg: state.message,
               ),
               gravity: ToastGravity.BOTTOM,
-              toastDuration: Duration(seconds: 2),
+              toastDuration: const Duration(seconds: 2),
             );
           }
         }
       },
       builder: (context, state) {
-        print("Status:${state.status}");
-        print(
-            "askTheExpertBloc.isFirstLoading:${askTheExpertBloc.isFirstLoading}");
+        MyPrint.printOnConsole("Status:${state.status}");
+        MyPrint.printOnConsole("askTheExpertBloc.isFirstLoading:${askTheExpertBloc.isFirstLoading}");
         if (state.status == Status.LOADING) {
           return askTheExpertBloc.isFirstLoading
               ? Align(
@@ -421,12 +421,12 @@ class _AddQuestionState extends State<AddQuestion> with SingleTickerProviderStat
         } else {
           return Container(
             alignment: Alignment.bottomCenter,
-            padding: EdgeInsets.only(left: 5.0, right: 5.0),
-            child: new Row(
+            padding: const EdgeInsets.only(left: 5.0, right: 5.0),
+            child: Row(
               children: [
-                new Expanded(
+                Expanded(
                   child: MaterialButton(
-                    padding: EdgeInsets.symmetric(vertical: 15),
+                    padding: const EdgeInsets.symmetric(vertical: 15),
                     onPressed: () {
                       validateAddQuestionForm();
                     },
@@ -436,9 +436,9 @@ class _AddQuestionState extends State<AddQuestion> with SingleTickerProviderStat
                         .withOpacity(0.5),
                     color: Color(int.parse(
                         "0xFF${appBloc.uiSettingModel.appButtonBgColor.substring(1, 7).toUpperCase()}")),
-                    child: Text('Submit Question'),
                     textColor: Color(int.parse(
                         "0xFF${appBloc.uiSettingModel.appButtonTextColor.substring(1, 7).toUpperCase()}")),
+                    child: const Text('Submit Question'),
                   ),
                 ),
               ],
@@ -450,7 +450,7 @@ class _AddQuestionState extends State<AddQuestion> with SingleTickerProviderStat
   }
 
   void validateAddQuestionForm() {
-    var filepath = askTheExpertBloc.filePath;
+    var filebytes = askTheExpertBloc.fileBytes;
     var fileName = askTheExpertBloc.fileName;
     var descriptionVar = ctrQuestionDesc.text;
     var titleNameVar = ctrQuestion.text;
@@ -459,14 +459,14 @@ class _AddQuestionState extends State<AddQuestion> with SingleTickerProviderStat
       flutterToast.showToast(
         child: CommonToast(displaymsg: 'Please enter question'),
         gravity: ToastGravity.BOTTOM,
-        toastDuration: Duration(seconds: 4),
+        toastDuration: const Duration(seconds: 4),
       );
       return;
     } else if (titleSelectCategory == 'Select Skill') {
       flutterToast.showToast(
         child: CommonToast(displaymsg: 'Please choose atleast one skill'),
         gravity: ToastGravity.BOTTOM,
-        toastDuration: Duration(seconds: 4),
+        toastDuration: const Duration(seconds: 4),
       );
       return;
     }
@@ -477,8 +477,8 @@ class _AddQuestionState extends State<AddQuestion> with SingleTickerProviderStat
         titleNameVar,
         descriptionVar,
         '',
-        filepath,
         fileName,
+        filebytes,
         titleSelectCategory,
         updateSelectedCatId(),
         -1,
@@ -496,7 +496,7 @@ class _AddQuestionState extends State<AddQuestion> with SingleTickerProviderStat
   }
 
   String formatString(List x) {
-    if (x.length == 0) {
+    if (x.isEmpty) {
       return 'Select Skill';
     }
     String formatted = '';
@@ -509,12 +509,12 @@ class _AddQuestionState extends State<AddQuestion> with SingleTickerProviderStat
   String updateSelectedCatId() {
     List<String> selectedCategoryID = [];
 
-    skillCategoriesListLocal.length > 0
+    skillCategoriesListLocal.isNotEmpty
         ? skillCategoriesListLocal.forEach((element) {
             selectedCategoryID.add('${element.skillID}');
           })
         : selectedCategoryID.clear();
-    print('selectedCategoryID ${formatString(selectedCategoryID)}');
+    MyPrint.printOnConsole('selectedCategoryID ${formatString(selectedCategoryID)}');
 
     //updateInformation(formatString(selectedCategoryID));
 
@@ -524,12 +524,12 @@ class _AddQuestionState extends State<AddQuestion> with SingleTickerProviderStat
   String updateSkillCategoryTitle() {
     List<String> selectedCategoryID = [];
 
-    skillCategoriesListLocal.length > 0
+    skillCategoriesListLocal.isNotEmpty
         ? skillCategoriesListLocal.forEach((element) {
-            selectedCategoryID.add('${element.preferrenceTitle}');
+            selectedCategoryID.add(element.preferrenceTitle);
           })
         : selectedCategoryID.clear();
-    print('selectedCategoryID ${formatString(selectedCategoryID)}');
+    MyPrint.printOnConsole('selectedCategoryID ${formatString(selectedCategoryID)}');
 
     updateInformation(formatString(selectedCategoryID));
 

@@ -524,8 +524,7 @@ class RestClient {
     return response;
   }
 
-  static Future<dio.Response?> uploadGenericFileData(
-      String endpoint, String filePath, String fileName) async {
+  static Future<dio.Response?> uploadGenericFileData(String endpoint, String filePath, String fileName) async {
     dio.Response? response;
     var token = await sharePrefGetString(sharedPref_bearer);
     var strUserID = await sharePrefGetString(sharedPref_userid);

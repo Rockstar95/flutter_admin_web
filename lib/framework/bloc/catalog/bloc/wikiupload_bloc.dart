@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:typed_data';
 
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/services.dart';
@@ -19,7 +20,7 @@ class WikiUploadBloc extends Bloc<WikiUploadEvent, WikiUploadState> {
   List<PlatformFile> _paths = [];
   String _extension = "";
   bool _multiPick = false;
-  String filePath = '';
+  Uint8List? fileBytes;
 
   WikiUploadRepository wikiUploadRepository;
 
@@ -64,7 +65,7 @@ class WikiUploadBloc extends Bloc<WikiUploadEvent, WikiUploadState> {
         Response? apiResponse = await wikiUploadRepository.uploadWikiFileData(
             categoryIds: event.categoryId,
             isUrl: event.isUrl,
-            filepath: event.filepath,
+            fileBytes: event.fileBytes,
             mediaTypeID: event.mediaTypeID,
             objectTypeID: event.objectTypeID,
             title: event.title,
@@ -96,7 +97,7 @@ class WikiUploadBloc extends Bloc<WikiUploadEvent, WikiUploadState> {
 
         yield OpenFileExplorerState.completed(fileName: fileName);
 
-        print('file name here $fileName $filePath');
+        print('file name here $fileName $fileBytes');
       }
 
       if (event is GetWikiCategoriesEvent) {
@@ -158,12 +159,9 @@ class WikiUploadBloc extends Bloc<WikiUploadEvent, WikiUploadState> {
       fileName = file != null
           ? file.name.replaceAll('(', ' ').replaceAll(')', '')
           : '';
-      filePath = file != null
-          ? (file.path ?? "")
-          : '';
+      fileBytes = file.bytes;
 
       fileName = fileName.trim();
-      filePath = filePath.trim();
     }
     return fileName;
   }

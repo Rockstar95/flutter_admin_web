@@ -109,10 +109,14 @@ class AppBloc extends Bloc<AppEvent, AppState> {
           String mobileGetLearningPortalInfoResponsStr = await _getLocalData(mobileGetLearningPortalInfoKey);
           MyPrint.logOnConsole("mobileGetLearningPortalInfoResponsStr:${mobileGetLearningPortalInfoResponsStr}");
 
-          MobileGetLearningPortalInfoResponse mobileGetLearningPortalInfoResponse = mobileGetLearningPortalInfoResponseFromJson(
-            mobileGetLearningPortalInfoResponsStr.isNotEmpty && mobileGetLearningPortalInfoResponsStr != "null" ? mobileGetLearningPortalInfoResponsStr : "{}"
-          );
-          setUiSettingFromMobileGetLearningPortalInfo(mobileGetLearningPortalInfoResponse);
+          try {
+            MobileGetLearningPortalInfoResponse mobileGetLearningPortalInfoResponse = mobileGetLearningPortalInfoResponseFromJson(mobileGetLearningPortalInfoResponsStr);
+            setUiSettingFromMobileGetLearningPortalInfo(mobileGetLearningPortalInfoResponse);
+          }
+          catch(e, s) {
+            print("Error in AppBloc.mapEventToState.SetUiSettingEvent.mobileGetLearningPortalInfoResponseFromJson():${e}");
+            print(s);
+          }
           uiSettingModel.setappname('in');
           uiSettingModel.setExpiredBGColor("#b3b0b8");
           String mobileGetNativeMenusResponseStr = await _getLocalData(mobileGetNativeMenusKey);

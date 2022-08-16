@@ -1,6 +1,10 @@
+import 'dart:typed_data';
+
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_admin_web/utils/my_print.dart';
+import 'package:flutter_admin_web/utils/my_print.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:flutter_admin_web/framework/bloc/app/bloc/app_bloc.dart';
 import 'package:flutter_admin_web/framework/bloc/messages/messages_bloc.dart';
@@ -186,16 +190,16 @@ class AttachmentIcon extends StatelessWidget {
                     color: Color(int.parse(
                         "0xFF${appBloc.uiSettingModel.appBGColor.substring(1, 7).toUpperCase()}")),
                     child: SingleChildScrollView(
-                      child: new Column(
+                      child: Column(
                         children: <Widget>[
-                          BottomSheetDragger(),
+                          const BottomSheetDragger(),
                           ListTile(
                               leading: Icon(
                                 Icons.image,
                                 color: Color(int.parse(
                                     "0xFF${appBloc.uiSettingModel.appTextColor.substring(1, 7).toUpperCase()}")),
                               ),
-                              title: new Text(
+                              title: Text(
                                 'Image',
                                 style: TextStyle(
                                     color: Color(int.parse(
@@ -211,7 +215,7 @@ class AttachmentIcon extends StatelessWidget {
                                 color: Color(int.parse(
                                     "0xFF${appBloc.uiSettingModel.appTextColor.substring(1, 7).toUpperCase()}")),
                               ),
-                              title: new Text(
+                              title: Text(
                                 'Video',
                                 style: TextStyle(
                                     color: Color(int.parse(
@@ -227,7 +231,7 @@ class AttachmentIcon extends StatelessWidget {
                                 color: Color(int.parse(
                                     "0xFF${appBloc.uiSettingModel.appTextColor.substring(1, 7).toUpperCase()}")),
                               ),
-                              title: new Text(
+                              title: Text(
                                 'Audio',
                                 style: TextStyle(
                                     color: Color(int.parse(
@@ -243,7 +247,7 @@ class AttachmentIcon extends StatelessWidget {
                                 color: Color(int.parse(
                                     "0xFF${appBloc.uiSettingModel.appTextColor.substring(1, 7).toUpperCase()}")),
                               ),
-                              title: new Text(
+                              title: Text(
                                 'Documents',
                                 style: TextStyle(
                                     color: Color(int.parse(
@@ -267,25 +271,25 @@ class AttachmentIcon extends StatelessWidget {
   openFile(MessageType msgType) async {
     // if (_pickingType == FileType.custom) {
     // }
-    FileType _pickingType = FileType.image;
-    String filePath;
+    FileType pickingType = FileType.image;
+    Uint8List? fileBytes;
     String fileName;
 
-    var _extension = '';
+    var extension = '';
     switch (msgType) {
       case MessageType.Image:
-        _pickingType = FileType.image;
+        pickingType = FileType.image;
         break;
       case MessageType.Audio:
-        _pickingType = FileType.custom;
-        _extension = "mp3,wav,3gp,webm";
+        pickingType = FileType.custom;
+        extension = "mp3,wav,3gp,webm";
         break;
       case MessageType.Video:
-        _pickingType = FileType.video;
+        pickingType = FileType.video;
         break;
       case MessageType.Doc:
-        _pickingType = FileType.custom;
-        _extension = "pdf,doc,docx,xlsx,xls";
+        pickingType = FileType.custom;
+        extension = "pdf,doc,docx,xlsx,xls";
         break;
       default:
         break;
@@ -294,34 +298,36 @@ class AttachmentIcon extends StatelessWidget {
     try {
       // var _paths = await FilePicker.platform.pickFiles(
       //     type: _pickingType, allowMultiple: false, allowedExtensions: []);
-      var _paths = (await FilePicker.platform.pickFiles(
-        type: _pickingType,
+      var paths = (await FilePicker.platform.pickFiles(
+        type: pickingType,
         allowMultiple: false,
-        allowedExtensions: (_extension.isNotEmpty)
-            ? _extension.replaceAll(' ', '').split(',')
+        allowedExtensions: (extension.isNotEmpty)
+            ? extension.replaceAll(' ', '').split(',')
             : null,
       ));
       //     ?.files;
-      var files = _paths?.files ?? [];
+      var files = paths?.files ?? [];
       if(files.isNotEmpty) {
-        filePath = files.isNotEmpty ? (files.first.path ?? "") : '';
+        fileBytes = files.isNotEmpty ? (files.first.bytes) : null;
         fileName = files.isNotEmpty ? files.first.name : '';
-        uploadFile(msgType, fileName, filePath);
+        uploadFile(msgType, fileName, fileBytes);
       }
-    } on PlatformException catch (e) {
-      print("Unsupported operation" + e.toString());
-    } catch (ex) {
-      print(ex);
+    }
+    on PlatformException catch (e) {
+      MyPrint.printOnConsole("Unsupported operation$e");
+    }
+    catch (ex) {
+      MyPrint.printOnConsole(ex);
     }
   }
 
-  Future uploadFile(MessageType msgType, String fileName, String filePath) async {
-    if (filePath.isEmpty || fileName.isEmpty) {
+  Future uploadFile(MessageType msgType, String fileName, Uint8List? fileBytes) async {
+    if (fileBytes == null || fileName.isEmpty) {
       return;
     }
 
     messageBloc.add(SendAttachmentEvent(
-        filePath: filePath,
+        fileBytes: fileBytes,
         fileName: fileName,
         toUserId: toUserId,
         msgType: msgType,

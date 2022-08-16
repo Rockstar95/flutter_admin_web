@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:http/http.dart';
 import 'package:flutter_admin_web/framework/common/constants.dart';
@@ -179,7 +181,7 @@ class MessagesRepositoryPublic extends MessagesRepository {
   }
 
   Future<Response?> uploadMessageFileData(
-      {String filePath = "",
+      {Uint8List? fileBytes,
       String fileName = "",
       String toUserId = "",
       MessageType msgType = MessageType.Doc,
@@ -189,15 +191,18 @@ class MessagesRepositoryPublic extends MessagesRepository {
     try {
       var strUserID = await sharePrefGetString(sharedPref_userid);
 
-      var response = await RestClient.uploadGenericFileData(
-          ApiEndpoints.genericFileUpload(), filePath, fileName);
+      List<MultipartFile> files = [];
 
-      print(response?.data);
+      if(fileBytes != null) {
+        files.add(MultipartFile.fromBytes("Image", fileBytes, filename: fileName));
+      }
+      var response = await RestClient.uploadFilesData(ApiEndpoints.genericFileUpload(), {}, files: files);
 
-      if (response?.data == 'success') {}
+      print(response?.body);
+
+      if (response?.body == 'success') {}
       print('${ApiEndpoints.mainSiteURL}$fileServerLocation$fileName');
-      var newFileUrl =
-          '${ApiEndpoints.mainSiteURL}$fileServerLocation$fileName';
+      var newFileUrl = '${ApiEndpoints.mainSiteURL}$fileServerLocation$fileName';
 
       var _fireStore = FirebaseFirestore.instance
           .collection(kAppFlavour)
