@@ -284,7 +284,7 @@ class MessagesBloc extends Bloc<MessagesEvent, MessagesState> {
 
         isAttachmentUploading = true;
         Response? apiResponse = await messagesRepository.uploadMessageFileData(
-            filePath: event.filePath,
+            fileBytes: event.fileBytes,
             fileName: event.fileName,
             toUserId: event.toUserId,
             msgType: event.msgType,

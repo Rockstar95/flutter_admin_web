@@ -40,7 +40,6 @@ import 'package:flutter_admin_web/framework/common/enums.dart';
 import 'package:flutter_admin_web/framework/common/pref_manger.dart';
 import 'package:flutter_admin_web/framework/helpers/ApiEndpoints.dart';
 import 'package:flutter_admin_web/framework/helpers/downloader/download_course.dart';
-import 'package:flutter_admin_web/framework/helpers/providermodel.dart';
 import 'package:flutter_admin_web/framework/helpers/utils.dart';
 import 'package:flutter_admin_web/framework/repository/Catalog/model/subsitelogin_response.dart';
 import 'package:flutter_admin_web/framework/repository/general/contract/general_repository.dart';
@@ -151,7 +150,7 @@ class _CommonDetailScreenState extends State<CommonDetailScreen> with SingleTick
   String downloadDestFolderPath = "";
   bool loaderEnroll = false;
   String contentID = '';
-  StreamController<int> streamController = new StreamController();
+  StreamController<int> streamController = StreamController();
   late GeneralRepository generalRepository;
   bool reviewMoreButtonEnabled = true;
   bool download = false;
@@ -325,11 +324,7 @@ class _CommonDetailScreenState extends State<CommonDetailScreen> with SingleTick
     if (isValidate) {
       print('ifdataaaaa');
       String alertMessage = appBloc.localstr.prerequistesalerttitle6Alerttitle6;
-      alertMessage = alertMessage +
-          '  \"' +
-          appBloc.localstr.prerequisLabelContenttypelabel +
-          '\" ' +
-          appBloc.localstr.prerequistesalerttitle5Alerttitle7;
+      alertMessage = '$alertMessage  \"${appBloc.localstr.prerequisLabelContenttypelabel}\" ${appBloc.localstr.prerequistesalerttitle5Alerttitle7}';
 
       showDialog(
           context: context,
@@ -354,12 +349,11 @@ class _CommonDetailScreenState extends State<CommonDetailScreen> with SingleTick
                               '0xFF${appBloc.uiSettingModel.appTextColor.substring(1, 7).toUpperCase()}'),
                         ))),
                 Text(
-                    '\n' +
-                        table2.viewprerequisitecontentstatus
+                    '\n${table2.viewprerequisitecontentstatus
                             .toString()
                             .split('#%')[1]
-                            .split('\$;')[0],
-                    style: TextStyle(
+                            .split('\$;')[0]}',
+                    style: const TextStyle(
                       fontSize: 16.0,
                       color: Colors.blue,
                     )),
@@ -500,20 +494,20 @@ class _CommonDetailScreenState extends State<CommonDetailScreen> with SingleTick
 //        .setobjecttypeid(widget.objtypeId.toString());
     generalRepository = GeneralRepositoryBuilder.repository();
 
-    tabList.add(new Tab(
+    tabList.add(const Tab(
       text: 'Sessions',
     ));
-    tabList.add(new Tab(
+    tabList.add(const Tab(
       text: 'Resource',
     ));
-    tabList.add(new Tab(
+    tabList.add(const Tab(
       text: 'Glossary',
     ));
-    _tabController = new TabController(length: tabList.length, vsync: this);
+    _tabController = TabController(length: tabList.length, vsync: this);
     getUserId();
 
     if (isValidString(widget.table2.eventstartdatetime ?? "")) {
-      DateTime tempDate = new DateFormat("yyyy-MM-ddThh:mm:ss")
+      DateTime tempDate = DateFormat("yyyy-MM-ddThh:mm:ss")
           .parse(widget.table2.eventstartdatetime);
 
       String date = DateFormat("yyyy-MM-dd HH:mm:ss").format(tempDate);
@@ -523,7 +517,7 @@ class _CommonDetailScreenState extends State<CommonDetailScreen> with SingleTick
     }
 
     if (isValidString(widget.table2.eventenddatetime ?? "")) {
-      DateTime tempDate = new DateFormat("yyyy-MM-ddThh:mm:ss")
+      DateTime tempDate = DateFormat("yyyy-MM-ddThh:mm:ss")
           .parse(widget.table2.eventenddatetime);
 
       String date = DateFormat("yyyy-MM-dd HH:mm:ss").format(tempDate);
@@ -558,10 +552,7 @@ class _CommonDetailScreenState extends State<CommonDetailScreen> with SingleTick
 
   void downloadPath(
       String contentid, DummyMyCatelogResponseTable2 table2) async {
-    String path = await AppDirectory.getDocumentsDirectory() +
-        "/.Mydownloads/Contentdownloads" +
-        "/" +
-        contentid;
+    String path = "${await AppDirectory.getDocumentsDirectory()}/.Mydownloads/Contentdownloads/$contentid";
 
     setState(() {
       downloadDestFolderPath = path;
@@ -598,7 +589,7 @@ class _CommonDetailScreenState extends State<CommonDetailScreen> with SingleTick
           flutterToast.showToast(
             child: CommonToast(displaymsg: 'Error while downloading'),
             gravity: ToastGravity.BOTTOM,
-            toastDuration: Duration(seconds: 2),
+            toastDuration: const Duration(seconds: 2),
           );
         }
         if (progress == 100) {
@@ -637,16 +628,16 @@ class _CommonDetailScreenState extends State<CommonDetailScreen> with SingleTick
     final useMobileLayout = smallestDimension < 600;
     thumbnailImgHeight = useMobileLayout ? 160 : 440;
 
-    Color statuscolor = Color(0xff5750da);
+    Color statuscolor = const Color(0xff5750da);
 
     //print("Common Details Called");
 
     if (widget.table2.corelessonstatus.toString().contains("Completed")) {
-      statuscolor = Color(0xff4ad963);
+      statuscolor = const Color(0xff4ad963);
     } else if (widget.table2.corelessonstatus.toString() == "Not Started") {
-      statuscolor = Color(0xfffe2c53);
+      statuscolor = const Color(0xfffe2c53);
     } else if (widget.table2.corelessonstatus.toString() == "In Progress") {
-      statuscolor = Color(0xffff9503);
+      statuscolor = const Color(0xffff9503);
     }
 
     return BlocConsumer<MyLearningBloc, MyLearningState>(
@@ -786,7 +777,7 @@ class _CommonDetailScreenState extends State<CommonDetailScreen> with SingleTick
                               } else {
                                 flutterToast.showToast(
                                     gravity: ToastGravity.BOTTOM,
-                                    toastDuration: Duration(seconds: 2),
+                                    toastDuration: const Duration(seconds: 2),
                                     child: CommonToast(
                                         displaymsg:
                                             'Something went wrong'));
@@ -800,7 +791,7 @@ class _CommonDetailScreenState extends State<CommonDetailScreen> with SingleTick
                               } else {
                                 flutterToast.showToast(
                                     gravity: ToastGravity.BOTTOM,
-                                    toastDuration: Duration(seconds: 2),
+                                    toastDuration: const Duration(seconds: 2),
                                     child: CommonToast(
                                         displaymsg:
                                             'Something went wrong'));
@@ -815,7 +806,7 @@ class _CommonDetailScreenState extends State<CommonDetailScreen> with SingleTick
                                   setTag1();
                                 });
 
-                                Future.delayed(Duration(seconds: 1),
+                                Future.delayed(const Duration(seconds: 1),
                                     () {
                                   // 5s over, navigate to a new page
                                   flutterToast.showToast(
@@ -823,7 +814,7 @@ class _CommonDetailScreenState extends State<CommonDetailScreen> with SingleTick
                                         displaymsg:
                                             'Enrollment cancelled successfully'),
                                     gravity: ToastGravity.BOTTOM,
-                                    toastDuration: Duration(seconds: 1),
+                                    toastDuration: const Duration(seconds: 1),
                                   );
                                   if (widget.screenType ==
                                       ScreenType.MyLearning) {
@@ -842,7 +833,7 @@ class _CommonDetailScreenState extends State<CommonDetailScreen> with SingleTick
                                       displaymsg:
                                           'Something went wrong'),
                                   gravity: ToastGravity.BOTTOM,
-                                  toastDuration: Duration(seconds: 2),
+                                  toastDuration: const Duration(seconds: 2),
                                 );
                               }
                             } else if (state.status == Status.ERROR) {
@@ -867,13 +858,11 @@ class _CommonDetailScreenState extends State<CommonDetailScreen> with SingleTick
                               if (state.isSucces.contains("true")) {
                                 flutterToast.showToast(
                                   child: CommonToast(
-                                      displaymsg: appBloc.localstr
-                                              .eventsAlertsubtitleThiseventitemhasbeenaddedto +
-                                          " " +
-                                          appBloc.localstr
-                                              .mylearningHeaderMylearningtitlelabel),
+                                      displaymsg: "${appBloc.localstr
+                                              .eventsAlertsubtitleThiseventitemhasbeenaddedto} ${appBloc.localstr
+                                              .mylearningHeaderMylearningtitlelabel}"),
                                   gravity: ToastGravity.BOTTOM,
-                                  toastDuration: Duration(seconds: 2),
+                                  toastDuration: const Duration(seconds: 2),
                                 );
 
                                 setState(() {
@@ -886,7 +875,7 @@ class _CommonDetailScreenState extends State<CommonDetailScreen> with SingleTick
                                       displaymsg:
                                           'Something went wrong'),
                                   gravity: ToastGravity.BOTTOM,
-                                  toastDuration: Duration(seconds: 2),
+                                  toastDuration: const Duration(seconds: 2),
                                 );
                               }
                             } else if (state.status == Status.ERROR) {
@@ -898,7 +887,7 @@ class _CommonDetailScreenState extends State<CommonDetailScreen> with SingleTick
                           else if (state is WaitingListState) {
                             if (state.status == Status.COMPLETED) {
                               if (state.waitingListResponse.isSuccess) {
-                                Future.delayed(Duration(seconds: 1),
+                                Future.delayed(const Duration(seconds: 1),
                                     () {
                                   // 5s over, navigate to a new page
                                   flutterToast.showToast(
@@ -907,7 +896,7 @@ class _CommonDetailScreenState extends State<CommonDetailScreen> with SingleTick
                                             .waitingListResponse
                                             .message),
                                     gravity: ToastGravity.BOTTOM,
-                                    toastDuration: Duration(seconds: 2),
+                                    toastDuration: const Duration(seconds: 2),
                                   );
                                 });
 
@@ -917,7 +906,7 @@ class _CommonDetailScreenState extends State<CommonDetailScreen> with SingleTick
                                   state.table2.actionwaitlist = '';
                                 });
                               } else {
-                                Future.delayed(Duration(seconds: 1),
+                                Future.delayed(const Duration(seconds: 1),
                                     () {
                                   // 5s over, navigate to a new page
                                   flutterToast.showToast(
@@ -926,7 +915,7 @@ class _CommonDetailScreenState extends State<CommonDetailScreen> with SingleTick
                                             .waitingListResponse
                                             .message),
                                     gravity: ToastGravity.BOTTOM,
-                                    toastDuration: Duration(seconds: 2),
+                                    toastDuration: const Duration(seconds: 2),
                                   );
                                 });
                               }
@@ -939,7 +928,7 @@ class _CommonDetailScreenState extends State<CommonDetailScreen> with SingleTick
                                       displaymsg:
                                           'Something went wrong'),
                                   gravity: ToastGravity.BOTTOM,
-                                  toastDuration: Duration(seconds: 2),
+                                  toastDuration: const Duration(seconds: 2),
                                 );
                               }
                             }
@@ -981,7 +970,7 @@ class _CommonDetailScreenState extends State<CommonDetailScreen> with SingleTick
                                               .catalogAlertsubtitleItemaddedtowishlistsuccesfully),
                                       gravity: ToastGravity.BOTTOM,
                                       toastDuration:
-                                          Duration(seconds: 2),
+                                          const Duration(seconds: 2),
                                     );
                                   }
                                   if (state
@@ -993,7 +982,7 @@ class _CommonDetailScreenState extends State<CommonDetailScreen> with SingleTick
                                               .catalogAlertsubtitleItemremovedtowishlistsuccesfully),
                                       gravity: ToastGravity.BOTTOM,
                                       toastDuration:
-                                          Duration(seconds: 2),
+                                          const Duration(seconds: 2),
                                     );
                                   }
                                   if (state is AddToMyLearningState) {
@@ -1005,7 +994,7 @@ class _CommonDetailScreenState extends State<CommonDetailScreen> with SingleTick
                                               .catalogAlertsubtitleThiscontentitemhasbeenaddedto),
                                       gravity: ToastGravity.BOTTOM,
                                       toastDuration:
-                                          Duration(seconds: 2),
+                                          const Duration(seconds: 2),
                                     );
                                   }
                                 }
@@ -1124,7 +1113,7 @@ class _CommonDetailScreenState extends State<CommonDetailScreen> with SingleTick
               Padding(
                 padding: bottomButton2Text.isNotEmpty
                     ? EdgeInsets.only(right: 5.h)
-                    : EdgeInsets.all(0.0),
+                    : const EdgeInsets.all(0.0),
                 child: FlatButton(
                   color: Color(int.parse(
                       "0xFF${appBloc.uiSettingModel.appButtonBgColor.substring(1, 7).toUpperCase()}")),
@@ -1165,7 +1154,7 @@ class _CommonDetailScreenState extends State<CommonDetailScreen> with SingleTick
               Padding(
                 padding: bottomButton1Text.isNotEmpty
                     ? EdgeInsets.only(left: 5.h)
-                    : EdgeInsets.all(0.0),
+                    : const EdgeInsets.all(0.0),
                 child: FlatButton(
                   color: Color(int.parse(
                       "0xFF${appBloc.uiSettingModel.appButtonBgColor.substring(1, 7).toUpperCase()}")),
@@ -1458,7 +1447,7 @@ class _CommonDetailScreenState extends State<CommonDetailScreen> with SingleTick
                             ? Row(
                           children: <
                               Widget>[
-                            Icon(
+                            const Icon(
                               Icons.timelapse,
                               color:
                               Colors.grey,
@@ -1801,7 +1790,7 @@ class _CommonDetailScreenState extends State<CommonDetailScreen> with SingleTick
                                 textAlign:
                                 TextAlign
                                     .end,
-                                style: TextStyle(
+                                style: const TextStyle(
                                     fontWeight:
                                     FontWeight.w600,
                                     color: Colors.grey))
@@ -1848,7 +1837,7 @@ class _CommonDetailScreenState extends State<CommonDetailScreen> with SingleTick
                             shrinkWrap:
                             true,
                             physics:
-                            ScrollPhysics(),
+                            const ScrollPhysics(),
                             itemCount:
                             reviewList
                                 .length,
@@ -1921,7 +1910,7 @@ class _CommonDetailScreenState extends State<CommonDetailScreen> with SingleTick
                                                       Navigator.of(context).push(MaterialPageRoute(builder: (context) => ReviewScreen(widget.contentid, true, widget.detailsBloc)));
                                                     },
                                                     iconSize: 20.h,
-                                                    icon: Icon(
+                                                    icon: const Icon(
                                                       Icons.edit,
                                                       color: Colors.black,
                                                     ),
@@ -2064,7 +2053,7 @@ class _CommonDetailScreenState extends State<CommonDetailScreen> with SingleTick
               child: Visibility(
                 visible: kShowContentTypeIcon,
                 child: Container(
-                  padding: EdgeInsets.all(2.0),
+                  padding: const EdgeInsets.all(2.0),
                   color: Colors.white,
                   child: CachedNetworkImage(
                     height: 30,
@@ -2091,7 +2080,7 @@ class _CommonDetailScreenState extends State<CommonDetailScreen> with SingleTick
                         color: Colors.grey.withOpacity(0.5),
                         spreadRadius: 1,
                         blurRadius: 4,
-                        offset: Offset(0, 3), // changes position of shadow
+                        offset: const Offset(0, 3), // changes position of shadow
                       ),
                     ],
                   ),
@@ -2230,8 +2219,8 @@ class _CommonDetailScreenState extends State<CommonDetailScreen> with SingleTick
           percent: downloadprogress,
           center: Container(
             padding: EdgeInsets.all(10.w),
-            margin: EdgeInsets.all(2),
-            decoration: BoxDecoration(
+            margin: const EdgeInsets.all(2),
+            decoration: const BoxDecoration(
               shape: BoxShape.circle,
               color: Colors.white,
               boxShadow: [
@@ -2257,7 +2246,7 @@ class _CommonDetailScreenState extends State<CommonDetailScreen> with SingleTick
       );
     }
     else {
-      return SizedBox(width: 0.0);
+      return const SizedBox(width: 0.0);
     }
   }
 
@@ -2287,7 +2276,7 @@ class _CommonDetailScreenState extends State<CommonDetailScreen> with SingleTick
               SizedBox(height: ScreenUtil().setHeight(10)),
               ListView.builder(
                   shrinkWrap: true,
-                  physics: NeverScrollableScrollPhysics(),
+                  physics: const NeverScrollableScrollPhysics(),
                   itemCount: 5,
                   itemBuilder: (context, i) => Container(
                         child: getTabList(tabName, i),
@@ -2311,16 +2300,16 @@ class _CommonDetailScreenState extends State<CommonDetailScreen> with SingleTick
   }
 
   Widget widgetGlosaryListItems(int position) {
-    return new ExpansionTile(
-      title: new Text(
+    return ExpansionTile(
+      title: Text(
         "A",
-        style: new TextStyle(
+        style: TextStyle(
           fontSize: 17.h,
           fontWeight: FontWeight.w600,
         ),
       ),
       children: <Widget>[
-        new Column(
+        Column(
           children: _buildExpandableContent(),
         ),
       ],
@@ -2333,9 +2322,9 @@ class _CommonDetailScreenState extends State<CommonDetailScreen> with SingleTick
     List<Widget> columnContent = [];
 
     for (int i = 0; i < 3; i++) {
-      columnContent.add(Padding(
-        padding: const EdgeInsets.all(10.0),
-        child: new Align(
+      columnContent.add(const Padding(
+        padding: EdgeInsets.all(10.0),
+        child: Align(
           alignment: Alignment.topLeft,
           child: Text("Content"),
         ),
@@ -2375,12 +2364,10 @@ class _CommonDetailScreenState extends State<CommonDetailScreen> with SingleTick
       child: GestureDetector(
         onTap: () {
           Navigator.of(context).push(MaterialPageRoute(
-              builder: (context) => ChangeNotifierProvider(
-                  create: (context) => ProviderModel(),
-                  child: CommonDetailScreen(
-                    table2: widget.table2,
-                    detailsBloc: detailsBloc,
-                  ))));
+              builder: (context) => CommonDetailScreen(
+                table2: widget.table2,
+                detailsBloc: detailsBloc,
+              )));
         },
         child: Card(
           elevation: 4,
@@ -2400,11 +2387,11 @@ class _CommonDetailScreenState extends State<CommonDetailScreen> with SingleTick
                           child: Center(
                               heightFactor: ScreenUtil().setWidth(20),
                               widthFactor: ScreenUtil().setWidth(20),
-                              child: CircularProgressIndicator(
-                                valueColor: new AlwaysStoppedAnimation<Color>(
+                              child: const CircularProgressIndicator(
+                                valueColor: AlwaysStoppedAnimation<Color>(
                                     Colors.orange),
                               ))),
-                      errorWidget: (context, url, error) => Icon(Icons.error),
+                      errorWidget: (context, url, error) => const Icon(Icons.error),
                       fit: BoxFit.fill,
                     ),
                   ),
@@ -2441,9 +2428,9 @@ class _CommonDetailScreenState extends State<CommonDetailScreen> with SingleTick
                       )),
                 ],
               ),
-              LinearProgressIndicator(
+              const LinearProgressIndicator(
                 value: 80,
-                valueColor: AlwaysStoppedAnimation<Color>(Colors.orange),
+                valueColor: const AlwaysStoppedAnimation<Color>(Colors.orange),
                 backgroundColor: Colors.grey,
               ),
               Container(
@@ -2508,14 +2495,14 @@ class _CommonDetailScreenState extends State<CommonDetailScreen> with SingleTick
                     ),
                     Row(
                       children: <Widget>[
-                        new Container(
+                        Container(
                             width: ScreenUtil().setWidth(20),
                             height: ScreenUtil().setWidth(20),
-                            decoration: new BoxDecoration(
+                            decoration: BoxDecoration(
                                 shape: BoxShape.circle,
-                                image: new DecorationImage(
+                                image: DecorationImage(
                                     fit: BoxFit.fill,
-                                    image: new NetworkImage(imgUrl)))),
+                                    image: NetworkImage(imgUrl)))),
                         SizedBox(
                           width: ScreenUtil().setWidth(5),
                         ),
@@ -2563,8 +2550,8 @@ class _CommonDetailScreenState extends State<CommonDetailScreen> with SingleTick
                       padding: const EdgeInsets.all(3.0),
                       child: Table(
                         columnWidths: {
-                          0: FractionColumnWidth(.2),
-                          1: FractionColumnWidth(.5)
+                          0: const FractionColumnWidth(.2),
+                          1: const FractionColumnWidth(.5)
                         },
                         children: [
                           TableRow(children: [
@@ -2588,8 +2575,8 @@ class _CommonDetailScreenState extends State<CommonDetailScreen> with SingleTick
                       padding: const EdgeInsets.all(3.0),
                       child: Table(
                         columnWidths: {
-                          0: FractionColumnWidth(.2),
-                          1: FractionColumnWidth(.5)
+                          0: const FractionColumnWidth(.2),
+                          1: const FractionColumnWidth(.5)
                         },
                         children: [
                           TableRow(children: [
@@ -2613,8 +2600,8 @@ class _CommonDetailScreenState extends State<CommonDetailScreen> with SingleTick
                       padding: const EdgeInsets.all(3.0),
                       child: Table(
                         columnWidths: {
-                          0: FractionColumnWidth(.2),
-                          1: FractionColumnWidth(.5)
+                          0: const FractionColumnWidth(.2),
+                          1: const FractionColumnWidth(.5)
                         },
                         children: [
                           TableRow(children: [
@@ -2638,8 +2625,8 @@ class _CommonDetailScreenState extends State<CommonDetailScreen> with SingleTick
                       padding: const EdgeInsets.all(3.0),
                       child: Table(
                         columnWidths: {
-                          0: FractionColumnWidth(.2),
-                          1: FractionColumnWidth(.5)
+                          0: const FractionColumnWidth(.2),
+                          1: const FractionColumnWidth(.5)
                         },
                         children: [
                           TableRow(children: [
@@ -2687,12 +2674,10 @@ class _CommonDetailScreenState extends State<CommonDetailScreen> with SingleTick
       child: GestureDetector(
         onTap: () {
           Navigator.of(context).push(MaterialPageRoute(
-              builder: (context) => ChangeNotifierProvider(
-                  create: (context) => ProviderModel(),
-                  child: CommonDetailScreen(
-                    table2: widget.table2,
-                    detailsBloc: detailsBloc,
-                  ))));
+              builder: (context) => CommonDetailScreen(
+                table2: widget.table2,
+                detailsBloc: detailsBloc,
+              )));
         },
         child: Card(
           elevation: 4,
@@ -2712,11 +2697,11 @@ class _CommonDetailScreenState extends State<CommonDetailScreen> with SingleTick
                           child: Center(
                               heightFactor: ScreenUtil().setWidth(20),
                               widthFactor: ScreenUtil().setWidth(20),
-                              child: CircularProgressIndicator(
-                                valueColor: new AlwaysStoppedAnimation<Color>(
+                              child: const CircularProgressIndicator(
+                                valueColor: AlwaysStoppedAnimation<Color>(
                                     Colors.orange),
                               ))),
-                      errorWidget: (context, url, error) => Icon(Icons.error),
+                      errorWidget: (context, url, error) => const Icon(Icons.error),
                       fit: BoxFit.fill,
                     ),
 
@@ -2771,7 +2756,7 @@ class _CommonDetailScreenState extends State<CommonDetailScreen> with SingleTick
                       )),
                 ],
               ),
-              LinearProgressIndicator(
+              const LinearProgressIndicator(
                 value: 80,
                 valueColor: AlwaysStoppedAnimation<Color>(Colors.orange),
                 backgroundColor: Colors.grey,
@@ -2821,14 +2806,14 @@ class _CommonDetailScreenState extends State<CommonDetailScreen> with SingleTick
                     ),
                     Row(
                       children: <Widget>[
-                        new Container(
+                        Container(
                             width: ScreenUtil().setWidth(20),
                             height: ScreenUtil().setWidth(20),
-                            decoration: new BoxDecoration(
+                            decoration: BoxDecoration(
                                 shape: BoxShape.circle,
-                                image: new DecorationImage(
+                                image: DecorationImage(
                                     fit: BoxFit.fill,
-                                    image: new NetworkImage(imgUrl)))),
+                                    image: NetworkImage(imgUrl)))),
                         SizedBox(
                           width: ScreenUtil().setWidth(5),
                         ),
@@ -2887,7 +2872,7 @@ class _CommonDetailScreenState extends State<CommonDetailScreen> with SingleTick
                             child: FlatButton.icon(
                           color: Color(int.parse(
                               "0xFF${appBloc.uiSettingModel.appButtonBgColor.substring(1, 7).toUpperCase()}")),
-                          icon: Icon(
+                          icon: const Icon(
                             Icons.cloud_download,
                             color: Colors.white,
                             size: 25,
@@ -2907,7 +2892,7 @@ class _CommonDetailScreenState extends State<CommonDetailScreen> with SingleTick
                             child: FlatButton.icon(
                           color: Color(int.parse(
                               "0xFF${appBloc.uiSettingModel.appButtonBgColor.substring(1, 7).toUpperCase()}")),
-                          icon: Icon(
+                          icon: const Icon(
                             Icons.remove_red_eye,
                             color: Colors.white,
                             size: 25,
@@ -2952,9 +2937,9 @@ class _CommonDetailScreenState extends State<CommonDetailScreen> with SingleTick
         builder: (BuildContext bc) {
           return Container(
             child: SingleChildScrollView(
-              child: new Column(
+              child: Column(
                 children: <Widget>[
-                  BottomSheetDragger(),
+                  const BottomSheetDragger(),
                   displayPauseDownload(widget.table2, myLearningDownloadModel),
                   displayResumeDownload(widget.table2, myLearningDownloadModel),
                   displayCancelDownload(widget.table2, myLearningDownloadModel),
@@ -3045,13 +3030,13 @@ class _CommonDetailScreenState extends State<CommonDetailScreen> with SingleTick
     // if ((table2?.ShareContentwithUser?.length ?? 0) > 0) {
     if (privilegeCreateForumIdExists()) {
       if (table2.objecttypeid == 14) {
-        return new ListTile(
+        return ListTile(
           leading: Icon(
             Icons.email,
             //IconDataSolid(int.parse('0xf06e')),
             color: InsColor(appBloc).appIconColor,
           ),
-          title: new Text(
+          title: Text(
               appBloc.localstr.mylearningsendviaemailnewoption == null
                   ? 'Share via Email'
                   : appBloc.localstr.mylearningsendviaemailnewoption,
@@ -3139,12 +3124,11 @@ class _CommonDetailScreenState extends State<CommonDetailScreen> with SingleTick
                                 "0xFF${appBloc.uiSettingModel.appTextColor.substring(1, 7).toUpperCase()}"),
                           ))),
                   Text(
-                      '\n' +
-                          table2.viewprerequisitecontentstatus
+                      '\n${table2.viewprerequisitecontentstatus
                               .toString()
                               .split('#%')[1]
-                              .split('\$;')[0],
-                      style: TextStyle(
+                              .split('\$;')[0]}',
+                      style: const TextStyle(
                         fontSize: 16.0,
                         color: Colors.blue,
                       )),
@@ -3162,9 +3146,9 @@ class _CommonDetailScreenState extends State<CommonDetailScreen> with SingleTick
               ),
               backgroundColor: InsColor(appBloc).appBGColor,
               shape: RoundedRectangleBorder(
-                  borderRadius: new BorderRadius.circular(5)),
+                  borderRadius: BorderRadius.circular(5)),
               actions: <Widget>[
-                new FlatButton(
+                FlatButton(
                   child: Text(appBloc.localstr.eventsAlertbuttonOkbutton),
                   textColor: Colors.blue,
                   onPressed: () async {
@@ -3207,7 +3191,7 @@ class _CommonDetailScreenState extends State<CommonDetailScreen> with SingleTick
 
       showDialog(
           context: context,
-          builder: (BuildContext context) => new AlertDialog(
+          builder: (BuildContext context) => AlertDialog(
                 title: Text(
                   'Pre-requisite Sequence',
                   style: TextStyle(
@@ -3228,12 +3212,11 @@ class _CommonDetailScreenState extends State<CommonDetailScreen> with SingleTick
                               "0xFF${appBloc.uiSettingModel.appTextColor.substring(1, 7).toUpperCase()}"),
                         ))),
                     Text(
-                        '\n' +
-                            table2.viewprerequisitecontentstatus
+                        '\n${table2.viewprerequisitecontentstatus
                                 .toString()
                                 .split('#%')[1]
-                                .split('\$;')[0],
-                        style: TextStyle(
+                                .split('\$;')[0]}',
+                        style: const TextStyle(
                           fontSize: 16.0,
                           color: Colors.blue,
                         )),
@@ -3251,9 +3234,9 @@ class _CommonDetailScreenState extends State<CommonDetailScreen> with SingleTick
                 ),
                 backgroundColor: InsColor(appBloc).appBGColor,
                 shape: RoundedRectangleBorder(
-                    borderRadius: new BorderRadius.circular(5)),
+                    borderRadius: BorderRadius.circular(5)),
                 actions: <Widget>[
-                  new FlatButton(
+                  FlatButton(
                     child: Text(appBloc.localstr.eventsAlertbuttonOkbutton),
                     textColor: Colors.blue,
                     onPressed: () async {
@@ -3332,32 +3315,15 @@ class _CommonDetailScreenState extends State<CommonDetailScreen> with SingleTick
       else if ([8, 9, 10, 102, 26].contains(table2.objecttypeid)) {
         String paramsString = "";
         if (table2.objecttypeid == 10 && table2.bit5) {
-          paramsString = "userID=" +
-              table2.userid.toString() +
-              "&scoid=" +
-              table2.scoid.toString() +
-              "&TrackObjectTypeID=" +
-              table2.objecttypeid.toString() +
-              "&TrackContentID=" +
-              table2.contentid +
-              "&TrackScoID=" +
-              table2.scoid.toString() +
-              "&SiteID=" +
-              table2.siteid.toString() +
-              "&OrgUnitID=" +
-              table2.siteid.toString() +
-              "&isonexist=onexit";
+          paramsString = "userID=${table2.userid}&scoid=${table2.scoid}&TrackObjectTypeID=${table2.objecttypeid}&TrackContentID=${table2.contentid}&TrackScoID=${table2.scoid}&SiteID=${table2.siteid}&OrgUnitID=${table2.siteid}&isonexist=onexit";
         } else {
-          paramsString = "userID=" +
-              table2.userid.toString() +
-              "&scoid=" +
-              table2.scoid.toString();
+          paramsString = "userID=${table2.userid}&scoid=${table2.scoid}";
         }
 
         String webApiUrl = await sharePrefGetString(sharedPref_webApiUrl);
 
         String url =
-            webApiUrl + "/MobileLMS/MobileGetContentStatus?" + paramsString;
+            "$webApiUrl/MobileLMS/MobileGetContentStatus?$paramsString";
 
         print('launchCourseUrl $url');
 
@@ -3539,27 +3505,16 @@ class _CommonDetailScreenState extends State<CommonDetailScreen> with SingleTick
                 )));
         return;
       } else {
-        paramsString = "userID=" +
-            table2.userid.toString() +
-            "&scoid=" +
-            table2.scoid.toString();
+        paramsString = "userID=${table2.userid}&scoid=${table2.scoid}";
       }
 
       if (token.isNotEmpty) {
         String courseUrl;
         if (isValidString(appBloc.uiSettingModel.azureRootPath)) {
-          courseUrl = appBloc.uiSettingModel.azureRootPath +
-              "content/index.html?coursetoken=" +
-              token +
-              "&TokenAPIURL=" +
-              ApiEndpoints.appAuthURL;
+          courseUrl = "${appBloc.uiSettingModel.azureRootPath}content/index.html?coursetoken=$token&TokenAPIURL=${ApiEndpoints.appAuthURL}";
         }
         else {
-          courseUrl = ApiEndpoints.strSiteUrl +
-              "content/index.html?coursetoken=" +
-              token +
-              "&TokenAPIURL=" +
-              ApiEndpoints.appAuthURL;
+          courseUrl = "${ApiEndpoints.strSiteUrl}content/index.html?coursetoken=$token&TokenAPIURL=${ApiEndpoints.appAuthURL}";
         }
 
         if (table2.objecttypeid == 26) {
@@ -3579,7 +3534,7 @@ class _CommonDetailScreenState extends State<CommonDetailScreen> with SingleTick
       String webApiUrl = await sharePrefGetString(sharedPref_webApiUrl);
 
       String url =
-          webApiUrl + "/MobileLMS/MobileGetContentStatus?" + paramsString;
+          "$webApiUrl/MobileLMS/MobileGetContentStatus?$paramsString";
 
       print('launchCourseUrl $url');
 
@@ -3591,7 +3546,7 @@ class _CommonDetailScreenState extends State<CommonDetailScreen> with SingleTick
   //region Bottomsheet Options
   Widget displayPauseDownload(DummyMyCatelogResponseTable2 table2, MyLearningDownloadModel downloadModel) {
     if(downloadModel.taskId.isEmpty || downloadModel.isFileDownloaded || !downloadModel.isFileDownloading || !downloadModel.table2.isDownloading) {
-      return SizedBox();
+      return const SizedBox();
     }
 
     return ListTile(
@@ -3617,7 +3572,7 @@ class _CommonDetailScreenState extends State<CommonDetailScreen> with SingleTick
 
   Widget displayResumeDownload(DummyMyCatelogResponseTable2 table2, MyLearningDownloadModel downloadModel) {
     if(downloadModel.taskId.isEmpty || downloadModel.isFileDownloaded || !downloadModel.isFileDownloading || downloadModel.table2.isDownloading) {
-      return SizedBox();
+      return const SizedBox();
     }
 
     return ListTile(
@@ -3643,7 +3598,7 @@ class _CommonDetailScreenState extends State<CommonDetailScreen> with SingleTick
 
   Widget displayCancelDownload(DummyMyCatelogResponseTable2 table2, MyLearningDownloadModel downloadModel) {
     if(downloadModel.taskId.isEmpty || downloadModel.isFileDownloaded || !downloadModel.isFileDownloading) {
-      return SizedBox();
+      return const SizedBox();
     }
 
     return ListTile(
@@ -3672,7 +3627,7 @@ class _CommonDetailScreenState extends State<CommonDetailScreen> with SingleTick
 
   Widget displayRemoveFromDownload(DummyMyCatelogResponseTable2 table2, MyLearningDownloadModel downloadModel) {
     if(!downloadModel.isFileDownloaded) {
-      return SizedBox();
+      return const SizedBox();
     }
 
     return ListTile(
@@ -3709,12 +3664,12 @@ class _CommonDetailScreenState extends State<CommonDetailScreen> with SingleTick
         table2.objecttypeid == 52) {
       if (table2.objecttypeid == 11 &&
           (table2.mediatypeid == 3 || table2.mediatypeid == 4)) {
-        return new ListTile(
+        return ListTile(
             leading: Icon(
               IconDataSolid(int.parse('0xf144')),
               color: InsColor(appBloc).appIconColor,
             ),
-            title: new Text(
+            title: Text(
               appBloc.localstr.mylearningActionsheetPlayoption,
               style: TextStyle(
                   color: Color(int.parse(
@@ -3756,12 +3711,12 @@ class _CommonDetailScreenState extends State<CommonDetailScreen> with SingleTick
       } else {
         print("View Displayed2");
 
-        return new ListTile(
+        return ListTile(
           leading: Icon(
             IconDataSolid(int.parse('0xf06e')),
             color: InsColor(appBloc).appIconColor,
           ),
-          title: new Text(appBloc.localstr.mylearningActionsheetViewoption,
+          title: Text(appBloc.localstr.mylearningActionsheetViewoption,
               style: TextStyle(
                   color: Color(int.parse(
                       "0xFF${appBloc.uiSettingModel.appTextColor.substring(1, 7).toUpperCase()}")))),
@@ -3772,15 +3727,11 @@ class _CommonDetailScreenState extends State<CommonDetailScreen> with SingleTick
 //              print('ifdataaaaa');
               String alertMessage =
                   appBloc.localstr.prerequistesalerttitle6Alerttitle6;
-              alertMessage = alertMessage +
-                  "  \"" +
-                  appBloc.localstr.prerequisLabelContenttypelabel +
-                  "\" " +
-                  appBloc.localstr.prerequistesalerttitle5Alerttitle7;
+              alertMessage = "$alertMessage  \"${appBloc.localstr.prerequisLabelContenttypelabel}\" ${appBloc.localstr.prerequistesalerttitle5Alerttitle7}";
 
               showDialog(
                   context: context,
-                  builder: (BuildContext context) => new AlertDialog(
+                  builder: (BuildContext context) => AlertDialog(
                         title: Text(
                           appBloc.localstr.detailsAlerttitleStringalert,
                           style: TextStyle(
@@ -3794,9 +3745,9 @@ class _CommonDetailScreenState extends State<CommonDetailScreen> with SingleTick
                         backgroundColor: Color(int.parse(
                             "0xFF${appBloc.uiSettingModel.appBGColor.substring(1, 7).toUpperCase()}")),
                         shape: RoundedRectangleBorder(
-                            borderRadius: new BorderRadius.circular(5)),
+                            borderRadius: BorderRadius.circular(5)),
                         actions: <Widget>[
-                          new FlatButton(
+                          FlatButton(
                             child: Text(
                                 appBloc.localstr.eventsAlertbuttonOkbutton),
                             textColor: Colors.blue,
@@ -3829,12 +3780,12 @@ class _CommonDetailScreenState extends State<CommonDetailScreen> with SingleTick
     } else {
       print("View Displayed3");
 
-      return new ListTile(
+      return ListTile(
         leading: Icon(
           IconDataSolid(int.parse('0xf06e')),
           color: InsColor(appBloc).appIconColor,
         ),
-        title: new Text(
+        title: Text(
           appBloc.localstr.mylearningActionsheetViewoption,
           style: TextStyle(
               color: Color(int.parse(
@@ -3878,14 +3829,14 @@ class _CommonDetailScreenState extends State<CommonDetailScreen> with SingleTick
           return Container();
         }
 
-        return new ListTile(
+        return ListTile(
             leading: SvgPicture.asset(
               'assets/Report.svg',
               width: 25.h,
               height: 25.h,
               color: InsColor(appBloc).appIconColor,
             ),
-            title: new Text(appBloc.localstr.mylearningActionsheetReportoption,
+            title: Text(appBloc.localstr.mylearningActionsheetReportoption,
                 style: TextStyle(
                     color: Color(int.parse(
                         "0xFF${appBloc.uiSettingModel.appTextColor.substring(1, 7).toUpperCase()}")))),
@@ -3903,20 +3854,20 @@ class _CommonDetailScreenState extends State<CommonDetailScreen> with SingleTick
     if (!isFromCatalog) {
       if (isValidString(widget.table2.eventenddatetime ?? "") &&
           !returnEventCompleted(widget.table2.eventenddatetime ?? "")) {
-        return new ListTile(
+        return ListTile(
           leading: Icon(
             IconDataSolid(int.parse('0xf271')),
             color: InsColor(appBloc).appIconColor,
           ),
-          title: new Text(
+          title: Text(
               appBloc.localstr.mylearningActionsheetAddtocalendaroption,
               style: TextStyle(
                   color: Color(int.parse(
                       "0xFF${appBloc.uiSettingModel.appTextColor.substring(1, 7).toUpperCase()}")))),
           onTap: () {
-            DateTime startDate = new DateFormat("yyyy-MM-ddTHH:mm:ss")
+            DateTime startDate = DateFormat("yyyy-MM-ddTHH:mm:ss")
                 .parse(widget.table2.eventstartdatetime);
-            DateTime endDate = new DateFormat("yyyy-MM-ddTHH:mm:ss")
+            DateTime endDate = DateFormat("yyyy-MM-ddTHH:mm:ss")
                 .parse(widget.table2.eventenddatetime);
 
 //            print(
@@ -3937,7 +3888,7 @@ class _CommonDetailScreenState extends State<CommonDetailScreen> with SingleTick
                         ? 'Event added successfully'
                         : 'Error occured while adding event'),
                 gravity: ToastGravity.BOTTOM,
-                toastDuration: Duration(seconds: 2),
+                toastDuration: const Duration(seconds: 2),
               );
             });
           },
@@ -3971,7 +3922,7 @@ class _CommonDetailScreenState extends State<CommonDetailScreen> with SingleTick
               height: 25.h,
               color: InsColor(appBloc).appIconColor,
             ),
-            title: new Text(
+            title: Text(
                 appBloc.localstr.mylearningActionsheetSetcompleteoption,
                 style: TextStyle(
                     color: Color(int.parse(
@@ -4018,7 +3969,7 @@ class _CommonDetailScreenState extends State<CommonDetailScreen> with SingleTick
                 IconDataSolid(int.parse('0xf410')),
                 color: InsColor(appBloc).appIconColor,
               ),
-              title: new Text(
+              title: Text(
                   appBloc.localstr.mylearningActionsheetCancelenrollmentoption,
                   style: TextStyle(
                       color: Color(
@@ -4033,8 +3984,8 @@ class _CommonDetailScreenState extends State<CommonDetailScreen> with SingleTick
         if (widget.table2.eventscheduletype == 1 &&
             appBloc.uiSettingModel.enableMultipleInstancesForEvent == 'true') {
           return ListTile(
-              leading: new Icon(Icons.cancel),
-              title: new Text(
+              leading: const Icon(Icons.cancel),
+              title: Text(
                   appBloc.localstr.mylearningActionsheetCancelenrollmentoption,
                   style: TextStyle(
                       color: Color(
@@ -4060,7 +4011,7 @@ class _CommonDetailScreenState extends State<CommonDetailScreen> with SingleTick
             IconDataSolid(int.parse('0xf1f8')),
             color: InsColor(appBloc).appIconColor,
           ),
-          title: new Text(appBloc.localstr.mylearningActionsheetDeleteoption,
+          title: Text(appBloc.localstr.mylearningActionsheetDeleteoption,
               style: TextStyle(
                   color: Color(
                     int.parse(
@@ -4097,7 +4048,7 @@ class _CommonDetailScreenState extends State<CommonDetailScreen> with SingleTick
             IconDataSolid(int.parse('0xf187')),
             color: InsColor(appBloc).appIconColor,
           ),
-          title: new Text(appBloc.localstr.mylearningActionsheetArchiveoption,
+          title: Text(appBloc.localstr.mylearningActionsheetArchiveoption,
               style: TextStyle(
                   color: Color(
                     int.parse(
@@ -4120,7 +4071,7 @@ class _CommonDetailScreenState extends State<CommonDetailScreen> with SingleTick
             IconDataSolid(int.parse('0xf187')),
             color: InsColor(appBloc).appIconColor,
           ),
-          title: new Text(appBloc.localstr.mylearningActionsheetUnarchiveoption,
+          title: Text(appBloc.localstr.mylearningActionsheetUnarchiveoption,
               style: TextStyle(
                   color: Color(
                     int.parse(
@@ -4137,12 +4088,12 @@ class _CommonDetailScreenState extends State<CommonDetailScreen> with SingleTick
 
   Widget displayReschedule() {
     if (isValidString(widget.table2.reschduleparentid ?? "")) {
-      return new ListTile(
+      return ListTile(
         leading: Icon(
           IconDataSolid(int.parse('0xf783')),
           color: InsColor(appBloc).appIconColor,
         ),
-        title: new Text(
+        title: Text(
             appBloc.localstr.mylearningActionbuttonRescheduleactionbutton,
             style: TextStyle(
                 color: Color(int.parse(
@@ -4156,14 +4107,14 @@ class _CommonDetailScreenState extends State<CommonDetailScreen> with SingleTick
 
   Widget displayCertificate() {
     if (isValidString(widget.table2.certificateaction)) {
-      return new ListTile(
+      return ListTile(
           leading: SvgPicture.asset(
             'assets/Certificate.svg',
             width: 25.h,
             height: 25.h,
             color: InsColor(appBloc).appIconColor,
           ),
-          title: new Text(
+          title: Text(
               appBloc.localstr.mylearningActionsheetViewcertificateoption,
               style: TextStyle(
                   color: Color(int.parse(
@@ -4174,7 +4125,7 @@ class _CommonDetailScreenState extends State<CommonDetailScreen> with SingleTick
 
               showDialog(
                   context: context,
-                  builder: (BuildContext context) => new AlertDialog(
+                  builder: (BuildContext context) => AlertDialog(
                     title: Text(
                       appBloc.localstr
                           .mylearningActionsheetViewcertificateoption,
@@ -4193,9 +4144,9 @@ class _CommonDetailScreenState extends State<CommonDetailScreen> with SingleTick
                     backgroundColor: Color(int.parse(
                         "0xFF${appBloc.uiSettingModel.appBGColor.substring(1, 7).toUpperCase()}")),
                     shape: RoundedRectangleBorder(
-                        borderRadius: new BorderRadius.circular(5)),
+                        borderRadius: BorderRadius.circular(5)),
                     actions: <Widget>[
-                      new FlatButton(
+                      FlatButton(
                         child: Text(appBloc.localstr
                             .mylearningClosebuttonactionClosebuttonalerttitle),
                         textColor: Colors.blue,
@@ -4221,12 +4172,12 @@ class _CommonDetailScreenState extends State<CommonDetailScreen> with SingleTick
       if (isValidString(widget.table2.qrimagename ?? "") &&
           isValidString(widget.table2.qrcodeimagepath ?? "") &&
           !widget.table2.bit4) {
-        return new ListTile(
+        return ListTile(
           leading: Icon(
             IconDataSolid(int.parse('0xf029')),
             color: InsColor(appBloc).appIconColor,
           ),
-          title: new Text(appBloc.localstr.mylearningActionsheetViewqrcode,
+          title: Text(appBloc.localstr.mylearningActionsheetViewqrcode,
               style: TextStyle(
                   color: Color(int.parse(
                       "0xFF${appBloc.uiSettingModel.appTextColor.substring(1, 7).toUpperCase()}")))),
@@ -4252,7 +4203,7 @@ class _CommonDetailScreenState extends State<CommonDetailScreen> with SingleTick
             color: InsColor(appBloc).appIconColor,
           ),
           title:
-          new Text(appBloc.localstr.learningtrackLabelEventviewrecording),
+          Text(appBloc.localstr.learningtrackLabelEventviewrecording),
           onTap: () => {},
         );
       } else {
@@ -4266,12 +4217,12 @@ class _CommonDetailScreenState extends State<CommonDetailScreen> with SingleTick
   Widget displayShare(DummyMyCatelogResponseTable2 table2) {
     if (table2.suggesttoconnlink != null ||
         table2.suggesttoconnlink.isNotEmpty) {
-      return new ListTile(
+      return ListTile(
         leading: Icon(
           IconDataSolid(int.parse('0xf1e0')),
           color: InsColor(appBloc).appIconColor,
         ),
-        title: new Text('Share with Connection',
+        title: Text('Share with Connection',
             style: TextStyle(
                 color: Color(
                   int.parse(
@@ -4293,14 +4244,14 @@ class _CommonDetailScreenState extends State<CommonDetailScreen> with SingleTick
   Widget displayShareConnection(DummyMyCatelogResponseTable2 table2) {
     if (table2.suggestwithfriendlink != null ||
         table2.suggestwithfriendlink.isNotEmpty) {
-      return new ListTile(
+      return ListTile(
         leading: Icon(
           IconDataSolid(
             int.parse('0xf079'),
           ),
           color: InsColor(appBloc).appIconColor,
         ),
-        title: new Text("Share with People",
+        title: Text("Share with People",
             style: TextStyle(
                 color: Color(
                   int.parse(
@@ -4367,7 +4318,7 @@ class _CommonDetailScreenState extends State<CommonDetailScreen> with SingleTick
     if (!isValidString(eventDate)) return false;
 
     try {
-      fromDate = new DateFormat("yyyy-MM-ddTHH:mm:ss").parse(eventDate);
+      fromDate = DateFormat("yyyy-MM-ddTHH:mm:ss").parse(eventDate);
 
       final date2 = DateTime.now();
       difference = date2.difference(fromDate).inDays;
@@ -4651,9 +4602,9 @@ class _CommonDetailScreenState extends State<CommonDetailScreen> with SingleTick
         builder: (BuildContext bc) {
           return Container(
             child: SingleChildScrollView(
-              child: new Column(
+              child: Column(
                 children: <Widget>[
-                  BottomSheetDragger(),
+                  const BottomSheetDragger(),
                   menu0
                       ? ListTile(
                           title: Text(
@@ -4750,7 +4701,7 @@ class _CommonDetailScreenState extends State<CommonDetailScreen> with SingleTick
                                         displaymsg:
                                             'Not a member of ${widget.table2.sitename}'),
                                     gravity: ToastGravity.BOTTOM,
-                                    toastDuration: Duration(seconds: 2),
+                                    toastDuration: const Duration(seconds: 2),
                                   );
                                   checkUserLogin(widget.table2);
                                 }
@@ -5012,7 +4963,7 @@ class _CommonDetailScreenState extends State<CommonDetailScreen> with SingleTick
                       IconDataSolid(int.parse('0xf1e0')),
                       color: InsColor(appBloc).appIconColor,
                     ),
-                    title: new Text('Share with Connection',
+                    title: Text('Share with Connection',
                         style: TextStyle(
                             color: Color(
                           int.parse(
@@ -5039,7 +4990,7 @@ class _CommonDetailScreenState extends State<CommonDetailScreen> with SingleTick
                       IconDataSolid(int.parse('0xf079')),
                       color: InsColor(appBloc).appIconColor,
                     ),
-                    title: new Text("Share with People",
+                    title: Text("Share with People",
                         style: TextStyle(
                             color: Color(
                           int.parse(
@@ -5111,17 +5062,9 @@ class _CommonDetailScreenState extends State<CommonDetailScreen> with SingleTick
     var strSiteID = await sharePrefGetString(sharedPref_siteid);
     var webApiUrl = await sharePrefGetString(sharedPref_webApiUrl);
 
-    String paramsString = "strContentID=" +
-        learningModel.contentid +
-        "&UserID=" +
-        strUserID +
-        "&SiteID=" +
-        strSiteID +
-        "&SCOID=" +
-        learningModel.scoid.toString() +
-        "&CanTrack=true";
+    String paramsString = "strContentID=${learningModel.contentid}&UserID=$strUserID&SiteID=$strSiteID&SCOID=${learningModel.scoid}&CanTrack=true";
 
-    String url = webApiUrl + "CourseTracking/TrackLRSStatement?" + paramsString;
+    String url = "${webApiUrl}CourseTracking/TrackLRSStatement?$paramsString";
 
     ApiResponse? apiResponse = await generalRepository.executeXAPICourse(url);
   }
@@ -5141,7 +5084,7 @@ class _CommonDetailScreenState extends State<CommonDetailScreen> with SingleTick
 
   checkSubsiteLoading(String response, DummyMyCatelogResponseTable2 table2) {
     SubsiteLoginResponse subsiteLoginResponse =
-        new SubsiteLoginResponse(failedUserLogin: [], successFullUserLogin: []);
+        SubsiteLoginResponse(failedUserLogin: [], successFullUserLogin: []);
     Map<String, dynamic> userloginAry = jsonDecode(response);
     try {
       String succesMessage =
@@ -5158,12 +5101,12 @@ class _CommonDetailScreenState extends State<CommonDetailScreen> with SingleTick
                 child:
                     CommonToast(displaymsg: 'Login Failed ${table2.sitename}'),
                 gravity: ToastGravity.BOTTOM,
-                toastDuration: Duration(seconds: 4),
+                toastDuration: const Duration(seconds: 4),
               )
             : flutterToast.showToast(
                 child: CommonToast(displaymsg: 'Pending Registration'),
                 gravity: ToastGravity.BOTTOM,
-                toastDuration: Duration(seconds: 4),
+                toastDuration: const Duration(seconds: 4),
               );
       } else if (userloginAry.containsKey("successfulluserlogin")) {
         subsiteLoginResponse = subsiteLoginResponse =
@@ -5172,7 +5115,7 @@ class _CommonDetailScreenState extends State<CommonDetailScreen> with SingleTick
         flutterToast.showToast(
           child: CommonToast(displaymsg: succesMessage),
           gravity: ToastGravity.BOTTOM,
-          toastDuration: Duration(seconds: 4),
+          toastDuration: const Duration(seconds: 4),
         );
         table2.userid =
             '${subsiteLoginResponse.successFullUserLogin[0].userid}';
@@ -5204,7 +5147,7 @@ class _CommonDetailScreenState extends State<CommonDetailScreen> with SingleTick
                       displaymsg:
                           'The subscribed item has been added to your My Learning. Please click on My Learning, and then click on View to launch the content.'),
                   gravity: ToastGravity.BOTTOM,
-                  toastDuration: Duration(seconds: 2));
+                  toastDuration: const Duration(seconds: 2));
               getDetailsApiCall(contentID);
               refresh(contentID);
             } else {
@@ -5212,7 +5155,7 @@ class _CommonDetailScreenState extends State<CommonDetailScreen> with SingleTick
                   child: CommonToast(
                       displaymsg: catalogBloc.addToMyLearningRes.message),
                   gravity: ToastGravity.BOTTOM,
-                  toastDuration: Duration(seconds: 2));
+                  toastDuration: const Duration(seconds: 2));
             }
           }
         }
@@ -5239,7 +5182,7 @@ class _CommonDetailScreenState extends State<CommonDetailScreen> with SingleTick
                     displaymsg: appBloc.localstr
                         .catalogAlertsubtitleItemaddedtowishlistsuccesfully),
                 gravity: ToastGravity.BOTTOM,
-                toastDuration: Duration(seconds: 2),
+                toastDuration: const Duration(seconds: 2),
               );
             }
             if (state is RemoveFromWishListState) {
@@ -5249,7 +5192,7 @@ class _CommonDetailScreenState extends State<CommonDetailScreen> with SingleTick
                     displaymsg: appBloc.localstr
                         .catalogAlertsubtitleItemremovedtowishlistsuccesfully),
                 gravity: ToastGravity.BOTTOM,
-                toastDuration: Duration(seconds: 2),
+                toastDuration: const Duration(seconds: 2),
               );
             }
             if (state is AddToMyLearningState) {
@@ -5258,7 +5201,7 @@ class _CommonDetailScreenState extends State<CommonDetailScreen> with SingleTick
                     displaymsg: appBloc.localstr
                         .catalogAlertsubtitleThiscontentitemhasbeenaddedto),
                 gravity: ToastGravity.BOTTOM,
-                toastDuration: Duration(seconds: 2),
+                toastDuration: const Duration(seconds: 2),
               );
             }
           }
@@ -5282,7 +5225,7 @@ class _CommonDetailScreenState extends State<CommonDetailScreen> with SingleTick
         }
       },
       builder: (context, state) {
-        return new Container(
+        return Container(
             color: Color(int.parse(
                 "0xFF${appBloc.uiSettingModel.appBGColor.substring(1, 7).toUpperCase()}")),
             child: Column(
@@ -5296,25 +5239,25 @@ class _CommonDetailScreenState extends State<CommonDetailScreen> with SingleTick
                             ? true
                             : false,
                     child: Padding(
-                        padding: EdgeInsets.only(
+                        padding: const EdgeInsets.only(
                           left: 10,
                         ),
-                        child: new Text(
+                        child: Text(
                           'Teaching Schedule',
-                          style: new TextStyle(
+                          style: TextStyle(
                               color: Color(int.parse(
                                   "0xFF${appBloc.uiSettingModel.appHeaderTextColor.substring(1, 7).toUpperCase()}")),
                               fontSize: 18.0,
                               fontWeight: FontWeight.bold),
                         ))),
-                new Container(
-                    child: new ListView.builder(
+                Container(
+                    child: ListView.builder(
                   primary: false,
                   shrinkWrap: true,
                   itemCount:
                       catalogBloc.eventEnrollmentResponse.courseList.length,
                   itemBuilder: (context, index) {
-                    return new GestureDetector(
+                    return GestureDetector(
                       onTap: () => {},
                       child: Padding(
                           padding:
@@ -5323,22 +5266,22 @@ class _CommonDetailScreenState extends State<CommonDetailScreen> with SingleTick
                             color: Color(int.parse(
                                 "0xFF${appBloc.uiSettingModel.appBGColor.substring(1, 7).toUpperCase()}")),
                             elevation: 4,
-                            child: new Container(
+                            child: Container(
                                 padding:
                                     EdgeInsets.all(ScreenUtil().setHeight(5)),
-                                child: new Column(
+                                child: Column(
                                   children: [
-                                    new Row(
+                                    Row(
                                       children: [
-                                        new Expanded(
-                                            child: new Column(
+                                        Expanded(
+                                            child: Column(
                                           crossAxisAlignment:
                                               CrossAxisAlignment.start,
                                           children: [
                                             Padding(
-                                                padding: EdgeInsets.only(
+                                                padding: const EdgeInsets.only(
                                                     left: 10, bottom: 5.0),
-                                                child: new Text(
+                                                child: Text(
                                                   DateFormat('EEEE, d MMM')
                                                       .format(DateFormat(
                                                               'MM/dd/yyyy HH:mm a')
@@ -5346,7 +5289,7 @@ class _CommonDetailScreenState extends State<CommonDetailScreen> with SingleTick
                                                               .eventEnrollmentResponse
                                                               .courseList[index]
                                                               .eventStartDateTime)),
-                                                  style: new TextStyle(
+                                                  style: TextStyle(
                                                       color: Color(int.parse(
                                                           "0xFF${appBloc.uiSettingModel.appTextColor.substring(1, 7).toUpperCase()}")),
                                                       fontSize: 14.0,
@@ -5358,7 +5301,7 @@ class _CommonDetailScreenState extends State<CommonDetailScreen> with SingleTick
                                                   CrossAxisAlignment.start,
                                               children: [
                                                 Padding(
-                                                  padding: EdgeInsets.only(
+                                                  padding: const EdgeInsets.only(
                                                       left: 20, top: 5.0),
                                                   child: Container(
                                                     height: 14,
@@ -5374,54 +5317,50 @@ class _CommonDetailScreenState extends State<CommonDetailScreen> with SingleTick
                                                   ),
                                                 ),
                                                 Padding(
-                                                    padding: EdgeInsets.only(
+                                                    padding: const EdgeInsets.only(
                                                         left: 20, top: 5.0),
-                                                    child: new Text(
+                                                    child: Text(
                                                       catalogBloc
                                                           .eventEnrollmentResponse
                                                           .courseList[index]
                                                           .contentType,
-                                                      style: new TextStyle(
+                                                      style: TextStyle(
                                                           color: Color(int.parse(
                                                               "0xFF${appBloc.uiSettingModel.appTextColor.substring(1, 7).toUpperCase()}")),
                                                           fontSize: 14.0),
                                                     )),
                                                 Padding(
-                                                    padding: EdgeInsets.only(
+                                                    padding: const EdgeInsets.only(
                                                       left: 20,
                                                     ),
-                                                    child: new Text(
-                                                      '(' +
-                                                          DateFormat('h:mm a').format(DateFormat(
+                                                    child: Text(
+                                                      '(${DateFormat('h:mm a').format(DateFormat(
                                                                   'dd/MM/yyyy HH:mm')
                                                               .parse(catalogBloc
                                                                   .eventEnrollmentResponse
                                                                   .courseList[
                                                                       index]
-                                                                  .eventStartDateTime)) +
-                                                          '-' +
-                                                          DateFormat('h:mm a').format(DateFormat(
+                                                                  .eventStartDateTime))}-${DateFormat('h:mm a').format(DateFormat(
                                                                   'dd/MM/yyyy HH:mm')
                                                               .parse(catalogBloc
                                                                   .eventEnrollmentResponse
                                                                   .courseList[
                                                                       index]
-                                                                  .eventEndDateTime)) +
-                                                          ')',
-                                                      style: new TextStyle(
+                                                                  .eventEndDateTime))})',
+                                                      style: TextStyle(
                                                           color: Color(int.parse(
                                                               "0xFF${appBloc.uiSettingModel.appTextColor.substring(1, 7).toUpperCase()}")),
                                                           fontSize: 14.0),
                                                     )),
                                                 Padding(
-                                                    padding: EdgeInsets.only(
+                                                    padding: const EdgeInsets.only(
                                                         left: 20, top: 10.0),
-                                                    child: new Text(
+                                                    child: Text(
                                                       catalogBloc
                                                           .eventEnrollmentResponse
                                                           .courseList[index]
                                                           .title,
-                                                      style: new TextStyle(
+                                                      style: TextStyle(
                                                           color: Color(int.parse(
                                                               "0xFF${appBloc.uiSettingModel.appTextColor.substring(1, 7).toUpperCase()}")),
                                                           fontSize: 14.0,
@@ -5429,29 +5368,29 @@ class _CommonDetailScreenState extends State<CommonDetailScreen> with SingleTick
                                                               FontWeight.bold),
                                                     )),
                                                 Padding(
-                                                    padding: EdgeInsets.only(
+                                                    padding: const EdgeInsets.only(
                                                         left: 20, top: 5.0),
-                                                    child: new Text(
+                                                    child: Text(
                                                       catalogBloc
                                                           .eventEnrollmentResponse
                                                           .courseList[index]
                                                           .shortDescription,
-                                                      style: new TextStyle(
+                                                      style: TextStyle(
                                                           color: Color(int.parse(
                                                               "0xFF${appBloc.uiSettingModel.appTextColor.substring(1, 7).toUpperCase()}")),
                                                           fontSize: 14.0),
                                                     )),
                                                 Padding(
-                                                    padding: EdgeInsets.only(
+                                                    padding: const EdgeInsets.only(
                                                         left: 20, top: 5.0),
                                                     child: Row(
                                                       children: [
-                                                        new Text(
+                                                        Text(
                                                           catalogBloc
                                                               .eventEnrollmentResponse
                                                               .courseList[index]
                                                               .duration,
-                                                          style: new TextStyle(
+                                                          style: TextStyle(
                                                               fontWeight:
                                                                   FontWeight
                                                                       .bold,
@@ -5462,7 +5401,7 @@ class _CommonDetailScreenState extends State<CommonDetailScreen> with SingleTick
                                                         ),
                                                         Padding(
                                                           padding:
-                                                              EdgeInsets.all(
+                                                              const EdgeInsets.all(
                                                                   7.0),
                                                           child: Container(
                                                             height: 10,
@@ -5480,14 +5419,13 @@ class _CommonDetailScreenState extends State<CommonDetailScreen> with SingleTick
                                                                         .shade700)),
                                                           ),
                                                         ),
-                                                        new Text(
-                                                          ' by ' +
-                                                              catalogBloc
+                                                        Text(
+                                                          ' by ${catalogBloc
                                                                   .eventEnrollmentResponse
                                                                   .courseList[
                                                                       index]
-                                                                  .presenterDisplayName,
-                                                          style: new TextStyle(
+                                                                  .presenterDisplayName}',
+                                                          style: TextStyle(
                                                               fontWeight:
                                                                   FontWeight
                                                                       .bold,
@@ -5499,14 +5437,14 @@ class _CommonDetailScreenState extends State<CommonDetailScreen> with SingleTick
                                                       ],
                                                     )),
                                                 Padding(
-                                                    padding: EdgeInsets.only(
+                                                    padding: const EdgeInsets.only(
                                                         left: 20, top: 5.0),
-                                                    child: new Text(
+                                                    child: Text(
                                                       catalogBloc
                                                           .eventEnrollmentResponse
                                                           .courseList[index]
                                                           .locationName,
-                                                      style: new TextStyle(
+                                                      style: TextStyle(
                                                           fontWeight:
                                                               FontWeight.bold,
                                                           color: Color(int.parse(
@@ -5523,7 +5461,7 @@ class _CommonDetailScreenState extends State<CommonDetailScreen> with SingleTick
                                                         ? false
                                                         : true,
                                                     child: Container(
-                                                      margin: EdgeInsets.only(
+                                                      margin: const EdgeInsets.only(
                                                           left: 20.0,
                                                           right: 20.0),
                                                       width:
@@ -5582,17 +5520,16 @@ class _CommonDetailScreenState extends State<CommonDetailScreen> with SingleTick
                                                       ),
                                                     )),
                                                 Padding(
-                                                    padding: EdgeInsets.only(
+                                                    padding: const EdgeInsets.only(
                                                         left: 20,
                                                         top: 5.0,
                                                         bottom: 5.0),
-                                                    child: new Text(
-                                                      catalogBloc
+                                                    child: Text(
+                                                      '${catalogBloc
                                                               .eventEnrollmentResponse
                                                               .courseList[index]
-                                                              .availableSeats +
-                                                          ' Seats Remain',
-                                                      style: new TextStyle(
+                                                              .availableSeats} Seats Remain',
+                                                      style: TextStyle(
                                                           color: Color(int.parse(
                                                               "0xFF${appBloc.uiSettingModel.appHeaderTextColor.substring(1, 7).toUpperCase()}")),
                                                           fontSize: 14.0,
@@ -5918,9 +5855,9 @@ class _CommonDetailScreenState extends State<CommonDetailScreen> with SingleTick
                 color: Color(int.parse(
                     "0xFF${appBloc.uiSettingModel.appBGColor.substring(1, 7).toUpperCase()}")),
                 child: SingleChildScrollView(
-                  child: new Column(
+                  child: Column(
                     children: <Widget>[
-                      BottomSheetDragger(),
+                      const BottomSheetDragger(),
                       menu0
                           ? ListTile(
                               onTap: () {
@@ -6107,7 +6044,7 @@ class _CommonDetailScreenState extends State<CommonDetailScreen> with SingleTick
                           IconDataSolid(int.parse('0xf1e0')),
                           color: InsColor(appBloc).appIconColor,
                         ),
-                        title: new Text('Share with Connection',
+                        title: Text('Share with Connection',
                             style: TextStyle(
                                 color: Color(
                               int.parse(
@@ -6131,7 +6068,7 @@ class _CommonDetailScreenState extends State<CommonDetailScreen> with SingleTick
                           IconDataSolid(int.parse('0xf079')),
                           color: InsColor(appBloc).appIconColor,
                         ),
-                        title: new Text("Share with People",
+                        title: Text("Share with People",
                             style: TextStyle(
                                 color: Color(
                               int.parse(
@@ -6160,15 +6097,13 @@ class _CommonDetailScreenState extends State<CommonDetailScreen> with SingleTick
   void checkRelatedContent(DummyMyCatelogResponseTable2 table2) {
     if (isValidString(table2.viewprerequisitecontentstatus ?? "")) {
       String alertMessage = appBloc.localstr.prerequistesalerttitle6Alerttitle6;
-      alertMessage = alertMessage +
+      alertMessage = "${alertMessage +
           " \"" +
-          table2.viewprerequisitecontentstatus +
-          "\" " +
-          appBloc.localstr.prerequistesalerttitle5Alerttitle7;
+          table2.viewprerequisitecontentstatus}\" ${appBloc.localstr.prerequistesalerttitle5Alerttitle7}";
 
       showDialog(
           context: context,
-          builder: (BuildContext context) => new AlertDialog(
+          builder: (BuildContext context) => AlertDialog(
                 title: Text(
                   appBloc.localstr.detailsAlerttitleStringalert,
                   style: TextStyle(
@@ -6188,9 +6123,9 @@ class _CommonDetailScreenState extends State<CommonDetailScreen> with SingleTick
                 ),
                 backgroundColor: Colors.white,
                 shape: RoundedRectangleBorder(
-                    borderRadius: new BorderRadius.circular(5)),
+                    borderRadius: BorderRadius.circular(5)),
                 actions: <Widget>[
-                  new FlatButton(
+                  FlatButton(
                     child: Text(appBloc.localstr.eventsAlertbuttonOkbutton),
                     textColor: Colors.blue,
                     onPressed: () async {
@@ -6249,7 +6184,7 @@ class _CommonDetailScreenState extends State<CommonDetailScreen> with SingleTick
   void showCancelEnrollDialog(DummyMyCatelogResponseTable2 table2, String isSuccess) {
     showDialog(
         context: context,
-        builder: (BuildContext context) => new AlertDialog(
+        builder: (BuildContext context) => AlertDialog(
               title: Text(
                 appBloc.localstr.mylearningAlerttitleStringareyousure,
                 style: Theme.of(context)
@@ -6267,9 +6202,9 @@ class _CommonDetailScreenState extends State<CommonDetailScreen> with SingleTick
               ),
               backgroundColor: InsColor(appBloc).appBGColor,
               shape: RoundedRectangleBorder(
-                  borderRadius: new BorderRadius.circular(5)),
+                  borderRadius: BorderRadius.circular(5)),
               actions: <Widget>[
-                new FlatButton(
+                FlatButton(
                   child: Text(appBloc.localstr.catalogAlertbuttonCancelbutton),
                   textColor: Color(int.parse(
                       "0xFF${appBloc.uiSettingModel.appTextColor.substring(1, 7).toUpperCase()}")),
@@ -6277,7 +6212,7 @@ class _CommonDetailScreenState extends State<CommonDetailScreen> with SingleTick
                     Navigator.of(context).pop();
                   },
                 ),
-                new FlatButton(
+                FlatButton(
                   child: Text(appBloc.localstr.eventsAlertbuttonOkbutton),
                   textColor: InsColor(appBloc).appTextColor,
                   onPressed: () async {
@@ -6324,7 +6259,7 @@ class _CommonDetailScreenState extends State<CommonDetailScreen> with SingleTick
                 .eventdetailsenrollementAlertsubtitleEventenrollmentlimit;
             showDialog(
                 context: context,
-                builder: (BuildContext context) => new AlertDialog(
+                builder: (BuildContext context) => AlertDialog(
                       title: Text(
                         appBloc.localstr.eventsActionsheetEnrolloption,
                         style: TextStyle(
@@ -6344,9 +6279,9 @@ class _CommonDetailScreenState extends State<CommonDetailScreen> with SingleTick
                       ),
                       backgroundColor: Colors.white,
                       shape: RoundedRectangleBorder(
-                          borderRadius: new BorderRadius.circular(5)),
+                          borderRadius: BorderRadius.circular(5)),
                       actions: <Widget>[
-                        new FlatButton(
+                        FlatButton(
                           child: Text(appBloc
                               .localstr.mylearningAlertbuttonCancelbutton),
                           textColor: Color(int.parse(
@@ -6355,7 +6290,7 @@ class _CommonDetailScreenState extends State<CommonDetailScreen> with SingleTick
                             Navigator.of(context).pop();
                           },
                         ),
-                        new FlatButton(
+                        FlatButton(
                           child: Text(
                               appBloc.localstr.myskillAlerttitleStringconfirm),
                           textColor: Colors.blue,
@@ -6395,15 +6330,13 @@ class _CommonDetailScreenState extends State<CommonDetailScreen> with SingleTick
         if (isValidString(widget.table2.viewprerequisitecontentstatus ?? "")) {
           String alertMessage =
               appBloc.localstr.prerequistesalerttitle6Alerttitle6;
-          alertMessage = alertMessage +
+          alertMessage = "${alertMessage +
               " \"" +
-              widget.table2.viewprerequisitecontentstatus +
-              "\" " +
-              appBloc.localstr.prerequistesalerttitle5Alerttitle7;
+              widget.table2.viewprerequisitecontentstatus}\" ${appBloc.localstr.prerequistesalerttitle5Alerttitle7}";
 
           showDialog(
               context: context,
-              builder: (BuildContext context) => new AlertDialog(
+              builder: (BuildContext context) => AlertDialog(
                     title: Text(
                       appBloc.localstr.detailsAlerttitleStringalert,
                       style: TextStyle(
@@ -6423,9 +6356,9 @@ class _CommonDetailScreenState extends State<CommonDetailScreen> with SingleTick
                     ),
                     backgroundColor: Colors.white,
                     shape: RoundedRectangleBorder(
-                        borderRadius: new BorderRadius.circular(5)),
+                        borderRadius: BorderRadius.circular(5)),
                     actions: <Widget>[
-                      new FlatButton(
+                      FlatButton(
                         child: Text(appBloc.localstr.eventsAlertbuttonOkbutton),
                         textColor: Colors.blue,
                         onPressed: () async {
@@ -6619,9 +6552,9 @@ class _CommonDetailScreenState extends State<CommonDetailScreen> with SingleTick
   }
 
   void callAddToCalendar() {
-    DateTime startDate = new DateFormat("yyyy-MM-ddTHH:mm:ss")
+    DateTime startDate = DateFormat("yyyy-MM-ddTHH:mm:ss")
         .parse(widget.table2.eventstartdatetime);
-    DateTime endDate = new DateFormat("yyyy-MM-ddTHH:mm:ss")
+    DateTime endDate = DateFormat("yyyy-MM-ddTHH:mm:ss")
         .parse(widget.table2.eventenddatetime);
 
 //            print(
@@ -6642,7 +6575,7 @@ class _CommonDetailScreenState extends State<CommonDetailScreen> with SingleTick
                 ? 'Event added successfully'
                 : 'Error occured while adding event'),
         gravity: ToastGravity.BOTTOM,
-        toastDuration: Duration(seconds: 2),
+        toastDuration: const Duration(seconds: 2),
       );
     });
   }
@@ -7058,6 +6991,6 @@ class _CommonDetailScreenState extends State<CommonDetailScreen> with SingleTick
       }
     }
 
-    return SizedBox();
+    return const SizedBox();
   }
 }

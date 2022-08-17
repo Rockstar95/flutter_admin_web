@@ -10,7 +10,7 @@ class WikiUploadRepositoryBuilder {
 abstract class WikiUploadRepository {
   Future<Response?> uploadWikiFileData(
       {bool isUrl,
-      String filepath,
+      dynamic fileBytes,
       int mediaTypeID,
       int objectTypeID,
       String title,

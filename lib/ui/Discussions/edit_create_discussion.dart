@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_admin_web/utils/my_print.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
@@ -22,7 +23,7 @@ import 'package:flutter_admin_web/ui/common/common_toast.dart';
 class EditCreateDiscussion extends StatefulWidget {
   final ForumList forumList;
 
-  EditCreateDiscussion({Key? key, required this.forumList}) : super(key: key);
+  const EditCreateDiscussion({Key? key, required this.forumList}) : super(key: key);
 
   @override
   _EditCreateDiscussionState createState() => _EditCreateDiscussionState();
@@ -56,7 +57,7 @@ class _EditCreateDiscussionState extends State<EditCreateDiscussion> with Single
   FocusNode reqFocusTitle = FocusNode();
   FocusNode reqFocusDescription = FocusNode();
 
-  GlobalKey<ScaffoldState> _scaffoldkey = new GlobalKey<ScaffoldState>();
+  final GlobalKey<ScaffoldState> _scaffoldkey = GlobalKey<ScaffoldState>();
 
   AppBloc get appBloc => BlocProvider.of<AppBloc>(context);
 
@@ -136,18 +137,18 @@ class _EditCreateDiscussionState extends State<EditCreateDiscussion> with Single
             "0xFF${appBloc.uiSettingModel.appBGColor.substring(1, 7).toUpperCase()}")),
         child: Stack(
           children: <Widget>[
-            Divider(
+            const Divider(
               height: 2,
               color: Colors.black87,
             ),
-            new Column(
+            Column(
               children: [
-                new Expanded(
+                Expanded(
                   child: SingleChildScrollView(
                     child: mainWidget(context, itemWidth, itemHeight),
                   ),
                 ),
-                new Padding(
+                Padding(
                     padding: const EdgeInsets.only(
                         top: 0.0, left: 10.0, right: 10.0, bottom: 10.0),
                     child: createDiscussionButton())
@@ -205,74 +206,72 @@ class _EditCreateDiscussionState extends State<EditCreateDiscussion> with Single
                       decoration: InputDecoration(
                         hintStyle: TextStyle(color: AppColors.getTextFieldHintColor()),
                         hintText: 'Enter your title here..',
-                        enabledBorder: OutlineInputBorder(
+                        enabledBorder: const OutlineInputBorder(
                           borderRadius: BorderRadius.all(Radius.circular(5)),
                           borderSide: BorderSide(
                             color: Color(0xFFDADCE0),
                           ),
                         ),
                         focusedBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.all(Radius.circular(5.0)),
+                          borderRadius: const BorderRadius.all(Radius.circular(5.0)),
                           borderSide: BorderSide(
                             color: Color(int.parse("0xFF${appBloc.uiSettingModel.appTextColor.substring(1, 7).toUpperCase()}")),
                             width: 1,
                           ),
                         ),
                         border: OutlineInputBorder(borderRadius: BorderRadius.circular(5.0)),
-                        contentPadding: new EdgeInsets.symmetric(
+                        contentPadding: const EdgeInsets.symmetric(
                             vertical: 35.0, horizontal: 20.0),
                       ),
                     ),
                     Padding(
-                      padding: EdgeInsets.only(
+                      padding: const EdgeInsets.only(
                           top: 20, left: 5.0, right: 10.0, bottom: 10.0),
-                      child: new Text(
+                      child: Text(
                         'Description',
-                        style: new TextStyle(
+                        style: TextStyle(
                             fontSize: 18.0,
                             color: Color(int.parse(
                                 "0xFF${appBloc.uiSettingModel.appTextColor.substring(1, 7).toUpperCase()}"))),
                       ),
                     ),
-                    Container(
-                      child: new ConstrainedBox(
-                        constraints: BoxConstraints(
-                          maxHeight: 400.0,
-                        ),
-                        child: TextFormField(
-                          style: TextStyle(
-                              fontSize: 14.h,
-                              color: Color(int.parse(
-                                  "0xFF${appBloc.uiSettingModel.appTextColor.substring(1, 7).toUpperCase()}"))),
-                          focusNode: reqFocusDescription,
-                          controller: ctrDescription,
-                          textInputAction: TextInputAction.next,
-                          onSaved: (val) => ctrDescription.text = val ?? "",
-                          onChanged: (val) {
-                            setState(() {});
-                          },
-                          decoration: InputDecoration(
-                            hintStyle: TextStyle(color: AppColors.getTextFieldHintColor()),
-                            hintText: 'Enter your description here..',
-                            enabledBorder: OutlineInputBorder(
-                              borderRadius: BorderRadius.all(Radius.circular(5)),
-                              borderSide: BorderSide(
-                                color: Color(0xFFDADCE0),
-                              ),
+                    ConstrainedBox(
+                      constraints: const BoxConstraints(
+                        maxHeight: 400.0,
+                      ),
+                      child: TextFormField(
+                        style: TextStyle(
+                            fontSize: 14.h,
+                            color: Color(int.parse(
+                                "0xFF${appBloc.uiSettingModel.appTextColor.substring(1, 7).toUpperCase()}"))),
+                        focusNode: reqFocusDescription,
+                        controller: ctrDescription,
+                        textInputAction: TextInputAction.next,
+                        onSaved: (val) => ctrDescription.text = val ?? "",
+                        onChanged: (val) {
+                          setState(() {});
+                        },
+                        decoration: InputDecoration(
+                          hintStyle: TextStyle(color: AppColors.getTextFieldHintColor()),
+                          hintText: 'Enter your description here..',
+                          enabledBorder: const OutlineInputBorder(
+                            borderRadius: BorderRadius.all(Radius.circular(5)),
+                            borderSide: BorderSide(
+                              color: Color(0xFFDADCE0),
                             ),
-                            focusedBorder: OutlineInputBorder(
-                              borderRadius: BorderRadius.all(Radius.circular(5.0)),
-                              borderSide: BorderSide(
-                                color: Color(int.parse("0xFF${appBloc.uiSettingModel.appTextColor.substring(1, 7).toUpperCase()}")),
-                                width: 1,
-                              ),
-                            ),
-                            border: OutlineInputBorder(borderRadius: BorderRadius.circular(5.0)),
-                            contentPadding: new EdgeInsets.symmetric(
-                                vertical: 45.0, horizontal: 20.0),
                           ),
-                          maxLines: null,
+                          focusedBorder: OutlineInputBorder(
+                            borderRadius: const BorderRadius.all(Radius.circular(5.0)),
+                            borderSide: BorderSide(
+                              color: Color(int.parse("0xFF${appBloc.uiSettingModel.appTextColor.substring(1, 7).toUpperCase()}")),
+                              width: 1,
+                            ),
+                          ),
+                          border: OutlineInputBorder(borderRadius: BorderRadius.circular(5.0)),
+                          contentPadding: const EdgeInsets.symmetric(
+                              vertical: 45.0, horizontal: 20.0),
                         ),
+                        maxLines: null,
                       ),
                     ),
                   ],
@@ -293,7 +292,7 @@ class _EditCreateDiscussionState extends State<EditCreateDiscussion> with Single
   //region Select Moderators Section
   Widget connectionsList() {
     return Container(
-      margin: EdgeInsets.symmetric(vertical: 10),
+      margin: const EdgeInsets.symmetric(vertical: 10),
       child: Column(
         children: [
           getSelectModeratorsWidget(),
@@ -316,16 +315,16 @@ class _EditCreateDiscussionState extends State<EditCreateDiscussion> with Single
               setState(() {});
             },
             child: Container(
-              padding: EdgeInsets.symmetric(horizontal: 20, vertical: 15),
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 15),
               decoration: BoxDecoration(
                 //color: Colors.green,
                 borderRadius: BorderRadius.circular(10),
-                border: Border.all(color: Color(0xFFDADCE0), ),
+                border: Border.all(color: const Color(0xFFDADCE0), ),
               ),
               child: Row(
                 children: [
-                  Icon(Icons.person),
-                  SizedBox(width: 20,),
+                  const Icon(Icons.person),
+                  const SizedBox(width: 20,),
                   Expanded(
                     child: Text.rich(
                       TextSpan(
@@ -340,8 +339,8 @@ class _EditCreateDiscussionState extends State<EditCreateDiscussion> with Single
                       ),
                     ),
                   ),
-                  SizedBox(width: 10,),
-                  Icon(Icons.arrow_forward_ios, size: 20,),
+                  const SizedBox(width: 10,),
+                  const Icon(Icons.arrow_forward_ios, size: 20,),
                 ],
               ),
             ),
@@ -358,7 +357,7 @@ class _EditCreateDiscussionState extends State<EditCreateDiscussion> with Single
     }
 
     if(list.isEmpty) {
-      return SizedBox();
+      return const SizedBox();
     }
 
     return Column(
@@ -382,27 +381,27 @@ class _EditCreateDiscussionState extends State<EditCreateDiscussion> with Single
         bloc: createDiscussionBloc,
         listener: (context, state) {},
         builder: (context, state) {
-          return new Container(
-            padding: EdgeInsets.only(top: 20.0),
-            child: new Column(
+          return Container(
+            padding: const EdgeInsets.only(top: 20.0),
+            child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Padding(
-                  padding: EdgeInsets.only(
+                  padding: const EdgeInsets.only(
                       top: 20, left: 5.0, right: 10.0, bottom: 10.0),
-                  child: new Text(
+                  child: Text(
                     'Thumbnails',
-                    style: new TextStyle(
+                    style: TextStyle(
                       fontSize: 18.0,
                       color: Color(int.parse(
                           "0xFF${appBloc.uiSettingModel.appTextColor.substring(1, 7).toUpperCase()}")),
                     ),
                   ),
                 ),
-                new SizedBox(
+                SizedBox(
                   width: double.infinity,
                   child: RaisedButton(
-                    padding: EdgeInsets.all(15.0),
+                    padding: const EdgeInsets.all(15.0),
                     onPressed: () {
                       if (createDiscussionBloc.fileName.isEmpty ||
                               createDiscussionBloc.fileName == '...') {
@@ -410,8 +409,6 @@ class _EditCreateDiscussionState extends State<EditCreateDiscussion> with Single
                             .add(OpenFileExplorerEvent(FileType.image));
                       }
                     },
-                    child: const Text('Upload File',
-                        style: TextStyle(fontSize: 20)),
                     color: createDiscussionBloc.fileName.isNotEmpty &&
                             createDiscussionBloc.fileName != '...'
                         ? Colors.grey
@@ -420,46 +417,44 @@ class _EditCreateDiscussionState extends State<EditCreateDiscussion> with Single
                     textColor: Color(int.parse(
                         "0xFF${appBloc.uiSettingModel.appButtonTextColor.substring(1, 7).toUpperCase()}")),
                     elevation: 5,
+                    child: const Text('Upload File',
+                        style: TextStyle(fontSize: 20)),
                   ),
                 ),
                 Visibility(
                   visible: (createDiscussionBloc.fileName.isNotEmpty &&
                       createDiscussionBloc.fileName != '...'),
                   child: Padding(
-                    padding: EdgeInsets.only(
+                    padding: const EdgeInsets.only(
                         top: 20.0, left: 5.0, right: 10.0, bottom: 10.0),
-                    child: new Row(
+                    child: Row(
                       children: [
                         Icon(
                           Icons.description,
                           color: Color(int.parse(
                               "0xFF${appBloc.uiSettingModel.appTextColor.substring(1, 7).toUpperCase()}")),
                         ),
-                        new Expanded(
+                        Expanded(
                           child: Padding(
-                            padding: EdgeInsets.only(
+                            padding: const EdgeInsets.only(
                               left: 20.0,
                             ),
-                            child: new Column(
+                            child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                new Text(
+                                Text(
                                   createDiscussionBloc.fileName,
                                   //createDiscussionBloc.filePath.substring(createDiscussionBloc.filePath.lastIndexOf("/") + 1),
-                                  style: new TextStyle(
+                                  style: TextStyle(
                                       fontSize: 16.0,
                                       color: InsColor(appBloc).appTextColor,
                                       fontWeight: FontWeight.normal),
                                 ),
-                                new Text(
-                                  createDiscussionBloc.filePath.isNotEmpty
-                                      ? (File(createDiscussionBloc.filePath)
-                                                      .lengthSync() /
-                                                  1024)
-                                              .toStringAsFixed(0) +
-                                          'kb'
+                                Text(
+                                  createDiscussionBloc.fileBytes != null
+                                      ? '${(createDiscussionBloc.fileBytes!.length / 1024).toStringAsFixed(0)}kb'
                                       : '',
-                                  style: new TextStyle(
+                                  style: TextStyle(
                                       fontSize: 12.0,
                                       color: Color(int.parse(
                                           "0xFF${appBloc.uiSettingModel.appTextColor.substring(1, 7).toUpperCase()}")),
@@ -469,11 +464,11 @@ class _EditCreateDiscussionState extends State<EditCreateDiscussion> with Single
                             ),
                           ),
                         ),
-                        new IconButton(
+                        IconButton(
                             onPressed: () {
                               setState(() {
                                 createDiscussionBloc.fileName = "";
-                                createDiscussionBloc.filePath = "";
+                                createDiscussionBloc.fileBytes = null;
                                 widget.forumList.forumThumbnailPath = '';
                               });
                             },
@@ -497,111 +492,108 @@ class _EditCreateDiscussionState extends State<EditCreateDiscussion> with Single
         bloc: createDiscussionBloc,
         listener: (context, state) {},
         builder: (context, state) {
-          return new Container(
-              child: new Column(
+          return Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Padding(
-                padding: EdgeInsets.only(
-                    top: 20, left: 5.0, right: 10.0, bottom: 10.0),
-                child: new Text(
-                  'Settings',
-                  style: new TextStyle(
-                      fontSize: 18.0,
-                      color: Color(int.parse(
-                          "0xFF${appBloc.uiSettingModel.appTextColor.substring(1, 7).toUpperCase()}"))),
-                ),
-              ),
-              new ListView.builder(
-                  shrinkWrap: true,
-                  itemCount: arrSettings.length,
-                  itemBuilder: (context, index) {
-                    return new Container(
-                      margin: EdgeInsets.only(top: 8.0, bottom: 8.0),
-                      child: new Row(
-                        children: [
-                          Padding(
-                            padding: EdgeInsets.only(
-                              left: 10.0,
-                            ),
-                            child: new Text(
-                              arrSettings[index],
-                              style: new TextStyle(
-                                fontSize: 16.0,
-                                color: Color(int.parse(
-                                    "0xFF${appBloc.uiSettingModel.appTextColor.substring(1, 7).toUpperCase()}")),
-                              ),
-                            ),
-                          ),
-                          new Spacer(),
-                          new Switch(
-                            value: isAllSeting[index],
-                            onChanged: (value) {
-                              setState(() {
-                                isAllSeting[index] = value;
-                              });
-                              print("88888 : " + isAllSeting[index].toString());
-                            },
-                            activeTrackColor: Colors.lightGreenAccent,
-                            activeColor: Color(int.parse(
-                                "0xFF${appBloc.uiSettingModel.appButtonBgColor.substring(1, 7).toUpperCase()}")),
-                          ),
-                        ],
-                      ),
-                    );
-                  }),
-            ],
-          ));
-        });
-  }
-
-  Widget privacy() {
-    return new Container(
-      child: new Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
           Padding(
-            padding:
-                EdgeInsets.only(top: 20, left: 5.0, right: 10.0, bottom: 10.0),
-            child: new Text(
-              'Privacy',
-              style: new TextStyle(
+            padding: const EdgeInsets.only(
+                top: 20, left: 5.0, right: 10.0, bottom: 10.0),
+            child: Text(
+              'Settings',
+              style: TextStyle(
                   fontSize: 18.0,
                   color: Color(int.parse(
                       "0xFF${appBloc.uiSettingModel.appTextColor.substring(1, 7).toUpperCase()}"))),
             ),
           ),
-          new Row(
-            children: [
-              Padding(
-                padding: EdgeInsets.only(
-                  left: 10.0,
-                ),
-                child: new Text(
-                  'Private discussion',
-                  style: new TextStyle(
-                    fontSize: 16.0,
-                    color: Color(int.parse(
-                        "0xFF${appBloc.uiSettingModel.appTextColor.substring(1, 7).toUpperCase()}")),
+          ListView.builder(
+              shrinkWrap: true,
+              itemCount: arrSettings.length,
+              itemBuilder: (context, index) {
+                return Container(
+                  margin: const EdgeInsets.only(top: 8.0, bottom: 8.0),
+                  child: Row(
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.only(
+                          left: 10.0,
+                        ),
+                        child: Text(
+                          arrSettings[index],
+                          style: TextStyle(
+                            fontSize: 16.0,
+                            color: Color(int.parse(
+                                "0xFF${appBloc.uiSettingModel.appTextColor.substring(1, 7).toUpperCase()}")),
+                          ),
+                        ),
+                      ),
+                      const Spacer(),
+                      Switch(
+                        value: isAllSeting[index],
+                        onChanged: (value) {
+                          setState(() {
+                            isAllSeting[index] = value;
+                          });
+                          MyPrint.printOnConsole("88888 : ${isAllSeting[index]}");
+                        },
+                        activeTrackColor: Colors.lightGreenAccent,
+                        activeColor: Color(int.parse(
+                            "0xFF${appBloc.uiSettingModel.appButtonBgColor.substring(1, 7).toUpperCase()}")),
+                      ),
+                    ],
                   ),
+                );
+              }),
+            ],
+          );
+        });
+  }
+
+  Widget privacy() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Padding(
+          padding:
+              const EdgeInsets.only(top: 20, left: 5.0, right: 10.0, bottom: 10.0),
+          child: Text(
+            'Privacy',
+            style: TextStyle(
+                fontSize: 18.0,
+                color: Color(int.parse(
+                    "0xFF${appBloc.uiSettingModel.appTextColor.substring(1, 7).toUpperCase()}"))),
+          ),
+        ),
+        Row(
+          children: [
+            Padding(
+              padding: const EdgeInsets.only(
+                left: 10.0,
+              ),
+              child: Text(
+                'Private discussion',
+                style: TextStyle(
+                  fontSize: 16.0,
+                  color: Color(int.parse(
+                      "0xFF${appBloc.uiSettingModel.appTextColor.substring(1, 7).toUpperCase()}")),
                 ),
               ),
-              new Spacer(),
-              new Switch(
-                value: createDiscussionBloc.isSwitched,
-                onChanged: (value) {
-                  setState(() {
-                    createDiscussionBloc.isSwitched = value;
-                  });
-                },
-                activeTrackColor: Colors.lightGreenAccent,
-                activeColor: Color(int.parse(
-                    "0xFF${appBloc.uiSettingModel.appButtonBgColor.substring(1, 7).toUpperCase()}")),
-              ),
-            ],
-          ),
-        ],
-      ),
+            ),
+            const Spacer(),
+            Switch(
+              value: createDiscussionBloc.isSwitched,
+              onChanged: (value) {
+                setState(() {
+                  createDiscussionBloc.isSwitched = value;
+                });
+              },
+              activeTrackColor: Colors.lightGreenAccent,
+              activeColor: Color(int.parse(
+                  "0xFF${appBloc.uiSettingModel.appButtonBgColor.substring(1, 7).toUpperCase()}")),
+            ),
+          ],
+        ),
+      ],
     );
   }
 
@@ -610,70 +602,69 @@ class _EditCreateDiscussionState extends State<EditCreateDiscussion> with Single
         bloc: createDiscussionBloc,
         listener: (context, state) {},
         builder: (context, state) {
-          return new Container(
-              child: new Column(
+          return Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Padding(
-                padding: EdgeInsets.only(
-                    top: 20, left: 5.0, right: 10.0, bottom: 10.0),
-                child: new Text(
-                  'Notification Subscriptions for this Discussion Forum',
-                  style: new TextStyle(
-                      fontSize: 18.0,
-                      color: Color(int.parse(
-                          "0xFF${appBloc.uiSettingModel.appTextColor.substring(1, 7).toUpperCase()}"))),
-                ),
-              ),
-              Padding(
-                padding: EdgeInsets.only(
-                    top: 20, left: 5.0, right: 10.0, bottom: 10.0),
-                child: new Text(
-                  'The Discussion notifications at the site level must be \u0027on\u0027 for the user to receive any notifications. The following settings apply to this Discussion Forum only.',
-                  style: new TextStyle(
-                      fontSize: 16.0,
-                      color: Color(int.parse(
-                          "0xFF${appBloc.uiSettingModel.appTextColor.substring(1, 7).toUpperCase()}"))),
-                ),
-              ),
-              new ListView.builder(
-                  shrinkWrap: true,
-                  itemCount: notificationSubscriptions.length,
-                  itemBuilder: (context, index) {
-                    return new Container(
-                      margin: EdgeInsets.only(top: 8.0, bottom: 8.0),
-                      child: new Row(
-                        children: [
-                          Radio<String>(
-                            value: notificationSubscriptions[index],
-                            groupValue: selectedNotification,
-                            onChanged: (value) {
-                              setState(() {
-                                selectedNotification = value ?? "";
-                              });
-                            },
-                          ),
-                          Expanded(
-                            child: Padding(
-                              padding: EdgeInsets.only(
-                                left: 10.0,
-                              ),
-                              child: new Text(
-                                notificationSubscriptions[index],
-                                style: new TextStyle(
-                                  fontSize: 16.0,
-                                  color: Color(int.parse(
-                                      "0xFF${appBloc.uiSettingModel.appTextColor.substring(1, 7).toUpperCase()}")),
-                                ),
-                              ),
-                            ),
-                          )
-                        ],
+          Padding(
+            padding: const EdgeInsets.only(
+                top: 20, left: 5.0, right: 10.0, bottom: 10.0),
+            child: Text(
+              'Notification Subscriptions for this Discussion Forum',
+              style: TextStyle(
+                  fontSize: 18.0,
+                  color: Color(int.parse(
+                      "0xFF${appBloc.uiSettingModel.appTextColor.substring(1, 7).toUpperCase()}"))),
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.only(
+                top: 20, left: 5.0, right: 10.0, bottom: 10.0),
+            child: Text(
+              'The Discussion notifications at the site level must be \u0027on\u0027 for the user to receive any notifications. The following settings apply to this Discussion Forum only.',
+              style: TextStyle(
+                  fontSize: 16.0,
+                  color: Color(int.parse(
+                      "0xFF${appBloc.uiSettingModel.appTextColor.substring(1, 7).toUpperCase()}"))),
+            ),
+          ),
+          ListView.builder(
+              shrinkWrap: true,
+              itemCount: notificationSubscriptions.length,
+              itemBuilder: (context, index) {
+                return Container(
+                  margin: const EdgeInsets.only(top: 8.0, bottom: 8.0),
+                  child: Row(
+                    children: [
+                      Radio<String>(
+                        value: notificationSubscriptions[index],
+                        groupValue: selectedNotification,
+                        onChanged: (value) {
+                          setState(() {
+                            selectedNotification = value ?? "";
+                          });
+                        },
                       ),
-                    );
-                  }),
+                      Expanded(
+                        child: Padding(
+                          padding: const EdgeInsets.only(
+                            left: 10.0,
+                          ),
+                          child: Text(
+                            notificationSubscriptions[index],
+                            style: TextStyle(
+                              fontSize: 16.0,
+                              color: Color(int.parse(
+                                  "0xFF${appBloc.uiSettingModel.appTextColor.substring(1, 7).toUpperCase()}")),
+                            ),
+                          ),
+                        ),
+                      )
+                    ],
+                  ),
+                );
+              }),
             ],
-          ));
+          );
         });
   }
 
@@ -697,7 +688,7 @@ class _EditCreateDiscussionState extends State<EditCreateDiscussion> with Single
                 displaymsg: state.message,
               ),
               gravity: ToastGravity.BOTTOM,
-              toastDuration: Duration(seconds: 2),
+              toastDuration: const Duration(seconds: 2),
             );
           }
         }
@@ -716,20 +707,20 @@ class _EditCreateDiscussionState extends State<EditCreateDiscussion> with Single
 
         return Align(
           alignment: Alignment.bottomCenter,
-          child: new SizedBox(
+          child: SizedBox(
             width: double.infinity,
             child: RaisedButton(
-              padding: EdgeInsets.all(15.0),
+              padding: const EdgeInsets.all(15.0),
               onPressed: () {
                 validateCreateDiscuusionForum();
               },
-              child:
-                  const Text('Edit discussion', style: TextStyle(fontSize: 20)),
               color: Color(int.parse(
                   "0xFF${appBloc.uiSettingModel.appButtonBgColor.substring(1, 7).toUpperCase()}")),
               textColor: Color(int.parse(
                   "0xFF${appBloc.uiSettingModel.appButtonTextColor.substring(1, 7).toUpperCase()}")),
               elevation: 5,
+              child:
+                  const Text('Edit discussion', style: TextStyle(fontSize: 20)),
             ),
           ),
         );
@@ -778,7 +769,7 @@ class _EditCreateDiscussionState extends State<EditCreateDiscussion> with Single
         allowShare: isAllSeting[3],
         isPrivate: createDiscussionBloc.isSwitched,
         allowPinTopic: isAllSeting[4],
-        filePath: createDiscussionBloc.filePath,
+        fileBytes: createDiscussionBloc.fileBytes,
         fileName: createDiscussionBloc.fileName,
       ));
     }
@@ -839,19 +830,17 @@ class _EditCreateDiscussionState extends State<EditCreateDiscussion> with Single
             children: <Widget>[
               Padding(
                 padding: const EdgeInsets.all(8.0),
-                child: Container(
-                  child: Center(
-                    child: Text(
-                        appBloc.localstr.commoncomponentLabelNodatalabel,
-                        style: TextStyle(
-                            color: Color(int.parse(
-                                "0xFF${appBloc.uiSettingModel.appTextColor.substring(1, 7).toUpperCase()}")),
-                            fontSize: 24)),
-                  ),
+                child: Center(
+                  child: Text(
+                      appBloc.localstr.commoncomponentLabelNodatalabel,
+                      style: TextStyle(
+                          color: Color(int.parse(
+                              "0xFF${appBloc.uiSettingModel.appTextColor.substring(1, 7).toUpperCase()}")),
+                          fontSize: 24)),
                 ),
               )
             ],
           )
-        : new Container();
+        : Container();
   }
 }

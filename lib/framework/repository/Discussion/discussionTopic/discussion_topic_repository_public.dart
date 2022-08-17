@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:typed_data';
 
 import 'package:http/http.dart';
 import 'package:flutter_admin_web/framework/common/constants.dart';
@@ -411,7 +412,7 @@ class DiscussionTopicRepositryPublic extends DiscussionTopicRepository {
       {String topicID = "",
       String replyID = "",
       bool isTopic = false,
-      String filePath = "",
+      Uint8List? fileBytes,
       String fileName = ""}) async {
     // TODO: implement getMobileMyCatalogObjectsData
     Response? response;
@@ -420,13 +421,16 @@ class DiscussionTopicRepositryPublic extends DiscussionTopicRepository {
       var strSiteID = await sharePrefGetString(sharedPref_siteid);
       var strLanguage = await sharePrefGetString(sharedPref_AppLocale);
 
-      if (filePath.isNotEmpty) {
-        //final file = await dio.MultipartFile.fromFile(filePath, filename: fileName);
-        File file = File(filePath);
+      if (fileBytes != null) {
         List<MultipartFile> files = [
-          MultipartFile("Image", file.openRead(), file.lengthSync(),
-              filename: fileName)
+          MultipartFile.fromBytes("Image", fileBytes),
         ];
+        //final file = await dio.MultipartFile.fromFile(filePath, filename: fileName);
+        // File file = File(fileBytes);
+        // List<MultipartFile> files = [
+        //   MultipartFile("Image", file.openRead(), file.lengthSync(),
+        //       filename: fileName)
+        // ];
 
         Map<String, String> formData = {
           'TopicID': topicID,

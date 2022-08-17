@@ -1,7 +1,9 @@
 import 'dart:io';
+import 'dart:typed_data';
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_admin_web/utils/my_print.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -23,11 +25,12 @@ import 'package:flutter_admin_web/framework/repository/profile/provider/profile_
 import 'package:flutter_admin_web/framework/theme/ins_theme.dart';
 import 'package:flutter_admin_web/ui/common/app_colors.dart';
 import 'package:flutter_admin_web/ui/common/common_toast.dart';
+import 'package:uuid/uuid.dart';
 
 class FeedbackScreen extends StatefulWidget {
   final Function updateTitle;
 
-  FeedbackScreen(this.updateTitle);
+  const FeedbackScreen(this.updateTitle);
 
   @override
   _FeedbackScreenState createState() => _FeedbackScreenState();
@@ -42,16 +45,16 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
 
   late FeedbackBloc feedbackBloc;
 
-  TextEditingController titleController = new TextEditingController();
+  TextEditingController titleController = TextEditingController();
 
-  TextEditingController descController = new TextEditingController();
+  TextEditingController descController = TextEditingController();
 
   bool isFeedbackform = true;
 
   late FToast flutterToast;
 
   final ImagePicker _picker = ImagePicker();
-  XFile _imageFile = XFile('');
+  Uint8List? _imageFile;
 
   bool imageAttached = false;
 
@@ -61,11 +64,9 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
     flutterToast = FToast();
     flutterToast.init(context);
 
-    profileBloc =
-        ProfileBloc(profileRepository: ProfileRepositoryBuilder.repository());
+    profileBloc = ProfileBloc(profileRepository: ProfileRepositoryBuilder.repository());
     profileBloc.add(GetProfileInfo());
-    feedbackBloc = FeedbackBloc(
-        feedbackRepository: FeedbackRepositoryBuilder.repository());
+    feedbackBloc = FeedbackBloc(feedbackRepository: FeedbackRepositoryBuilder.repository());
 
     feedbackBloc.isFirstLoading = true;
 
@@ -90,7 +91,7 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
                   isFeedbackform
                       ? isFeedbackform = false
                       : isFeedbackform = true;
-                  Future.delayed(Duration(seconds: 0)).then((value) {
+                  Future.delayed(const Duration(seconds: 0)).then((value) {
                     isFeedbackform
                         ? appBloc.feedbackTitle = 'Enter New Feedback'
                         : appBloc.feedbackTitle = 'Previous Feedback List';
@@ -101,11 +102,11 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
               child: Padding(
                 padding: const EdgeInsets.all(10.0),
                 child: isFeedbackform
-                    ? Icon(
+                    ? const Icon(
                         Icons.list_outlined,
                         color: Colors.black,
                       )
-                    : Icon(
+                    : const Icon(
                         Icons.feedback,
                         color: Colors.black,
                       ),
@@ -134,7 +135,7 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
                         state.status == Status.COMPLETED) {
                       titleController.text = '';
                       descController.text = '';
-                      _imageFile = XFile('');
+                      _imageFile = null;
                       showToast();
                     }
                   },
@@ -180,7 +181,7 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
                                   //             "0xFF${appBloc.uiSettingModel.appTextColor.substring(1, 7).toUpperCase()}"),
                                   //       ))),
                                   // ),
-                                  SizedBox(height: 10.0,),
+                                  const SizedBox(height: 10.0,),
                                   Padding(
                                     padding: const EdgeInsets.only(
                                         top: 1.0,
@@ -217,14 +218,14 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
                                       // key: Key(wikiUploadBloc.fileName),
                                       controller: titleController,
                                       decoration: InputDecoration(
-                                        enabledBorder: OutlineInputBorder(
+                                        enabledBorder: const OutlineInputBorder(
                                           borderRadius: BorderRadius.all(Radius.circular(5)),
                                           borderSide: BorderSide(
                                             color: Color(0xFFDADCE0),
                                           ),
                                         ),
                                         focusedBorder: OutlineInputBorder(
-                                          borderRadius: BorderRadius.all(Radius.circular(5.0)),
+                                          borderRadius: const BorderRadius.all(Radius.circular(5.0)),
                                           borderSide: BorderSide(
                                             color: Color(int.parse("0xFF${appBloc.uiSettingModel.appTextColor.substring(1, 7).toUpperCase()}")),
                                             width: 1,
@@ -278,14 +279,14 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
                                       cursorHeight: 25.0,
                                       maxLines: 10,
                                       decoration: InputDecoration(
-                                        enabledBorder: OutlineInputBorder(
+                                        enabledBorder: const OutlineInputBorder(
                                           borderRadius: BorderRadius.all(Radius.circular(5)),
                                           borderSide: BorderSide(
                                             color: Color(0xFFDADCE0),
                                           ),
                                         ),
                                         focusedBorder: OutlineInputBorder(
-                                          borderRadius: BorderRadius.all(Radius.circular(5.0)),
+                                          borderRadius: const BorderRadius.all(Radius.circular(5.0)),
                                           borderSide: BorderSide(
                                             color: Color(int.parse("0xFF${appBloc.uiSettingModel.appTextColor.substring(1, 7).toUpperCase()}")),
                                             width: 1,
@@ -304,40 +305,34 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
                                   Padding(
                                     padding: const EdgeInsets.all(16.0),
                                     child: RaisedButton.icon(
-                                        icon: Icon(_imageFile.path.isEmpty
+                                        icon: Icon(_imageFile != null
                                             ? Icons.image
                                             : Icons.highlight_remove),
                                         onPressed: () => {
                                               setState(() {
-                                                feedbackBloc.filePath = '';
+                                                feedbackBloc.fileBytes = null;
                                                 feedbackBloc.fileName = '';
-                                                _imageFile = XFile('');
+                                                _imageFile = null;
                                               }),
-                                              print('choose file ${_imageFile.path}'),
-                                              _imageFile.path.isEmpty
+                                              MyPrint.printOnConsole('choose file ${_imageFile}'),
+                                              _imageFile == null
                                                   ? showDialog(
                                                       context: context,
-                                                      builder:
-                                                          (BuildContext
-                                                                  context) =>
-                                                              new AlertDialog(
+                                                      builder: (BuildContext context) =>
+                                                              AlertDialog(
                                                                 title: Text(
                                                                   'Choose Image From',
                                                                   style: TextStyle(
-                                                                      fontWeight:
-                                                                          FontWeight
-                                                                              .bold,
-                                                                      color: Color(
-                                                                          int.parse(
-                                                                              "0xFF${appBloc.uiSettingModel.appTextColor.substring(1, 7).toUpperCase()}"))),
+                                                                      fontWeight: FontWeight.bold,
+                                                                      color: Color(int.parse("0xFF${appBloc.uiSettingModel.appTextColor.substring(1, 7).toUpperCase()}"))),
                                                                 ),
                                                                 content:
-                                                                    Container(
+                                                                    SizedBox(
                                                                   height: 100,
                                                                   child: Column(
                                                                     children: <
                                                                         Widget>[
-                                                                      SizedBox(
+                                                                      const SizedBox(
                                                                         height:
                                                                             10,
                                                                       ),
@@ -350,7 +345,7 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
                                                                               Icons.camera_alt,
                                                                               color: InsColor(appBloc).appIconColor,
                                                                             ),
-                                                                            SizedBox(
+                                                                            const SizedBox(
                                                                               width: 10,
                                                                             ),
                                                                             Text(
@@ -366,12 +361,12 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
                                                                               context: context);
                                                                         },
                                                                       ),
-                                                                      SizedBox(
+                                                                      const SizedBox(
                                                                         height:
                                                                             10,
                                                                       ),
-                                                                      Divider(),
-                                                                      SizedBox(
+                                                                      const Divider(),
+                                                                      const SizedBox(
                                                                         height:
                                                                             10,
                                                                       ),
@@ -382,7 +377,7 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
                                                                               Widget>[
                                                                             Icon(Icons.image,
                                                                                 color: InsColor(appBloc).appIconColor),
-                                                                            SizedBox(
+                                                                            const SizedBox(
                                                                               width: 10,
                                                                             ),
                                                                             Text(
@@ -408,7 +403,7 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
                                                                 ),
                                                                 shape: RoundedRectangleBorder(
                                                                     borderRadius:
-                                                                        new BorderRadius.circular(
+                                                                        BorderRadius.circular(
                                                                             5)),
                                                               ))
                                                   : updateUIForImage,
@@ -418,7 +413,7 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
                                             .withOpacity(0.5),
                                         color: Color(int.parse(
                                             "0xFF${appBloc.uiSettingModel.appButtonBgColor.substring(1, 7).toUpperCase()}")),
-                                        label: Text(_imageFile.path.isEmpty
+                                        label: Text(_imageFile == null
                                             ? 'Choose Image'
                                             : 'Remove Image'),
                                         textColor: Color(int.parse(
@@ -426,12 +421,12 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
                                   ),
                                   Padding(
                                     padding: const EdgeInsets.all(16.0),
-                                    child: _imageFile.path.isNotEmpty
+                                    child: _imageFile != null
                                         ? ClipRRect(
                                             borderRadius:
                                                 BorderRadius.circular(5.0),
-                                            child: Image.file(
-                                              File(_imageFile.path),
+                                            child: Image.memory(
+                                              _imageFile!,
                                               fit: BoxFit.cover,
                                               width: 105,
                                               height: 105,
@@ -452,42 +447,37 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
                   return Container(
                     color: Color(int.parse(
                         "0xFF${appBloc.uiSettingModel.appBGColor.substring(1, 7).toUpperCase()}")),
-                    child: feedbackBloc.feedbackList.length != 0
+                    child: feedbackBloc.feedbackList.isNotEmpty
                         ? ListView.builder(
                             itemCount: feedbackBloc.feedbackList.length,
                             itemBuilder: (BuildContext context, int index) {
-                              return new Container(
-                                child: FeedbackCell(
-                                  feedback: feedbackBloc.feedbackList[index],
-                                  onDeleteTap: (int id) {
-                                    //feedbackBloc.feedbackList.removeAt(index);
-                                    feedbackBloc
-                                        .add(DeleteFeedbackEvent(id: id));
-                                    print(id);
-                                  },
-                                  appBloc: appBloc,
-                                ),
+                              return FeedbackCell(
+                                feedback: feedbackBloc.feedbackList[index],
+                                onDeleteTap: (int id) {
+                                  //feedbackBloc.feedbackList.removeAt(index);
+                                  feedbackBloc.add(DeleteFeedbackEvent(id: id));
+                                  MyPrint.printOnConsole(id);
+                                },
+                                appBloc: appBloc,
                               );
                             },
                           )
-                        : Container(
-                            child: Center(
-                              child: Text(
-                                  appBloc
-                                      .localstr.commoncomponentLabelNodatalabel,
-                                  style: TextStyle(
-                                      color: Color(int.parse(
-                                          "0xFF${appBloc.uiSettingModel.appTextColor.substring(1, 7).toUpperCase()}")),
-                                      fontSize: 24)),
-                            ),
-                          ),
+                        : Center(
+                          child: Text(
+                              appBloc
+                                  .localstr.commoncomponentLabelNodatalabel,
+                              style: TextStyle(
+                                  color: Color(int.parse(
+                                      "0xFF${appBloc.uiSettingModel.appTextColor.substring(1, 7).toUpperCase()}")),
+                                  fontSize: 24)),
+                        ),
                   );
                 },
                 listener: (context, state) {}),
         bottomNavigationBar: isFeedbackform
             ? Row(
                 children: <Widget>[
-                  SizedBox(
+                  const SizedBox(
                     width: 5,
                   ),
                   Expanded(
@@ -515,7 +505,7 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
                       },
                     ),
                   ),
-                  SizedBox(
+                  const SizedBox(
                     width: 5,
                   ),
                 ],
@@ -542,7 +532,6 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
   }
 
   Future<void> submitFeedback() async {
-    var filepath = _imageFile.path;
     var descriptionVar = descController.text;
     var titleNameVar = titleController.text;
 
@@ -550,24 +539,23 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
       flutterToast.showToast(
         child: CommonToast(displaymsg: 'Please Enter Title'),
         gravity: ToastGravity.BOTTOM,
-        toastDuration: Duration(seconds: 4),
+        toastDuration: const Duration(seconds: 4),
       );
       return;
-    } else if (descriptionVar.isEmpty) {
+    }
+    else if (descriptionVar.isEmpty) {
       flutterToast.showToast(
         child: CommonToast(displaymsg: 'Please Enter Feedback'),
         gravity: ToastGravity.BOTTOM,
-        toastDuration: Duration(seconds: 4),
+        toastDuration: const Duration(seconds: 4),
       );
       return;
     }
 
-    File file = new File(_imageFile.path);
-
-    var filname = await AppDirectory.getFileNameWithExtension(file);
+    var filname = "${const Uuid().v1().replaceAll("-", "")}.png";
 
     feedbackBloc.add(FeedbackSubmitEvent(
-        image: _imageFile.path,
+        image: _imageFile,
         feedbackTitle: titleController.text,
         feedbackDesc: descController.text,
         currentUserId: '0',
@@ -579,22 +567,21 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
 
   void onImageButtonPressed(ImageSource source, {required BuildContext context}) async {
     try {
-      final XFile? pickedFile = await _picker.pickImage(
-          source: source, maxWidth: 1000, maxHeight: 1000, imageQuality: 100);
+      final XFile? pickedFile = await _picker.pickImage(source: source, maxWidth: 1000, maxHeight: 1000, imageQuality: 100);
       Navigator.of(context).pop();
 
       if (pickedFile != null) {
-        var imageName = DateTime.now().millisecondsSinceEpoch.toString() + '.jpg';
-        setState(() {
-          // _imageFile =;
-          print('pickedFile.path ${pickedFile.path}');
-          if (titleController.text.isEmpty) {
-           titleController.text = imageName;
-          }
-          // descController.text = pickedFile.path;
-          _imageFile = pickedFile;
-        });
-        print('imageName $imageName');
+        var imageName = '${DateTime.now().millisecondsSinceEpoch}.jpg';
+        // _imageFile =;
+        MyPrint.printOnConsole('pickedFile.path ${pickedFile.path}');
+        if (titleController.text.isEmpty) {
+         titleController.text = imageName;
+        }
+        // descController.text = pickedFile.path;
+        _imageFile = await pickedFile.readAsBytes();
+
+        setState(() {});
+        MyPrint.printOnConsole('imageName $imageName');
       }
     } catch (e) {
       setState(() {});
@@ -603,7 +590,7 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
 
   void updateUIForImage() {
     setState(() {
-      _imageFile = XFile('');
+      _imageFile = null;
     });
   }
 
@@ -612,7 +599,7 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
       child: CommonToast(
           displaymsg: 'Feedback Submitted Successfully  \n Thank you!'),
       gravity: ToastGravity.BOTTOM,
-      toastDuration: Duration(seconds: 4),
+      toastDuration: const Duration(seconds: 4),
     );
   }
 }
@@ -623,7 +610,7 @@ class FeedbackCell extends StatelessWidget {
   final FeedbackModel feedback;
   final AppBloc appBloc;
 
-  FeedbackCell(
+  const FeedbackCell(
       {Key? key,
       required this.feedback,
       this.onTap,
@@ -662,8 +649,8 @@ class FeedbackCell extends StatelessWidget {
         child: Container(
           color: Color(int.parse(
               "0xFF${appBloc.uiSettingModel.appBGColor.substring(1, 7).toUpperCase()}")),
-          padding: EdgeInsets.all(4),
-          margin: EdgeInsets.symmetric(vertical: 4, horizontal: 8),
+          padding: const EdgeInsets.all(4),
+          margin: const EdgeInsets.symmetric(vertical: 4, horizontal: 8),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -684,7 +671,7 @@ class FeedbackCell extends StatelessWidget {
                       ),
                     ),
                   ),
-                  SizedBox(
+                  const SizedBox(
                     width: 8,
                   ),
                   Expanded(
@@ -736,7 +723,7 @@ class FeedbackCell extends StatelessWidget {
                   Expanded(
                     flex: 1,
                     child: Padding(
-                      padding: EdgeInsets.only(right: 0),
+                      padding: const EdgeInsets.only(right: 0),
                       child: IconButton(
                         icon: Icon(Icons.delete,
                             color: Color(
@@ -751,7 +738,7 @@ class FeedbackCell extends StatelessWidget {
                   ),
                 ],
               ),
-              SizedBox(height: 8),
+              const SizedBox(height: 8),
               Container(
                 padding:
                     const EdgeInsets.symmetric(horizontal: 4.0, vertical: 2),
@@ -777,7 +764,7 @@ class FeedbackCell extends StatelessWidget {
                       onTap: () {
                         showDialogImage(context, atachmentPath);
                       },
-                      child: Container(
+                      child: SizedBox(
                         height: ScreenUtil().setHeight(
                             useMobileLayout ? kCellThumbHeight : 180),
                         width:
@@ -812,7 +799,7 @@ class FeedbackCell extends StatelessWidget {
       barrierLabel: "Barrier",
       barrierDismissible: true,
       barrierColor: Colors.black.withOpacity(0.5),
-      transitionDuration: Duration(milliseconds: 700),
+      transitionDuration: const Duration(milliseconds: 700),
       context: context,
       pageBuilder: (_, __, ___) {
         return Align(
@@ -835,7 +822,7 @@ class FeedbackCell extends StatelessWidget {
               ),
               fit: BoxFit.cover,
             ),
-            margin: EdgeInsets.only(bottom: 50, left: 12, right: 12),
+            margin: const EdgeInsets.only(bottom: 50, left: 12, right: 12),
             decoration: BoxDecoration(
               color: Colors.white,
               borderRadius: BorderRadius.circular(10),
@@ -845,7 +832,7 @@ class FeedbackCell extends StatelessWidget {
       },
       transitionBuilder: (_, anim, __, child) {
         return SlideTransition(
-          position: Tween(begin: Offset(0, 1), end: Offset(0, 0)).animate(anim),
+          position: Tween(begin: const Offset(0, 1), end: const Offset(0, 0)).animate(anim),
           child: child,
         );
       },
@@ -855,7 +842,7 @@ class FeedbackCell extends StatelessWidget {
   void showConfirmDialog(BuildContext context) {
     showDialog(
         context: context,
-        builder: (BuildContext context) => new AlertDialog(
+        builder: (BuildContext context) => AlertDialog(
               title: Text(
                 "Feedback",
                 style: TextStyle(
@@ -874,17 +861,17 @@ class FeedbackCell extends StatelessWidget {
                     "0xFF${appBloc.uiSettingModel.appBGColor.substring(1, 7).toUpperCase()}"),
               ),
               shape: RoundedRectangleBorder(
-                  borderRadius: new BorderRadius.circular(5)),
+                  borderRadius: BorderRadius.circular(5)),
               actions: <Widget>[
-                new FlatButton(
-                  child: Text('Cancel'),
+                FlatButton(
+                  child: const Text('Cancel'),
                   textColor: Colors.blue,
                   onPressed: () async {
                     Navigator.of(context).pop();
                   },
                 ),
-                new FlatButton(
-                  child: Text('Delete'),
+                FlatButton(
+                  child: const Text('Delete'),
                   textColor: Colors.blue,
                   onPressed: () async {
                     Navigator.of(context).pop();

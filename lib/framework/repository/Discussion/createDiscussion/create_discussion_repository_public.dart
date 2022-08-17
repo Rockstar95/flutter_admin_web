@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:typed_data';
 
 import 'package:http/http.dart';
 import 'package:flutter_admin_web/framework/common/constants.dart';
@@ -29,7 +30,7 @@ class CreateDiscussionRepositryPublic extends CreateDiscussionRepositry {
       bool allowShare,
       bool isPrivate,
       bool allowPinTopic,
-      String filePath,
+      Uint8List? fileBytes,
       String fileName) async {
     // TODO: implement discussionforumdata
     Response? response;
@@ -41,12 +42,14 @@ class CreateDiscussionRepositryPublic extends CreateDiscussionRepositry {
       var strSiteID = await sharePrefGetString(sharedPref_siteid);
       var language = await sharePrefGetString(sharedPref_AppLocale);
 
-      if (filePath != '') {
+      if (fileBytes != null) {
+        List<MultipartFile> files = [
+          MultipartFile.fromBytes("Image", fileBytes, filename: fileName)
+        ];
         //final file = await dio.MultipartFile.fromFile(filePath, filename: fileName);
-        File file = File(filePath);
-        List<MultipartFile> files = [];
-        files.add(MultipartFile("image", file.openRead(), file.lengthSync(),
-            filename: fileName));
+        // File file = File();
+        // List<MultipartFile> files = [];
+        // files.add(MultipartFile("image", file.openRead(), file.lengthSync(), filename: fileName));
 
         Map<String, String> formData = {
           'locale': language,
@@ -72,7 +75,6 @@ class CreateDiscussionRepositryPublic extends CreateDiscussionRepositry {
           'CategoryIDs': categoryIDs,
           'AllowPinTopic': allowPinTopic.toString(),
         };
-        print("formdata : " + file.toString());
         response = await RestClient.uploadFilesData(
             ApiEndpoints.apiCreateDiscussion(), formData,
             files: files);

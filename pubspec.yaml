@@ -67,7 +67,8 @@ dependencies:
   #chewie: ^1.2.2
   open_file: ^3.2.1
   #flutter_filereader: ^2.1.0
-  flutter_inappwebview: ^5.4.3+7
+  webviewx: ^0.2.1
+#  flutter_inappwebview: ^5.4.3+7
   #  flutter_webview_plugin: ^0.4.0
   font_awesome_flutter: ^9.2.0
   flutter_svg: ^0.22.0

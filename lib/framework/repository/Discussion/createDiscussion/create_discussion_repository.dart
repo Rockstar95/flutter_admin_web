@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 import 'package:http/http.dart';
 
 abstract class CreateDiscussionRepositry {
@@ -20,7 +22,7 @@ abstract class CreateDiscussionRepositry {
       bool allowShare,
       bool isPrivate,
       bool allowPinTopic,
-      String filePth,
+      Uint8List? fileBytes,
       String fileName);
 
   Future<Response?> getDiscussionTopicUserData(

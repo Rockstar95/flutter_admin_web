@@ -219,6 +219,11 @@ class UISettingModel {
   String _isFeedbackRedirection = "";
   String _enableGamification = "";
   String _addProfileAdditionalTab = "";
+  String _enableChatBot = "";
+  String _beforeLoginKnowledgeBaseID = "";
+  String _botChatIcon = "";
+  String _instancyBotEndPointURL = "";
+  String _botGreetingContent = "";
   bool _isFromPush = false;
 
   bool get isFromPush => _isFromPush;
@@ -237,6 +242,31 @@ class UISettingModel {
 
   void setAddProfileAdditionalTab(String value) {
     _addProfileAdditionalTab = value;
+  }
+
+  String get enableChatBot => _enableChatBot;
+  void setEnableChatBot(String value) {
+    _enableChatBot = value;
+  }
+
+  String get beforeLoginKnowledgeBaseID => _beforeLoginKnowledgeBaseID;
+  void setBeforeLoginKnowledgeBaseID(String value) {
+    _beforeLoginKnowledgeBaseID = value;
+  }
+
+  String get botChatIcon => _botChatIcon;
+  void setBotChatIcon(String value) {
+    _botChatIcon = value;
+  }
+
+  String get instancyBotEndPointURL => _instancyBotEndPointURL;
+  void setInstancyBotEndPointURL(String value) {
+    _instancyBotEndPointURL = value;
+  }
+
+  String get botGreetingContent => _botGreetingContent;
+  void setBotGreetingContent(String value) {
+    _botGreetingContent = value;
   }
 
   String get isFeedbackRedirection => _isFeedbackRedirection;

@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 import 'package:equatable/equatable.dart';
 import 'package:file_picker/file_picker.dart';
 
@@ -11,7 +13,7 @@ class FeedbackSubmitEvent extends FeedbackEvent {
   final String imageFileName;
   final String feedbackDesc;
   final String currentUrl;
-  final String image;
+  final Uint8List? image;
   final String currentUserId;
   final String date2;
   final String currentSiteId;
@@ -22,7 +24,7 @@ class FeedbackSubmitEvent extends FeedbackEvent {
     this.imageFileName = "",
     this.feedbackDesc = "",
     this.currentUrl = "",
-    this.image = "",
+    this.image,
     this.currentUserId = "",
     this.date2 = "",
     this.currentSiteId = "",
@@ -35,7 +37,6 @@ class FeedbackSubmitEvent extends FeedbackEvent {
         imageFileName,
         feedbackDesc,
         currentUrl,
-        image,
         currentUserId,
         currentSiteId,
       ];

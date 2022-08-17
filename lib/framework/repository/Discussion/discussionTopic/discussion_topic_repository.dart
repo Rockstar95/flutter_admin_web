@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 import 'package:http/http.dart';
 
 abstract class DiscussionTopicRepository {
@@ -90,6 +92,6 @@ abstract class DiscussionTopicRepository {
       {String topicID,
       String replyID,
       bool isTopic,
-      String filePath,
+      Uint8List? fileBytes,
       String fileName});
 }

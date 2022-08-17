@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/services.dart';
 import 'package:google_sign_in/google_sign_in.dart';
@@ -14,7 +16,7 @@ import 'package:uuid/uuid.dart';
 
 class AuthenticationRepository implements AuthRepository {
   @override
-  Future<bool> doLogin(String username, String password, String mobileSiteUrl, String downloadContent, String siteId, bool isFromSignup) async {
+  Future<bool> doLogin(String username, String password, String mobileSiteUrl, String downloadContent, String siteId, bool isFromSignup, {bool isEncrypted = false}) async {
     bool isLoggedin = false;
 
     try {
@@ -25,6 +27,7 @@ class AuthenticationRepository implements AuthRepository {
       login.downloadContent = downloadContent;
       login.siteId = siteId;
       login.isFromSignUp = isFromSignup;
+      login.isEncrypted = isEncrypted;
 
       var data = loginToJson(login);
       print('login req $data');
@@ -78,6 +81,70 @@ class AuthenticationRepository implements AuthRepository {
 
     print('isloggedin $isLoggedin');
     return isLoggedin;
+  }
+
+  Future<Map<String,dynamic>> gettingSiteMetadata(String siteToken) async {
+    Map<String,dynamic> isSuccess = {};
+    Map<String,dynamic> body = {};
+    Map<String,dynamic> data = {
+      "intUserID": -1,
+      "intFromSIteID" : -1,
+      "strAuthKey":"$siteToken"
+    };
+    try {
+      Response? response = await RestClient.postMethodWithoutToken(ApiEndpoints.apiGetGenericSiteMetaData(), data);
+      print("000000000 ${response?.body}");
+
+      if (response?.statusCode == 200) {
+        print("111111");
+        body = json.decode(response?.body ?? "{}");
+        print("2");
+        print("bodyyyyyyyy : ${body}");
+        print("3");
+        if (body.isNotEmpty) {
+          print("4");
+          isSuccess = await setUserIdPassFromMetaData(body["Table"][0]["UserID"],body["Table"][0]["FromSiteID"],body["Table"][0]["ToSiteID"]);
+          print("5");
+          print("IsSuccess : $isSuccess");
+          return isSuccess;
+        }
+      } else {
+        isSuccess = {};
+      }
+    }
+    catch (e){
+      print("Error in AuthenticationRepository.gettingSiteMetadata():$e");
+    }
+
+    return isSuccess;
+  }
+
+  Future<Map<String,dynamic>> setUserIdPassFromMetaData(int intUserID, int intSiteID, int intMainSiteID) async {
+    Map<String,dynamic> isSuccess = {},body = {};
+    Map<String,dynamic> dataToPass = {
+      "intUserID":"$intUserID",
+      "intSiteID":"${intSiteID}",
+      "intMainSiteID":"$intMainSiteID"
+    };
+
+    try{
+      Response? response = await RestClient.postMethodWithQueryParamData(ApiEndpoints.apiGetUserCredentials(), dataToPass);
+      if (response?.statusCode == 200) {
+        body = json.decode(response?.body ?? "{}");
+        if (body.isNotEmpty) {
+          isSuccess = {"email":body["Table"][0]["Email"],"pass":body["Table"][0]["Password"]};
+          return isSuccess;
+        }
+      } else {
+        isSuccess = {};
+      }
+    } catch (e){
+      print("Error in AuthenticationRepository.setUserIdPassFromMetaData():$e");
+
+    }
+
+
+    return isSuccess;
   }
 
   @override

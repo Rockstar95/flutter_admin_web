@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:typed_data';
 
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/services.dart';
@@ -20,7 +21,7 @@ class DiscussionTopicCommentBloc extends Bloc<DiscussionTopicCommentEvent, Discu
   // final formatter = DateFormat('MM/dd/yyyy HH:mm:ss');
   bool isFirstLoading = true;
   bool isSwitched = false;
-  String filePath = '';
+  Uint8List? fileBytes;
   String fileName = "";
   List<PlatformFile> _paths = [];
   String _directoryPath = "";
@@ -133,7 +134,7 @@ class DiscussionTopicCommentBloc extends Bloc<DiscussionTopicCommentEvent, Discu
         fileName = await openFileExplorer(event.pickingType);
 
         yield OpenFileExplorerState.completed(fileName: fileName);
-        print('file name here $fileName $filePath');
+        print('file name here $fileName $fileBytes');
       } else if (event is GetDiscussionTopicCommentReplyEvent) {
         yield GetDiscussionTopicReplyDetailsState.loading('Please wait');
         Response? apiResponse =
@@ -198,12 +199,9 @@ class DiscussionTopicCommentBloc extends Bloc<DiscussionTopicCommentEvent, Discu
       fileName = file != null
           ? file.name.replaceAll('(', ' ').replaceAll(')', '')
           : '';
-      filePath = file != null
-          ? (file.path ?? "")
-          : '';
+      fileBytes = file.bytes;
       fileName = fileName.trim();
       fileName = Uuid().v1() + fileName.substring(fileName.indexOf("."));
-      filePath = filePath.trim();
     }
     return fileName;
   }

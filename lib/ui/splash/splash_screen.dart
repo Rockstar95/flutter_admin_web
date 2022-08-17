@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_admin_web/ui/common/common_toast.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_downloader/flutter_downloader.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -92,7 +93,7 @@ class _SplashScreenState extends State<SplashScreen> {
       ApiEndpoints.siteID = subsiteID;
     }
 
-    if (siteURL.length == 0) {
+    if (siteURL.isEmpty) {
       appLogoUrl = ApiEndpoints.mainSiteURL + "Content/SiteConfiguration/374/LoginSettingLogo/logo.png";
     }
     else {
@@ -167,7 +168,7 @@ class _SplashScreenState extends State<SplashScreen> {
   }
 
   void doGetData() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
+    /*SharedPreferences prefs = await SharedPreferences.getInstance();
     isLoggedIn = prefs.getString('login') ?? "";
 
     if (isLoggedIn == 'true') {
@@ -216,6 +217,24 @@ class _SplashScreenState extends State<SplashScreen> {
     else {
       List<String> imageList = [];
       nextScreenNav(context, false, imageList);
+    }*/
+
+    // SharedPreferences prefs = await SharedPreferences.getInstance();
+    // isLoggedIn = prefs.getString('login') ?? "";
+    //
+    // print("isLoggedIn : $isLoggedIn" );
+    // if (isLoggedIn == 'true') {
+
+    appBloc.userid = await sharePrefGetString(sharedPref_userid);
+    Map<String,dynamic> userIdPass = await AuthenticationRepository().gettingSiteMetadata(ApiEndpoints.authToken);
+    bool loggedIn = await AuthenticationRepository().doLogin(userIdPass["email"], userIdPass["pass"], ApiEndpoints.strSiteUrl, '', '374', false,isEncrypted: true);
+
+    MyPrint.printOnConsole("loggedIn:$loggedIn");
+    if(loggedIn) {
+      Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => ActBase()), (_) => false);
+    }
+    else {
+      Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => LoginCommonPage()), (_) => false);
     }
   }
 

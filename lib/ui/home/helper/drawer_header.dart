@@ -94,8 +94,7 @@ class _DrawerHeaderWidgetState extends State<DrawerHeaderWidget> {
         }
         if (state.status == Status.COMPLETED) {
           if (state is GetUserAchievementDataState) {
-            if (state.userAchievementResponse != null &&
-                    state.userAchievementResponse.userLevel != null ||
+            if (state.userAchievementResponse != null ||
                 state.userAchievementResponse.userBadges != null ||
                 state.userAchievementResponse.userPoints != null) {}
           }
@@ -112,7 +111,7 @@ class _DrawerHeaderWidgetState extends State<DrawerHeaderWidget> {
               )
             : Padding(
                 // padding: EdgeInsets.only(left: ScreenUtil().setWidth(30)),
-                padding: EdgeInsets.all(10),
+                padding: const EdgeInsets.all(10),
                 child: Column(
                     crossAxisAlignment: CrossAxisAlignment.end,
                     children: [
@@ -124,7 +123,7 @@ class _DrawerHeaderWidgetState extends State<DrawerHeaderWidget> {
                             children: <Widget>[
                               ClipOval(
                                 child: CachedNetworkImage(
-                                  imageUrl: userimageUrl.length == 0
+                                  imageUrl: userimageUrl.isEmpty
                                       ? imgUrl
                                       : userimageUrl,
                                   width: 50.h,
@@ -133,6 +132,8 @@ class _DrawerHeaderWidgetState extends State<DrawerHeaderWidget> {
                                   placeholder: (context, url) => ClipOval(
                                     child: CircleAvatar(
                                       radius: 25.h,
+                                      backgroundColor: Color(int.parse(
+                                          "0xFF${appBloc.uiSettingModel.appButtonBgColor.substring(1, 7).toUpperCase()}")),
                                       child: Text(
                                        shortName,
                                         style: TextStyle(
@@ -141,14 +142,14 @@ class _DrawerHeaderWidgetState extends State<DrawerHeaderWidget> {
                                             color: Color(int.parse(
                                                 "0xFF${appBloc.uiSettingModel.appHeaderTextColor.substring(1, 7).toUpperCase()}"))),
                                       ),
-                                      backgroundColor: Color(int.parse(
-                                          "0xFF${appBloc.uiSettingModel.appButtonBgColor.substring(1, 7).toUpperCase()}")),
                                     ),
                                   ),
                                   errorWidget: (context, url, error) =>
                                       ClipOval(
                                     child: CircleAvatar(
                                       radius: 25.h,
+                                      backgroundColor: Color(int.parse(
+                                          "0xFF${appBloc.uiSettingModel.appButtonBgColor.substring(1, 7).toUpperCase()}")),
                                       child: Text(
                                         shortName,
                                         style: TextStyle(
@@ -157,19 +158,17 @@ class _DrawerHeaderWidgetState extends State<DrawerHeaderWidget> {
                                             color: Color(int.parse(
                                                 "0xFF${appBloc.uiSettingModel.appHeaderTextColor.substring(1, 7).toUpperCase()}"))),
                                       ),
-                                      backgroundColor: Color(int.parse(
-                                          "0xFF${appBloc.uiSettingModel.appButtonBgColor.substring(1, 7).toUpperCase()}")),
                                     ),
                                   ),
                                 ),
                               ),
-                              Spacer(),
+                              const Spacer(),
                               Column(children: [
                                 InkWell(
                                   onTap: () {
                                     widget.signOutFunc();
                                   },
-                                  child: new Icon(Icons.logout,
+                                  child: Icon(Icons.logout,
                                       color: appBloc.uiSettingModel
                                               .appHeaderTextColor.isEmpty
                                           ? Colors.grey
@@ -190,7 +189,7 @@ class _DrawerHeaderWidgetState extends State<DrawerHeaderWidget> {
                             ],
                           ),
                           Container(
-                            padding: EdgeInsets.all(5),
+                            padding: const EdgeInsets.all(5),
                             child: Text(
                               username,
                               maxLines: 1,
@@ -202,7 +201,7 @@ class _DrawerHeaderWidgetState extends State<DrawerHeaderWidget> {
                               overflow: TextOverflow.ellipsis,
                             ),
                           ),
-                          Divider(
+                          const Divider(
                             color: Colors.grey,
                             height: 3,
                           ),
@@ -245,7 +244,7 @@ class _DrawerHeaderWidgetState extends State<DrawerHeaderWidget> {
           "${myDashBoardBloc.userAchievementResponse.userOverAllData?.badges ?? ""}";
 
       userLevel =
-          "${myDashBoardBloc.userAchievementResponse.userOverAllData?.userLevel ?? ""}";
+          myDashBoardBloc.userAchievementResponse.userOverAllData?.userLevel ?? "";
     }
 
     return Column(
@@ -259,13 +258,15 @@ class _DrawerHeaderWidgetState extends State<DrawerHeaderWidget> {
           children: <Widget>[
             ClipOval(
               child: CachedNetworkImage(
-                imageUrl: userimageUrl.length == 0 ? imgUrl : userimageUrl,
+                imageUrl: userimageUrl.isEmpty ? imgUrl : userimageUrl,
                 width: 50.h,
                 height: 50.h,
                 fit: BoxFit.cover,
                 placeholder: (context, url) => ClipOval(
                   child: CircleAvatar(
                     radius: 25.h,
+                    backgroundColor: Color(int.parse(
+                        "0xFF${appBloc.uiSettingModel.appBGColor.substring(1, 7).toUpperCase()}")),
                     child: Text(
                       shortName,
                       style: TextStyle(
@@ -274,13 +275,13 @@ class _DrawerHeaderWidgetState extends State<DrawerHeaderWidget> {
                           color: Color(int.parse(
                               "0xFF${appBloc.uiSettingModel.appTextColor.substring(1, 7).toUpperCase()}"))),
                     ),
-                    backgroundColor: Color(int.parse(
-                        "0xFF${appBloc.uiSettingModel.appBGColor.substring(1, 7).toUpperCase()}")),
                   ),
                 ),
                 errorWidget: (context, url, error) => ClipOval(
                   child: CircleAvatar(
                     radius: 25.h,
+                    backgroundColor: Color(int.parse(
+                        "0xFF${appBloc.uiSettingModel.appButtonBgColor.substring(1, 7).toUpperCase()}")),
                     child: Text(
                       shortName,
                       style: TextStyle(
@@ -289,8 +290,6 @@ class _DrawerHeaderWidgetState extends State<DrawerHeaderWidget> {
                           color: Color(int.parse(
                               "0xFF${appBloc.uiSettingModel.appTextColor.substring(1, 7).toUpperCase()}"))),
                     ),
-                    backgroundColor: Color(int.parse(
-                        "0xFF${appBloc.uiSettingModel.appButtonBgColor.substring(1, 7).toUpperCase()}")),
                   ),
                 ),
               ),
@@ -348,8 +347,8 @@ class _DrawerHeaderWidgetState extends State<DrawerHeaderWidget> {
             overflow: TextOverflow.ellipsis,
           ),
         ),
-        Padding(
-          padding: const EdgeInsets.fromLTRB(0, 10, 20, 10),
+        const Padding(
+          padding: EdgeInsets.fromLTRB(0, 10, 20, 10),
           child: LinearProgressIndicator(
             backgroundColor: Colors.grey,
             valueColor: AlwaysStoppedAnimation<Color>(
@@ -380,7 +379,7 @@ class _DrawerHeaderWidgetState extends State<DrawerHeaderWidget> {
             ],
           ),
         ),
-        Divider(
+        const Divider(
           color: Colors.grey,
           height: 3,
         ),

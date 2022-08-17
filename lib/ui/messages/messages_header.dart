@@ -103,7 +103,15 @@ class Functions {
       } else {
         return false;
       }
-    } on SocketException catch (_) {
+    }
+    on SocketException catch (e, s) {
+      print("SocketException in messages_header.getNetworkStatus():${e}");
+      print(s);
+      return false;
+    }
+    catch(e, s) {
+      print("Error in messages_header.getNetworkStatus():${e}");
+      print(s);
       return false;
     }
   }

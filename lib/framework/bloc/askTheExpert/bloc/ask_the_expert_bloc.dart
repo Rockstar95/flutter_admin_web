@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:typed_data';
 
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/services.dart';
@@ -30,7 +31,7 @@ class AskTheExpertBloc extends Bloc<AskTheExpertEvent, AskTheExpertState> {
   List<CommentList> commentList = [];
   bool isAddAnswer = false;
 
-  String filePath = '';
+  Uint8List? fileBytes;
   String fileName = "";
   List<PlatformFile> _paths = [];
   String _directoryPath = "";
@@ -151,8 +152,8 @@ class AskTheExpertBloc extends Bloc<AskTheExpertEvent, AskTheExpertState> {
             userQuestion: event.userQuestion,
             userQuestionDesc: event.userQuestionDesc,
             userUploadedImageName: event.useruploadedImageName,
-            filePath: event.filePath,
             fileName: event.fileName,
+            fileBytes: event.fileBytes,
             skills: event.skills,
             selectedSkillIds: event.seletedSkillIds,
             editQueID: event.editQueID,
@@ -177,7 +178,7 @@ class AskTheExpertBloc extends Bloc<AskTheExpertEvent, AskTheExpertState> {
         fileName = await openFileExplorer(event.pickingType);
 
         yield OpenFileExplorerState.completed(fileName: fileName);
-        print('file name here $fileName $filePath');
+        print('file name here $fileName $fileBytes');
       }
       else if (event is AnswersListEvent) {
         isFirstLoading = true;
@@ -238,7 +239,7 @@ class AskTheExpertBloc extends Bloc<AskTheExpertEvent, AskTheExpertState> {
             userCommentImage: event.userCommentImage,
             commentStatus: event.commentStatus,
             isRemoveCommentImage: event.isRemoveCommentImage,
-            filePath: event.filePath,
+            fileBytes: event.fileBytes,
             fileName: event.fileName);
         if (apiResponse?.statusCode == 200) {
           isFirstLoading = false;
@@ -403,7 +404,7 @@ class AskTheExpertBloc extends Bloc<AskTheExpertEvent, AskTheExpertState> {
             responseID: event.responseID,
             questionID: event.questionID,
             isRemoveEditImage: event.isRemoveEditImage,
-            filePath: event.filePath,
+            fileBytes: event.fileBytes,
             fileName: event.fileName);
         if (apiResponse?.statusCode == 200) {
           yield AddAnswerState.completed(data: AddAnswerResponse(table: []));
@@ -468,15 +469,11 @@ class AskTheExpertBloc extends Bloc<AskTheExpertEvent, AskTheExpertState> {
     PlatformFile? file = _paths.isNotEmpty ? _paths.first : null;
 
     if(file != null) {
-      fileName = file != null
-          ? file.name.replaceAll('(', ' ').replaceAll(')', '')
-          : '';
-      filePath = file != null
-          ? (file.path ?? "")
-          : '';
+      fileName = file.name.replaceAll('(', ' ').replaceAll(')', '');
+
+      fileBytes = file.bytes;
       fileName = fileName.trim();
-      fileName = Uuid().v1() + fileName.substring(fileName.indexOf("."));
-      filePath = filePath.trim();
+      fileName = const Uuid().v1() + fileName.substring(fileName.indexOf("."));
     }
     return fileName;
   }

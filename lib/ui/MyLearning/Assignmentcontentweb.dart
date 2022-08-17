@@ -3,12 +3,11 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:flutter_admin_web/framework/bloc/app/bloc/app_bloc.dart';
 import 'package:flutter_admin_web/framework/bloc/mylearning/bloc/mylearning_bloc.dart';
 import 'package:flutter_admin_web/framework/bloc/mylearning/model/dummy_my_catelog_response_entity.dart';
 import 'package:logger/logger.dart';
-import 'package:webview_flutter/webview_flutter.dart';
+import 'package:webviewx/webviewx.dart';
 
 class Assignmentcontentweb extends StatefulWidget {
   Assignmentcontentweb({required this.url, required this.myLearningModel});
@@ -27,12 +26,9 @@ class Assignmentcontent extends State<Assignmentcontentweb> {
 
   MyLearningBloc get myLearningBloc => BlocProvider.of<MyLearningBloc>(context);
 
-  final Completer<WebViewController> _controller =
-      Completer<WebViewController>();
-
   AppBloc get appBloc => BlocProvider.of<AppBloc>(context);
 
-  InAppWebViewController? webView;
+  WebViewXController? webviewController;
 
   @override
   void initState() {
@@ -75,74 +71,23 @@ class Assignmentcontent extends State<Assignmentcontentweb> {
         child: Scaffold(
           resizeToAvoidBottomInset: true,
           // appBar: myAppBar(widget.myLearningModel),
-          body: new GestureDetector(
+          body: GestureDetector(
             child: Stack(
               children: <Widget>[
                 Column(
                   children: [
                     Expanded(
-                      child: InAppWebView(
-                        initialOptions: InAppWebViewGroupOptions(
-                          ///*
-                          android: AndroidInAppWebViewOptions(
-                            allowFileAccess: true,
-                          ),
-                          ios: IOSInAppWebViewOptions(),
-                          crossPlatform: InAppWebViewOptions(
-                            javaScriptEnabled: true,
-                            useOnLoadResource: true,
-                          ),
-                        ),
-                        initialUrlRequest: URLRequest(
-                            url: Uri.tryParse(widget.url.startsWith('www')
-                                ? 'https://${widget.url}'
-                                : widget.url),
-                            headers: {}),
-                        onLoadResource: (InAppWebViewController controller,
-                            LoadedResource resource) {
-                          //logger.e("....onLoadResource.....SAGAR.....${resource.url}");
-
-                          /// temp method
-
-                          if ((resource.url?.path.toLowerCase() ?? "").contains(
-                                  "coursetracking/savecontenttrackeddata1") ||
-                              (resource.url?.path.toLowerCase() ?? "")
-                                  .contains("blank.html?ioscourseclose=true") ||
-                              (resource.url?.path.toLowerCase() ?? "").contains(
-                                  "userassignment/submituserassignmentresponse")) {
-                            Navigator.of(context).pop(true);
-                          }
-                        },
-                        shouldOverrideUrlLoading:
-                            (InAppWebViewController controller,
-                                NavigationAction navigationAction) async {
-                          return NavigationActionPolicy.ALLOW;
-                        },
-                        onWebViewCreated: (InAppWebViewController controller) {
-                          webView = controller;
-                        },
-                        onLoadStart:
-                            (InAppWebViewController controller, Uri? url) {
-                          //logger.e("....onLoadStart.....SAGAR.....$url");
-                        },
-                        onLoadStop:
-                            (InAppWebViewController controller, Uri? url) {
-                          //logger.e("....onLoadStop.....SAGAR.....$url");
-                          setState(() {
-                            isLoading = false;
-                          });
-                        },
-                      ),
+                      child: getWebview(context),
                     ),
                   ],
                 ),
                 isLoading
-                    ? Center(child: CircularProgressIndicator())
+                    ? const Center(child: CircularProgressIndicator())
                     : Container(),
               ],
             ),
             onTap: () {
-              FocusScope.of(context).requestFocus(new FocusNode());
+              FocusScope.of(context).requestFocus(FocusNode());
             },
           ),
         ),
@@ -151,13 +96,12 @@ class Assignmentcontent extends State<Assignmentcontentweb> {
   }
 
   Widget myAppBar(DummyMyCatelogResponseTable2 myLearningModel) {
-    if (myLearningModel.objecttypeid == 8 ||
-        myLearningModel.objecttypeid == 9 ||
-        myLearningModel.objecttypeid == 10) {
-      return SizedBox();
-    } else {
+    if ([8, 9, 10].contains(myLearningModel.objecttypeid)) {
+      return const SizedBox();
+    }
+    else {
       return AppBar(
-        iconTheme: new IconThemeData(
+        iconTheme: IconThemeData(
           color: Color(int.parse(
               "0xFF${appBloc.uiSettingModel.appHeaderTextColor.substring(1, 7).toUpperCase()}")),
         ),
@@ -182,14 +126,13 @@ class Assignmentcontent extends State<Assignmentcontentweb> {
           Visibility(
             visible: widget.myLearningModel.mediatypeid != 13,
             child: IconButton(
-              icon: Icon(Icons.refresh),
+              icon: const Icon(Icons.refresh),
               onPressed: () {
                 if (widget.url.contains('https://docs.google.com')) {
                   setState(() {
                     isLoading = true;
                   });
-                  webView?.loadUrl(
-                      urlRequest: URLRequest(url: Uri.tryParse(widget.url)));
+                  webviewController?.loadContent(widget.url, SourceType.url);
                 }
               },
             ),
@@ -197,6 +140,55 @@ class Assignmentcontent extends State<Assignmentcontentweb> {
         ],
       );
     }
+  }
+
+  Widget getWebview(BuildContext context) {
+    Size size = MediaQuery.of(context).size;
+
+    return WebViewX(
+      width: size.width,
+      height: size.height,
+      initialContent: widget.url.startsWith('www') ? 'https://${widget.url}' : widget.url,
+      initialSourceType: SourceType.url,
+      onWebViewCreated: (WebViewXController controller) {
+        webviewController = controller;
+      },
+      onPageStarted: (String src) {
+        print("On Page Started Src:${src}");
+      },
+      onPageFinished: (String src) {
+        print("On Page Finished Src:${src}");
+        setState(() {
+          isLoading = false;
+        });
+
+        if (src.toLowerCase().contains("coursetracking/savecontenttrackeddata1") ||
+            src.toLowerCase().contains("blank.html?ioscourseclose=true") ||
+            src.toLowerCase().contains("userassignment/submituserassignmentresponse")
+        ) {
+          Navigator.of(context).pop(true);
+        }
+      },
+      onWebResourceError: (WebResourceError error) {
+        print("On Web Resource Error:${error.description}");
+      },
+      javascriptMode: JavascriptMode.unrestricted,
+      webSpecificParams: const WebSpecificParams(
+        webAllowFullscreenContent: true,
+      ),
+      userAgent: "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/78.0.3904.108 Safari/537.36",
+      navigationDelegate: (NavigationRequest navigation) async {
+        print("navigationDelegate source Type:${navigation.content.sourceType}");
+        print("navigationDelegate source:${navigation.content.source}");
+
+        if(navigation.content.sourceType == SourceType.url && (navigation.content.source.startsWith("http://") || navigation.content.source.startsWith("https://"))) {
+          return NavigationDecision.navigate;
+        }
+        else {
+          return NavigationDecision.prevent;
+        }
+      },
+    );
   }
 
   bool isFullScreen(DummyMyCatelogResponseTable2 myLearningModel) {
