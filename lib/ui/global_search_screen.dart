@@ -25,7 +25,6 @@ import 'package:flutter_admin_web/framework/common/constants.dart';
 import 'package:flutter_admin_web/framework/common/enums.dart';
 import 'package:flutter_admin_web/framework/common/pref_manger.dart';
 import 'package:flutter_admin_web/framework/helpers/ApiEndpoints.dart';
-import 'package:flutter_admin_web/framework/helpers/providermodel.dart';
 import 'package:flutter_admin_web/framework/helpers/utils.dart';
 import 'package:flutter_admin_web/framework/repository/Catalog/catalog_repositry_builder.dart';
 import 'package:flutter_admin_web/framework/repository/event_module/provider/event_repository_builder.dart';
@@ -693,8 +692,7 @@ class _GlobalSearchScreenState extends State<GlobalSearchScreen> {
 
     switch (searchResult.searchComponent.menuId) {
       case 3219:
-        selectedWidget = ChangeNotifierProvider(
-            create: (context) => ProviderModel(), child: EventMainPage(enableSearching: false, searchString: globalSearchBloc.searchString,));
+        selectedWidget = EventMainPage(enableSearching: false, searchString: globalSearchBloc.searchString,);
         break;
       case 50014:
         appBloc.listNativeModel.forEach((element) async {
@@ -737,14 +735,11 @@ class _GlobalSearchScreenState extends State<GlobalSearchScreen> {
         //     categaoryName: '',
         //     nativeMenuModel: nativeMenuModel);
 
-        selectedWidget = ChangeNotifierProvider(
-          create: (context) => ProviderModel(),
-          child: CatalogRefreshScreen(
-            categaoryID: 0,
-            categaoryName: "",
-            nativeMenuModel: nativeMenuModel,
-            searchString: globalSearchBloc.searchString,
-          ),
+        selectedWidget = CatalogRefreshScreen(
+          categaoryID: 0,
+          categaoryName: "",
+          nativeMenuModel: nativeMenuModel,
+          searchString: globalSearchBloc.searchString,
         );
         break;
       case 4018:
@@ -762,14 +757,11 @@ class _GlobalSearchScreenState extends State<GlobalSearchScreen> {
         //     categaoryID: 0,
         //     categaoryName: '',
         //     nativeMenuModel: nativeMenuModel);
-        selectedWidget = ChangeNotifierProvider(
-          create: (context) => ProviderModel(),
-          child: CatalogRefreshScreen(
-            categaoryID: 0,
-            categaoryName: "",
-            nativeMenuModel: nativeMenuModel,
-            searchString: globalSearchBloc.searchString,
-          ),
+        selectedWidget = CatalogRefreshScreen(
+          categaoryID: 0,
+          categaoryName: "",
+          nativeMenuModel: nativeMenuModel,
+          searchString: globalSearchBloc.searchString,
         );
         break;
       case 3091:
@@ -784,14 +776,11 @@ class _GlobalSearchScreenState extends State<GlobalSearchScreen> {
                 sharedPref_RepositoryId, element.repositoryId);
           }
         });
-        selectedWidget = ChangeNotifierProvider(
-          create: (context) => ProviderModel(),
-          child: CatalogRefreshScreen(
-              categaoryID: 0,
-              categaoryName: "",
-              nativeMenuModel: nativeMenuModel,
-            searchString: globalSearchBloc.searchString,
-          ),
+        selectedWidget = CatalogRefreshScreen(
+            categaoryID: 0,
+            categaoryName: "",
+            nativeMenuModel: nativeMenuModel,
+          searchString: globalSearchBloc.searchString,
         );
         break;
       case 3219:
@@ -913,15 +902,12 @@ class _GlobalSearchScreenState extends State<GlobalSearchScreen> {
                           ? GestureDetector(
                               onTap: () {
                                 Navigator.of(context).push(MaterialPageRoute(
-                                    builder: (context) => ChangeNotifierProvider(
-                                          create: (context) => ProviderModel(),
-                                          child: WishList(
-                                            categaoryID: 0,
-                                            categaoryName: "",
-                                            detailsBloc: myLearningDetailsBloc,
-                                            filterMenus: {},
-                                          ),
-                                        )));
+                                    builder: (context) => WishList(
+                                      categaoryID: 0,
+                                      categaoryName: "",
+                                      detailsBloc: myLearningDetailsBloc,
+                                      filterMenus: {},
+                                    )));
                               },
                               child: Icon(
                                 Icons.favorite,
@@ -1340,18 +1326,15 @@ class _GlobalSearchScreenState extends State<GlobalSearchScreen> {
           IconDataSolid(int.parse('0xf570')),
           color: InsColor(appBloc).appIconColor,
         ),
-        screen: ChangeNotifierProvider(
-          create: (context) => ProviderModel(),
-          child: CommonDetailScreen(
-              screenType: ScreenType.Events,
-              contentid: result.contentId,
-              objtypeId: result.contentTypeId,
-              detailsBloc: myLearningDetailsBloc,
-              table2: myCatelogResponseTable2,
-              isShowShedule: true,
-              isFromReschedule: false,
-              filterMenus: filterMenus),
-        ),
+        screen: CommonDetailScreen(
+            screenType: ScreenType.Events,
+            contentid: result.contentId,
+            objtypeId: result.contentTypeId,
+            detailsBloc: myLearningDetailsBloc,
+            table2: myCatelogResponseTable2,
+            isShowShedule: true,
+            isFromReschedule: false,
+            filterMenus: filterMenus),
     );
   }
 
@@ -1491,18 +1474,15 @@ class _GlobalSearchScreenState extends State<GlobalSearchScreen> {
           IconDataSolid(int.parse('0xf570')),
           color: InsColor(appBloc).appIconColor,
         ),
-        screen: ChangeNotifierProvider(
-          create: (context) => ProviderModel(),
-          child: CommonDetailScreen(
-              screenType: ScreenType.Catalog,
-              contentid: result.contentId,
-              objtypeId: result.contentTypeId,
-              detailsBloc: myLearningDetailsBloc,
-              table2: myCatelogResponseTable2,
-              isShowShedule: true,
-              isFromReschedule: false,
-              filterMenus: filterMenus),
-        ));
+        screen: CommonDetailScreen(
+            screenType: ScreenType.Catalog,
+            contentid: result.contentId,
+            objtypeId: result.contentTypeId,
+            detailsBloc: myLearningDetailsBloc,
+            table2: myCatelogResponseTable2,
+            isShowShedule: true,
+            isFromReschedule: false,
+            filterMenus: filterMenus));
   }
 
   ResultMoreOptionModel initGoToTopicOption(CourseList result) {

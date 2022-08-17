@@ -32,7 +32,6 @@ import 'package:table_calendar/table_calendar.dart';
 import 'package:url_launcher/url_launcher_string.dart';
 
 import '../../../../framework/bloc/mylearning/bloc/mylearning_details_bloc.dart';
-import '../../../../framework/helpers/providermodel.dart';
 import '../../../../framework/repository/mylearning/mylearning_repositry_builder.dart';
 import '../../../common/bottomsheet_drager.dart';
 import '../../../global_search_screen.dart';
@@ -58,7 +57,7 @@ class DashboardCalendar extends State<DashboardCalendarScreen> with TickerProvid
   String tabValue = 'upcoming';
   late EvntModuleBloc eventModuleBloc;
   final _controller = ScrollController();
-  ScrollController _sc = new ScrollController();
+  ScrollController _sc = ScrollController();
   bool isGetListEvent = false;
   int selectedIndex = 0;
   int pageNumber = 1;
@@ -104,7 +103,7 @@ class DashboardCalendar extends State<DashboardCalendarScreen> with TickerProvid
 
     for (EventResourcePlusResponse item in widget.getEventresourcelist) {
       DateTime dateTime =
-          new DateFormat('yyyy-MM-ddThh:mm:ss').parse(item.start); //'mm/dd/yyyy hh:mm:ss a'
+          DateFormat('yyyy-MM-ddThh:mm:ss').parse(item.start); //'mm/dd/yyyy hh:mm:ss a'
       _filteredEvents[_selectedDay.subtract(Duration(days: dateTime.day))] = [
         item
       ];
@@ -133,7 +132,7 @@ class DashboardCalendar extends State<DashboardCalendarScreen> with TickerProvid
         pageIndex: 1,
     ));
 
-    Future.delayed(Duration(seconds: 4), () {
+    Future.delayed(const Duration(seconds: 4), () {
       eventModuleBloc.add(GetCalanderFilterListContent(
       startDate: DateTime.now().toString().split(" ")[0]));
     });
@@ -159,7 +158,7 @@ class DashboardCalendar extends State<DashboardCalendarScreen> with TickerProvid
       body: SafeArea(
         child: Column(
           children: [
-            Text(
+            const Text(
               'Calendar',
               style: TextStyle(color: Colors.black),
             ),
@@ -333,7 +332,7 @@ class DashboardCalendar extends State<DashboardCalendarScreen> with TickerProvid
             } else {
               flutterToast.showToast(
                   gravity: ToastGravity.BOTTOM,
-                  toastDuration: Duration(seconds: 2),
+                  toastDuration: const Duration(seconds: 2),
                   child: CommonToast(displaymsg: 'Something went wrong'));
             }
           }
@@ -382,7 +381,7 @@ class DashboardCalendar extends State<DashboardCalendarScreen> with TickerProvid
                                         //monthViewSettings: MonthViewSettings(showAgenda: true),
 
                                         //For showing eventnames in down side of the dates
-                                        monthViewSettings: MonthViewSettings(
+                                        monthViewSettings: const MonthViewSettings(
                                            // numberOfWeeksInView: 4,
                                             appointmentDisplayCount: 1,
                                             
@@ -461,7 +460,7 @@ class DashboardCalendar extends State<DashboardCalendarScreen> with TickerProvid
                                                 myLearningBloc: myLearningBloc,
                                                 pageIndex: 1));
 
-                                              Future.delayed(Duration(seconds: 4), () {
+                                              Future.delayed(const Duration(seconds: 4), () {
                                               eventModuleBloc.add(GetCalanderFilterListContent(
                                               startDate: DateTime.now().toString().split(" ")[0]));
                                               });
@@ -676,9 +675,9 @@ class DashboardCalendar extends State<DashboardCalendarScreen> with TickerProvid
     eventModuleBloc.calanderFilterList.forEach((element) {
       final DateTime today = DateTime.now();
 
-      final DateTime startTime = new DateFormat("yyyy-MM-ddThh:mm:ss")
+      final DateTime startTime = DateFormat("yyyy-MM-ddThh:mm:ss")
           .parse(element.createddate);
-      final DateTime endTime = startTime.add(Duration(hours: 2));
+      final DateTime endTime = startTime.add(const Duration(hours: 2));
           _filteredEvents[_selectedDay.subtract(Duration(days: startTime.day))] = [
         element
       ];
@@ -694,10 +693,10 @@ class DashboardCalendar extends State<DashboardCalendarScreen> with TickerProvid
       final DateTime today = DateTime.now();
       print("_getDataSource ${element.eventstartdatedisplay}");
       if(element.eventstartdatedisplay != ""){
-      final DateTime startTime =  new DateFormat("yyyy-MM-ddThh:mm:ss")
+      final DateTime startTime =  DateFormat("yyyy-MM-ddThh:mm:ss")
           .parse(element.eventstartdatedisplay);
       
-      final DateTime endTime = startTime.add(Duration(hours: 2));
+      final DateTime endTime = startTime.add(const Duration(hours: 2));
      // if(!meetings.contains(Meeting("${element.name}",startTime,startTime,const Color(0xFF0F8644),false))){
       meetings.add(Meeting(
           "${element.name}",
@@ -730,7 +729,7 @@ class DashboardCalendar extends State<DashboardCalendarScreen> with TickerProvid
           myLearningBloc: myLearningBloc,
           pageIndex: pageNumber));
       _controller.animateTo(MediaQuery.of(context).size.width * index,
-          duration: Duration(seconds: 1), curve: Curves.fastOutSlowIn);
+          duration: const Duration(seconds: 1), curve: Curves.fastOutSlowIn);
     });
   }
 
@@ -767,7 +766,7 @@ class DashboardCalendar extends State<DashboardCalendarScreen> with TickerProvid
         ? ResponsiveWidget(
             mobile: ListView.builder(
                 scrollDirection: Axis.vertical,
-                physics: PageScrollPhysics(),
+                physics: const PageScrollPhysics(),
                 shrinkWrap: true,
                 itemCount: eventModuleBloc.list.length,
                 itemBuilder: (context, i) {
@@ -779,19 +778,19 @@ class DashboardCalendar extends State<DashboardCalendarScreen> with TickerProvid
                   childAspectRatio: MediaQuery.of(context).size.width / 960,
                 ),
                 scrollDirection: Axis.vertical,
-                physics: PageScrollPhysics(),
+                physics: const PageScrollPhysics(),
                 shrinkWrap: true,
                 itemCount: eventModuleBloc.list.length,
                 itemBuilder: (context, i) {
                   return widgetMyEventItems(eventModuleBloc.list[i],i);
                 }),
             web: GridView.builder(
-              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                 crossAxisCount: 5,
                 childAspectRatio: 1,
               ),
               scrollDirection: Axis.vertical,
-              physics: PageScrollPhysics(),
+              physics: const PageScrollPhysics(),
               shrinkWrap: true,
               itemCount: eventModuleBloc.list.length,
               itemBuilder: (context, i) {
@@ -878,12 +877,12 @@ class DashboardCalendar extends State<DashboardCalendarScreen> with TickerProvid
                             if (eventModuleBloc.list.length == 0) {
                               if (state.status == Status.LOADING &&
                                   state is GetTabContentState) {
-                                return Padding(
-                                  padding: const EdgeInsets.all(8.0),
-                                  child: new Center(
-                                    child: new Opacity(
+                                return const Padding(
+                                  padding: EdgeInsets.all(8.0),
+                                  child: Center(
+                                    child: Opacity(
                                       opacity: 1.0,
-                                      child: new CircularProgressIndicator(),
+                                      child: CircularProgressIndicator(),
                                     ),
                                   ),
                                 );
@@ -909,12 +908,12 @@ class DashboardCalendar extends State<DashboardCalendarScreen> with TickerProvid
                               if (state.status == Status.LOADING &&
                                   state is GetTabContentState) {
 //                        print("gone in _buildProgressIndicator");
-                                return Padding(
-                                  padding: const EdgeInsets.all(8.0),
-                                  child: new Center(
-                                    child: new Opacity(
+                                return const Padding(
+                                  padding: EdgeInsets.all(8.0),
+                                  child: Center(
+                                    child: Opacity(
                                       opacity: 1.0,
-                                      child: new CircularProgressIndicator(),
+                                      child: CircularProgressIndicator(),
                                     ),
                                   ),
                                 );
@@ -926,7 +925,7 @@ class DashboardCalendar extends State<DashboardCalendarScreen> with TickerProvid
                             }
                           }),
                       web: GridView.builder(
-                          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                             crossAxisCount: 5,
                             childAspectRatio: 1,
                           ),
@@ -938,12 +937,12 @@ class DashboardCalendar extends State<DashboardCalendarScreen> with TickerProvid
                               if (state.status == Status.LOADING &&
                                   state is GetTabContentState) {
 //                        print("gone in _buildProgressIndicator");
-                                return Padding(
-                                  padding: const EdgeInsets.all(8.0),
-                                  child: new Center(
-                                    child: new Opacity(
+                                return const Padding(
+                                  padding: EdgeInsets.all(8.0),
+                                  child: Center(
+                                    child: Opacity(
                                       opacity: 1.0,
-                                      child: new CircularProgressIndicator(),
+                                      child: CircularProgressIndicator(),
                                     ),
                                   ),
                                 );
@@ -982,7 +981,7 @@ class DashboardCalendar extends State<DashboardCalendarScreen> with TickerProvid
     final result = await Navigator.push(
       context,
       // Create the SelectionScreen in the next step.
-      MaterialPageRoute(builder: (context) => GlobalSearchScreen(menuId: 3219)),
+      MaterialPageRoute(builder: (context) => const GlobalSearchScreen(menuId: 3219)),
     );
 
     print(result);
@@ -1031,11 +1030,11 @@ class DashboardCalendar extends State<DashboardCalendarScreen> with TickerProvid
     }
     
     if(table2.eventstartdatedisplay != "" && table2.eventenddatedisplay != ""){
-    DateTime startTempDate = new DateFormat("yyyy-MM-ddThh:mm:ss")
+    DateTime startTempDate = DateFormat("yyyy-MM-ddThh:mm:ss")
         .parse(table2.eventstartdatedisplay);
 
     DateTime endTempDate =
-        new DateFormat("yyyy-MM-ddThh:mm:ss").parse(table2.eventenddatedisplay);
+        DateFormat("yyyy-MM-ddThh:mm:ss").parse(table2.eventenddatedisplay);
 
     startDate = 
            DateFormat("yyyy-MM-ddThh:mm:ss").format(startTempDate);
@@ -1098,8 +1097,8 @@ class DashboardCalendar extends State<DashboardCalendarScreen> with TickerProvid
                           child: Center(
                               heightFactor: ScreenUtil().setWidth(20),
                               widthFactor: ScreenUtil().setWidth(20),
-                              child: CircularProgressIndicator(
-                                valueColor: new AlwaysStoppedAnimation<Color>(
+                              child: const CircularProgressIndicator(
+                                valueColor: AlwaysStoppedAnimation<Color>(
                                     Colors.orange),
                               ))),
                       errorWidget: (context, url, error) => Image.asset(
@@ -1117,7 +1116,7 @@ class DashboardCalendar extends State<DashboardCalendarScreen> with TickerProvid
                       child: Visibility(
                         visible: kShowContentTypeIcon,
                         child: Container(
-                            padding: EdgeInsets.all(2.0),
+                            padding: const EdgeInsets.all(2.0),
                             color: Colors.white,
                             child: CachedNetworkImage(
                               height: 30,
@@ -1180,14 +1179,14 @@ class DashboardCalendar extends State<DashboardCalendarScreen> with TickerProvid
                   ),
                   Row(
                     children: <Widget>[
-                      new Container(
+                      Container(
                           width: ScreenUtil().setWidth(20),
                           height: ScreenUtil().setWidth(20),
-                          decoration: new BoxDecoration(
+                          decoration: BoxDecoration(
                               shape: BoxShape.circle,
-                              image: new DecorationImage(
+                              image: DecorationImage(
                                   fit: BoxFit.fill,
-                                  image: new NetworkImage(imgUrl)))),
+                                  image: NetworkImage(imgUrl)))),
                       SizedBox(
                         width: ScreenUtil().setWidth(5),
                       ),
@@ -1311,7 +1310,7 @@ class DashboardCalendar extends State<DashboardCalendarScreen> with TickerProvid
                       ],
                     ),
                   ),
-                  SizedBox(height: 8),
+                  const SizedBox(height: 8),
                   Padding(
                     padding: const EdgeInsets.all(2.0),
                     child: Row(
@@ -1334,7 +1333,7 @@ class DashboardCalendar extends State<DashboardCalendarScreen> with TickerProvid
                       ],
                     ),
                   ),
-                  SizedBox(height: 8),
+                  const SizedBox(height: 8),
                   Padding(
                     padding: const EdgeInsets.all(2.0),
                     child: Row(
@@ -1357,7 +1356,7 @@ class DashboardCalendar extends State<DashboardCalendarScreen> with TickerProvid
                       ],
                     ),
                   ),
-                  SizedBox(height: 8),
+                  const SizedBox(height: 8),
                   Padding(
                     padding: const EdgeInsets.all(2.0),
                     child: Row(
@@ -1424,9 +1423,9 @@ class DashboardCalendar extends State<DashboardCalendarScreen> with TickerProvid
                   "0xFF${appBloc.uiSettingModel.appBGColor.substring(1, 7).toUpperCase()}"),
             ),
             child: SingleChildScrollView(
-              child: new Column(
+              child: Column(
                 children: <Widget>[
-                  BottomSheetDragger(),
+                  const BottomSheetDragger(),
                   //displayPlay(table2),
                   displayView(table2),
                   displayDetails(table2, i),
@@ -1472,12 +1471,12 @@ class DashboardCalendar extends State<DashboardCalendarScreen> with TickerProvid
           (table2.mediatypeid == 3 || table2.mediatypeid == 4)) {
         return Container();
       } else {
-        return new ListTile(
+        return ListTile(
           leading: Icon(
             IconDataSolid(int.parse('0xf06e')),
             color: InsColor(appBloc).appIconColor,
           ),
-          title: new Text(appBloc.localstr.mylearningActionsheetViewoption,
+          title: Text(appBloc.localstr.mylearningActionsheetViewoption,
               style: TextStyle(
                   color: Color(
                 int.parse(
@@ -1490,15 +1489,11 @@ class DashboardCalendar extends State<DashboardCalendarScreen> with TickerProvid
 //              print('ifdataaaaa');
               String alertMessage =
                   appBloc.localstr.prerequistesalerttitle6Alerttitle6;
-              alertMessage = alertMessage +
-                  "  \"" +
-                  appBloc.localstr.prerequisLabelContenttypelabel +
-                  "\" " +
-                  appBloc.localstr.prerequistesalerttitle5Alerttitle7;
+              alertMessage = "$alertMessage  \"${appBloc.localstr.prerequisLabelContenttypelabel}\" ${appBloc.localstr.prerequistesalerttitle5Alerttitle7}";
 
               showDialog(
                   context: context,
-                  builder: (BuildContext context) => new AlertDialog(
+                  builder: (BuildContext context) => AlertDialog(
                         title: Text(
                           appBloc.localstr.detailsAlerttitleStringalert,
                           style: TextStyle(
@@ -1540,9 +1535,9 @@ class DashboardCalendar extends State<DashboardCalendarScreen> with TickerProvid
                         ),
                         backgroundColor: InsColor(appBloc).appBGColor,
                         shape: RoundedRectangleBorder(
-                            borderRadius: new BorderRadius.circular(5)),
+                            borderRadius: BorderRadius.circular(5)),
                         actions: <Widget>[
-                          new FlatButton(
+                          FlatButton(
                             child: Text(
                                 appBloc.localstr.eventsAlertbuttonOkbutton),
                             textColor: Colors.blue,
@@ -1562,12 +1557,12 @@ class DashboardCalendar extends State<DashboardCalendarScreen> with TickerProvid
     } else if (table2.objecttypeid == 688 || table2.objecttypeid == 70) {
       return Container();
     } else {
-      return new ListTile(
+      return ListTile(
         leading: Icon(
           IconDataSolid(int.parse('0xf06e')),
           color: InsColor(appBloc).appIconColor,
         ),
-        title: new Text(appBloc.localstr.mylearningActionsheetViewoption,
+        title: Text(appBloc.localstr.mylearningActionsheetViewoption,
             style: TextStyle(
                 color: Color(
               int.parse(
@@ -1588,7 +1583,7 @@ class DashboardCalendar extends State<DashboardCalendarScreen> with TickerProvid
 
             showDialog(
                 context: context,
-                builder: (BuildContext context) => new AlertDialog(
+                builder: (BuildContext context) => AlertDialog(
                       title: Text(
                         'Pre-requisite Sequence',
                         style: TextStyle(
@@ -1609,12 +1604,11 @@ class DashboardCalendar extends State<DashboardCalendarScreen> with TickerProvid
                                     "0xFF${appBloc.uiSettingModel.appTextColor.substring(1, 7).toUpperCase()}"),
                               ))),
                           Text(
-                              '\n' +
-                                  table2.viewprerequisitecontentstatus
+                              '\n${table2.viewprerequisitecontentstatus
                                       .toString()
                                       .split('#%')[1]
-                                      .split('\$;')[0],
-                              style: TextStyle(
+                                      .split('\$;')[0]}',
+                              style: const TextStyle(
                                 fontSize: 16.0,
                                 color: Colors.blue,
                               )),
@@ -1632,9 +1626,9 @@ class DashboardCalendar extends State<DashboardCalendarScreen> with TickerProvid
                       ),
                       backgroundColor: InsColor(appBloc).appBGColor,
                       shape: RoundedRectangleBorder(
-                          borderRadius: new BorderRadius.circular(5)),
+                          borderRadius: BorderRadius.circular(5)),
                       actions: <Widget>[
-                        new FlatButton(
+                        FlatButton(
                           child:
                               Text(appBloc.localstr.eventsAlertbuttonOkbutton),
                           textColor: Colors.blue,
@@ -1722,12 +1716,12 @@ class DashboardCalendar extends State<DashboardCalendarScreen> with TickerProvid
     if (table2.objecttypeid == 70 && (table2.bit4 != null && table2.bit4)) {
       return Container();
     }
-    return new ListTile(
+    return ListTile(
         leading: Icon(
           IconDataSolid(int.parse('0xf570')),
           color: InsColor(appBloc).appIconColor,
         ),
-        title: new Text(appBloc.localstr.mylearningActionsheetDetailsoption,
+        title: Text(appBloc.localstr.mylearningActionsheetDetailsoption,
             style: TextStyle(
                 color: Color(
               int.parse(
@@ -1741,19 +1735,16 @@ class DashboardCalendar extends State<DashboardCalendarScreen> with TickerProvid
               ) {
             Navigator.of(context)
                 .push(MaterialPageRoute(
-                    builder: (context) => ChangeNotifierProvider(
-                          create: (context) => ProviderModel(),
-                          child: CommonDetailScreen(
-                            screenType: ScreenType.MyLearning,
-                            contentid: table2.contentid,
-                            objtypeId: table2.objecttypeid,
-                            detailsBloc: detailsBloc,
-                            table2: table2,
-                            //     nativeModel: widget.nativeModel,
-                            isFromReschedule: false,
-                            //isFromMyLearning: false
-                          ),
-                        )))
+                    builder: (context) => CommonDetailScreen(
+                      screenType: ScreenType.MyLearning,
+                      contentid: table2.contentid,
+                      objtypeId: table2.objecttypeid,
+                      detailsBloc: detailsBloc,
+                      table2: table2,
+                      //     nativeModel: widget.nativeModel,
+                      isFromReschedule: false,
+                      //isFromMyLearning: false
+                    )))
                 .then((value) => {
                       if (value == true)
                         { Container(),
@@ -1766,19 +1757,16 @@ class DashboardCalendar extends State<DashboardCalendarScreen> with TickerProvid
                     });
           } else if (table2.objecttypeid == 70) {
             print(
-                'isaddedtomylearning' + table2.isaddedtomylearning.toString());
+                'isaddedtomylearning${table2.isaddedtomylearning}');
             Navigator.of(context)
                 .push(MaterialPageRoute(
-                    builder: (context) => ChangeNotifierProvider(
-                          create: (context) => ProviderModel(),
-                          child: CommonDetailScreen(
-                              screenType: ScreenType.MyLearning,
-                              contentid: table2.contentid,
-                              objtypeId: table2.objecttypeid,
-                              detailsBloc: detailsBloc,
-                              table2: table2,
-                              isFromReschedule: false),
-                        )))
+                    builder: (context) => CommonDetailScreen(
+                        screenType: ScreenType.MyLearning,
+                        contentid: table2.contentid,
+                        objtypeId: table2.objecttypeid,
+                        detailsBloc: detailsBloc,
+                        table2: table2,
+                        isFromReschedule: false)))
                 .then((value) => {
                       if (value == true)
                         {
@@ -1790,22 +1778,19 @@ class DashboardCalendar extends State<DashboardCalendarScreen> with TickerProvid
                     });
           } else {
             print(
-                'isaddedtomylearning' + table2.isaddedtomylearning.toString());
+                'isaddedtomylearning${table2.isaddedtomylearning}');
             Navigator.of(context)
                 .push(MaterialPageRoute(
-                    builder: (context) => ChangeNotifierProvider(
-                          create: (context) => ProviderModel(),
-                          child: CommonDetailScreen(
-                              screenType: ScreenType.MyLearning,
-                              contentid: table2.contentid,
-                              objtypeId: table2.objecttypeid,
-                              detailsBloc: detailsBloc,
-                              table2: table2,
-                              pos: i,
-                              mylearninglist: myLearningBloc.list,
-                              isFromReschedule: false
-                              //isFromMyLearning: true
-                              ),
+                    builder: (context) => CommonDetailScreen(
+                        screenType: ScreenType.MyLearning,
+                        contentid: table2.contentid,
+                        objtypeId: table2.objecttypeid,
+                        detailsBloc: detailsBloc,
+                        table2: table2,
+                        pos: i,
+                        mylearninglist: myLearningBloc.list,
+                        isFromReschedule: false
+                        //isFromMyLearning: true
                         )))
                 .then((value) => {
                       if (value == true)
@@ -1992,12 +1977,12 @@ class DashboardCalendar extends State<DashboardCalendarScreen> with TickerProvid
       if ((table2.eventenddatetime != null) && isValidString(table2.eventenddatetime)) if (!returnEventCompleted(
           table2.eventenddatetime)) {
         if (table2.typeofevent == 2) {
-          return new ListTile(
+          return ListTile(
             leading: Icon(
               IconDataSolid(int.parse('0xf234')),
               color: InsColor(appBloc).appIconColor,
             ),
-            title: new Text(appBloc.localstr.mylearningActionsheetJoinoption,
+            title: Text(appBloc.localstr.mylearningActionsheetJoinoption,
                 style: TextStyle(
                     color: Color(
                   int.parse(
@@ -2015,7 +2000,7 @@ class DashboardCalendar extends State<DashboardCalendarScreen> with TickerProvid
                 flutterToast.showToast(
                   child: CommonToast(displaymsg: 'No url found'),
                   gravity: ToastGravity.BOTTOM,
-                  toastDuration: Duration(seconds: 2),
+                  toastDuration: const Duration(seconds: 2),
                 );
 //              Toast.makeText(v.getContext(), "No Url Found", Toast.LENGTH_SHORT).show();
               }
@@ -2051,7 +2036,7 @@ class DashboardCalendar extends State<DashboardCalendarScreen> with TickerProvid
     if (!isValidString(eventDate)) return false;
 
     try {
-      fromDate = new DateFormat("yyyy-MM-ddTHH:mm:ss").parse(eventDate);
+      fromDate = DateFormat("yyyy-MM-ddTHH:mm:ss").parse(eventDate);
 
       final date2 = DateTime.now();
       difference = date2.difference(fromDate).inDays;
@@ -2078,12 +2063,12 @@ class DashboardCalendar extends State<DashboardCalendarScreen> with TickerProvid
 
       if ((table2.eventenddatetime != null) && isValidString(table2.eventenddatetime)) if (!returnEventCompleted(
           table2.eventenddatetime)) {
-        return new ListTile(
+        return ListTile(
           leading: Icon(
             IconDataSolid(int.parse('0xf271')),
             color: InsColor(appBloc).appIconColor,
           ),
-          title: new Text(
+          title: Text(
               appBloc.localstr.mylearningActionsheetAddtocalendaroption,
               style: TextStyle(
                   color: Color(
@@ -2091,9 +2076,9 @@ class DashboardCalendar extends State<DashboardCalendarScreen> with TickerProvid
                     "0xFF${appBloc.uiSettingModel.appTextColor.substring(1, 7).toUpperCase()}"),
               ))),
           onTap: () {
-            DateTime startDate = new DateFormat("yyyy-MM-ddTHH:mm:ss")
+            DateTime startDate = DateFormat("yyyy-MM-ddTHH:mm:ss")
                 .parse(table2.eventstartdatetime);
-            DateTime endDate = new DateFormat("yyyy-MM-ddTHH:mm:ss")
+            DateTime endDate = DateFormat("yyyy-MM-ddTHH:mm:ss")
                 .parse(table2.eventenddatetime);
 
 //            print(
@@ -2114,7 +2099,7 @@ class DashboardCalendar extends State<DashboardCalendarScreen> with TickerProvid
                         ? 'Event added successfully'
                         : 'Error occured while adding event'),
                 gravity: ToastGravity.BOTTOM,
-                toastDuration: Duration(seconds: 2),
+                toastDuration: const Duration(seconds: 2),
               );
             });
           },
@@ -2160,7 +2145,7 @@ class DashboardCalendar extends State<DashboardCalendarScreen> with TickerProvid
         child: Center(
           child: Text(
             '${date.day}',
-            style: TextStyle().copyWith(
+            style: const TextStyle().copyWith(
               color: Colors.black,
               fontSize: 12.0,
             ),
@@ -2302,7 +2287,7 @@ class DashboardCalendar extends State<DashboardCalendarScreen> with TickerProvid
   Widget _buildHighlitedEventsMarker(DateTime date, List events) {
     return AnimatedContainer(
       duration: const Duration(milliseconds: 300),
-      decoration: BoxDecoration(
+      decoration: const BoxDecoration(
         shape: BoxShape.circle,
 // borderRadius: BorderRadius.circular(4),
 /* color: _calendarController.isSelected(date)
@@ -2316,7 +2301,7 @@ class DashboardCalendar extends State<DashboardCalendarScreen> with TickerProvid
       child: Center(
         child: Text(
           '${date.day}',
-          style: TextStyle().copyWith(
+          style: const TextStyle().copyWith(
             color: Colors.white,
             fontSize: 12.0,
           ),

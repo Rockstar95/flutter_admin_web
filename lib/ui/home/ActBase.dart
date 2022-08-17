@@ -30,7 +30,6 @@ import 'package:flutter_admin_web/framework/common/logout_alert_dialog.dart';
 import 'package:flutter_admin_web/framework/common/notification_string.dart';
 import 'package:flutter_admin_web/framework/common/pref_manger.dart';
 import 'package:flutter_admin_web/framework/helpers/ApiEndpoints.dart';
-import 'package:flutter_admin_web/framework/helpers/providermodel.dart';
 import 'package:flutter_admin_web/framework/helpers/utils.dart';
 import 'package:flutter_admin_web/framework/repository/mylearning/mylearning_repositry_builder.dart';
 import 'package:flutter_admin_web/framework/repository/profile/provider/profile_repository_builder.dart';
@@ -63,7 +62,6 @@ import 'package:flutter_admin_web/ui/progressReport/progress_report.dart';
 import 'package:flutter_admin_web/ui/splash/splash_screen.dart';
 import 'package:flutter_admin_web/utils/my_print.dart';
 import 'package:http/http.dart';
-import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../common/app_colors.dart';
@@ -498,7 +496,7 @@ class _ActBaseState extends State<ActBase> {
                         "0xFF${appBloc.uiSettingModel.menuTextColor.substring(1, 7).toUpperCase()}"))
                 //color: GloballColor.secondaryAppColor,
                 ),
-            title: new Text(
+            title: Text(
               "Instancy Learning",
               style: TextStyle(
                   color: appBloc.uiSettingModel.menuTextColor.isEmpty
@@ -567,7 +565,7 @@ class _ActBaseState extends State<ActBase> {
                   : AppColors.getMenuTextColor()
               //color: GloballColor.secondaryAppColor,
               ),
-          title: new Text(
+          title: Text(
             "Message",
             style: TextStyle(
                 color: appBloc.uiSettingModel.menuTextColor.isEmpty
@@ -656,23 +654,17 @@ class _ActBaseState extends State<ActBase> {
             MyPrint.printOnConsole("isChanged:$isChanged");
             try {
               if (isChanged) {
-                return ChangeNotifierProvider(
-                  create: (context) => ProviderModel(),
-                  child: CatalogRefreshScreen(
+                return CatalogRefreshScreen(
+                  categaoryID: 0,
+                  categaoryName: "",
+                  nativeMenuModel: nativeMenuModel!,
+                );
+              } else {
+                return CatalogSubScreen(
                     categaoryID: 0,
                     categaoryName: "",
                     nativeMenuModel: nativeMenuModel!,
-                  ),
-                );
-              } else {
-                return ChangeNotifierProvider(
-                  create: (context) => ProviderModel(),
-                  child: CatalogSubScreen(
-                      categaoryID: 0,
-                      categaoryName: "",
-                      nativeMenuModel: nativeMenuModel!,
-                      contentId: contentID),
-                );
+                    contentId: contentID);
               }
             } catch (e) {
               print('error : $e');
@@ -767,8 +759,7 @@ class _ActBaseState extends State<ActBase> {
                   sharedPref_RepositoryId, element.repositoryId);
             }
           });
-          return ChangeNotifierProvider(
-              create: (context) => ProviderModel(), child: EventMainPage());
+          return EventMainPage();
         case "9":
           appBloc.listNativeModel.forEach((element) async {
             if (element.contextmenuId == '9') {
@@ -833,7 +824,7 @@ class _ActBaseState extends State<ActBase> {
         case "10":
           return ConnectionIndexScreen();
         default:
-          return new Text(
+          return Text(
             "Work in PROGRESS Drawer",
             style: TextStyle(color: Colors.grey),
           );
@@ -890,8 +881,7 @@ class _ActBaseState extends State<ActBase> {
                   sharedPref_RepositoryId, element.repositoryId);
             }
           });
-          return ChangeNotifierProvider(
-              create: (context) => ProviderModel(), child: EventMainPage());
+          return EventMainPage();
         default:
           return getCominSoon(context);
       }
@@ -909,7 +899,7 @@ class _ActBaseState extends State<ActBase> {
   }
 
   Map<String, String> generateHashMap(List<String> conditionsArray) {
-    Map<String, String> map = new Map();
+    Map<String, String> map = Map();
     if (conditionsArray.length != 0) {
       for (int i = 0; i < conditionsArray.length; i++) {
         var filterArray = conditionsArray[i].split("=");
@@ -930,7 +920,7 @@ class _ActBaseState extends State<ActBase> {
       }
     });
     print("neel  --- strConditions ---- $strConditions");
-    Map<String, String> responMap = new Map();
+    Map<String, String> responMap = Map();
     if (strConditions != null && strConditions != "") {
       if (strConditions.contains("#@#")) {
         var conditionsArray = strConditions.split("#@#");
@@ -998,7 +988,7 @@ class _ActBaseState extends State<ActBase> {
                         Icons.insert_chart,
                         color: InsColor(appBloc).appIconColor,
                       ),
-                      title: new Text(
+                      title: Text(
                         appBloc.localstr.loginActionsheetSettingsoption,
                         style: Theme.of(context)
                             .textTheme
@@ -1019,7 +1009,7 @@ class _ActBaseState extends State<ActBase> {
                         Icons.feedback,
                         color: InsColor(appBloc).appIconColor,
                       ),
-                      title: new Text(
+                      title: Text(
                         'Feedback',
                         style: Theme.of(context)
                             .textTheme
@@ -1065,7 +1055,7 @@ class _ActBaseState extends State<ActBase> {
                             });
                           }
                         },
-                        child: new Text(listNativeModel[pos].displayname,
+                        child: Text(listNativeModel[pos].displayname,
                             style: Theme.of(context)
                                 .textTheme
                                 .headline2
@@ -1073,7 +1063,7 @@ class _ActBaseState extends State<ActBase> {
                       ),
                       children: <Widget>[
                         Align(
-                          child: new Column(
+                          child: Column(
                               children: _buildList(listNativeModel[pos])),
                         )
                       ]
@@ -1320,7 +1310,7 @@ class _ActBaseState extends State<ActBase> {
                   Icons.settings,
                   color: Colors.grey,
                 ),
-                title: new Text(
+                title: Text(
                   appBloc.localstr.loginActionsheetSettingsoption,
                   style: TextStyle(
                       color: appBloc.uiSettingModel.menuTextColor.isEmpty
@@ -1373,7 +1363,7 @@ class _ActBaseState extends State<ActBase> {
                         });
                       }
                     },
-                    child: new Text(
+                    child: Text(
                       listNativeModel[i].displayname,
                       style: TextStyle(
                           color: appBloc.uiSettingModel.menuTextColor.isEmpty
@@ -1382,7 +1372,7 @@ class _ActBaseState extends State<ActBase> {
                     ),
                   ),
                   children: <Widget>[
-                    new Column(children: _buildList(listNativeModel[i]))
+                    Column(children: _buildList(listNativeModel[i]))
                   ],
                 ),
               ),
@@ -1475,7 +1465,7 @@ class _ActBaseState extends State<ActBase> {
                         : AppColors.getMenuTextColor()
                       //color: GlobalColor.secondaryAppColor,
                     ),
-                title: new Text(
+                title: Text(
                   appBloc.localstr.loginActionsheetSettingsoption != null
                       ? appBloc.localstr.loginActionsheetSettingsoption
                       : "",
@@ -1506,7 +1496,7 @@ class _ActBaseState extends State<ActBase> {
                         : AppColors.getMenuTextColor()
                     //color: GlobalColor.secondaryAppColor,
                     ),
-                title: new Text(
+                title: Text(
                   'Feedback',
                   style: TextStyle(
                       color: appBloc.uiSettingModel.menuTextColor.isEmpty
@@ -1537,7 +1527,7 @@ class _ActBaseState extends State<ActBase> {
                             "0xFF${appBloc.uiSettingModel.menuTextColor.substring(1, 7).toUpperCase()}"))
                     //color: GlobalColor.secondaryAppColor,
                     ),
-                title: new Text(
+                title: Text(
                   'Notifications',
                   style: TextStyle(
                       color: appBloc.uiSettingModel.menuTextColor.isEmpty
@@ -1609,7 +1599,7 @@ class _ActBaseState extends State<ActBase> {
                         //         : Color(int.parse("0xFF${appBloc.uiSettingModel.menuTextColor.substring(1, 7).toUpperCase()}"))),
                   ),
                   children: <Widget>[
-                    new Column(children: _buildList(nativeMenuModel))
+                    Column(children: _buildList(nativeMenuModel))
                   ],
               ),
             ),
@@ -1741,7 +1731,7 @@ class _ActBaseState extends State<ActBase> {
     MyPrint.printOnConsole("selected menu : $selectedmenu");
 
     return AppBar(
-      iconTheme: new IconThemeData(
+      iconTheme: IconThemeData(
         color: lableColor,
       ),
       backgroundColor: backgroundColor,
@@ -1795,7 +1785,7 @@ class _ActBaseState extends State<ActBase> {
               child: Positioned(
                 right:selectedmenu =="4"? 0: 11,
                 top: 12,
-                child: new Container(
+                child: Container(
                   padding: EdgeInsets.all(2),
                   decoration: BoxDecoration(
                     //color: Color(int.parse("0xFF${appBloc.uiSettingModel.appButtonBgColor.isNotEmpty ? appBloc.uiSettingModel.appButtonBgColor.substring(1, 7).toUpperCase() : "000000"}")),
@@ -1912,19 +1902,16 @@ class _ActBaseState extends State<ActBase> {
               )
             : Container(),
         (selectedmenu == "2" && landingpageType == "0")
-            ? new Stack(
+            ? Stack(
                 children: <Widget>[
                   InkWell(
                     onTap: (){
                       Navigator.of(context).push(MaterialPageRoute(
-                          builder: (context) => ChangeNotifierProvider(
-                            create: (context) => ProviderModel(),
-                            child: WishList(
-                              categaoryID: 0,
-                              categaoryName: "",
-                              detailsBloc: detailsBloc,
-                              filterMenus: filterMenus,
-                            ),
+                          builder: (context) => WishList(
+                            categaoryID: 0,
+                            categaoryName: "",
+                            detailsBloc: detailsBloc,
+                            filterMenus: filterMenus,
                           )));
                     },
                     child: Icon(Icons.favorite,size: 25.h,color: InsColor(appBloc).appIconColor,),
@@ -1945,12 +1932,12 @@ class _ActBaseState extends State<ActBase> {
                   //                 ),
                   //               )));
                   //     }),
-                  new Positioned(
+                  Positioned(
                     right: 6,
                     top: 6,
-                    child: new Container(
+                    child: Container(
                       padding: EdgeInsets.all(2),
-                      decoration: new BoxDecoration(
+                      decoration: BoxDecoration(
                         // color: Color(int.parse(
                         //     "0xFF${appBloc.uiSettingModel.appButtonBgColor.substring(1, 7).toUpperCase()}")),
                         // borderRadius: BorderRadius.circular(6),
@@ -2018,9 +2005,9 @@ class _ActBaseState extends State<ActBase> {
                   child: Positioned(
                     right: 6,
                     top: 14,
-                    child: new Container(
+                    child: Container(
                       padding: EdgeInsets.all(1),
-                      decoration: new BoxDecoration(
+                      decoration: BoxDecoration(
                         color: lableColor,
                         shape: BoxShape.circle,
                         border: Border.all(color: backgroundColor),
@@ -2056,7 +2043,7 @@ class _ActBaseState extends State<ActBase> {
                 visible: false, //appBloc.isAllowGroupBy ? true : false,
                 child: Container(
                     color: Color(int.parse("0xFF${appBloc.uiSettingModel.appBGColor.substring(1, 7).toUpperCase()}")),
-                    child: new Theme(
+                    child: Theme(
                         data: Theme.of(context).copyWith(
                           canvasColor: Color(int.parse(
                               "0xFF${appBloc.uiSettingModel.appBGColor.substring(1, 7).toUpperCase()}")),
@@ -2253,7 +2240,7 @@ class _ActBaseState extends State<ActBase> {
                 isDrawer = true;
               });
             },
-            child: new ListTile(
+            child: ListTile(
                 title: Text(
                   appBloc.listNativeModel[i].displayname,
                   style: TextStyle(

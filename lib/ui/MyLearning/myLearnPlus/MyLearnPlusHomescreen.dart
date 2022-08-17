@@ -39,7 +39,6 @@ import 'package:flutter_admin_web/framework/common/constants.dart';
 import 'package:flutter_admin_web/framework/common/enums.dart';
 import 'package:flutter_admin_web/framework/common/pref_manger.dart';
 import 'package:flutter_admin_web/framework/helpers/ApiEndpoints.dart';
-import 'package:flutter_admin_web/framework/helpers/providermodel.dart';
 import 'package:flutter_admin_web/framework/helpers/utils.dart';
 import 'package:flutter_admin_web/framework/repository/event_module/provider/event_repository_builder.dart';
 import 'package:flutter_admin_web/framework/repository/general/contract/general_repository.dart';
@@ -108,13 +107,13 @@ class MyLearnPlusHome extends State<MyLearnPlusHomeScreen> with SingleTickerProv
   bool isReportEnabled = true;
 
   UserAchievementResponse userAchievementResponse =
-      new UserAchievementResponse();
+      UserAchievementResponse();
   double progress = 0.0;
   int pageNumber = 1;
   late FToast flutterToast;
   int pageArchiveNumber = 1;
   bool isGetArchiveListEvent = false;
-  ScrollController _scArchive = new ScrollController();
+  ScrollController _scArchive = ScrollController();
 
   int pos = 0;
 
@@ -180,11 +179,11 @@ class MyLearnPlusHome extends State<MyLearnPlusHomeScreen> with SingleTickerProv
   List<EventResourcePlusResponse> getEventResourceList = [];
 
   String dashTitle = 'Your Schedule';
-  Color statusThickColor = Color(0xff000000);
-  Color statusLightColor = Color(0xff000000);
+  Color statusThickColor = const Color(0xff000000);
+  Color statusLightColor = const Color(0xff000000);
 
   late EvntModuleBloc eventModuleBloc;
-  DateTime timeInfo = new DateTime.now();
+  DateTime timeInfo = DateTime.now();
 
   String lastOfDay = '';
   String startOfDay = '';
@@ -199,11 +198,11 @@ class MyLearnPlusHome extends State<MyLearnPlusHomeScreen> with SingleTickerProv
   bool leaderCond = false;
   String compId = ""; String compInstId = "";
 
-  LeaderBoardResponse leaderBoardResponse = new LeaderBoardResponse(leaderBoardList: []);
+  LeaderBoardResponse leaderBoardResponse = LeaderBoardResponse(leaderBoardList: []);
 
   @override
   void initState() {
-    componentsResponse =  new MenuComponentsResponse();
+    componentsResponse =  MenuComponentsResponse();
     contentId = widget.contentId;
     profileBloc = ProfileBloc(profileRepository: ProfileRepositoryBuilder.repository());
     profileBloc.add(GetProfileInfo());
@@ -282,7 +281,7 @@ class MyLearnPlusHome extends State<MyLearnPlusHomeScreen> with SingleTickerProv
     // myLearningBloc.add(getMyLearnPlusLearningObjectsEvent(
     //     pageNumber: pageNumber, pageSize: 10, searchText: "",Contentstatus: 'grade,inprogress,not attempted,incomplete,registered'));
 
-    DateTime lastdate = new DateTime(timeInfo.year, timeInfo.month + 1, 0);
+    DateTime lastdate = DateTime(timeInfo.year, timeInfo.month + 1, 0);
     lastOfDay = '${lastdate.year}-${lastdate.month}-${lastdate.day}';
     // lastofday = lastdate.toString();
     startOfDay = '${timeInfo.year}-${timeInfo.month + 0}-01';
@@ -304,7 +303,7 @@ class MyLearnPlusHome extends State<MyLearnPlusHomeScreen> with SingleTickerProv
     flutterToast.init(context);	
     return Scaffold(
       body: (widget.nativeModel.parameterString == "") ? Container(
-                child: Center(
+                child: const Center(
                   child: AbsorbPointer(
                     child: SpinKitCircle(
                       color: Colors.grey,
@@ -317,10 +316,10 @@ class MyLearnPlusHome extends State<MyLearnPlusHomeScreen> with SingleTickerProv
             listener: (context, state) {
               if (state is GetGameslistLearnPlusState) {
                 if (state.status == Status.COMPLETED) {
-                  dropdownValue = myLearningBloc.gameslist.length > 0
+                  dropdownValue = myLearningBloc.gameslist.isNotEmpty
                       ? myLearningBloc.gameslist[0].gameName
                       : "Select game";
-                  dropdownGameID = myLearningBloc.gameslist.length > 0
+                  dropdownGameID = myLearningBloc.gameslist.isNotEmpty
                       ? "${myLearningBloc.gameslist[0].gameID}"
                       : "1";
                 } else if (state.status == Status.ERROR) {}
@@ -329,24 +328,21 @@ class MyLearnPlusHome extends State<MyLearnPlusHomeScreen> with SingleTickerProv
 //            print('List size ${state.list.length}');
                   if (appBloc.uiSettingModel.isFromPush) {
                     print(
-                        'Data data : ' + myLearningBloc.list.length.toString());
+                        'Data data : ${myLearningBloc.list.length}');
                     myLearningBloc.list.asMap().forEach((i, element) {
                       if (element.contentid == contentId) {
                         Navigator.of(context)
                             .push(
                               MaterialPageRoute(
-                                builder: (context) => ChangeNotifierProvider(
-                                  create: (context) => ProviderModel(),
-                                  child: CommonDetailScreen(
-                                    screenType: ScreenType.MyLearning,
-                                    contentid: contentId,
-                                    objtypeId: element.objecttypeid,
-                                    detailsBloc: detailsBloc,
-                                    table2: element,
-                                    pos: i,
-                                    mylearninglist: myLearningBloc.list,
-                                    isFromReschedule: false,
-                                  ),
+                                builder: (context) => CommonDetailScreen(
+                                  screenType: ScreenType.MyLearning,
+                                  contentid: contentId,
+                                  objtypeId: element.objecttypeid,
+                                  detailsBloc: detailsBloc,
+                                  table2: element,
+                                  pos: i,
+                                  mylearninglist: myLearningBloc.list,
+                                  isFromReschedule: false,
                                 ),
                               ),
                             )
@@ -398,7 +394,7 @@ class MyLearnPlusHome extends State<MyLearnPlusHomeScreen> with SingleTickerProv
                         displaymsg: appBloc
                             .localstr.mylearningAlertsubtitleUnarchivedsuccesfully),
                     gravity: ToastGravity.BOTTOM,
-                    toastDuration: Duration(seconds: 2),
+                    toastDuration: const Duration(seconds: 2),
                   );
 
                   //myLearningBloc.isArchiveFirstLoading = true;
@@ -422,7 +418,7 @@ class MyLearnPlusHome extends State<MyLearnPlusHomeScreen> with SingleTickerProv
                  flutterToast.showToast(
                   child: CommonToast(displaymsg: 'Added to Archive.'),
                   gravity: ToastGravity.BOTTOM,
-                  toastDuration: Duration(seconds: 2),
+                  toastDuration: const Duration(seconds: 2),
                 );
                   myLearningBloc.isFirstLoading = true;
                   setState(() {
@@ -468,7 +464,7 @@ class MyLearnPlusHome extends State<MyLearnPlusHomeScreen> with SingleTickerProv
                   userAchievementResponse = state.userAchievementResponse;
                   //progress = (userAchievementResponse.userOverAllData.overAllPoints)/(userAchievementResponse.userOverAllData.overAllPoints + userAchievementResponse.userOverAllData.neededPoints)*100;
                 } else if (state.status == Status.ERROR) {
-                  userAchievementResponse = new UserAchievementResponse();
+                  userAchievementResponse = UserAchievementResponse();
                 }
               }else if(state is GetFilterMenusState){
                 if(state.status == Status.COMPLETED){
@@ -484,7 +480,7 @@ class MyLearnPlusHome extends State<MyLearnPlusHomeScreen> with SingleTickerProv
                   dynamicTabobj.mobileDisplayName = "Archive";
                   dynamicTabobj.parameterString = 'sree = sds&dsd = dsds&ds = dsd';
                   dynamicTabList.add(dynamicTabobj);
-                  _tabController = new TabController(
+                  _tabController = TabController(
                       length: dynamicTabList.length, vsync: this);
                   print("Build level tabList ${tabList.length}  ${dynamicTabList.length}");    
                   // tabList.add(dynamicTabobj);   
@@ -747,7 +743,7 @@ class MyLearnPlusHome extends State<MyLearnPlusHomeScreen> with SingleTickerProv
 
 
                 } else if (state.status == Status.ERROR) {
-                  userAchievementResponse = new UserAchievementResponse();
+                  userAchievementResponse = UserAchievementResponse();
                 }
               } else if (state is GetWishListPlusState) {
                 if (state.status == Status.COMPLETED) {
@@ -755,7 +751,7 @@ class MyLearnPlusHome extends State<MyLearnPlusHomeScreen> with SingleTickerProv
                  // mylearningplusWishlist = [];
                   myLearningPlusDummyWishlist = myLearningBloc.catalogCatgoryWishlist;
                  // mylearningplusWishlist = myLearningBloc.catalogCatgoryWishlist;
-                  if (myLearningPlusDummyWishlist.length > 0) {
+                  if (myLearningPlusDummyWishlist.isNotEmpty) {
                     myLearningPlusWishlist.addAll(myLearningPlusDummyWishlist);
                   }
                   print(
@@ -783,12 +779,12 @@ class MyLearnPlusHome extends State<MyLearnPlusHomeScreen> with SingleTickerProv
                 myLearningPlusCompletedList = [];//mylearningplusWishlist = [];
                 //
                   // mylearningpluscompletedlist = state.list;
-                  if(state.list.length > 0 && (state.list[0].actualstatus == "completed" || state.list[0].actualstatus == "registered") && (state.list[0].datefilter == "today" || state.list[0].datefilter == "thisweek" || state.list[0].datefilter == "thismonth" || state.list[0].datefilter == "future")){ // Dashbaord
+                  if(state.list.isNotEmpty && (state.list[0].actualstatus == "completed" || state.list[0].actualstatus == "registered") && (state.list[0].datefilter == "today" || state.list[0].datefilter == "thisweek" || state.list[0].datefilter == "thismonth" || state.list[0].datefilter == "future")){ // Dashbaord
                   // dashgridlist = [];
                  // mylearningplusdashdayWishlist = state.list;
                  //if(state.list.length > 1){
                  //state.list.forEach((element) {
-                  DashGridResponse gridResponse = new DashGridResponse();
+                  DashGridResponse gridResponse = DashGridResponse();
                   gridResponse.dashcommonlist.addAll(state.list);
                    print("gridResponse length ${gridResponse.dashcommonlist}");
                  // if(!dashgridlist.contains(gridResponse))
@@ -812,23 +808,23 @@ class MyLearnPlusHome extends State<MyLearnPlusHomeScreen> with SingleTickerProv
 
 
                 }
-                else if (state.list.length > 0 && ((state.list[0].actualstatus == "completed") || (state.list[0].actualstatus == "passed") || (state.list[0].actualstatus == "failed"))) { //Completed
+                else if (state.list.isNotEmpty && ((state.list[0].actualstatus == "completed") || (state.list[0].actualstatus == "passed") || (state.list[0].actualstatus == "failed"))) { //Completed
                     myLearningPlusCompletedList.addAll(state.list);
                  }
-                 else if(state.list.length > 0 && state.list[0].actualstatus == "incomplete"){ //In Progress ("inprogress,incomplete,grade")
+                 else if(state.list.isNotEmpty && state.list[0].actualstatus == "incomplete"){ //In Progress ("inprogress,incomplete,grade")
                  //mylearningplusinprolist.clear();
                  myLearningPlusInProList = state.list;
                  }
-                 else if(state.list.length > 0 && (state.list[0].actualstatus == "not attempted" || state.list[0].actualstatus == "registered")){ //Not started
+                 else if(state.list.isNotEmpty && (state.list[0].actualstatus == "not attempted" || state.list[0].actualstatus == "registered")){ //Not started
                  myLearningPlusNotStartProList = state.list;
                  }
-                 else if(state.list.length > 0 && ((state.list[0].actualstatus == "attended") || (state.list[0].actualstatus == "notattended"))){  //Attending
+                 else if(state.list.isNotEmpty && ((state.list[0].actualstatus == "attended") || (state.list[0].actualstatus == "notattended"))){  //Attending
                  myLearningPlusAttendProList = state.list;
                  }
-                else if(state.list.length > 0 && (state.list[0].datefilter == "today" || state.list[0].datefilter == "thisweek" || state.list[0].datefilter == "future")){ // Dashbaord //state.list[0].datefilter == "thismonth" ||
+                else if(state.list.isNotEmpty && (state.list[0].datefilter == "today" || state.list[0].datefilter == "thisweek" || state.list[0].datefilter == "future")){ // Dashbaord //state.list[0].datefilter == "thismonth" ||
                    //dashgridlist = [];
                   myLearningPlusDashDayWishlist = state.list;
-                  DashGridResponse gridResponse = new DashGridResponse();
+                  DashGridResponse gridResponse = DashGridResponse();
                   //gridResponse.title = 'In the Future';
                   //dashtitle = 'In the Future';
                   gridResponse.dashcommonlist = myLearningPlusDashDayWishlist;
@@ -855,7 +851,7 @@ class MyLearnPlusHome extends State<MyLearnPlusHomeScreen> with SingleTickerProv
 
                   myLearningPlusCompletedList = [];//mylearningplusWishlist = [];
                   myLearningPlusCompletedList = state.list;
-                  if (myLearningPlusCompletedList.length > 0) {
+                  if (myLearningPlusCompletedList.isNotEmpty) {
                     myLearningPlusCompletedList.addAll(myLearningPlusCompletedList);
                   }
                   // mylearningpluscompletedlist = [];
@@ -882,7 +878,7 @@ class MyLearnPlusHome extends State<MyLearnPlusHomeScreen> with SingleTickerProv
                 if (state.status == Status.COMPLETED) {
                   dashGridList = [];
                   myLearningPlusDashDayWishlist = state.list;
-                  DashGridResponse gridResponse = new DashGridResponse();
+                  DashGridResponse gridResponse = DashGridResponse();
                   gridResponse.title = 'Today';
                   gridResponse.dashcommonlist = myLearningPlusDashDayWishlist;
                   dashGridList.add(gridResponse);
@@ -892,7 +888,7 @@ class MyLearnPlusHome extends State<MyLearnPlusHomeScreen> with SingleTickerProv
               } else if (state is GetMyLearnPlusLearningObjectsDashWeekState) {
                 if (state.status == Status.COMPLETED) {
                   myLearningPlusDashWeekList = state.list;
-                  DashGridResponse gridResponse = new DashGridResponse();
+                  DashGridResponse gridResponse = DashGridResponse();
                   gridResponse.title = 'This Week';
                   gridResponse.dashcommonlist = myLearningPlusDashWeekList;
                   dashGridList.add(gridResponse);
@@ -902,7 +898,7 @@ class MyLearnPlusHome extends State<MyLearnPlusHomeScreen> with SingleTickerProv
               } else if (state is GetMyLearnPlusLearningObjectsDashMonthState) {
                 if (state.status == Status.COMPLETED) {
                   myLearningPlusDashMonthList = state.list;
-                  DashGridResponse gridResponse = new DashGridResponse();
+                  DashGridResponse gridResponse = DashGridResponse();
                   gridResponse.title = 'This Month';
                   gridResponse.dashcommonlist = myLearningPlusDashMonthList;
                   dashGridList.add(gridResponse);
@@ -913,7 +909,7 @@ class MyLearnPlusHome extends State<MyLearnPlusHomeScreen> with SingleTickerProv
                   is GetMyLearnPlusLearningObjectsDashFutureState) {
                 if (state.status == Status.COMPLETED) {
                   myLearningPlusDashFutureList = state.list;
-                  DashGridResponse gridResponse = new DashGridResponse();
+                  DashGridResponse gridResponse = DashGridResponse();
                   gridResponse.title = 'In The Future';
                   gridResponse.dashcommonlist = myLearningPlusDashFutureList;
                   dashGridList.add(gridResponse);
@@ -924,7 +920,7 @@ class MyLearnPlusHome extends State<MyLearnPlusHomeScreen> with SingleTickerProv
                 if (state.status == Status.COMPLETED) {
                   leaderBoardResponse = state.leaderBoardResponse;
                 } else if (state.status == Status.ERROR) {
-                  leaderBoardResponse = new LeaderBoardResponse(leaderBoardList: []);
+                  leaderBoardResponse = LeaderBoardResponse(leaderBoardList: []);
                 }
               } else if (state is GetMyLearnPlusEventResourceState) {
                 if (state.status == Status.COMPLETED) {
@@ -1028,8 +1024,8 @@ class MyLearnPlusHome extends State<MyLearnPlusHomeScreen> with SingleTickerProv
                                 ? showAchievements == "true" ? getAppBarView(context, userAchievementResponse):Container()
                                 : Container(),
                               Container(
-                              decoration: new BoxDecoration(color: Colors.white),
-                              child: new TabBar(
+                              decoration: const BoxDecoration(color: Colors.white),
+                              child: TabBar(
                                   isScrollable: dynamicTabList.length > 3 ? true : false,
                                   controller: _tabController,
                                   unselectedLabelColor: Colors.black,
@@ -1077,7 +1073,7 @@ class MyLearnPlusHome extends State<MyLearnPlusHomeScreen> with SingleTickerProv
                                       child: TabBarView(
                                         controller: _tabController,
                                         children: getList(),                
-                                        physics: NeverScrollableScrollPhysics(),//PageScrollPhysics(),
+                                        physics: const NeverScrollableScrollPhysics(),//PageScrollPhysics(),
                                       ),
                                     ),
                                   )//: SizedBox(),
@@ -1121,44 +1117,19 @@ class MyLearnPlusHome extends State<MyLearnPlusHomeScreen> with SingleTickerProv
         table2.objecttypeid == 26) {
       String paramsString = "";
       if (table2.objecttypeid == 10 && table2.bit5) {
-        paramsString = "userID=" +
-            table2.userid.toString() +
-            "&scoid=" +
-            table2.scoid.toString() +
-            "&TrackObjectTypeID=" +
-            table2.objecttypeid.toString() +
-            "&TrackContentID=" +
-            table2.contentid +
-            "&TrackScoID=" +
-            table2.scoid.toString() +
-            "&SiteID=" +
-            table2.siteid.toString() +
-            "&OrgUnitID=" +
-            table2.siteid.toString() +
-            "&isonexist=onexit";
+        paramsString = "userID=${table2.userid}&scoid=${table2.scoid}&TrackObjectTypeID=${table2.objecttypeid}&TrackContentID=${table2.contentid}&TrackScoID=${table2.scoid}&SiteID=${table2.siteid}&OrgUnitID=${table2.siteid}&isonexist=onexit";
       } else {
-        paramsString = "userID=" +
-            table2.userid.toString() +
-            "&scoid=" +
-            table2.scoid.toString();
+        paramsString = "userID=${table2.userid}&scoid=${table2.scoid}";
       }
 
       if (token.isNotEmpty) {
         String courseUrl;
         if (isValidString(appBloc.uiSettingModel.azureRootPath)) {
-          courseUrl = appBloc.uiSettingModel.azureRootPath +
-              "content/index.html?coursetoken=" +
-              token +
-              "&TokenAPIURL=" +
-              ApiEndpoints.appAuthURL;
+          courseUrl = "${appBloc.uiSettingModel.azureRootPath}content/index.html?coursetoken=$token&TokenAPIURL=${ApiEndpoints.appAuthURL}";
 
           // assignmenturl = await '${ApiEndpoints.strSiteUrl}assignmentdialog/ContentID/${table2.contentid}/SiteID/${table2.usersiteid}/ScoID/${table2.scoid}/UserID/${table2.userid}';
         } else {
-          courseUrl = ApiEndpoints.strSiteUrl +
-              "content/index.html?coursetoken=" +
-              token +
-              "&TokenAPIURL=" +
-              ApiEndpoints.appAuthURL;
+          courseUrl = "${ApiEndpoints.strSiteUrl}content/index.html?coursetoken=$token&TokenAPIURL=${ApiEndpoints.appAuthURL}";
 
           //assignmenturl = await '${ApiEndpoints.strSiteUrl}assignmentdialog/ContentID/${table2.contentid}/SiteID/${table2.usersiteid}/ScoID/${table2.scoid}/UserID/${table2.userid}';
         }
@@ -1172,7 +1143,7 @@ class MyLearnPlusHome extends State<MyLearnPlusHomeScreen> with SingleTickerProv
         } else {
           // assignmenturl = await '$assignmenturl/ismobilecontentview/true';
           //print('assignmenturl is : $assignmenturl');
-          HashMap<String, String> map = new HashMap<String, String>();
+          HashMap<String, String> map = HashMap<String, String>();
           String parameter = selectedTabObj.parameterString;
           var dataSp = parameter.split('&');
           Map<String, String> mapData = Map();
@@ -1218,7 +1189,7 @@ class MyLearnPlusHome extends State<MyLearnPlusHomeScreen> with SingleTickerProv
       String webApiUrl = await sharePrefGetString(sharedPref_webApiUrl);
 
       String url =
-          webApiUrl + "/MobileLMS/MobileGetContentStatus?" + paramsString;
+          "$webApiUrl/MobileLMS/MobileGetContentStatus?$paramsString";
 
       detailsBloc.add(GetContentStatus(url: url, table2: table2));
       myLearningBloc.add(GetListEvent(pageNumber: 1, pageSize: 10, searchText: myLearningBloc.searchMyCourseString));
@@ -1232,7 +1203,7 @@ class MyLearnPlusHome extends State<MyLearnPlusHomeScreen> with SingleTickerProv
             pageNumber: pageArchiveNumber, pageSize: 10, searchText:''));
       }
       if(input == 'NotStarted'){
-        HashMap<String, String> map = new HashMap<String, String>();
+        HashMap<String, String> map = HashMap<String, String>();
         String parameter = selectedTabObj.parameterString;
         var dataSp = parameter.split('&');
         Map<String, String> mapData = Map();
@@ -1389,7 +1360,7 @@ class MyLearnPlusHome extends State<MyLearnPlusHomeScreen> with SingleTickerProv
 
       if(input == 'WaitingList'){
         HashMap<String, String> map =
-        new HashMap<String, String>();
+        HashMap<String, String>();
         String parameter = selectedTabObj.parameterString;
         var dataSp = parameter.split('&');
         Map<String, String> mapData = Map();
@@ -1413,7 +1384,7 @@ class MyLearnPlusHome extends State<MyLearnPlusHomeScreen> with SingleTickerProv
       }
       if(input == 'Attending'){
         HashMap<String, String> map =
-        new HashMap<String, String>();
+        HashMap<String, String>();
         String parameter = selectedTabObj.parameterString;
         var dataSp = parameter.split('&');
         Map<String, String> mapData = Map();
@@ -1438,7 +1409,7 @@ class MyLearnPlusHome extends State<MyLearnPlusHomeScreen> with SingleTickerProv
       if(input == 'InProgress'){
         myLearningPlusInProList.clear();
         HashMap<String, String> map =
-        new HashMap<String, String>();
+        HashMap<String, String>();
         String parameter = selectedTabObj.parameterString;
         var dataSp = parameter.split('&');
         Map<String, String> mapData = Map();
@@ -1462,7 +1433,7 @@ class MyLearnPlusHome extends State<MyLearnPlusHomeScreen> with SingleTickerProv
       }
       if(input == 'Completed'){
         HashMap<String, String> map =
-        new HashMap<String, String>();
+        HashMap<String, String>();
         String parameter = selectedTabObj.parameterString;
         var dataSp = parameter.split('&');
         Map<String, String> mapData = Map();
@@ -1561,7 +1532,7 @@ class MyLearnPlusHome extends State<MyLearnPlusHomeScreen> with SingleTickerProv
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        Container(child: Center(child: Text(appBloc.localstr.filterLblLblnodata,style: TextStyle(color: Colors.black,),),))
+        Container(child: Center(child: Text(appBloc.localstr.filterLblLblnodata,style: const TextStyle(color: Colors.black,),),))
         // Center(
         //   child: Text('Coming Soon',style: TextStyle(
         //                 color: Colors.lightGreen,
@@ -1575,7 +1546,7 @@ class MyLearnPlusHome extends State<MyLearnPlusHomeScreen> with SingleTickerProv
   Widget dashboardScreen(List<DashGridResponse> dashgridlist,ConnectionDynamicTab tab) {
     print('The Dash list : ${dashgridlist.length}');
     String headerTitle = "";
-    if(dashgridlist.length > 0) {
+    if(dashgridlist.isNotEmpty) {
     if (dashgridlist[0].dashcommonlist[0].datefilter == "thisweek") headerTitle = "In This Week";
     else if(dashgridlist[0].dashcommonlist[0].datefilter == "today") headerTitle = "Today";
     else if(dashgridlist[0].dashcommonlist[0].datefilter == "thismonth") headerTitle = "In this Month";
@@ -1588,14 +1559,14 @@ class MyLearnPlusHome extends State<MyLearnPlusHomeScreen> with SingleTickerProv
       child: Column(
         children: <Widget>[
           Padding(
-            padding: EdgeInsets.all(10.0),
+            padding: const EdgeInsets.all(10.0),
             child: Row(
               children: [
                 Expanded(
                   flex: 6,
                   child: Text(
                     headerTitle,
-                    style: TextStyle(
+                    style: const TextStyle(
                       color: Colors.lightGreen,
                       fontSize: 15,
                     ),
@@ -1616,7 +1587,7 @@ class MyLearnPlusHome extends State<MyLearnPlusHomeScreen> with SingleTickerProv
                               calendarCond = false;
                               leaderCond = false;
                               globalCondition = 'grid';
-                              dashTitle = (dashgridlist.length > 0) ? dashgridlist[0].title :'';
+                              dashTitle = (dashgridlist.isNotEmpty) ? dashgridlist[0].title :'';
                             });
                           },
                           child: Icon(Icons.grid_view,
@@ -1670,7 +1641,7 @@ class MyLearnPlusHome extends State<MyLearnPlusHomeScreen> with SingleTickerProv
               ],
             ),
           ),
-          Divider(color: Colors.black),
+          const Divider(color: Colors.black),
           Expanded(
             child: clickWiseScreen(globalCondition, dashgridlist,tab),
           ),
@@ -1718,7 +1689,7 @@ class MyLearnPlusHome extends State<MyLearnPlusHomeScreen> with SingleTickerProv
     final result = await Navigator.push(
       context,
       // Create the SelectionScreen in the next step.
-      MaterialPageRoute(builder: (context) => GlobalSearchScreen(menuId: 4180)),
+      MaterialPageRoute(builder: (context) => const GlobalSearchScreen(menuId: 4180)),
     );
 
     print(result);
@@ -1764,14 +1735,14 @@ class MyLearnPlusHome extends State<MyLearnPlusHomeScreen> with SingleTickerProv
                         flutterToast.showToast(
                           child: CommonToast(displaymsg: 'Please wait'),
                           gravity: ToastGravity.BOTTOM,
-                          toastDuration: Duration(seconds: 2),
+                          toastDuration: const Duration(seconds: 2),
                         );
                       } else if (state.status == Status.COMPLETED) {
                         flutterToast.showToast(
                           child: CommonToast(
                               displaymsg: 'Course completed successfully'),
                           gravity: ToastGravity.BOTTOM,
-                          toastDuration: Duration(seconds: 2),
+                          toastDuration: const Duration(seconds: 2),
                         );
                         setState(() {
                           myLearningPlusInProList.clear();
@@ -1782,7 +1753,7 @@ class MyLearnPlusHome extends State<MyLearnPlusHomeScreen> with SingleTickerProv
                               pageSize: 10,
                               searchText: myLearningBloc.searchMyCourseString));
                             HashMap<String, String> map =
-                            new HashMap<String, String>();
+                            HashMap<String, String>();
                             String parameter = selectedTabObj.parameterString;
                             var dataSp = parameter.split('&');
                             Map<String, String> mapData = Map();
@@ -1810,7 +1781,7 @@ class MyLearnPlusHome extends State<MyLearnPlusHomeScreen> with SingleTickerProv
                           child: CommonToast(
                               displaymsg: 'Filed to update course status'),
                           gravity: ToastGravity.BOTTOM,
-                          toastDuration: Duration(seconds: 2),
+                          toastDuration: const Duration(seconds: 2),
                         );
                       }
                     }
@@ -1821,7 +1792,7 @@ class MyLearnPlusHome extends State<MyLearnPlusHomeScreen> with SingleTickerProv
                         return type == 'vertical'
           ? commonlist.isEmpty
               ? Container()
-              : commonlist.length > 0
+              : commonlist.isNotEmpty
                   ? Container(
                       child: Column(
                         mainAxisSize: MainAxisSize.min,
@@ -1917,7 +1888,7 @@ class MyLearnPlusHome extends State<MyLearnPlusHomeScreen> with SingleTickerProv
                                   )
                                 : null,
                         onSubmitAction: (value) {
-                          if (value.toString().length > 0) {
+                          if (value.toString().isNotEmpty) {
                             myLearningBloc.isArchiveFirstLoading = true;
                             myLearningBloc.isArchiveSearch = true;
                             myLearningBloc.searchArchiveString =
@@ -2029,11 +2000,11 @@ class MyLearnPlusHome extends State<MyLearnPlusHomeScreen> with SingleTickerProv
                           Expanded(
                             child: ListView.builder(
                               shrinkWrap: true,
-                              physics: ScrollPhysics(),
+                              physics: const ScrollPhysics(),
                               scrollDirection: Axis.vertical,
                               itemCount: commonlist.length,
                               itemBuilder: (context, i) {
-                                if (commonlist.length == 0) {
+                                if (commonlist.isEmpty) {
                                   //if (state.status == Status.LOADING) {
 //                          print("gone in _buildProgressIndicator");
                                   return _buildProgressIndicator();
@@ -2050,11 +2021,11 @@ class MyLearnPlusHome extends State<MyLearnPlusHomeScreen> with SingleTickerProv
                         ],
                       ),
                     )
-                  : Container(child: Center(child: Text(appBloc.localstr.filterLblLblnodata,style: TextStyle(color: Colors.black,),),))
-          : ((dashgridlist.length == 0 )) ? Container(child: Center(child: Text(appBloc.localstr.filterLblLblnodata,style: TextStyle(color: Colors.black,),),)) : Container(
+                  : Container(child: Center(child: Text(appBloc.localstr.filterLblLblnodata,style: const TextStyle(color: Colors.black,),),))
+          : ((dashgridlist.isEmpty )) ? Container(child: Center(child: Text(appBloc.localstr.filterLblLblnodata,style: const TextStyle(color: Colors.black,),),)) : Container(
               child: ListView.builder(
                 shrinkWrap: true,
-                physics: ScrollPhysics(),
+                physics: const ScrollPhysics(),
                 scrollDirection: Axis.vertical,
                 itemCount: dashgridlist.length,
                 itemBuilder: (context, i) {
@@ -2072,14 +2043,14 @@ class MyLearnPlusHome extends State<MyLearnPlusHomeScreen> with SingleTickerProv
                       //   ),
                       //   alignment: Alignment.centerLeft,
                       // ),
-                      ((dashgridlist.length > 0 && dashgridlist[0].dashcommonlist.length == 0 )) ? Container(child: Center(child: Text(appBloc.localstr.filterLblLblnodata,style: TextStyle(color: Colors.black,),),)) :
+                      ((dashgridlist.isNotEmpty && dashgridlist[0].dashcommonlist.isEmpty )) ? Container(child: Center(child: Text(appBloc.localstr.filterLblLblnodata,style: const TextStyle(color: Colors.black,),),)) :
                       Container(
                         color: Colors.white,
                         height: MediaQuery.of(context).size.height * 0.43,
                         width: MediaQuery.of(context).size.width,
                         child: ListView.builder(
                           shrinkWrap: true,
-                          physics: ScrollPhysics(),
+                          physics: const ScrollPhysics(),
                           scrollDirection: Axis.horizontal,
                           itemCount: dashgridlist[i].dashcommonlist.length,
                           itemBuilder: (context, j) {
@@ -2094,7 +2065,7 @@ class MyLearnPlusHome extends State<MyLearnPlusHomeScreen> with SingleTickerProv
                                   child: Container(alignment: Alignment.centerLeft,
                                     child:Text(
                                     label,
-                                    style: TextStyle(
+                                    style: const TextStyle(
                                       color: Colors.lightGreen,
                                       fontSize: 15,
                                     ),
@@ -2146,17 +2117,17 @@ class MyLearnPlusHome extends State<MyLearnPlusHomeScreen> with SingleTickerProv
       String imgUrl =
           "https://image.shutterstock.com/z/stock-photo-high-angle-view-of-video-conference-with-teacher-on-laptop-at-home-top-view-of-girl-in-video-call-1676998303.jpg";
 
-      Color statuscolor = Color(0xff5750da);
+      Color statuscolor = const Color(0xff5750da);
       String statusval = obj.corelessonstatus.toString();
       double ratingRequired = 0;
       if (statusval.trim().contains('Completed')) {
-        statuscolor = Color(0xff4ad963);
+        statuscolor = const Color(0xff4ad963);
       }
       else if (statusval.trim() == 'Not Started') {
-        statuscolor = Color(0xfffe2c53);
+        statuscolor = const Color(0xfffe2c53);
       }
       else if (statusval.trim() == 'In Progress') {
-        statuscolor = Color(0xffff9503);
+        statuscolor = const Color(0xffff9503);
       }
 
       bool isratingbarVissble = false;
@@ -2190,7 +2161,7 @@ class MyLearnPlusHome extends State<MyLearnPlusHomeScreen> with SingleTickerProv
       bool isExpired = false;
       if (obj.durationenddate != null) {
         DateTime tempDate =
-            new DateFormat("yyyy-MM-ddThh:mm:ss").parse(obj.durationenddate);
+            DateFormat("yyyy-MM-ddThh:mm:ss").parse(obj.durationenddate);
         String dateStr = DateFormat("yyyy-MM-dd HH:mm:ss").format(tempDate);
 
         //var isExpire = tempDate.isAfter(DateTime.now());
@@ -2199,7 +2170,7 @@ class MyLearnPlusHome extends State<MyLearnPlusHomeScreen> with SingleTickerProv
         print(DateTime.now());
         print(isExpired);
         if (isExpired) {
-          statuscolor = Color(0xfffe2c53);
+          statuscolor = const Color(0xfffe2c53);
         }
         //print(isExpire);
       }
@@ -2210,14 +2181,14 @@ class MyLearnPlusHome extends State<MyLearnPlusHomeScreen> with SingleTickerProv
         if (state is CancelEnrollmentState) {
           if (state.status == Status.COMPLETED) {
             if (state.isSucces == '"true"') {
-              Future.delayed(Duration(seconds: 1), () {
+              Future.delayed(const Duration(seconds: 1), () {
                 // 5s over, navigate to a page
                 flutterToast.showToast(
                   child: CommonToast(
                       displaymsg:
                           'Your enrollment for the course has been successfully canceled'),
                   gravity: ToastGravity.BOTTOM,
-                  toastDuration: Duration(seconds: 1),
+                  toastDuration: const Duration(seconds: 1),
                 );
                 setState(() {
                 dashGridList.remove(obj);
@@ -2234,7 +2205,7 @@ class MyLearnPlusHome extends State<MyLearnPlusHomeScreen> with SingleTickerProv
               flutterToast.showToast(
                 child: CommonToast(displaymsg: 'Something went wrong'),
                 gravity: ToastGravity.BOTTOM,
-                toastDuration: Duration(seconds: 2),
+                toastDuration: const Duration(seconds: 2),
               );
             }
           } else if (state.status == Status.ERROR) {
@@ -2259,15 +2230,11 @@ class MyLearnPlusHome extends State<MyLearnPlusHomeScreen> with SingleTickerProv
             print('ifdataaaaa');
             String alertMessage =
                 appBloc.localstr.prerequistesalerttitle6Alerttitle6;
-            alertMessage = alertMessage +
-                "  \"" +
-                appBloc.localstr.prerequisLabelContenttypelabel +
-                "\" " +
-                appBloc.localstr.prerequistesalerttitle5Alerttitle7;
+            alertMessage = "$alertMessage  \"${appBloc.localstr.prerequisLabelContenttypelabel}\" ${appBloc.localstr.prerequistesalerttitle5Alerttitle7}";
 
             showDialog(
                 context: context,
-                builder: (BuildContext context) => new AlertDialog(
+                builder: (BuildContext context) => AlertDialog(
                   title: Text(
                     'Pre-requisite Sequence',
                     style: TextStyle(
@@ -2288,12 +2255,11 @@ class MyLearnPlusHome extends State<MyLearnPlusHomeScreen> with SingleTickerProv
                                     "0xFF${appBloc.uiSettingModel.appTextColor.substring(1, 7).toUpperCase()}"),
                               ))),
                       Text(
-                          '\n' +
-                              obj.viewprerequisitecontentstatus
+                          '\n${obj.viewprerequisitecontentstatus
                                   .toString()
                                   .split('#%')[1]
-                                  .split('\$;')[0],
-                          style: TextStyle(
+                                  .split('\$;')[0]}',
+                          style: const TextStyle(
                             fontSize: 16.0,
                             color: Colors.blue,
                           )),
@@ -2311,9 +2277,9 @@ class MyLearnPlusHome extends State<MyLearnPlusHomeScreen> with SingleTickerProv
                   ),
                   backgroundColor: InsColor(appBloc).appBGColor,
                   shape: RoundedRectangleBorder(
-                      borderRadius: new BorderRadius.circular(5)),
+                      borderRadius: BorderRadius.circular(5)),
                   actions: <Widget>[
-                    new FlatButton(
+                    FlatButton(
                       child: Text(appBloc.localstr.eventsAlertbuttonOkbutton),
                       textColor: Colors.blue,
                       onPressed: () async {
@@ -2340,7 +2306,7 @@ class MyLearnPlusHome extends State<MyLearnPlusHomeScreen> with SingleTickerProv
                 padding: const EdgeInsets.all(10.0),
                 child: SingleChildScrollView(
                   scrollDirection: Axis.vertical,
-                  physics: ScrollPhysics(),
+                  physics: const ScrollPhysics(),
                   child: Column(
                     children: <Widget>[
                       Stack(
@@ -2373,7 +2339,7 @@ class MyLearnPlusHome extends State<MyLearnPlusHomeScreen> with SingleTickerProv
                                 child: Visibility(
                                   visible: kShowContentTypeIcon,
                                   child: Container(
-                                      padding: EdgeInsets.all(2.0),
+                                      padding: const EdgeInsets.all(2.0),
                                       color: Colors.white,
                                       child: CachedNetworkImage(
                                         height: 30,
@@ -2400,7 +2366,7 @@ class MyLearnPlusHome extends State<MyLearnPlusHomeScreen> with SingleTickerProv
                             left: 0,
                             child: Container(
                               decoration: BoxDecoration(
-                                color: Color(0xFF007BFF),
+                                color: const Color(0xFF007BFF),
                                 borderRadius: BorderRadius.circular(5),
                               ),
                               padding: EdgeInsets.only(
@@ -2420,7 +2386,7 @@ class MyLearnPlusHome extends State<MyLearnPlusHomeScreen> with SingleTickerProv
                           ),
                         ],
                       ),
-                      SizedBox(
+                      const SizedBox(
                         height: 10,
                       ),
                       Container(
@@ -2474,7 +2440,7 @@ class MyLearnPlusHome extends State<MyLearnPlusHomeScreen> with SingleTickerProv
                           ],
                         ),
                       ),
-                      SizedBox(
+                      const SizedBox(
                         height: 10,
                       ),
                       Container(
@@ -2489,21 +2455,21 @@ class MyLearnPlusHome extends State<MyLearnPlusHomeScreen> with SingleTickerProv
                           textAlign: TextAlign.start,
                         ),
                       ),
-                      SizedBox(
+                      const SizedBox(
                         height: 30,
                       ),
                       Container(
                         width: ScreenUtil().setHeight(210),
                         child: Row(
                           children: <Widget>[
-                            new Container(
+                            Container(
                                 width: ScreenUtil().setWidth(20),
                                 height: ScreenUtil().setWidth(20),
-                                decoration: new BoxDecoration(
+                                decoration: BoxDecoration(
                                     shape: BoxShape.circle,
-                                    image: new DecorationImage(
+                                    image: DecorationImage(
                                         fit: BoxFit.fill,
-                                        image: new NetworkImage(imgUrl)))),
+                                        image: NetworkImage(imgUrl)))),
                             SizedBox(
                               width: ScreenUtil().setWidth(5),
                             ),
@@ -2518,7 +2484,7 @@ class MyLearnPlusHome extends State<MyLearnPlusHomeScreen> with SingleTickerProv
                           ],
                         ),
                       ),
-                      SizedBox(
+                      const SizedBox(
                         height: 10,
                       ),
                       Container(
@@ -2586,12 +2552,12 @@ class MyLearnPlusHome extends State<MyLearnPlusHomeScreen> with SingleTickerProv
                           ],
                         ),
                       ),
-                      SizedBox(
+                      const SizedBox(
                         height: 10,
                       ),
                       Container(
                         width: ScreenUtil().setHeight(210),
-                        padding: EdgeInsets.fromLTRB(10, 0, 0, 0),
+                        padding: const EdgeInsets.fromLTRB(10, 0, 0, 0),
                         alignment: Alignment.topLeft,
                         child: Text(
                           obj.shortdescription,
@@ -2603,7 +2569,7 @@ class MyLearnPlusHome extends State<MyLearnPlusHomeScreen> with SingleTickerProv
                                   .withOpacity(0.5)),
                         ),
                       ),
-                      SizedBox(
+                      const SizedBox(
                         height: 10,
                       ),
                       isExpired
@@ -2618,7 +2584,7 @@ class MyLearnPlusHome extends State<MyLearnPlusHomeScreen> with SingleTickerProv
                                     width: ScreenUtil().setWidth(10),
                                   ),
                                   displayViewTile(obj,tab),
-                                  SizedBox(
+                                  const SizedBox(
                                     width: 10,
                                   ),
                                   displayPlayTile(obj,tab)
@@ -2645,17 +2611,17 @@ class MyLearnPlusHome extends State<MyLearnPlusHomeScreen> with SingleTickerProv
       String imgUrl =
           "https://image.shutterstock.com/z/stock-photo-high-angle-view-of-video-conference-with-teacher-on-laptop-at-home-top-view-of-girl-in-video-call-1676998303.jpg";
 
-      Color statuscolor = Color(0xff5750da);
+      Color statuscolor = const Color(0xff5750da);
       String statusval = obj.corelessonstatus.toString();
       double ratingRequired = 0;
       if (statusval.trim().contains('Completed')) {
-        statuscolor = Color(0xff4ad963);
+        statuscolor = const Color(0xff4ad963);
       }
       else if (statusval.trim() == 'Not Started') {
-        statuscolor = Color(0xfffe2c53);
+        statuscolor = const Color(0xfffe2c53);
       }
       else if (statusval.trim() == 'In Progress') {
-        statuscolor = Color(0xffff9503);
+        statuscolor = const Color(0xffff9503);
       }
 
       bool isratingbarVissble = false;
@@ -2692,7 +2658,7 @@ class MyLearnPlusHome extends State<MyLearnPlusHomeScreen> with SingleTickerProv
       bool isExpired = false;
       if (obj.durationenddate != null) {
         DateTime tempDate =
-            new DateFormat("yyyy-MM-ddThh:mm:ss").parse(obj.durationenddate);
+            DateFormat("yyyy-MM-ddThh:mm:ss").parse(obj.durationenddate);
         String dateStr = DateFormat("yyyy-MM-dd HH:mm:ss").format(tempDate);
 
         //var isExpire = tempDate.isAfter(DateTime.now());
@@ -2701,7 +2667,7 @@ class MyLearnPlusHome extends State<MyLearnPlusHomeScreen> with SingleTickerProv
         print(DateTime.now());
         print(isExpired);
         if (isExpired) {
-          statuscolor = Color(0xfffe2c53);
+          statuscolor = const Color(0xfffe2c53);
         }
         //print(isExpire);
       }
@@ -2715,24 +2681,21 @@ class MyLearnPlusHome extends State<MyLearnPlusHomeScreen> with SingleTickerProv
 //            print('List size ${state.list.length}');
                   if (appBloc.uiSettingModel.isFromPush) {
                     print(
-                        'Data data : ' + myLearningBloc.list.length.toString());
+                        'Data data : ${myLearningBloc.list.length}');
                     myLearningBloc.list.asMap().forEach((i, element) {
                       if (element.contentid == contentId) {
                         Navigator.of(context)
                             .push(
                               MaterialPageRoute(
-                                builder: (context) => ChangeNotifierProvider(
-                                  create: (context) => ProviderModel(),
-                                  child: CommonDetailScreen(
-                                    screenType: ScreenType.MyLearning,
-                                    contentid: contentId,
-                                    objtypeId: element.objecttypeid,
-                                    detailsBloc: detailsBloc,
-                                    table2: element,
-                                    pos: i,
-                                    mylearninglist: myLearningBloc.list,
-                                    isFromReschedule: false,
-                                  ),
+                                builder: (context) => CommonDetailScreen(
+                                  screenType: ScreenType.MyLearning,
+                                  contentid: contentId,
+                                  objtypeId: element.objecttypeid,
+                                  detailsBloc: detailsBloc,
+                                  table2: element,
+                                  pos: i,
+                                  mylearninglist: myLearningBloc.list,
+                                  isFromReschedule: false,
                                 ),
                               ),
                             )
@@ -2763,19 +2726,19 @@ class MyLearnPlusHome extends State<MyLearnPlusHomeScreen> with SingleTickerProv
               }
               else if(state is GetMyLearnPlusLearningObjectsState){
                 if(state.status == Status.COMPLETED){
-                if (state.list.length > 0 && ((state.list[0].actualstatus == "completed") || (state.list[0].actualstatus == "passed") || (state.list[0].actualstatus == "failed"))) { //Completed
+                if (state.list.isNotEmpty && ((state.list[0].actualstatus == "completed") || (state.list[0].actualstatus == "passed") || (state.list[0].actualstatus == "failed"))) { //Completed
                     myLearningPlusCompletedList.clear();
                     myLearningPlusCompletedList.addAll(state.list);
                  }
-                 else if(state.list.length > 0 && state.list[0].actualstatus == "incomplete"){ //In Progress ("inprogress,incomplete,grade")
+                 else if(state.list.isNotEmpty && state.list[0].actualstatus == "incomplete"){ //In Progress ("inprogress,incomplete,grade")
                  myLearningPlusInProList.clear();
                  myLearningPlusInProList = state.list;
                  }
-                 else if(state.list.length > 0 && (state.list[0].actualstatus == "not attempted" || state.list[0].actualstatus == "registered")){ //Not started
+                 else if(state.list.isNotEmpty && (state.list[0].actualstatus == "not attempted" || state.list[0].actualstatus == "registered")){ //Not started
                  myLearningPlusNotStartProList.clear();
                  myLearningPlusNotStartProList = state.list;
                  }
-                 else if(state.list.length > 0 && ((state.list[0].actualstatus == "attended") || (state.list[0].actualstatus == "notattended"))){  //Attending
+                 else if(state.list.isNotEmpty && ((state.list[0].actualstatus == "attended") || (state.list[0].actualstatus == "notattended"))){  //Attending
                  myLearningPlusAttendProList.clear();
                  myLearningPlusAttendProList = state.list;
                  }
@@ -2801,15 +2764,11 @@ class MyLearnPlusHome extends State<MyLearnPlusHomeScreen> with SingleTickerProv
             print('ifdataaaaa');
             String alertMessage =
                 appBloc.localstr.prerequistesalerttitle6Alerttitle6;
-            alertMessage = alertMessage +
-                "  \"" +
-                appBloc.localstr.prerequisLabelContenttypelabel +
-                "\" " +
-                appBloc.localstr.prerequistesalerttitle5Alerttitle7;
+            alertMessage = "$alertMessage  \"${appBloc.localstr.prerequisLabelContenttypelabel}\" ${appBloc.localstr.prerequistesalerttitle5Alerttitle7}";
 
             showDialog(
                 context: context,
-                builder: (BuildContext context) => new AlertDialog(
+                builder: (BuildContext context) => AlertDialog(
                   title: Text(
                     'Pre-requisite Sequence',
                     style: TextStyle(
@@ -2830,12 +2789,11 @@ class MyLearnPlusHome extends State<MyLearnPlusHomeScreen> with SingleTickerProv
                                     "0xFF${appBloc.uiSettingModel.appTextColor.substring(1, 7).toUpperCase()}"),
                               ))),
                       Text(
-                          '\n' +
-                              obj.viewprerequisitecontentstatus
+                          '\n${obj.viewprerequisitecontentstatus
                                   .toString()
                                   .split('#%')[1]
-                                  .split('\$;')[0],
-                          style: TextStyle(
+                                  .split('\$;')[0]}',
+                          style: const TextStyle(
                             fontSize: 16.0,
                             color: Colors.blue,
                           )),
@@ -2853,9 +2811,9 @@ class MyLearnPlusHome extends State<MyLearnPlusHomeScreen> with SingleTickerProv
                   ),
                   backgroundColor: InsColor(appBloc).appBGColor,
                   shape: RoundedRectangleBorder(
-                      borderRadius: new BorderRadius.circular(5)),
+                      borderRadius: BorderRadius.circular(5)),
                   actions: <Widget>[
-                    new FlatButton(
+                    FlatButton(
                       child: Text(appBloc.localstr.eventsAlertbuttonOkbutton),
                       textColor: Colors.blue,
                       onPressed: () async {
@@ -2912,7 +2870,7 @@ class MyLearnPlusHome extends State<MyLearnPlusHomeScreen> with SingleTickerProv
                               child: Visibility(
                                 visible: kShowContentTypeIcon,
                                 child: Container(
-                                    padding: EdgeInsets.all(2.0),
+                                    padding: const EdgeInsets.all(2.0),
                                     color: Colors.white,
                                     child: CachedNetworkImage(
                                       height: 30,
@@ -2939,7 +2897,7 @@ class MyLearnPlusHome extends State<MyLearnPlusHomeScreen> with SingleTickerProv
                             left: 15,
                             child: obj.corelessonstatus.isEmpty ? Container() : Container(
                               decoration: BoxDecoration(
-                                color: Color(0xFF007BFF),
+                                color: const Color(0xFF007BFF),
                                 borderRadius: BorderRadius.circular(5),
                               ),
                               padding: EdgeInsets.only(
@@ -2969,7 +2927,7 @@ class MyLearnPlusHome extends State<MyLearnPlusHomeScreen> with SingleTickerProv
                       valueColor: AlwaysStoppedAnimation<Color>(statuscolor),
                       backgroundColor: Colors.grey,
                     ),
-                    SizedBox(
+                    const SizedBox(
                       height: 10,
                     ),
                     Container(
@@ -3027,7 +2985,7 @@ class MyLearnPlusHome extends State<MyLearnPlusHomeScreen> with SingleTickerProv
                       ),
                     ),
 
-                    SizedBox(
+                    const SizedBox(
                       height: 10,
                     ),
                     Container(
@@ -3042,20 +3000,20 @@ class MyLearnPlusHome extends State<MyLearnPlusHomeScreen> with SingleTickerProv
                       ),
                     ),
 
-                    SizedBox(
+                    const SizedBox(
                       height: 30,
                     ),
 
                     Row(
                       children: <Widget>[
-                        new Container(
+                        Container(
                             width: ScreenUtil().setWidth(20),
                             height: ScreenUtil().setWidth(20),
-                            decoration: new BoxDecoration(
+                            decoration: BoxDecoration(
                                 shape: BoxShape.circle,
-                                image: new DecorationImage(
+                                image: DecorationImage(
                                     fit: BoxFit.fill,
-                                    image: new NetworkImage(imgUrl)))),
+                                    image: NetworkImage(imgUrl)))),
                         SizedBox(
                           width: ScreenUtil().setWidth(5),
                         ),
@@ -3070,7 +3028,7 @@ class MyLearnPlusHome extends State<MyLearnPlusHomeScreen> with SingleTickerProv
                       ],
                     ),
 
-                    SizedBox(
+                    const SizedBox(
                       height: 10,
                     ),
 
@@ -3134,11 +3092,11 @@ class MyLearnPlusHome extends State<MyLearnPlusHomeScreen> with SingleTickerProv
                       ],
                     ),
 
-                    SizedBox(
+                    const SizedBox(
                       height: 10,
                     ),
                     Container(
-                      padding: EdgeInsets.fromLTRB(10, 0, 0, 0),
+                      padding: const EdgeInsets.fromLTRB(10, 0, 0, 0),
                       alignment: Alignment.topLeft,
                       child: Text(
                         obj.shortdescription,
@@ -3150,7 +3108,7 @@ class MyLearnPlusHome extends State<MyLearnPlusHomeScreen> with SingleTickerProv
                                 .withOpacity(0.5)),
                       ),
                     ),
-                    SizedBox(
+                    const SizedBox(
                       height: 10,
                     ),
                     isExpired
@@ -3163,7 +3121,7 @@ class MyLearnPlusHome extends State<MyLearnPlusHomeScreen> with SingleTickerProv
                                 width: ScreenUtil().setWidth(10),
                               ),
                              (obj.iswishlistcontent != 1) ? displayViewTile(obj,tab) : Container(),
-                              SizedBox(
+                              const SizedBox(
                                 width: 10,
                               ),
                               displayPlayTile(obj,tab)
@@ -3306,15 +3264,11 @@ class MyLearnPlusHome extends State<MyLearnPlusHomeScreen> with SingleTickerProv
           print('ifdataaaaa');
           String alertMessage =
               appBloc.localstr.prerequistesalerttitle6Alerttitle6;
-          alertMessage = alertMessage +
-              "  \"" +
-              appBloc.localstr.prerequisLabelContenttypelabel +
-              "\" " +
-              appBloc.localstr.prerequistesalerttitle5Alerttitle7;
+          alertMessage = "$alertMessage  \"${appBloc.localstr.prerequisLabelContenttypelabel}\" ${appBloc.localstr.prerequistesalerttitle5Alerttitle7}";
 
           showDialog(
               context: context,
-              builder: (BuildContext context) => new AlertDialog(
+              builder: (BuildContext context) => AlertDialog(
                     title: Text(
                       'Pre-requisite Sequence',
                       style: TextStyle(
@@ -3335,12 +3289,11 @@ class MyLearnPlusHome extends State<MyLearnPlusHomeScreen> with SingleTickerProv
                                   "0xFF${appBloc.uiSettingModel.appTextColor.substring(1, 7).toUpperCase()}"),
                             ))),
                         Text(
-                            '\n' +
-                                table2.viewprerequisitecontentstatus
+                            '\n${table2.viewprerequisitecontentstatus
                                     .toString()
                                     .split('#%')[1]
-                                    .split('\$;')[0],
-                            style: TextStyle(
+                                    .split('\$;')[0]}',
+                            style: const TextStyle(
                               fontSize: 16.0,
                               color: Colors.blue,
                             )),
@@ -3358,9 +3311,9 @@ class MyLearnPlusHome extends State<MyLearnPlusHomeScreen> with SingleTickerProv
                     ),
                     backgroundColor: InsColor(appBloc).appBGColor,
                     shape: RoundedRectangleBorder(
-                        borderRadius: new BorderRadius.circular(5)),
+                        borderRadius: BorderRadius.circular(5)),
                     actions: <Widget>[
-                      new FlatButton(
+                      FlatButton(
                         child: Text(appBloc.localstr.eventsAlertbuttonOkbutton),
                         textColor: Colors.blue,
                         onPressed: () async {
@@ -3542,32 +3495,15 @@ class MyLearnPlusHome extends State<MyLearnPlusHomeScreen> with SingleTickerProv
       String paramsString = "";
       if (table2.objecttypeid == 10 && table2.bit5) {
          if(context != null){
-        paramsString = "userID=" +
-            table2.userid.toString() +
-            "&scoid=" +
-            table2.scoid.toString() +
-            "&TrackObjectTypeID=" +
-            table2.objecttypeid.toString() +
-            "&TrackContentID=" +
-            table2.contentid +
-            "&TrackScoID=" +
-            table2.scoid.toString() +
-            "&SiteID=" +
-            table2.siteid.toString() +
-            "&OrgUnitID=" +
-            table2.siteid.toString() +
-            "&isonexist=onexit";
+        paramsString = "userID=${table2.userid}&scoid=${table2.scoid}&TrackObjectTypeID=${table2.objecttypeid}&TrackContentID=${table2.contentid}&TrackScoID=${table2.scoid}&SiteID=${table2.siteid}&OrgUnitID=${table2.siteid}&isonexist=onexit";
       } else {
-        paramsString = "userID=" +
-            table2.userid.toString() +
-            "&scoid=" +
-            table2.scoid.toString();
+        paramsString = "userID=${table2.userid}&scoid=${table2.scoid}";
       }
 
       String webApiUrl = await sharePrefGetString(sharedPref_webApiUrl);
 
       String url =
-          webApiUrl + "/MobileLMS/MobileGetContentStatus?" + paramsString;
+          "$webApiUrl/MobileLMS/MobileGetContentStatus?$paramsString";
 
       print('launchCourseUrl $url');
 
@@ -3578,12 +3514,12 @@ class MyLearnPlusHome extends State<MyLearnPlusHomeScreen> with SingleTickerProv
 
 
   Widget _buildProgressIndicator() {
-    return new Padding(
-      padding: const EdgeInsets.all(8.0),
-      child: new Center(
-        child: new Opacity(
+    return const Padding(
+      padding: EdgeInsets.all(8.0),
+      child: Center(
+        child: Opacity(
           opacity: 1.0,
-          child: new CircularProgressIndicator(),
+          child: CircularProgressIndicator(),
         ),
       ),
     );
@@ -3604,17 +3540,9 @@ class MyLearnPlusHome extends State<MyLearnPlusHomeScreen> with SingleTickerProv
     var strSiteID = await sharePrefGetString(sharedPref_siteid);
     var webApiUrl = await sharePrefGetString(sharedPref_webApiUrl);
 
-    String paramsString = "strContentID=" +
-        learningModel.contentid +
-        "&UserID=" +
-        strUserID +
-        "&SiteID=" +
-        strSiteID +
-        "&SCOID=" +
-        learningModel.scoid.toString() +
-        "&CanTrack=true";
+    String paramsString = "strContentID=${learningModel.contentid}&UserID=$strUserID&SiteID=$strSiteID&SCOID=${learningModel.scoid}&CanTrack=true";
 
-    String url = webApiUrl + "CourseTracking/TrackLRSStatement?" + paramsString;
+    String url = "${webApiUrl}CourseTracking/TrackLRSStatement?$paramsString";
 
     ApiResponse? apiResponse = await generalRepository.executeXAPICourse(url);
   }
@@ -3631,9 +3559,9 @@ class MyLearnPlusHome extends State<MyLearnPlusHomeScreen> with SingleTickerProv
                   "0xFF${appBloc.uiSettingModel.appBGColor.substring(1, 7).toUpperCase()}"),
             ),
             child: SingleChildScrollView(
-              child: new Column(
+              child: Column(
                 children: <Widget>[
-                  BottomSheetDragger(),
+                  const BottomSheetDragger(),
                   displayPlay(table2,tabInfo),
                   displayView(table2,tabInfo),
                   (table2.iswishlistcontent == 1) ? displayAddToMyLearning(table2): Container(),
@@ -3682,13 +3610,13 @@ class MyLearnPlusHome extends State<MyLearnPlusHomeScreen> with SingleTickerProv
     //if ((table2?.ShareContentwithUser?.length ?? 0) > 0) {
     if (privilegeCreateForumIdExists()) {
       if (table2.objecttypeid == 14) {
-        return new ListTile(
+        return ListTile(
           leading: Icon(
             Icons.email,
             // IconDataSolid(int.parse('0xf06e')),
             color: InsColor(appBloc).appIconColor,
           ),
-          title: new Text(
+          title: Text(
               appBloc.localstr.mylearningsendviaemailnewoption.isEmpty
                   ? 'Share via Email'
                   : appBloc.localstr.mylearningsendviaemailnewoption,
@@ -3720,12 +3648,12 @@ class MyLearnPlusHome extends State<MyLearnPlusHomeScreen> with SingleTickerProv
   Widget displayShare(DummyMyCatelogResponseTable2 table2) {
     if ((table2.suggesttoconnlink.isNotEmpty ||
         table2.suggesttoconnlink.isNotEmpty) && table2.iswishlistcontent != 1) {
-      return new ListTile(
+      return ListTile(
         leading: Icon(
           IconDataSolid(int.parse('0xf1e0')),
           color: InsColor(appBloc).appIconColor,
         ),
-        title: new Text('Share with Connection',
+        title: Text('Share with Connection',
             style: TextStyle(
                 color: Color(
               int.parse(
@@ -3747,14 +3675,14 @@ class MyLearnPlusHome extends State<MyLearnPlusHomeScreen> with SingleTickerProv
   Widget displayShareConnection(DummyMyCatelogResponseTable2 table2) {
     if ((table2.suggestwithfriendlink.isNotEmpty ||
         table2.suggestwithfriendlink.isNotEmpty) && table2.iswishlistcontent != 1) {
-      return new ListTile(
+      return ListTile(
         leading: Icon(
           IconDataSolid(
             int.parse('0xf079'),
           ),
           color: InsColor(appBloc).appIconColor,
         ),
-        title: new Text("Share with People",
+        title: Text("Share with People",
             style: TextStyle(
                 color: Color(
               int.parse(
@@ -3780,7 +3708,7 @@ class MyLearnPlusHome extends State<MyLearnPlusHomeScreen> with SingleTickerProv
             IconDataSolid(int.parse('0xf187')),
             color: InsColor(appBloc).appIconColor,
           ),
-          title: new Text(appBloc.localstr.mylearningActionsheetUnarchiveoption,
+          title: Text(appBloc.localstr.mylearningActionsheetUnarchiveoption,
               style: TextStyle(
                   color: Color(
                 int.parse(
@@ -3808,7 +3736,7 @@ class MyLearnPlusHome extends State<MyLearnPlusHomeScreen> with SingleTickerProv
             IconDataSolid(int.parse('0xf056')),
             color: InsColor(appBloc).appIconColor,
           ),
-          title: new Text(
+          title: Text(
               appBloc.localstr.mylearningActionsheetRemovefrommylearning,
               style: TextStyle(
                   color: Color(
@@ -3819,7 +3747,7 @@ class MyLearnPlusHome extends State<MyLearnPlusHomeScreen> with SingleTickerProv
             Navigator.of(context).pop();
             showDialog(
                 context: context,
-                builder: (BuildContext context) => new AlertDialog(
+                builder: (BuildContext context) => AlertDialog(
                       title: Text(
                         appBloc.localstr.mylearningAlerttitleStringareyousure,
                         style: TextStyle(
@@ -3843,9 +3771,9 @@ class MyLearnPlusHome extends State<MyLearnPlusHomeScreen> with SingleTickerProv
                             "0xFF${appBloc.uiSettingModel.appBGColor.substring(1, 7).toUpperCase()}"),
                       ),
                       shape: RoundedRectangleBorder(
-                          borderRadius: new BorderRadius.circular(5)),
+                          borderRadius: BorderRadius.circular(5)),
                       actions: <Widget>[
-                        new FlatButton(
+                        FlatButton(
                           child: Text(
                               appBloc.localstr.mylearningAlertbuttonYesbutton),
                           textColor: Colors.blue,
@@ -3875,7 +3803,7 @@ class MyLearnPlusHome extends State<MyLearnPlusHomeScreen> with SingleTickerProv
             IconDataSolid(int.parse('0xf783')),
             color: InsColor(appBloc).appIconColor,
           ),
-          title: new Text(
+          title: Text(
               appBloc.localstr.mylearningActionbuttonRescheduleactionbutton,
               style: TextStyle(
                   color: Color(
@@ -3891,18 +3819,16 @@ class MyLearnPlusHome extends State<MyLearnPlusHomeScreen> with SingleTickerProv
                 table2.objecttypeid == 70 && table2.eventscheduletype == 1) {
               Navigator.of(context)
                   .push(MaterialPageRoute(
-                      builder: (context) => ChangeNotifierProvider(
-                          create: (context) => ProviderModel(),
-                          child: CommonDetailScreen(
-                            screenType: ScreenType.MyLearning,
-                            contentid: table2.reschduleparentid,
-                            objtypeId: table2.objecttypeid,
-                            detailsBloc: detailsBloc,
-                            table2: table2,
-                            //     nativeModel: widget.nativeModel,
-                            isFromReschedule: true,
-                            //isFromMyLearning: true
-                          ))))
+                      builder: (context) => CommonDetailScreen(
+                        screenType: ScreenType.MyLearning,
+                        contentid: table2.reschduleparentid,
+                        objtypeId: table2.objecttypeid,
+                        detailsBloc: detailsBloc,
+                        table2: table2,
+                        //     nativeModel: widget.nativeModel,
+                        isFromReschedule: true,
+                        //isFromMyLearning: true
+                      )))
                   .then((value) => {
                         if (true)
                           {
@@ -3929,7 +3855,7 @@ class MyLearnPlusHome extends State<MyLearnPlusHomeScreen> with SingleTickerProv
             height: 25.h,
             color: InsColor(appBloc).appIconColor,
           ),
-          title: new Text(
+          title: Text(
               appBloc.localstr.mylearningActionsheetViewcertificateoption,
               style: TextStyle(
                   color: Color(
@@ -3943,7 +3869,7 @@ class MyLearnPlusHome extends State<MyLearnPlusHomeScreen> with SingleTickerProv
 
               showDialog(
                   context: context,
-                  builder: (BuildContext context) => new AlertDialog(
+                  builder: (BuildContext context) => AlertDialog(
                         title: Text(
                           appBloc.localstr
                               .mylearningActionsheetViewcertificateoption,
@@ -3962,9 +3888,9 @@ class MyLearnPlusHome extends State<MyLearnPlusHomeScreen> with SingleTickerProv
                         backgroundColor: Color(int.parse(
                             "0xFF${appBloc.uiSettingModel.appBGColor.substring(1, 7).toUpperCase()}")),
                         shape: RoundedRectangleBorder(
-                            borderRadius: new BorderRadius.circular(5)),
+                            borderRadius: BorderRadius.circular(5)),
                         actions: <Widget>[
-                          new FlatButton(
+                          FlatButton(
                             child: Text(appBloc.localstr
                                 .mylearningClosebuttonactionClosebuttonalerttitle),
                             textColor: Colors.blue,
@@ -3996,12 +3922,12 @@ class MyLearnPlusHome extends State<MyLearnPlusHomeScreen> with SingleTickerProv
       if ((table2.qrimagename != null) && isValidString(table2.qrimagename) &&
           (table2.qrcodeimagepath != null) && isValidString(table2.qrcodeimagepath) &&
           !table2.bit4) {
-        return new ListTile(
+        return ListTile(
           leading: Icon(
             IconDataSolid(int.parse('0xf029')),
             color: InsColor(appBloc).appIconColor,
           ),
-          title: new Text(appBloc.localstr.mylearningActionsheetViewqrcode,
+          title: Text(appBloc.localstr.mylearningActionsheetViewqrcode,
               style: TextStyle(
                   color: Color(
                 int.parse(
@@ -4026,13 +3952,13 @@ class MyLearnPlusHome extends State<MyLearnPlusHomeScreen> with SingleTickerProv
       if (table2.isaddedtomylearning == 1 ||
           typeFrom == "event" ||
           typeFrom == "track") {
-        return new ListTile(
+        return ListTile(
           leading: Icon(
             IconDataSolid(int.parse('0xf8d9')),
             color: InsColor(appBloc).appIconColor,
           ),
           title:
-              new Text(appBloc.localstr.learningtrackLabelEventviewrecording),
+              Text(appBloc.localstr.learningtrackLabelEventviewrecording),
           onTap: () => {
             //todo : sprint -3
 //            Navigator.of(context).push(MaterialPageRoute(
@@ -4054,7 +3980,7 @@ class MyLearnPlusHome extends State<MyLearnPlusHomeScreen> with SingleTickerProv
             IconDataSolid(int.parse('0xf187')),
             color: InsColor(appBloc).appIconColor,
           ),
-          title: new Text(appBloc.localstr.mylearningActionsheetArchiveoption,
+          title: Text(appBloc.localstr.mylearningActionsheetArchiveoption,
               style: TextStyle(
                   color: Color(
                 int.parse(
@@ -4095,12 +4021,12 @@ class MyLearnPlusHome extends State<MyLearnPlusHomeScreen> with SingleTickerProv
         table2.objecttypeid == 52) {
       if (table2.objecttypeid == 11 &&
           (table2.mediatypeid == 3 || table2.mediatypeid == 4)) {
-        return new ListTile(
+        return ListTile(
             leading: Icon(
               IconDataSolid(int.parse('0xf144')),
               color: InsColor(appBloc).appIconColor,
             ),
-            title: new Text(
+            title: Text(
               (appBloc.localstr.mylearningActionsheetPlayoption != null) ? appBloc.localstr.mylearningActionsheetPlayoption : '',
               style: TextStyle(
                   color: Color(
@@ -4115,15 +4041,11 @@ class MyLearnPlusHome extends State<MyLearnPlusHomeScreen> with SingleTickerProv
 //                print('ifdataaaaa');
                 String alertMessage =
                     appBloc.localstr.prerequistesalerttitle6Alerttitle6;
-                alertMessage = alertMessage +
-                    "  \"" +
-                    appBloc.localstr.prerequisLabelContenttypelabel +
-                    "\" " +
-                    appBloc.localstr.prerequistesalerttitle5Alerttitle7;
+                alertMessage = "$alertMessage  \"${appBloc.localstr.prerequisLabelContenttypelabel}\" ${appBloc.localstr.prerequistesalerttitle5Alerttitle7}";
 
                 showDialog(
                     context: context,
-                    builder: (BuildContext context) => new AlertDialog(
+                    builder: (BuildContext context) => AlertDialog(
                           title: Text(
                             appBloc.localstr.detailsAlerttitleStringalert,
                             style: TextStyle(
@@ -4143,9 +4065,9 @@ class MyLearnPlusHome extends State<MyLearnPlusHomeScreen> with SingleTickerProv
                           ),
                           backgroundColor: InsColor(appBloc).appBGColor,
                           shape: RoundedRectangleBorder(
-                              borderRadius: new BorderRadius.circular(5)),
+                              borderRadius: BorderRadius.circular(5)),
                           actions: <Widget>[
-                            new FlatButton(
+                            FlatButton(
                               child: Text(
                                   appBloc.localstr.eventsAlertbuttonOkbutton),
                               textColor: Colors.blue,
@@ -4174,12 +4096,12 @@ class MyLearnPlusHome extends State<MyLearnPlusHomeScreen> with SingleTickerProv
     if (table2.objecttypeid == 70 && (table2.bit4 != null && table2.bit4)) {
       return Container();
     }
-    return new ListTile(
+    return ListTile(
         leading: Icon(
           IconDataSolid(int.parse('0xf570')),
           color: InsColor(appBloc).appIconColor,
         ),
-        title: new Text((appBloc.localstr.mylearningActionsheetDetailsoption != null) ? appBloc.localstr.mylearningActionsheetDetailsoption : appBloc.localstr.mylearningActionsheetDetailsoption,
+        title: Text((appBloc.localstr.mylearningActionsheetDetailsoption != null) ? appBloc.localstr.mylearningActionsheetDetailsoption : appBloc.localstr.mylearningActionsheetDetailsoption,
             style: TextStyle(
                 color: Color(
               int.parse(
@@ -4193,19 +4115,16 @@ class MyLearnPlusHome extends State<MyLearnPlusHomeScreen> with SingleTickerProv
               ) {
             Navigator.of(context)
                 .push(MaterialPageRoute(
-                    builder: (context) => ChangeNotifierProvider(
-                          create: (context) => ProviderModel(),
-                          child: CommonDetailScreen(
-                            screenType: ScreenType.MyLearning,
-                            contentid: table2.contentid,
-                            objtypeId: table2.objecttypeid,
-                            detailsBloc: detailsBloc,
-                            table2: table2,
-                            //     nativeModel: widget.nativeModel,
-                            isFromReschedule: false,
-                            //isFromMyLearning: false
-                          ),
-                        )))
+                    builder: (context) => CommonDetailScreen(
+                      screenType: ScreenType.MyLearning,
+                      contentid: table2.contentid,
+                      objtypeId: table2.objecttypeid,
+                      detailsBloc: detailsBloc,
+                      table2: table2,
+                      //     nativeModel: widget.nativeModel,
+                      isFromReschedule: false,
+                      //isFromMyLearning: false
+                    )))
                 .then((value) => {
                       if (value == true)
                         {
@@ -4218,19 +4137,16 @@ class MyLearnPlusHome extends State<MyLearnPlusHomeScreen> with SingleTickerProv
                     });
           } else if (table2.objecttypeid == 70) {
             print(
-                'isaddedtomylearning' + table2.isaddedtomylearning.toString());
+                'isaddedtomylearning${table2.isaddedtomylearning}');
             Navigator.of(context)
                 .push(MaterialPageRoute(
-                    builder: (context) => ChangeNotifierProvider(
-                          create: (context) => ProviderModel(),
-                          child: CommonDetailScreen(
-                              screenType: ScreenType.MyLearning,
-                              contentid: table2.contentid,
-                              objtypeId: table2.objecttypeid,
-                              detailsBloc: detailsBloc,
-                              table2: table2,
-                              isFromReschedule: false),
-                        )))
+                    builder: (context) => CommonDetailScreen(
+                        screenType: ScreenType.MyLearning,
+                        contentid: table2.contentid,
+                        objtypeId: table2.objecttypeid,
+                        detailsBloc: detailsBloc,
+                        table2: table2,
+                        isFromReschedule: false)))
                 .then((value) => {
                       if (value == true)
                         {
@@ -4242,22 +4158,19 @@ class MyLearnPlusHome extends State<MyLearnPlusHomeScreen> with SingleTickerProv
                     });
           } else {
             print(
-                'isaddedtomylearning' + table2.isaddedtomylearning.toString());
+                'isaddedtomylearning${table2.isaddedtomylearning}');
             Navigator.of(context)
                 .push(MaterialPageRoute(
-                    builder: (context) => ChangeNotifierProvider(
-                          create: (context) => ProviderModel(),
-                          child: CommonDetailScreen(
-                              screenType: ScreenType.MyLearning,
-                              contentid: table2.contentid,
-                              objtypeId: table2.objecttypeid,
-                              detailsBloc: detailsBloc,
-                              table2: table2,
-                              pos: i,
-                              mylearninglist: myLearningBloc.list,
-                              isFromReschedule: false
-                              //isFromMyLearning: true
-                              ),
+                    builder: (context) => CommonDetailScreen(
+                        screenType: ScreenType.MyLearning,
+                        contentid: table2.contentid,
+                        objtypeId: table2.objecttypeid,
+                        detailsBloc: detailsBloc,
+                        table2: table2,
+                        pos: i,
+                        mylearninglist: myLearningBloc.list,
+                        isFromReschedule: false
+                        //isFromMyLearning: true
                         )))
                 .then((value) => {
                       if (value == true)
@@ -4296,12 +4209,12 @@ class MyLearnPlusHome extends State<MyLearnPlusHomeScreen> with SingleTickerProv
       if ((table2.eventenddatetime != null) && isValidString(table2.eventenddatetime)) if (!returnEventCompleted(
           table2.eventenddatetime)) {
         if (table2.typeofevent == 2) {
-          return new ListTile(
+          return ListTile(
             leading: Icon(
               IconDataSolid(int.parse('0xf234')),
               color: InsColor(appBloc).appIconColor,
             ),
-            title: new Text(appBloc.localstr.mylearningActionsheetJoinoption,
+            title: Text(appBloc.localstr.mylearningActionsheetJoinoption,
                 style: TextStyle(
                     color: Color(
                   int.parse(
@@ -4313,13 +4226,13 @@ class MyLearnPlusHome extends State<MyLearnPlusHomeScreen> with SingleTickerProv
 
               print('joinurllll ${table2.joinurl}');
 
-              if (joinUrl.length > 0) {
+              if (joinUrl.isNotEmpty) {
                 _launchInBrowser(joinUrl);
               } else {
                 flutterToast.showToast(
                   child: CommonToast(displaymsg: 'No url found'),
                   gravity: ToastGravity.BOTTOM,
-                  toastDuration: Duration(seconds: 2),
+                  toastDuration: const Duration(seconds: 2),
                 );
 //              Toast.makeText(v.getContext(), "No Url Found", Toast.LENGTH_SHORT).show();
               }
@@ -4347,12 +4260,12 @@ class MyLearnPlusHome extends State<MyLearnPlusHomeScreen> with SingleTickerProv
         return Container();
       } else {
         if(table2.iswishlistcontent != 1){
-        return new ListTile(
+        return ListTile(
           leading: Icon(
             IconDataSolid(int.parse('0xf06e')),
             color: InsColor(appBloc).appIconColor,
           ),
-          title: new Text((appBloc.localstr.mylearningActionsheetViewoption != null) ? appBloc.localstr.mylearningActionsheetViewoption: '',
+          title: Text((appBloc.localstr.mylearningActionsheetViewoption != null) ? appBloc.localstr.mylearningActionsheetViewoption: '',
               style: TextStyle(
                   color: Color(
                 int.parse(
@@ -4365,15 +4278,11 @@ class MyLearnPlusHome extends State<MyLearnPlusHomeScreen> with SingleTickerProv
 //              print('ifdataaaaa');
               String alertMessage =
                   appBloc.localstr.prerequistesalerttitle6Alerttitle6;
-              alertMessage = alertMessage +
-                  "  \"" +
-                  appBloc.localstr.prerequisLabelContenttypelabel +
-                  "\" " +
-                  appBloc.localstr.prerequistesalerttitle5Alerttitle7;
+              alertMessage = "$alertMessage  \"${appBloc.localstr.prerequisLabelContenttypelabel}\" ${appBloc.localstr.prerequistesalerttitle5Alerttitle7}";
 
               showDialog(
                   context: context,
-                  builder: (BuildContext context) => new AlertDialog(
+                  builder: (BuildContext context) => AlertDialog(
                         title: Text(
                           appBloc.localstr.detailsAlerttitleStringalert,
                           style: TextStyle(
@@ -4415,9 +4324,9 @@ class MyLearnPlusHome extends State<MyLearnPlusHomeScreen> with SingleTickerProv
                         ),
                         backgroundColor: InsColor(appBloc).appBGColor,
                         shape: RoundedRectangleBorder(
-                            borderRadius: new BorderRadius.circular(5)),
+                            borderRadius: BorderRadius.circular(5)),
                         actions: <Widget>[
-                          new FlatButton(
+                          FlatButton(
                             child: Text(
                                 appBloc.localstr.eventsAlertbuttonOkbutton),
                             textColor: Colors.blue,
@@ -4437,12 +4346,12 @@ class MyLearnPlusHome extends State<MyLearnPlusHomeScreen> with SingleTickerProv
     } else if (table2.objecttypeid == 688 || table2.objecttypeid == 70) {
       return Container();
     } else {
-      return new ListTile(
+      return ListTile(
         leading: Icon(
           IconDataSolid(int.parse('0xf06e')),
           color: InsColor(appBloc).appIconColor,
         ),
-        title: new Text(appBloc.localstr.mylearningActionsheetViewoption,
+        title: Text(appBloc.localstr.mylearningActionsheetViewoption,
             style: TextStyle(
                 color: Color(
               int.parse(
@@ -4463,7 +4372,7 @@ class MyLearnPlusHome extends State<MyLearnPlusHomeScreen> with SingleTickerProv
 
             showDialog(
                 context: context,
-                builder: (BuildContext context) => new AlertDialog(
+                builder: (BuildContext context) => AlertDialog(
                       title: Text(
                         'Pre-requisite Sequence',
                         style: TextStyle(
@@ -4484,12 +4393,11 @@ class MyLearnPlusHome extends State<MyLearnPlusHomeScreen> with SingleTickerProv
                                     "0xFF${appBloc.uiSettingModel.appTextColor.substring(1, 7).toUpperCase()}"),
                               ))),
                           Text(
-                              '\n' +
-                                  table2.viewprerequisitecontentstatus
+                              '\n${table2.viewprerequisitecontentstatus
                                       .toString()
                                       .split('#%')[1]
-                                      .split('\$;')[0],
-                              style: TextStyle(
+                                      .split('\$;')[0]}',
+                              style: const TextStyle(
                                 fontSize: 16.0,
                                 color: Colors.blue,
                               )),
@@ -4507,9 +4415,9 @@ class MyLearnPlusHome extends State<MyLearnPlusHomeScreen> with SingleTickerProv
                       ),
                       backgroundColor: InsColor(appBloc).appBGColor,
                       shape: RoundedRectangleBorder(
-                          borderRadius: new BorderRadius.circular(5)),
+                          borderRadius: BorderRadius.circular(5)),
                       actions: <Widget>[
-                        new FlatButton(
+                        FlatButton(
                           child:
                               Text(appBloc.localstr.eventsAlertbuttonOkbutton),
                           textColor: Colors.blue,
@@ -4569,14 +4477,14 @@ class MyLearnPlusHome extends State<MyLearnPlusHomeScreen> with SingleTickerProv
           return Container();
         }
 
-        return new ListTile(
+        return ListTile(
             leading: SvgPicture.asset(
               'assets/Report.svg',
               width: 25.h,
               height: 25.h,
               color: InsColor(appBloc).appIconColor,
             ),
-            title: new Text(appBloc.localstr.mylearningActionsheetReportoption,
+            title: Text(appBloc.localstr.mylearningActionsheetReportoption,
                 style: TextStyle(
                     color: Color(
                   int.parse(
@@ -4601,12 +4509,12 @@ class MyLearnPlusHome extends State<MyLearnPlusHomeScreen> with SingleTickerProv
 
       if ((table2.eventenddatetime != null) && isValidString(table2.eventenddatetime)) if (!returnEventCompleted(
           table2.eventenddatetime)) {
-        return new ListTile(
+        return ListTile(
           leading: Icon(
             IconDataSolid(int.parse('0xf271')),
             color: InsColor(appBloc).appIconColor,
           ),
-          title: new Text(
+          title: Text(
               appBloc.localstr.mylearningActionsheetAddtocalendaroption,
               style: TextStyle(
                   color: Color(
@@ -4614,9 +4522,9 @@ class MyLearnPlusHome extends State<MyLearnPlusHomeScreen> with SingleTickerProv
                     "0xFF${appBloc.uiSettingModel.appTextColor.substring(1, 7).toUpperCase()}"),
               ))),
           onTap: () {
-            DateTime startDate = new DateFormat("yyyy-MM-ddTHH:mm:ss")
+            DateTime startDate = DateFormat("yyyy-MM-ddTHH:mm:ss")
                 .parse(table2.eventstartdatetime);
-            DateTime endDate = new DateFormat("yyyy-MM-ddTHH:mm:ss")
+            DateTime endDate = DateFormat("yyyy-MM-ddTHH:mm:ss")
                 .parse(table2.eventenddatetime);
 
 //            print(
@@ -4637,7 +4545,7 @@ class MyLearnPlusHome extends State<MyLearnPlusHomeScreen> with SingleTickerProv
                         ? 'Event added successfully'
                         : 'Error occured while adding event'),
                 gravity: ToastGravity.BOTTOM,
-                toastDuration: Duration(seconds: 2),
+                toastDuration: const Duration(seconds: 2),
               );
             });
           },
@@ -4673,7 +4581,7 @@ class MyLearnPlusHome extends State<MyLearnPlusHomeScreen> with SingleTickerProv
               height: 25.h,
               color: InsColor(appBloc).appIconColor,
             ),
-            title: new Text(
+            title: Text(
                 appBloc.localstr.mylearningActionsheetSetcompleteoption,
                 style: TextStyle(
                     color: Color(
@@ -4700,7 +4608,7 @@ class MyLearnPlusHome extends State<MyLearnPlusHomeScreen> with SingleTickerProv
               Icons.content_copy,
               color: InsColor(appBloc).appIconColor,
             ),
-            title: new Text(
+            title: Text(
                 appBloc.localstr.mylearningActionsheetRelatedcontentoption,
                 style: TextStyle(
                     color: Color(
@@ -4713,15 +4621,13 @@ class MyLearnPlusHome extends State<MyLearnPlusHomeScreen> with SingleTickerProv
               if ((table2.viewprerequisitecontentstatus != null) && isValidString(table2.viewprerequisitecontentstatus)) {
                 String alertMessage =
                     appBloc.localstr.prerequistesalerttitle6Alerttitle6;
-                alertMessage = alertMessage +
+                alertMessage = "${alertMessage +
                     " \"" +
-                    table2.viewprerequisitecontentstatus +
-                    "\" " +
-                    appBloc.localstr.prerequistesalerttitle5Alerttitle7;
+                    table2.viewprerequisitecontentstatus}\" ${appBloc.localstr.prerequistesalerttitle5Alerttitle7}";
 
                 showDialog(
                     context: context,
-                    builder: (BuildContext context) => new AlertDialog(
+                    builder: (BuildContext context) => AlertDialog(
                           title: Text(
                             appBloc.localstr.detailsAlerttitleStringalert,
                             style: TextStyle(
@@ -4741,9 +4647,9 @@ class MyLearnPlusHome extends State<MyLearnPlusHomeScreen> with SingleTickerProv
                           ),
                           backgroundColor: InsColor(appBloc).appBGColor,
                           shape: RoundedRectangleBorder(
-                              borderRadius: new BorderRadius.circular(5)),
+                              borderRadius: BorderRadius.circular(5)),
                           actions: <Widget>[
-                            new FlatButton(
+                            FlatButton(
                               child: Text(
                                   appBloc.localstr.eventsAlertbuttonOkbutton),
                               textColor: Colors.blue,
@@ -4791,7 +4697,7 @@ class MyLearnPlusHome extends State<MyLearnPlusHomeScreen> with SingleTickerProv
                 IconDataSolid(int.parse('0xf410')),
                 color: InsColor(appBloc).appIconColor,
               ),
-              title: new Text(
+              title: Text(
                   appBloc.localstr.mylearningActionsheetCancelenrollmentoption,
                   style: TextStyle(
                       color: Color(
@@ -4806,8 +4712,8 @@ class MyLearnPlusHome extends State<MyLearnPlusHomeScreen> with SingleTickerProv
         if (table2.eventscheduletype == 1 &&
             appBloc.uiSettingModel.enableMultipleInstancesForEvent == 'true') {
           return ListTile(
-              leading: new Icon(Icons.cancel),
-              title: new Text(
+              leading: const Icon(Icons.cancel),
+              title: Text(
                   appBloc.localstr.mylearningActionsheetCancelenrollmentoption,
                   style: TextStyle(
                       color: Color(
@@ -4826,16 +4732,13 @@ class MyLearnPlusHome extends State<MyLearnPlusHomeScreen> with SingleTickerProv
 
   void downloadPath(
       String contentid, DummyMyCatelogResponseTable2 table2) async {
-    String path = await AppDirectory.getDocumentsDirectory() +
-        "/.Mydownloads/Contentdownloads" +
-        "/" +
-        contentid;
+    String path = "${await AppDirectory.getDocumentsDirectory()}/.Mydownloads/Contentdownloads/$contentid";
 
     setState(() {
       downloadDestFolderPath = path;
     });
 
-    final File myFile = new File(downloadDestFolderPath);
+    final File myFile = File(downloadDestFolderPath);
 
     print('myfiledata $myFile');
 
@@ -4868,7 +4771,7 @@ class MyLearnPlusHome extends State<MyLearnPlusHomeScreen> with SingleTickerProv
             IconDataSolid(int.parse('0xf1f8')),
             color: InsColor(appBloc).appIconColor,
           ),
-          title: new Text(appBloc.localstr.mylearningActionsheetDeleteoption,
+          title: Text(appBloc.localstr.mylearningActionsheetDeleteoption,
               style: TextStyle(
                   color: Color(
                 int.parse(
@@ -4936,7 +4839,7 @@ class MyLearnPlusHome extends State<MyLearnPlusHomeScreen> with SingleTickerProv
       DummyMyCatelogResponseTable2 table2, String isSuccess) {
     showDialog(
         context: context,barrierColor: Colors.transparent.withOpacity(0.25),
-        builder: (BuildContext context) => new AlertDialog(
+        builder: (BuildContext context) => AlertDialog(
               title: Text(
                 appBloc.localstr.mylearningAlerttitleStringareyousure,
                 style: TextStyle(
@@ -4952,16 +4855,16 @@ class MyLearnPlusHome extends State<MyLearnPlusHomeScreen> with SingleTickerProv
               ),
               backgroundColor: InsColor(appBloc).appBGColor,
               shape: RoundedRectangleBorder(
-                  borderRadius: new BorderRadius.circular(5)),
+                  borderRadius: BorderRadius.circular(5)),
               actions: <Widget>[
-                new FlatButton(
+                FlatButton(
                   child: Text(appBloc.localstr.catalogAlertbuttonCancelbutton),
                   textColor: Colors.blue,
                   onPressed: () async {
                     Navigator.of(context).pop();
                   },
                 ),
-                new FlatButton(
+                FlatButton(
                   child: Text(appBloc.localstr.eventsAlertbuttonOkbutton),
                   textColor: Colors.blue,
                   onPressed: () async {
@@ -4999,7 +4902,7 @@ class MyLearnPlusHome extends State<MyLearnPlusHomeScreen> with SingleTickerProv
     if (!isValidString(eventDate)) return false;
 
     try {
-      fromDate = new DateFormat("yyyy-MM-ddTHH:mm:ss").parse(eventDate);
+      fromDate = DateFormat("yyyy-MM-ddTHH:mm:ss").parse(eventDate);
 
       final date2 = DateTime.now();
       difference = date2.difference(fromDate).inDays;
@@ -5048,7 +4951,7 @@ class MyLearnPlusHome extends State<MyLearnPlusHomeScreen> with SingleTickerProv
       progress = currentpoints / totalpoints;
     }
     return Container(
-      padding: EdgeInsets.all(10),
+      padding: const EdgeInsets.all(10),
       color: bannerBackgroundType == "true" ?
       Color(int.parse(
           "0xFF${headerBackgroundColor.substring(1, 7).toUpperCase()}"))
@@ -5062,7 +4965,7 @@ class MyLearnPlusHome extends State<MyLearnPlusHomeScreen> with SingleTickerProv
                   child: Container(
                     child: Row(
                       children: [
-                        SizedBox(
+                        const SizedBox(
                           width: 10,
                         ),
                         ClipOval(
@@ -5117,7 +5020,7 @@ class MyLearnPlusHome extends State<MyLearnPlusHomeScreen> with SingleTickerProv
                             ),
                           ),
                         ),
-                        SizedBox(
+                        const SizedBox(
                           width: 15,
                         ),
                         Column(
@@ -5126,16 +5029,16 @@ class MyLearnPlusHome extends State<MyLearnPlusHomeScreen> with SingleTickerProv
                           children: [
                             Text(
                               '${achievementResponse.userOverAllData?.userDisplayName}',
-                              style: TextStyle(
+                              style: const TextStyle(
                                   color: Colors.white70, fontSize: 16),
                             ),
-                            SizedBox(
+                            const SizedBox(
                               height: 5,
                             ),
                             showLevels == "true"?
                             Text(
                               '${achievementResponse.userOverAllData?.userLevel}',
-                              style: TextStyle(
+                              style: const TextStyle(
                                   color: Colors.white70, fontSize: 12),
                             ):Container(),
                           ],
@@ -5156,17 +5059,17 @@ class MyLearnPlusHome extends State<MyLearnPlusHomeScreen> with SingleTickerProv
                             mainAxisAlignment: MainAxisAlignment.center,
                             crossAxisAlignment: CrossAxisAlignment.center,
                             children: [
-                              Text(
+                              const Text(
                                 'Points',
                                 style: TextStyle(
                                     color: Colors.white70, fontSize: 12),
                               ),
-                              SizedBox(
+                              const SizedBox(
                                 height: 10,
                               ),
                               Text(
                                 '${achievementResponse.userOverAllData?.overAllPoints}',
-                                style: TextStyle(
+                                style: const TextStyle(
                                     color: Colors.white70, fontSize: 12),
                               ),
                             ],
@@ -5178,17 +5081,17 @@ class MyLearnPlusHome extends State<MyLearnPlusHomeScreen> with SingleTickerProv
                               mainAxisAlignment: MainAxisAlignment.center,
                               crossAxisAlignment: CrossAxisAlignment.center,
                               children: [
-                                Text(
+                                const Text(
                                   'Badges',
                                   style: TextStyle(
                                       color: Colors.white70, fontSize: 12),
                                 ),
-                                SizedBox(
+                                const SizedBox(
                                   height: 10,
                                 ),
                                 Text(
                                   '${achievementResponse.userOverAllData?.badges}',
-                                  style: TextStyle(
+                                  style: const TextStyle(
                                       color: Colors.white70, fontSize: 12),
                                 ),
                               ],
@@ -5198,17 +5101,17 @@ class MyLearnPlusHome extends State<MyLearnPlusHomeScreen> with SingleTickerProv
                   )),
             ],
           ),
-          SizedBox(
+          const SizedBox(
             height: 15,
           ),
           showLevels == "true" ?
           LinearProgressIndicator(
             minHeight: 8,
             value: progress,
-            valueColor: AlwaysStoppedAnimation<Color>(Color(0xffff9503)),
+            valueColor: const AlwaysStoppedAnimation<Color>(Color(0xffff9503)),
             backgroundColor: Colors.grey,
           ):Container(),
-          SizedBox(
+          const SizedBox(
             height: 15,
           ),
           achievementResponse.userOverAllData?.neededLevel == null ? Container() :
@@ -5221,14 +5124,14 @@ class MyLearnPlusHome extends State<MyLearnPlusHomeScreen> with SingleTickerProv
                 flex: 7,
                 child: Text(
                   '${achievementResponse.userOverAllData?.neededPoints} Points to next level : ${achievementResponse.userOverAllData?.neededLevel}',
-                  style: TextStyle(color: Colors.white70, fontSize: 12),
+                  style: const TextStyle(color: Colors.white70, fontSize: 12),
                 ),
               ),
               Expanded(
                 flex: 3,
                 child: Text(
                   '${(achievementResponse.userOverAllData?.overAllPoints ?? 0) + (achievementResponse.userOverAllData?.neededPoints ?? 0)} Points',
-                  style: TextStyle(color: Colors.white70, fontSize: 12),
+                  style: const TextStyle(color: Colors.white70, fontSize: 12),
                 ),
               ),
             ],

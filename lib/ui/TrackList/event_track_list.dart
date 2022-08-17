@@ -140,8 +140,8 @@ class _EventTrackListState extends State<EventTrackList> with TickerProviderStat
 
   TabController? _tabController;
   List<Tab> tabList = [];
-  ScrollController _sc = new ScrollController();
-  ScrollController _scTabs = new ScrollController();
+  ScrollController _sc = ScrollController();
+  ScrollController _scTabs = ScrollController();
   bool isReportEnabled = true;
 
   int pageNumber = 1;
@@ -298,7 +298,7 @@ class _EventTrackListState extends State<EventTrackList> with TickerProviderStat
     return ModalProgressHUD(
       inAsyncCall: isLoading,
       color: Colors.transparent,
-      progressIndicator: Center(
+      progressIndicator: const Center(
         child: RoundedSquareProgressIndicator(),
       ),
       child: Container(
@@ -382,7 +382,7 @@ class _EventTrackListState extends State<EventTrackList> with TickerProviderStat
                               if (eventTrackBloc.resEventTrackTabs.isNotEmpty) {
                                 for (ResEventTrackTabs tab
                                     in eventTrackBloc.resEventTrackTabs) {
-                                  tabList.add(new Tab(
+                                  tabList.add(Tab(
                                     text: tab.tabName,
                                   ));
 
@@ -409,7 +409,7 @@ class _EventTrackListState extends State<EventTrackList> with TickerProviderStat
                                 }
                               }
 
-                              _tabController = new TabController(
+                              _tabController = TabController(
                                   length: tabList.length, vsync: this);
                             } else if (state.status == Status.ERROR) {
                               print("listner Error ${state.message}");
@@ -430,7 +430,7 @@ class _EventTrackListState extends State<EventTrackList> with TickerProviderStat
                                       displaymsg:
                                           'Your enrollment for the course has been successfully canceled'),
                                   gravity: ToastGravity.BOTTOM,
-                                  toastDuration: Duration(seconds: 2),
+                                  toastDuration: const Duration(seconds: 2),
                                 );
                                 Navigator.of(context).pop();
                               } else {
@@ -438,7 +438,7 @@ class _EventTrackListState extends State<EventTrackList> with TickerProviderStat
                                   child: CommonToast(
                                       displaymsg: 'Something went wrong'),
                                   gravity: ToastGravity.BOTTOM,
-                                  toastDuration: Duration(seconds: 2),
+                                  toastDuration: const Duration(seconds: 2),
                                 );
                               }
                             } else if (state.status == Status.ERROR) {
@@ -533,7 +533,7 @@ class _EventTrackListState extends State<EventTrackList> with TickerProviderStat
                               flutterToast.showToast(
                                 child: CommonToast(displaymsg: 'Please wait'),
                                 gravity: ToastGravity.BOTTOM,
-                                toastDuration: Duration(seconds: 2),
+                                toastDuration: const Duration(seconds: 2),
                               );
                             } else if (state.status == Status.COMPLETED) {
                               flutterToast.showToast(
@@ -541,7 +541,7 @@ class _EventTrackListState extends State<EventTrackList> with TickerProviderStat
                                     displaymsg:
                                         'Course completed successfully'),
                                 gravity: ToastGravity.BOTTOM,
-                                toastDuration: Duration(seconds: 2),
+                                toastDuration: const Duration(seconds: 2),
                               );
                               setState(() {
                                 eventTrackBloc.add(GetTrackListData(
@@ -556,7 +556,7 @@ class _EventTrackListState extends State<EventTrackList> with TickerProviderStat
                                     displaymsg:
                                         'Filed to update course status'),
                                 gravity: ToastGravity.BOTTOM,
-                                toastDuration: Duration(seconds: 2),
+                                toastDuration: const Duration(seconds: 2),
                               );
                             }
                           }
@@ -581,7 +581,7 @@ class _EventTrackListState extends State<EventTrackList> with TickerProviderStat
 
                               flutterToast.showToast(
                                   gravity: ToastGravity.BOTTOM,
-                                  toastDuration: Duration(seconds: 2),
+                                  toastDuration: const Duration(seconds: 2),
                                   child: CommonToast(
                                       displaymsg:
                                           'Course completed successfully'));
@@ -812,7 +812,7 @@ class _EventTrackListState extends State<EventTrackList> with TickerProviderStat
           );
         }
         else {
-          return SizedBox();
+          return const SizedBox();
         }
       }
     }
@@ -830,7 +830,7 @@ class _EventTrackListState extends State<EventTrackList> with TickerProviderStat
               ),
             ),
           )
-        : new Container();
+        : Container();
   }
 
   Widget _homeBody({required BuildContext context, required double itemWidth, required double itemHeight, required Widget body}) {
@@ -839,7 +839,7 @@ class _EventTrackListState extends State<EventTrackList> with TickerProviderStat
     pinnedHeaderHeight = statusBarHeight + kToolbarHeight;
 
     return NestedScrollView(
-      physics: ClampingScrollPhysics(),
+      physics: const ClampingScrollPhysics(),
       headerSliverBuilder: (BuildContext c, bool f) {
         return buildSliverHeader2();
       },
@@ -863,7 +863,7 @@ class _EventTrackListState extends State<EventTrackList> with TickerProviderStat
         }
       },
       builder: (context, state) {
-        if (state.status == Status.LOADING && !(state is TrackSetCompleteState) && !(state is ParentTrackGetContentStatusState)) {
+        if (state.status == Status.LOADING && state is! TrackSetCompleteState && state is! ParentTrackGetContentStatusState) {
           return _buildLoadingSpinner();
         }
         else {
@@ -906,7 +906,7 @@ class _EventTrackListState extends State<EventTrackList> with TickerProviderStat
                             ]),
                       )
                     : Container(),
-                (state.status == Status.LOADING && !(state is ParentTrackGetContentStatusState))
+                (state.status == Status.LOADING && state is! ParentTrackGetContentStatusState)
                     ? _buildLoadingSpinner()
                     : Container()
               ],
@@ -940,17 +940,9 @@ class _EventTrackListState extends State<EventTrackList> with TickerProviderStat
     var strSiteID = await sharePrefGetString(sharedPref_siteid);
     var webApiUrl = await sharePrefGetString(sharedPref_webApiUrl);
 
-    String paramsString = "strContentID=" +
-        learningModel.contentid +
-        "&UserID=" +
-        strUserID +
-        "&SiteID=" +
-        strSiteID +
-        "&SCOID=" +
-        learningModel.scoid.toString() +
-        "&CanTrack=true";
+    String paramsString = "strContentID=${learningModel.contentid}&UserID=$strUserID&SiteID=$strSiteID&SCOID=${learningModel.scoid}&CanTrack=true";
 
-    String url = webApiUrl + "CourseTracking/TrackLRSStatement?" + paramsString;
+    String url = "${webApiUrl}CourseTracking/TrackLRSStatement?$paramsString";
 
     await generalRepository.executeXAPICourse(url);
   }
@@ -1071,9 +1063,9 @@ class _EventTrackListState extends State<EventTrackList> with TickerProviderStat
           builder: (BuildContext bc) {
             return Container(
               child: SingleChildScrollView(
-                child: new Column(
+                child: Column(
                   children: <Widget>[
-                    BottomSheetDragger(),
+                    const BottomSheetDragger(),
                     menu1
                         ? ListTile(
                             title: Text(
@@ -1169,7 +1161,7 @@ class _EventTrackListState extends State<EventTrackList> with TickerProviderStat
               child: SingleChildScrollView(
                 child: Column(
                   children: <Widget>[
-                    BottomSheetDragger(),
+                    const BottomSheetDragger(),
                     displayPauseDownload(table2, myLearningDownloadModel),
                     /*displayResumeDownload(table2, myLearningDownloadModel),
                     displayCancelDownload(table2, myLearningDownloadModel),
@@ -1202,45 +1194,40 @@ class _EventTrackListState extends State<EventTrackList> with TickerProviderStat
     if ([11, 14, 36, 28, 20, 21, 52].contains(table2.objecttypeid)) {
       if (table2.objecttypeid == 11 &&
           (table2.mediatypeid == 3 || table2.mediatypeid == 4)) {
-        return new ListTile(
+        return ListTile(
             leading: Icon(
               IconDataSolid(int.parse('0xf144')),
               color: InsColor(appBloc).appIconColor,
             ),
-            title: new Text(appBloc.localstr.mylearningActionsheetPlayoption,
+            title: Text(appBloc.localstr.mylearningActionsheetPlayoption,
                 style: TextStyle(color: InsColor(appBloc).appTextColor)),
             onTap: () {
               Navigator.of(context).pop();
 
               if (AppDirectory.isValidString(
                   table2.viewprerequisitecontentstatus ?? "")) {
-                String alertMessage =
-                    appBloc.localstr.prerequistesalerttitle6Alerttitle6;
-                alertMessage = alertMessage +
-                    "  \"" +
-                    appBloc.localstr.prerequisLabelContenttypelabel +
-                    "\" " +
-                    appBloc.localstr.prerequistesalerttitle5Alerttitle7;
+                String alertMessage = appBloc.localstr.prerequistesalerttitle6Alerttitle6;
+                alertMessage = "$alertMessage  \"${appBloc.localstr.prerequisLabelContenttypelabel}\" ${appBloc.localstr.prerequistesalerttitle5Alerttitle7}";
 
                 showDialog(
                     context: context,
-                    builder: (BuildContext context) => new AlertDialog(
+                    builder: (BuildContext context) => AlertDialog(
                           title: Text(
                             appBloc.localstr.detailsAlerttitleStringalert,
-                            style: TextStyle(fontWeight: FontWeight.bold),
+                            style: const TextStyle(fontWeight: FontWeight.bold),
                           ),
                           content: Text(alertMessage),
                           backgroundColor: Colors.white,
                           shape: RoundedRectangleBorder(
-                              borderRadius: new BorderRadius.circular(5)),
+                              borderRadius: BorderRadius.circular(5)),
                           actions: <Widget>[
                             TextButton(
-                              child: Text(
-                                  appBloc.localstr.eventsAlertbuttonOkbutton),
                               style: textButtonStyle,
                               onPressed: () async {
                                 Navigator.of(context).pop();
                               },
+                              child: Text(
+                                  appBloc.localstr.eventsAlertbuttonOkbutton),
                             ),
                           ],
                         ));
@@ -1260,12 +1247,12 @@ class _EventTrackListState extends State<EventTrackList> with TickerProviderStat
           (table2.mediatypeid == 3 || table2.mediatypeid == 4)) {
         return Container();
       } else {
-        return new ListTile(
+        return ListTile(
           leading: Icon(
             IconDataSolid(int.parse('0xf06e')),
             color: InsColor(appBloc).appIconColor,
           ),
-          title: new Text(appBloc.localstr.mylearningActionsheetViewoption,
+          title: Text(appBloc.localstr.mylearningActionsheetViewoption,
               style: TextStyle(color: InsColor(appBloc).appTextColor)),
           onTap: () {
             Navigator.of(context).pop();
@@ -1274,31 +1261,27 @@ class _EventTrackListState extends State<EventTrackList> with TickerProviderStat
                 table2.viewprerequisitecontentstatus ?? "")) {
               String alertMessage =
                   appBloc.localstr.prerequistesalerttitle6Alerttitle6;
-              alertMessage = alertMessage +
-                  "  \"" +
-                  appBloc.localstr.prerequisLabelContenttypelabel +
-                  "\" " +
-                  appBloc.localstr.prerequistesalerttitle5Alerttitle7;
+              alertMessage = "$alertMessage  \"${appBloc.localstr.prerequisLabelContenttypelabel}\" ${appBloc.localstr.prerequistesalerttitle5Alerttitle7}";
 
               showDialog(
                   context: context,
-                  builder: (BuildContext context) => new AlertDialog(
+                  builder: (BuildContext context) => AlertDialog(
                         title: Text(
                           appBloc.localstr.detailsAlerttitleStringalert,
-                          style: TextStyle(fontWeight: FontWeight.bold),
+                          style: const TextStyle(fontWeight: FontWeight.bold),
                         ),
                         content: Text(alertMessage),
                         backgroundColor: Colors.white,
                         shape: RoundedRectangleBorder(
-                            borderRadius: new BorderRadius.circular(5)),
+                            borderRadius: BorderRadius.circular(5)),
                         actions: <Widget>[
                           TextButton(
-                            child: Text(
-                                appBloc.localstr.eventsAlertbuttonOkbutton),
                             style: textButtonStyle,
                             onPressed: () async {
                               Navigator.of(context).pop();
                             },
+                            child: Text(
+                                appBloc.localstr.eventsAlertbuttonOkbutton),
                           ),
                         ],
                       ));
@@ -1311,12 +1294,12 @@ class _EventTrackListState extends State<EventTrackList> with TickerProviderStat
     } else if ([688, 70].contains(table2.objecttypeid)) {
       return Container();
     } else {
-      return new ListTile(
+      return ListTile(
         leading: Icon(
           IconDataSolid(int.parse('0xf06e')),
           color: InsColor(appBloc).appIconColor,
         ),
-        title: new Text(appBloc.localstr.mylearningActionsheetViewoption,
+        title: Text(appBloc.localstr.mylearningActionsheetViewoption,
             style: TextStyle(color: InsColor(appBloc).appTextColor)),
         onTap: () {
           Navigator.of(context).pop();
@@ -1325,31 +1308,27 @@ class _EventTrackListState extends State<EventTrackList> with TickerProviderStat
               table2.viewprerequisitecontentstatus ?? "")) {
             String alertMessage =
                 appBloc.localstr.prerequistesalerttitle6Alerttitle6;
-            alertMessage = alertMessage +
-                "  \"" +
-                appBloc.localstr.prerequisLabelContenttypelabel +
-                "\" " +
-                appBloc.localstr.prerequistesalerttitle5Alerttitle7;
+            alertMessage = "$alertMessage  \"${appBloc.localstr.prerequisLabelContenttypelabel}\" ${appBloc.localstr.prerequistesalerttitle5Alerttitle7}";
 
             showDialog(
                 context: context,
-                builder: (BuildContext context) => new AlertDialog(
+                builder: (BuildContext context) => AlertDialog(
                       title: Text(
                         appBloc.localstr.detailsAlerttitleStringalert,
-                        style: TextStyle(fontWeight: FontWeight.bold),
+                        style: const TextStyle(fontWeight: FontWeight.bold),
                       ),
                       content: Text(alertMessage),
                       backgroundColor: Colors.white,
                       shape: RoundedRectangleBorder(
-                          borderRadius: new BorderRadius.circular(5)),
+                          borderRadius: BorderRadius.circular(5)),
                       actions: <Widget>[
                         TextButton(
-                          child:
-                              Text(appBloc.localstr.eventsAlertbuttonOkbutton),
                           style: textButtonStyle,
                           onPressed: () async {
                             Navigator.of(context).pop();
                           },
+                          child:
+                              Text(appBloc.localstr.eventsAlertbuttonOkbutton),
                         ),
                       ],
                     ));
@@ -1370,12 +1349,12 @@ class _EventTrackListState extends State<EventTrackList> with TickerProviderStat
         isStringValid &&
         isEventCompleted &&
         table2.typeofevent == 2) {
-      return new ListTile(
+      return ListTile(
         leading: Icon(
           IconDataSolid(int.parse('0xf234')),
           color: InsColor(appBloc).appIconColor,
         ),
-        title: new Text(appBloc.localstr.mylearningActionsheetJoinoption,
+        title: Text(appBloc.localstr.mylearningActionsheetJoinoption,
             style: TextStyle(color: InsColor(appBloc).appTextColor)),
         onTap: () {
           Navigator.pop(context);
@@ -1387,7 +1366,7 @@ class _EventTrackListState extends State<EventTrackList> with TickerProviderStat
             flutterToast.showToast(
               child: CommonToast(displaymsg: 'No url found'),
               gravity: ToastGravity.BOTTOM,
-              toastDuration: Duration(seconds: 2),
+              toastDuration: const Duration(seconds: 2),
             );
 //              Toast.makeText(v.getContext(), "No Url Found", Toast.LENGTH_SHORT).show();
           }
@@ -1407,14 +1386,14 @@ class _EventTrackListState extends State<EventTrackList> with TickerProviderStat
         return Container();
       }
 
-      return new ListTile(
+      return ListTile(
           leading: SvgPicture.asset(
             'assets/Report.svg',
             width: 25.h,
             height: 25.h,
             color: Colors.grey,
           ),
-          title: new Text(appBloc.localstr.mylearningActionsheetReportoption,
+          title: Text(appBloc.localstr.mylearningActionsheetReportoption,
               style: TextStyle(color: InsColor(appBloc).appTextColor)),
           onTap: () {
             Navigator.pop(context);
@@ -1431,12 +1410,12 @@ class _EventTrackListState extends State<EventTrackList> with TickerProviderStat
     bool isEventCompleted =
         !returnEventCompleted(table2.eventenddatetime ?? "");
     if (table2.objecttypeid == 70 && isStringValid && isEventCompleted) {
-      return new ListTile(
+      return ListTile(
         leading: Icon(
           IconDataSolid(int.parse('0xf271')),
           color: InsColor(appBloc).appIconColor,
         ),
-        title: new Text(
+        title: Text(
             appBloc.localstr.mylearningActionsheetAddtocalendaroption,
             style: TextStyle(color: InsColor(appBloc).appTextColor)),
         onTap: () {
@@ -1468,7 +1447,7 @@ class _EventTrackListState extends State<EventTrackList> with TickerProviderStat
             height: 25.h,
             color: Colors.grey,
           ),
-          title: new Text(
+          title: Text(
               appBloc.localstr.mylearningActionsheetSetcompleteoption,
               style: TextStyle(color: InsColor(appBloc).appTextColor)),
           onTap: () {
@@ -1493,7 +1472,7 @@ class _EventTrackListState extends State<EventTrackList> with TickerProviderStat
                   IconDataSolid(int.parse('0xf410')),
                   color: InsColor(appBloc).appIconColor,
                 ),
-                title: new Text(
+                title: Text(
                     appBloc
                         .localstr.mylearningActionsheetCancelenrollmentoption,
                     style: TextStyle(color: InsColor(appBloc).appTextColor)),
@@ -1507,7 +1486,7 @@ class _EventTrackListState extends State<EventTrackList> with TickerProviderStat
                   'true') {
             return ListTile(
 //                  leading: new Icon(Icons.people),
-                title: new Text(appBloc
+                title: Text(appBloc
                     .localstr.mylearningActionsheetCancelenrollmentoption),
                 onTap: () {
                   checkCancellation(table2, context);
@@ -1529,7 +1508,7 @@ class _EventTrackListState extends State<EventTrackList> with TickerProviderStat
             IconDataSolid(int.parse('0xf1f8')),
             color: InsColor(appBloc).appIconColor,
           ),
-          title: new Text(appBloc.localstr.mylearningActionsheetDeleteoption,
+          title: Text(appBloc.localstr.mylearningActionsheetDeleteoption,
               style: TextStyle(color: InsColor(appBloc).appTextColor)),
 
           /// TODO : Sagar sir - delete offline file
@@ -1565,7 +1544,7 @@ class _EventTrackListState extends State<EventTrackList> with TickerProviderStat
             height: 25.h,
             color: Colors.grey,
           ),
-          title: new Text(
+          title: Text(
               appBloc.localstr.mylearningActionsheetViewcertificateoption,
               style: TextStyle(color: InsColor(appBloc).appTextColor)),
           onTap: () {
@@ -1575,7 +1554,7 @@ class _EventTrackListState extends State<EventTrackList> with TickerProviderStat
 
               showDialog(
                   context: context,
-                  builder: (BuildContext context) => new AlertDialog(
+                  builder: (BuildContext context) => AlertDialog(
                         title: Text(
                           appBloc.localstr
                               .mylearningActionsheetViewcertificateoption,
@@ -1589,15 +1568,15 @@ class _EventTrackListState extends State<EventTrackList> with TickerProviderStat
                         backgroundColor: Color(int.parse(
                             "0xFF${appBloc.uiSettingModel.appBGColor.substring(1, 7).toUpperCase()}")),
                         shape: RoundedRectangleBorder(
-                            borderRadius: new BorderRadius.circular(5)),
+                            borderRadius: BorderRadius.circular(5)),
                         actions: <Widget>[
                           TextButton(
-                            child: Text(appBloc.localstr
-                                .mylearningClosebuttonactionClosebuttonalerttitle),
                             style: textButtonStyle,
                             onPressed: () async {
                               Navigator.of(context).pop();
                             },
+                            child: Text(appBloc.localstr
+                                .mylearningClosebuttonactionClosebuttonalerttitle),
                           ),
                         ],
                       ));
@@ -1623,12 +1602,12 @@ class _EventTrackListState extends State<EventTrackList> with TickerProviderStat
       if (AppDirectory.isValidString(table2.qrimagename ?? "") &&
           AppDirectory.isValidString(table2.qrcodeimagepath ?? "") &&
           !table2.bit4) {
-        return new ListTile(
+        return ListTile(
           leading: Icon(
             IconDataSolid(int.parse('0xf029')),
             color: InsColor(appBloc).appIconColor,
           ),
-          title: new Text(appBloc.localstr.mylearningActionsheetViewqrcode,
+          title: Text(appBloc.localstr.mylearningActionsheetViewqrcode,
               style: TextStyle(color: InsColor(appBloc).appTextColor)),
           onTap: () => {
             Navigator.of(context).push(MaterialPageRoute(
@@ -1647,12 +1626,12 @@ class _EventTrackListState extends State<EventTrackList> with TickerProviderStat
       if (detailsBloc.myLearningDetailsModel.addedToMyLearning == 1 ||
           typeFrom == "event" ||
           typeFrom == "track") {
-        return new ListTile(
+        return ListTile(
           leading: Icon(
             IconDataSolid(int.parse('0xf8d9')),
             color: InsColor(appBloc).appIconColor,
           ),
-          title: new Text(appBloc.localstr.learningtrackLabelEventviewrecording,
+          title: Text(appBloc.localstr.learningtrackLabelEventviewrecording,
               style: TextStyle(color: InsColor(appBloc).appTextColor)),
           onTap: () => {
             //todo : sprint -3
@@ -1673,7 +1652,7 @@ class _EventTrackListState extends State<EventTrackList> with TickerProviderStat
   //region My Downloads Bottomsheet
   Widget displayPauseDownload(DummyMyCatelogResponseTable2 table2, MyLearningDownloadModel downloadModel) {
     if(downloadModel.taskId.isEmpty || downloadModel.isFileDownloaded || !downloadModel.isFileDownloading || !downloadModel.table2.isDownloading) {
-      return SizedBox();
+      return const SizedBox();
     }
 
     return ListTile(
@@ -1699,7 +1678,7 @@ class _EventTrackListState extends State<EventTrackList> with TickerProviderStat
 
   Widget displayResumeDownload(DummyMyCatelogResponseTable2 table2, MyLearningDownloadModel downloadModel) {
     if(downloadModel.taskId.isEmpty || downloadModel.isFileDownloaded || !downloadModel.isFileDownloading || downloadModel.table2.isDownloading) {
-      return SizedBox();
+      return const SizedBox();
     }
 
     return ListTile(
@@ -1725,7 +1704,7 @@ class _EventTrackListState extends State<EventTrackList> with TickerProviderStat
 
   Widget displayCancelDownload(DummyMyCatelogResponseTable2 table2, MyLearningDownloadModel downloadModel) {
     if(downloadModel.taskId.isEmpty || downloadModel.isFileDownloaded || !downloadModel.isFileDownloading) {
-      return SizedBox();
+      return const SizedBox();
     }
 
     return ListTile(
@@ -1754,7 +1733,7 @@ class _EventTrackListState extends State<EventTrackList> with TickerProviderStat
 
   Widget displayRemoveFromDownload(DummyMyCatelogResponseTable2 table2, MyLearningDownloadModel downloadModel) {
     if(!downloadModel.isFileDownloaded) {
-      return SizedBox();
+      return const SizedBox();
     }
 
     return ListTile(
@@ -1945,28 +1924,26 @@ class _EventTrackListState extends State<EventTrackList> with TickerProviderStat
     } else {
       showDialog(
           context: context,
-          builder: (BuildContext context) => new AlertDialog(
+          builder: (BuildContext context) => AlertDialog(
                 title: Text(
                   appBloc.localstr.mylearningAlerttitleStringareyousure,
-                  style: TextStyle(fontWeight: FontWeight.bold),
+                  style: const TextStyle(fontWeight: FontWeight.bold),
                 ),
                 content: Text(appBloc.localstr
                     .mylearningAlertsubtitleDoyouwanttocancelenrolledevent),
                 backgroundColor: Colors.white,
                 shape: RoundedRectangleBorder(
-                    borderRadius: new BorderRadius.circular(5)),
+                    borderRadius: BorderRadius.circular(5)),
                 actions: <Widget>[
                   TextButton(
-                    child: Text(
-                        appBloc.localstr.mylearningAlertbuttonCancelbutton),
                     style: textButtonStyle,
                     onPressed: () async {
                       Navigator.of(context).pop();
                     },
+                    child: Text(
+                        appBloc.localstr.mylearningAlertbuttonCancelbutton),
                   ),
                   TextButton(
-                    child:
-                        Text(appBloc.localstr.mylearningAlertbuttonYesbutton),
                     style: textButtonStyle,
                     onPressed: () async {
                       Navigator.of(context).pop();
@@ -1975,6 +1952,8 @@ class _EventTrackListState extends State<EventTrackList> with TickerProviderStat
                           strContentID: table2.contentid));
 //                  mylearningInterface.cancelEnrollment(true);
                     },
+                    child:
+                        Text(appBloc.localstr.mylearningAlertbuttonYesbutton),
                   ),
                 ],
               ));
@@ -2014,7 +1993,7 @@ class _EventTrackListState extends State<EventTrackList> with TickerProviderStat
     if (!AppDirectory.isValidString(eventDate)) return false;
 
     try {
-      fromDate = new DateFormat("yyyy-MM-ddTHH:mm:ss").parse(eventDate);
+      fromDate = DateFormat("yyyy-MM-ddTHH:mm:ss").parse(eventDate);
 
       final date2 = DateTime.now();
       difference = date2.difference(fromDate).inDays;
@@ -2199,7 +2178,7 @@ class _EventTrackListState extends State<EventTrackList> with TickerProviderStat
           flutterToast.showToast(
             child: CommonToast(displaymsg: 'Error while downloading'),
             gravity: ToastGravity.BOTTOM,
-            toastDuration: Duration(seconds: 2),
+            toastDuration: const Duration(seconds: 2),
           );
         } else if (progress == 100) {
           setState(() {
@@ -2209,7 +2188,7 @@ class _EventTrackListState extends State<EventTrackList> with TickerProviderStat
             flutterToast.showToast(
               child: CommonToast(displaymsg: 'Downloaded Successfully'),
               gravity: ToastGravity.BOTTOM,
-              toastDuration: Duration(seconds: 2),
+              toastDuration: const Duration(seconds: 2),
             );
 
             //sreekanth commented
@@ -2291,7 +2270,7 @@ class _EventTrackListState extends State<EventTrackList> with TickerProviderStat
     var smallestDimension = MediaQuery.of(context).size.shortestSide;
     final useMobileLayout = smallestDimension < 600;
 
-    Color statuscolor = Color(0xff5750da);
+    Color statuscolor = const Color(0xff5750da);
     Color statusBarColor = Colors.grey;
 
     String thumbnailImg = "";
@@ -2318,14 +2297,14 @@ class _EventTrackListState extends State<EventTrackList> with TickerProviderStat
 
     if (["Completed", "Completed (passed)"]
         .contains(data.corelessonstatus.toString())) {
-      statuscolor = Color(0xff4ad963);
-      statusBarColor = Color(0xff4ad963);
+      statuscolor = const Color(0xff4ad963);
+      statusBarColor = const Color(0xff4ad963);
     } else if (data.corelessonstatus.toString() == "Not Started") {
-      statuscolor = Color(0xfffe2c53);
+      statuscolor = const Color(0xfffe2c53);
       statusBarColor = Colors.grey;
     } else if (data.corelessonstatus.toString() == "In Progress") {
-      statuscolor = Color(0xffff9503);
-      statusBarColor = Color(0xffff9503);
+      statuscolor = const Color(0xffff9503);
+      statusBarColor = const Color(0xffff9503);
     }
     String contentIconPath = data.iconpath;
 
@@ -2730,7 +2709,7 @@ class _EventTrackListState extends State<EventTrackList> with TickerProviderStat
                                   size: 25.h,
                                 ),
                         )
-                      : SizedBox(
+                      : const SizedBox(
                           width: 1,
                         ),
                 ),
@@ -2738,7 +2717,7 @@ class _EventTrackListState extends State<EventTrackList> with TickerProviderStat
             ),
             Padding(
               padding: EdgeInsets.all(8.h),
-              child: Divider(),
+              child: const Divider(),
             )
 //              Stack(
 //                children: <Widget>[
@@ -2991,11 +2970,11 @@ class _EventTrackListState extends State<EventTrackList> with TickerProviderStat
   }
 
   Widget widgetGlosaryListItems(int position, GlossaryExpandable glossaryExpandable) {
-    return new ExpansionTile(
+    return ExpansionTile(
       initiallyExpanded: false,
-      title: new Text(
+      title: Text(
         glossaryExpandable.charName,
-        style: new TextStyle(
+        style: TextStyle(
           color: Color(int.parse(
               "0xFF${appBloc.uiSettingModel.appTextColor.substring(1, 7).toUpperCase()}")),
           fontSize: 17.h,
@@ -3003,7 +2982,7 @@ class _EventTrackListState extends State<EventTrackList> with TickerProviderStat
         ),
       ),
       children: <Widget>[
-        new Column(
+        Column(
           children: _buildExpandableContent(glossaryExpandable),
         ),
       ],
@@ -3020,7 +2999,7 @@ class _EventTrackListState extends State<EventTrackList> with TickerProviderStat
 
       columnContent.add(Padding(
         padding: const EdgeInsets.all(10.0),
-        child: new Align(
+        child: Align(
           alignment: Alignment.topLeft,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -3046,7 +3025,7 @@ class _EventTrackListState extends State<EventTrackList> with TickerProviderStat
                 data: glossaryExpandable.glossaryitem[i].description,
               ),*/
               (i != glossaryExpandable.glossaryitem.length - 1)
-                  ? Divider()
+                  ? const Divider()
                   : Container()
             ],
           ),
@@ -3066,7 +3045,7 @@ class _EventTrackListState extends State<EventTrackList> with TickerProviderStat
               color: Colors.grey.withOpacity(0.5),
               spreadRadius: 1,
               blurRadius: 4,
-              offset: Offset(0, 3), // changes position of shadow
+              offset: const Offset(0, 3), // changes position of shadow
             ),
           ],
         ),
@@ -3585,7 +3564,7 @@ class _EventTrackListState extends State<EventTrackList> with TickerProviderStat
       child: FlatButton.icon(
         color: Color(int.parse(
             "0xFF${appBloc.uiSettingModel.appButtonBgColor.substring(1, 7).toUpperCase()}")),
-        icon: Icon(
+        icon: const Icon(
           Icons.remove_red_eye,
           color: Colors.white,
           size: 25,
@@ -3600,31 +3579,27 @@ class _EventTrackListState extends State<EventTrackList> with TickerProviderStat
               table2.viewprerequisitecontentstatus ?? "")) {
             String alertMessage =
                 appBloc.localstr.prerequistesalerttitle6Alerttitle6;
-            alertMessage = alertMessage +
-                "  \"" +
-                appBloc.localstr.prerequisLabelContenttypelabel +
-                "\" " +
-                appBloc.localstr.prerequistesalerttitle5Alerttitle7;
+            alertMessage = "$alertMessage  \"${appBloc.localstr.prerequisLabelContenttypelabel}\" ${appBloc.localstr.prerequistesalerttitle5Alerttitle7}";
 
             showDialog(
                 context: context,
-                builder: (BuildContext context) => new AlertDialog(
+                builder: (BuildContext context) => AlertDialog(
                       title: Text(
                         appBloc.localstr.detailsAlerttitleStringalert,
-                        style: TextStyle(fontWeight: FontWeight.bold),
+                        style: const TextStyle(fontWeight: FontWeight.bold),
                       ),
                       content: Text(alertMessage),
                       backgroundColor: Colors.white,
                       shape: RoundedRectangleBorder(
-                          borderRadius: new BorderRadius.circular(5)),
+                          borderRadius: BorderRadius.circular(5)),
                       actions: <Widget>[
                         TextButton(
-                          child:
-                              Text(appBloc.localstr.eventsAlertbuttonOkbutton),
                           style: textButtonStyle,
                           onPressed: () async {
                             Navigator.of(context).pop();
                           },
+                          child:
+                              Text(appBloc.localstr.eventsAlertbuttonOkbutton),
                         ),
                       ],
                     ));
@@ -3661,7 +3636,7 @@ class _EventTrackListState extends State<EventTrackList> with TickerProviderStat
                           .withOpacity(0.5),
                       color: Color(int.parse(
                           "0xFF${appBloc.uiSettingModel.appButtonBgColor.substring(1, 7).toUpperCase()}")),
-                      icon: Icon(
+                      icon: const Icon(
                         Icons.cloud_download,
                         color: Colors.white,
                         size: 25,
@@ -3758,9 +3733,9 @@ class _EventTrackListState extends State<EventTrackList> with TickerProviderStat
                       initiallyExpanded: (eventTrackBloc.resEventTrackTabs.isEmpty && eventTrackBloc.trackBlockList.length == 1),
                       title: Container(
                         margin: EdgeInsets.symmetric(vertical: 8.h),
-                        child: new Text(
+                        child: Text(
                           eventTrackBloc.trackBlockList[i].block,
-                          style: new TextStyle(
+                          style: TextStyle(
                             color: Color(int.parse(
                                 "0xFF${appBloc.uiSettingModel.appTextColor.substring(1, 7).toUpperCase()}")),
                             fontSize: 17.h,
@@ -3769,7 +3744,7 @@ class _EventTrackListState extends State<EventTrackList> with TickerProviderStat
                         ),
                       ),
                       children: <Widget>[
-                        new Column(
+                        Column(
                           children:
                           _buildContent(eventTrackBloc.trackBlockList[i]),
                         ),
@@ -3858,7 +3833,7 @@ class _EventTrackListState extends State<EventTrackList> with TickerProviderStat
     for (int i = 0; i < trackBlockList.data.length; i++) {
       columnContent.add(Padding(
         padding: const EdgeInsets.all(10.0),
-        child: new Align(
+        child: Align(
           alignment: Alignment.topLeft,
           child: widgetSessionsListItems(trackBlockList.data[i], i),
         ),
@@ -3940,22 +3915,14 @@ class _EventTrackListState extends State<EventTrackList> with TickerProviderStat
 
     if (networkAvailable && isCourseDownloaded) {
       // launch offline
-      bool isLaunched = await EventTrackController().launchCourseOffline(
-        context: context,
-        parentMyLearningModel: widget.myLearningModel,
-        table2: table2,
-      );
+      bool isLaunched = true;
       if(isLaunched) {
         await SyncData().syncData();
       }
       return isLaunched;
     } else if (!networkAvailable && isCourseDownloaded) {
       // launch offline
-      return await EventTrackController().launchCourseOffline(
-        context: context,
-        parentMyLearningModel: widget.myLearningModel,
-        table2: table2,
-      );
+      return true;
     } else if (networkAvailable && !isCourseDownloaded) {
       // launch online
       launchCourse(table2, context, isContentisolation);
@@ -4007,8 +3974,7 @@ class _EventTrackListState extends State<EventTrackList> with TickerProviderStat
       executeXAPICourse(table2);
     }
 
-    courseLaunch = GotoCourseLaunch(
-        context, table2, false, appBloc.uiSettingModel, myLearningBloc.list);
+    courseLaunch = GotoCourseLaunch(context, table2, false, appBloc.uiSettingModel, myLearningBloc.list);
     String url = await courseLaunch!.getCourseUrl();
 
     setState(() {
@@ -4049,15 +4015,12 @@ class _EventTrackListState extends State<EventTrackList> with TickerProviderStat
     if ([8, 9, 11, 14, 28, 102, 26].contains(table2.objecttypeid)) {
       String paramsString = "";
 
-      paramsString = "userID=" +
-          table2.userid.toString() +
-          "&scoid=" +
-          table2.scoid.toString();
+      paramsString = "userID=${table2.userid}&scoid=${table2.scoid}";
 
       String webApiUrl = await sharePrefGetString(sharedPref_webApiUrl);
 
       String url =
-          webApiUrl + "/MobileLMS/MobileGetContentStatus?" + paramsString;
+          "$webApiUrl/MobileLMS/MobileGetContentStatus?$paramsString";
 
       print('launchCourseUrl $url');
 
@@ -4089,14 +4052,7 @@ class _EventTrackListState extends State<EventTrackList> with TickerProviderStat
     if (objectTypeIds.contains(table2.objecttypeid)) {
       String paramsString = '';
       if (table2.objecttypeid == 10 && table2.bit5) {
-        paramsString = 'userID=${table2.userid.toString()}' +
-            '&scoid=${table2.scoid.toString()}' +
-            '&TrackObjectTypeID=${table2.objecttypeid.toString()}' +
-            '&TrackContentID=${table2.contentid}' +
-            '&TrackScoID=${table2.scoid.toString()}' +
-            '&SiteID=${table2.siteid.toString()}' +
-            '&OrgUnitID=${table2.siteid.toString()}' +
-            '&isonexist=onexit';
+        paramsString = 'userID=${table2.userid.toString()}&scoid=${table2.scoid.toString()}&TrackObjectTypeID=${table2.objecttypeid.toString()}&TrackContentID=${table2.contentid}&TrackScoID=${table2.scoid.toString()}&SiteID=${table2.siteid.toString()}&OrgUnitID=${table2.siteid.toString()}&isonexist=onexit';
       } else {
         paramsString = 'userID=${table2.userid.toString()}' +
             '&scoid=${table2.scoid.toString()}';
@@ -4166,7 +4122,7 @@ class _EventTrackListState extends State<EventTrackList> with TickerProviderStat
   }
 
   Widget comingSoon() {
-    return Center(
+    return const Center(
       child: Text('Coming Soon'),
     );
   }
@@ -4176,7 +4132,7 @@ class _EventTrackListState extends State<EventTrackList> with TickerProviderStat
     String endDate = '';
     if (widget.myLearningModel.objecttypeid == 70) {
       if (widget.myLearningModel.eventstartdatedisplay.toString().isNotEmpty) {
-        DateTime startTempDate = new DateFormat("yyyy-MM-ddThh:mm:ss")
+        DateTime startTempDate = DateFormat("yyyy-MM-ddThh:mm:ss")
             .parse(widget.myLearningModel.eventstartdatedisplay);
 
         startDate =
@@ -4184,7 +4140,7 @@ class _EventTrackListState extends State<EventTrackList> with TickerProviderStat
       }
 
       if (widget.myLearningModel.eventenddatedisplay.toString().isNotEmpty) {
-        DateTime endTempDate = new DateFormat("yyyy-MM-ddThh:mm:ss")
+        DateTime endTempDate = DateFormat("yyyy-MM-ddThh:mm:ss")
             .parse(widget.myLearningModel.eventenddatedisplay);
 
         endDate = DateFormat("E dd/MMM/yyyy hh:mm:ss a").format(endTempDate);
@@ -4225,12 +4181,12 @@ class _EventTrackListState extends State<EventTrackList> with TickerProviderStat
                           "0xFF${appBloc.uiSettingModel.appTextColor.substring(1, 7).toUpperCase()}")),
                     ),
                   )
-                : new Column(
+                : Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
-                      new Text(
+                      Text(
                         flag
-                            ? removeAllHtmlTags(firstHalf + "...")
+                            ? removeAllHtmlTags("$firstHalf...")
                             : removeAllHtmlTags(firstHalf + secondHalf),
                         style: TextStyle(
                           color: Color(int.parse(
@@ -4238,13 +4194,13 @@ class _EventTrackListState extends State<EventTrackList> with TickerProviderStat
                         ),
                         textAlign: TextAlign.justify,
                       ),
-                      new InkWell(
-                        child: new Row(
+                      InkWell(
+                        child: Row(
                           mainAxisAlignment: MainAxisAlignment.end,
                           children: <Widget>[
-                            new Text(
+                            Text(
                               flag ? "show more" : "show less",
-                              style: new TextStyle(
+                              style: TextStyle(
                                 color: Color(int.parse(
                                     "0xFF${appBloc.uiSettingModel.appButtonBgColor.substring(1, 7).toUpperCase()}")),
                               ),
@@ -4382,10 +4338,10 @@ class _EventTrackListState extends State<EventTrackList> with TickerProviderStat
                     onPressed: () {
                       addToCal(widget.myLearningModel);
                     },
-                    child: Text(appBloc
-                        .localstr.mylearningActionsheetAddtocalendaroption),
                     border: Border.all(color: Color(int.parse("0xFF${appBloc.uiSettingModel.appButtonBgColor.substring(1, 7).toUpperCase()}"))),
                     borderRadius:  BorderRadius.circular(5.h),
+                    child: Text(appBloc
+                        .localstr.mylearningActionsheetAddtocalendaroption),
                   )
                 : Container(),
             SizedBox(
@@ -4450,6 +4406,8 @@ class _EventTrackListState extends State<EventTrackList> with TickerProviderStat
                         placeholder: (context, url) => ClipOval(
                           child: CircleAvatar(
                             radius: 25.h,
+                            backgroundColor: Color(int.parse(
+                                "0xFF${appBloc.uiSettingModel.appButtonBgColor.substring(1, 7).toUpperCase()}")),
                             child: Text(
                               eventTrackBloc.overviewResponse[0].displayName
                                       .isNotEmpty
@@ -4459,13 +4417,13 @@ class _EventTrackListState extends State<EventTrackList> with TickerProviderStat
                               style: TextStyle(
                                   fontSize: 20.h, fontWeight: FontWeight.w600),
                             ),
-                            backgroundColor: Color(int.parse(
-                                "0xFF${appBloc.uiSettingModel.appButtonBgColor.substring(1, 7).toUpperCase()}")),
                           ),
                         ),
                         errorWidget: (context, url, error) => ClipOval(
                           child: CircleAvatar(
                             radius: 25.h,
+                            backgroundColor: Color(int.parse(
+                                "0xFF${appBloc.uiSettingModel.appButtonBgColor.substring(1, 7).toUpperCase()}")),
                             child: Text(
                               eventTrackBloc.overviewResponse[0].displayName
                                       .isNotEmpty
@@ -4478,8 +4436,6 @@ class _EventTrackListState extends State<EventTrackList> with TickerProviderStat
                                   fontSize: 30.h,
                                   fontWeight: FontWeight.w600),
                             ),
-                            backgroundColor: Color(int.parse(
-                                "0xFF${appBloc.uiSettingModel.appButtonBgColor.substring(1, 7).toUpperCase()}")),
                           ),
                         ),
                       ),
@@ -4612,7 +4568,7 @@ class _EventTrackListState extends State<EventTrackList> with TickerProviderStat
         flutterToast.showToast(
           child: CommonToast(displaymsg: 'Error while downloading'),
           gravity: ToastGravity.BOTTOM,
-          toastDuration: Duration(seconds: 2),
+          toastDuration: const Duration(seconds: 2),
         );
       } else if (_downloadProgress == 100) {
         setState(() {
@@ -4623,7 +4579,7 @@ class _EventTrackListState extends State<EventTrackList> with TickerProviderStat
         flutterToast.showToast(
           child: CommonToast(displaymsg: 'Successfully downloaded'),
           gravity: ToastGravity.BOTTOM,
-          toastDuration: Duration(seconds: 2),
+          toastDuration: const Duration(seconds: 2),
         );
       } else {
         setState(() {
@@ -4703,7 +4659,7 @@ class _EventTrackListState extends State<EventTrackList> with TickerProviderStat
               "0xFF${appBloc.uiSettingModel.appBGColor.substring(1, 7).toUpperCase()}")),
           width: MediaQuery.of(context).size.width,
           child: ListView(
-            physics: ScrollPhysics(),
+            physics: const ScrollPhysics(),
             shrinkWrap: true,
 //            crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
@@ -4737,7 +4693,7 @@ class _EventTrackListState extends State<EventTrackList> with TickerProviderStat
                         child: Visibility(
                             visible: kShowContentTypeIcon,
                             child: Container(
-                                padding: EdgeInsets.all(2.0),
+                                padding: const EdgeInsets.all(2.0),
                                 color: Colors.white,
                                 child: CachedNetworkImage(
                                   height: 30,
@@ -4833,7 +4789,7 @@ class _EventTrackListState extends State<EventTrackList> with TickerProviderStat
                             height: 7.h,
                             child: LinearProgressIndicator(
                               backgroundColor: Colors.grey.shade400,
-                              valueColor: AlwaysStoppedAnimation<Color>(
+                              valueColor: const AlwaysStoppedAnimation<Color>(
                                 Colors.blue,
                               ),
                               value: AppDirectory.isValidString(
@@ -4936,7 +4892,7 @@ class _EventTrackListState extends State<EventTrackList> with TickerProviderStat
           return Container(
             color: AppColors.getAppButtonBGColor(),
             width: MediaQuery.of(context).size.width,
-            padding: EdgeInsets.symmetric(horizontal: 20, vertical: 15),
+            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 15),
             child: Column(
               children: [
                 Row(
@@ -4966,7 +4922,7 @@ class _EventTrackListState extends State<EventTrackList> with TickerProviderStat
                         fit: BoxFit.cover,
                       ),
                     ),
-                    SizedBox(width: 10,),
+                    const SizedBox(width: 10,),
                     Expanded(
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -4979,9 +4935,9 @@ class _EventTrackListState extends State<EventTrackList> with TickerProviderStat
                               color: Colors.white,
                             ),
                           ),
-                          SizedBox(height: 5,),
+                          const SizedBox(height: 5,),
                           Text(
-                            "By " + widget.myLearningModel.authordisplayname,
+                            "By ${widget.myLearningModel.authordisplayname}",
                             style: TextStyle(
                               fontSize: 12.h,
                               //fontWeight: FontWeight.w600,
@@ -4991,23 +4947,23 @@ class _EventTrackListState extends State<EventTrackList> with TickerProviderStat
                         ],
                       ),
                     ),
-                    SizedBox(width: 10,),
+                    const SizedBox(width: 10,),
                     GestureDetector(
                       onTap: () {
 
                       },
                       child: Container(
-                        padding: EdgeInsets.all(10),
+                        padding: const EdgeInsets.all(10),
                         decoration: BoxDecoration(
                           shape: BoxShape.circle,
                           color: AppColors.getAppBGColor(),
                         ),
-                        child: Icon(Icons.download_rounded),
+                        child: const Icon(Icons.download_rounded),
                       ),
                     ),
                   ],
                 ),
-                SizedBox(height: 10,),
+                const SizedBox(height: 10,),
                 Container(
                   height: 10.h,
                   child: LinearProgressIndicator(
@@ -5016,7 +4972,7 @@ class _EventTrackListState extends State<EventTrackList> with TickerProviderStat
                     value: completedPercentage,
                   ),
                 ),
-                SizedBox(height: 10,),
+                const SizedBox(height: 10,),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
@@ -5092,13 +5048,13 @@ class _EventTrackListState extends State<EventTrackList> with TickerProviderStat
           urlpath.toLowerCase().contains(".xls") ||
           urlpath.toLowerCase().contains(".xlsx")) {
         urlpath = urlpath.replaceAll("file://", "");
-        urlpath = "https://docs.google.com/gview?embedded=true&url=" + urlpath;
+        urlpath = "https://docs.google.com/gview?embedded=true&url=$urlpath";
       } else if (urlpath.toLowerCase().contains(".pdf")) {
         if (appBloc.uiSettingModel.isCloudStorageEnabled.toLowerCase() ==
             'true') {
-          urlpath = urlpath + "?fromnativeapp=true";
+          urlpath = "$urlpath?fromnativeapp=true";
         } else {
-          urlpath = urlpath + "?fromNativeapp=true";
+          urlpath = "$urlpath?fromNativeapp=true";
         }
       } else {
         urlpath = urlpath;
@@ -5140,16 +5096,12 @@ class _EventTrackListState extends State<EventTrackList> with TickerProviderStat
         urlpath = urlpath.replaceAll("file://", "");
         if (appBloc.uiSettingModel.isCloudStorageEnabled.toLowerCase() ==
             'true') {
-          urlpath = "https://docs.google.com/gview?embedded=true&url=" +
-              urlpath +
-              "?fromnativeapp=true";
+          urlpath = "https://docs.google.com/gview?embedded=true&url=$urlpath?fromnativeapp=true";
         } else {
-          urlpath = "https://docs.google.com/gview?embedded=true&url=" +
-              urlpath +
-              "?fromNativeapp=true";
+          urlpath = "https://docs.google.com/gview?embedded=true&url=$urlpath?fromNativeapp=true";
         }
       } else if (urlpath.toLowerCase().contains(".jwplatform")) {
-        urlpath = 'http://' + urlpath;
+        urlpath = 'http://$urlpath';
       }
 //      else if (urlpath.toLowerCase().contains(".pdf")) {
 //        if (appBloc.uiSettingModel.isCloudStorageEnabled.toLowerCase() ==
@@ -5220,21 +5172,7 @@ class _EventTrackListState extends State<EventTrackList> with TickerProviderStat
 
   void createParentUrl(DummyMyCatelogResponseTable2 table2) async {
     print("createParentUrl called");
-    String paramsString = "userID=" +
-        table2.userid.toString() +
-        "&scoid=" +
-        table2.scoid.toString() +
-        "&TrackObjectTypeID=" +
-        table2.objecttypeid.toString() +
-        "&TrackContentID=" +
-        table2.contentid +
-        "&TrackScoID=" +
-        table2.scoid.toString() +
-        "&SiteID=" +
-        table2.siteid.toString() +
-        "&OrgUnitID=" +
-        table2.siteid.toString() +
-        "&isonexist=onexit";
+    String paramsString = "userID=${table2.userid}&scoid=${table2.scoid}&TrackObjectTypeID=${table2.objecttypeid}&TrackContentID=${table2.contentid}&TrackScoID=${table2.scoid}&SiteID=${table2.siteid}&OrgUnitID=${table2.siteid}&isonexist=onexit";
 
     /*String paramsString = "parentcontentID=${table2.contentid}&siteID=${table2.siteid}&userID=${table2.userid}"
         "&objecttypeid=${table2.objecttypeid}&iscontentenrolled=true&scoid=${table2.scoid}&localeID=${locale}";*/
@@ -5242,7 +5180,7 @@ class _EventTrackListState extends State<EventTrackList> with TickerProviderStat
     String webApiUrl = await sharePrefGetString(sharedPref_webApiUrl);
 
     String url =
-        webApiUrl + "/MobileLMS/MobileGetContentStatus?" + paramsString;
+        "$webApiUrl/MobileLMS/MobileGetContentStatus?$paramsString";
     //String url = webApiUrl + "EventTrackTabs/GetEventTrackHeaderData?$paramsString";
 
     print('Parent Content Status url:$url');
@@ -5253,9 +5191,9 @@ class _EventTrackListState extends State<EventTrackList> with TickerProviderStat
 
   void addToCal(DummyMyCatelogResponseTable2 table2) {
     DateTime startDate =
-        new DateFormat("yyyy-MM-ddTHH:mm:ss").parse(table2.eventstartdatetime);
+        DateFormat("yyyy-MM-ddTHH:mm:ss").parse(table2.eventstartdatetime);
     DateTime endDate =
-        new DateFormat("yyyy-MM-ddTHH:mm:ss").parse(table2.eventenddatetime);
+        DateFormat("yyyy-MM-ddTHH:mm:ss").parse(table2.eventenddatetime);
 
     Event event = Event(
       title: table2.name,
@@ -5273,7 +5211,7 @@ class _EventTrackListState extends State<EventTrackList> with TickerProviderStat
                 ? 'Event added successfully'
                 : 'Error occured while adding event'),
         gravity: ToastGravity.BOTTOM,
-        toastDuration: Duration(seconds: 2),
+        toastDuration: const Duration(seconds: 2),
       );
     });
   }
@@ -5290,31 +5228,31 @@ class _EventTrackListState extends State<EventTrackList> with TickerProviderStat
   void showCancelEnrollDialog(DummyMyCatelogResponseTable2 table2, String isSuccess) {
     showDialog(
       context: context,
-      builder: (BuildContext context) => new AlertDialog(
+      builder: (BuildContext context) => AlertDialog(
         title: Text(
           appBloc.localstr.mylearningAlerttitleStringareyousure,
-          style: TextStyle(fontWeight: FontWeight.bold),
+          style: const TextStyle(fontWeight: FontWeight.bold),
         ),
         content: Text(appBloc
             .localstr.mylearningAlertsubtitleDoyouwanttocancelenrolledevent),
         backgroundColor: Colors.white,
         shape:
-            RoundedRectangleBorder(borderRadius: new BorderRadius.circular(5)),
+            RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)),
         actions: <Widget>[
           TextButton(
-            child: Text(appBloc.localstr.catalogAlertbuttonCancelbutton),
             style: textButtonStyle,
             onPressed: () async {
               Navigator.of(context).pop();
             },
+            child: Text(appBloc.localstr.catalogAlertbuttonCancelbutton),
           ),
           TextButton(
-            child: Text(appBloc.localstr.eventsAlertbuttonOkbutton),
             style: textButtonStyle,
             onPressed: () async {
               Navigator.of(context).pop();
               cancelEnrollment(table2, isSuccess);
             },
+            child: Text(appBloc.localstr.eventsAlertbuttonOkbutton),
           ),
         ],
       ),
@@ -5332,7 +5270,7 @@ class _EventTrackListState extends State<EventTrackList> with TickerProviderStat
           eventTrackModel: widget.myLearningModel,
         ));
       }
-      await Future.delayed(Duration(milliseconds: 300));
+      await Future.delayed(const Duration(milliseconds: 300));
     }
     eventTrackBloc.add(GetTrackListData(
         isInternet: true,

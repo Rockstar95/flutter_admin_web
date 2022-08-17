@@ -15,11 +15,9 @@ import 'package:flutter_admin_web/framework/bloc/mylearning/events/mylearning_ev
 import 'package:flutter_admin_web/framework/common/enums.dart';
 import 'package:flutter_admin_web/framework/helpers/ApiEndpoints.dart';
 import 'package:flutter_admin_web/framework/helpers/ResponsiveWidget.dart';
-import 'package:flutter_admin_web/framework/helpers/providermodel.dart';
 import 'package:flutter_admin_web/framework/theme/ins_theme.dart';
 import 'package:flutter_admin_web/ui/Catalog/catalog_sub_screen.dart';
 import 'package:flutter_admin_web/ui/common/app_colors.dart';
-import 'package:provider/provider.dart';
 
 import 'catalog_refresh.dart';
 
@@ -215,16 +213,13 @@ class _CatalogSubCategoryScreenState extends State<CatalogSubCategoryScreen> {
                                 Navigator.of(context).push(
                                   MaterialPageRoute(
                                     builder: (context) =>
-                                        ChangeNotifierProvider(
-                                      create: (context) => ProviderModel(),
-                                      child: CatalogRefreshScreen(
-                                        categaoryID: 0,
-                                        categaoryName: "true",
-                                        nativeMenuModel:
-                                            nativeMenuModel ??
-                                                NativeMenuModel(categoryStyle: "",componentId: "",conditions: "",contextTitle: "",contextmenuId: "",displayOrder: 0,displayname: "",image: "",isEnabled: "",isofflineMenu: "",landingpageType: "",menuid: "",parameterString: "",parentMenuId: "",repositoryId: "",siteId: "",siteUrl: "",webMenuId: 0),
-                                      ),
-                                    ),
+                                        CatalogRefreshScreen(
+                                          categaoryID: 0,
+                                          categaoryName: "true",
+                                          nativeMenuModel:
+                                              nativeMenuModel ??
+                                                  NativeMenuModel(categoryStyle: "",componentId: "",conditions: "",contextTitle: "",contextmenuId: "",displayOrder: 0,displayname: "",image: "",isEnabled: "",isofflineMenu: "",landingpageType: "",menuid: "",parameterString: "",parentMenuId: "",repositoryId: "",siteId: "",siteUrl: "",webMenuId: 0),
+                                        ),
                                   ),
                                 );
                               },
@@ -302,23 +297,19 @@ class _CatalogSubCategoryScreenState extends State<CatalogSubCategoryScreen> {
                                               Navigator.of(context)
                                                   .push(MaterialPageRoute(
                                                 builder: (context) =>
-                                                    ChangeNotifierProvider(
-                                                  create: (context) =>
-                                                      ProviderModel(),
-                                                  child: CatalogSubScreen(
-                                                    categaoryID: catalogBloc
-                                                        .subCategoryCatalogList[
-                                                            i]
-                                                        .categoryId,
-                                                    categaoryName: catalogBloc
-                                                        .subCategoryCatalogList[
-                                                            i]
-                                                        .categoryName,
-                                                    nativeMenuModel: widget
-                                                            .nativeMenuModel ??
-                                                        NativeMenuModel(categoryStyle: "",componentId: "",conditions: "",contextTitle: "",contextmenuId: "",displayOrder: 0,displayname: "",image: "",isEnabled: "",isofflineMenu: "",landingpageType: "",menuid: "",parameterString: "",parentMenuId: "",repositoryId: "",siteId: "",siteUrl: "",webMenuId: 0),
-                                                  ),
-                                                ),
+                                                    CatalogSubScreen(
+                                                      categaoryID: catalogBloc
+                                                          .subCategoryCatalogList[
+                                                              i]
+                                                          .categoryId,
+                                                      categaoryName: catalogBloc
+                                                          .subCategoryCatalogList[
+                                                              i]
+                                                          .categoryName,
+                                                      nativeMenuModel: widget
+                                                              .nativeMenuModel ??
+                                                          NativeMenuModel(categoryStyle: "",componentId: "",conditions: "",contextTitle: "",contextmenuId: "",displayOrder: 0,displayname: "",image: "",isEnabled: "",isofflineMenu: "",landingpageType: "",menuid: "",parameterString: "",parentMenuId: "",repositoryId: "",siteId: "",siteUrl: "",webMenuId: 0),
+                                                    ),
                                               ));
                                             }
                                           },
@@ -444,22 +435,18 @@ class _CatalogSubCategoryScreenState extends State<CatalogSubCategoryScreen> {
                                               Navigator.of(context)
                                                   .push(MaterialPageRoute(
                                                 builder: (context) =>
-                                                    ChangeNotifierProvider(
-                                                  create: (context) =>
-                                                      ProviderModel(),
-                                                  child: CatalogSubScreen(
-                                                    categaoryID: catalogBloc
-                                                        .subCategoryCatalogList[
-                                                            i]
-                                                        .categoryId,
-                                                    categaoryName: catalogBloc
-                                                        .subCategoryCatalogList[
-                                                            i]
-                                                        .categoryName,
-                                                    nativeMenuModel:
-                                                        nativeMenuModel!,
-                                                  ),
-                                                ),
+                                                    CatalogSubScreen(
+                                                      categaoryID: catalogBloc
+                                                          .subCategoryCatalogList[
+                                                              i]
+                                                          .categoryId,
+                                                      categaoryName: catalogBloc
+                                                          .subCategoryCatalogList[
+                                                              i]
+                                                          .categoryName,
+                                                      nativeMenuModel:
+                                                          nativeMenuModel!,
+                                                    ),
                                               ));
                                             }
                                           },
@@ -583,21 +570,17 @@ class _CatalogSubCategoryScreenState extends State<CatalogSubCategoryScreen> {
                                               Navigator.of(context)
                                                   .push(MaterialPageRoute(
                                                 builder: (context) =>
-                                                    ChangeNotifierProvider(
-                                                      create: (context) =>
-                                                          ProviderModel(),
-                                                      child: CatalogSubScreen(
-                                                        categaoryID: catalogBloc
-                                                            .subCategoryCatalogList[
-                                                        i]
-                                                            .categoryId,
-                                                        categaoryName: catalogBloc
-                                                            .subCategoryCatalogList[
-                                                        i]
-                                                            .categoryName,
-                                                        nativeMenuModel:
-                                                        nativeMenuModel!,
-                                                      ),
+                                                    CatalogSubScreen(
+                                                      categaoryID: catalogBloc
+                                                          .subCategoryCatalogList[
+                                                      i]
+                                                          .categoryId,
+                                                      categaoryName: catalogBloc
+                                                          .subCategoryCatalogList[
+                                                      i]
+                                                          .categoryName,
+                                                      nativeMenuModel:
+                                                      nativeMenuModel!,
                                                     ),
                                               ));
                                             }

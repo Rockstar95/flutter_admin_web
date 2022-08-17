@@ -22,7 +22,6 @@ import 'package:flutter_admin_web/framework/common/constants.dart';
 import 'package:flutter_admin_web/framework/common/enums.dart';
 import 'package:flutter_admin_web/framework/common/pref_manger.dart';
 import 'package:flutter_admin_web/framework/helpers/ApiEndpoints.dart';
-import 'package:flutter_admin_web/framework/helpers/providermodel.dart';
 import 'package:flutter_admin_web/framework/repository/auth/provider/auth_repository_builder.dart';
 import 'package:flutter_admin_web/framework/theme/ins_theme.dart';
 import 'package:flutter_admin_web/ui/Setting/site_setting.dart';
@@ -30,7 +29,6 @@ import 'package:flutter_admin_web/ui/auth/dynamic_signup_page.dart';
 import 'package:flutter_admin_web/ui/auth/forgot_password.dart';
 import 'package:flutter_admin_web/ui/common/common_toast.dart';
 import 'package:flutter_admin_web/ui/home/ActBase.dart';
-import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'membership_signup.dart';
@@ -131,7 +129,6 @@ class _LoginPageState extends State<LoginPage> {
       builder: (context) {
         return StatefulBuilder(
           builder: (context, setState) {
-            Size size = MediaQuery.of(context).size;
             var memItems = planItems(membershipList, currency);
             return AlertDialog(
               scrollable: true,
@@ -160,7 +157,7 @@ class _LoginPageState extends State<LoginPage> {
       isloading = true;
     });
 
-    Future.delayed(new Duration(seconds: 2), () {
+    Future.delayed(Duration(seconds: 2), () {
       hideLoading();
       Navigator.of(context)
           .push(MaterialPageRoute(builder: (context) => ActBase()));
@@ -232,7 +229,7 @@ class _LoginPageState extends State<LoginPage> {
 
   @override
   void initState() {
-    regExp = new RegExp(pattern);
+    regExp = RegExp(pattern);
     authBloc = AuthBloc(authRepository: AuthRepositoryBuilder.repository());
     authBloc.add(GetMembershipDetailsEvent());
     //_requestNotificationPermission();
@@ -611,11 +608,7 @@ class _LoginPageState extends State<LoginPage> {
                                           else {
                                             Navigator.of(context).push(MaterialPageRoute(
                                                 builder: (context) =>
-                                                    ChangeNotifierProvider(
-                                                      create: (context) =>
-                                                          ProviderModel(),
-                                                      child: DynamicSignUp(),
-                                                    )));
+                                                    DynamicSignUp()));
                                           }
 
                                           //
@@ -672,8 +665,8 @@ class _LoginPageState extends State<LoginPage> {
       newItems.add(Container(
         margin: EdgeInsets.symmetric(vertical: 5),
         //constraints: BoxConstraints(minHeight: 300),
-        decoration: new BoxDecoration(
-          border: new Border.all(width: 3.0, color: InsColor(appBloc).appBtnBgColor),
+        decoration: BoxDecoration(
+          border: Border.all(width: 3.0, color: InsColor(appBloc).appBtnBgColor),
           borderRadius: const BorderRadius.all(const Radius.circular(2.0)),
         ),
         //height: 300,
@@ -711,7 +704,7 @@ class _LoginPageState extends State<LoginPage> {
             ]),
             Column(
               children: List.generate(membershipRes.radioData.length, (index) {
-                return new InkWell(
+                return InkWell(
                   onTap: () {
                     setState(() {
                       authBloc.memberShipPlansList
@@ -732,12 +725,9 @@ class _LoginPageState extends State<LoginPage> {
                           membershipRes.memberShipId)
                           .radioData[index];
                       print(data.memberShipDurationID);
-                      var productId = '';
                       if (data.productId == 'Gold 1') {
                         //Temporary until productId from server response
-                        productId = 'com.instancy.goldyearplan';
                       } else if (data.productId.toLowerCase() == 'silver') {
-                        productId = 'com.instancy.silveronemonth';
                       }
                       Navigator.pop(context);
                       // Navigator.of(context).push(MaterialPageRoute(
@@ -747,12 +737,9 @@ class _LoginPageState extends State<LoginPage> {
                       //         )));
 
                       Navigator.of(context).push(MaterialPageRoute(
-                          builder: (context) => ChangeNotifierProvider(
-                            create: (context) => ProviderModel(),
-                            child: DynamicSignUp(
-                              membershipId: data.memberShipDurationID,
-                              productId: data.productId,
-                            ),
+                          builder: (context) => DynamicSignUp(
+                            membershipId: data.memberShipDurationID,
+                            productId: data.productId,
                           )));
                     });
                   },

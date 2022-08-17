@@ -34,7 +34,6 @@ import 'package:flutter_admin_web/framework/common/pref_manger.dart';
 import 'package:flutter_admin_web/framework/helpers/ApiEndpoints.dart';
 import 'package:flutter_admin_web/framework/helpers/ResponsiveWidget.dart';
 import 'package:flutter_admin_web/framework/helpers/parsing_helper.dart';
-import 'package:flutter_admin_web/framework/helpers/providermodel.dart';
 import 'package:flutter_admin_web/framework/helpers/utils.dart';
 import 'package:flutter_admin_web/framework/repository/Catalog/model/subsitelogin_response.dart';
 import 'package:flutter_admin_web/framework/repository/general/contract/general_repository.dart';
@@ -111,7 +110,7 @@ class _CatalogRefreshScreenState extends State<CatalogRefreshScreen> with Single
 
   CatalogBloc get catalogBloc => BlocProvider.of<CatalogBloc>(context);
 
-  ScrollController _sc = new ScrollController();
+  ScrollController _sc = ScrollController();
 
   late MyLearningDetailsBloc detailsBloc;
   bool addToMyLearn = false;
@@ -294,25 +293,21 @@ class _CatalogRefreshScreenState extends State<CatalogRefreshScreen> with Single
             ? Navigator.of(context).push(
             MaterialPageRoute(
                 builder: (context) =>
-                    ChangeNotifierProvider(
-                      create: (context) =>
-                          ProviderModel(),
-                      child: CommonDetailScreen(
-                        screenType:
-                        ScreenType.Catalog,
-                        contentid:
-                        table2.contentid,
-                        objtypeId:
-                        table2.objecttypeid,
-                        detailsBloc:
-                        detailsBloc,
-                        table2: table2,
-                        isShowShedule: true,
-                        isFromReschedule: false,
-                        //isFromMyLearning: true
-                        // nativeModel:
-                        //     widget.nativeMenuModel,
-                      ),
+                    CommonDetailScreen(
+                      screenType:
+                      ScreenType.Catalog,
+                      contentid:
+                      table2.contentid,
+                      objtypeId:
+                      table2.objecttypeid,
+                      detailsBloc:
+                      detailsBloc,
+                      table2: table2,
+                      isShowShedule: true,
+                      isFromReschedule: false,
+                      //isFromMyLearning: true
+                      // nativeModel:
+                      //     widget.nativeMenuModel,
                     )))
             : catalogBloc.add(
           AddToMyLearningEvent(
@@ -352,7 +347,7 @@ class _CatalogRefreshScreenState extends State<CatalogRefreshScreen> with Single
       showDialog(
           context: context,
           builder: (BuildContext context) =>
-          new AlertDialog(
+          AlertDialog(
             title: Text(
               'Pre-requisite Sequence',
               style: TextStyle(
@@ -400,9 +395,9 @@ class _CatalogRefreshScreenState extends State<CatalogRefreshScreen> with Single
             InsColor(appBloc).appBGColor,
             shape: RoundedRectangleBorder(
                 borderRadius:
-                new BorderRadius.circular(5)),
+                BorderRadius.circular(5)),
             actions: <Widget>[
-              new FlatButton(
+              FlatButton(
                 child: Text(appBloc.localstr
                     .eventsAlertbuttonOkbutton),
                 textColor: Colors.blue,
@@ -425,7 +420,7 @@ class _CatalogRefreshScreenState extends State<CatalogRefreshScreen> with Single
   @override
   void initState() {
     appBloc.add(WishlistCountEvent());
-    filterMenus = new Map();
+    filterMenus = Map();
     getComponentId();
     log('String:${widget.nativeMenuModel.conditions}');
     filterMenus = getConditionsValue(widget.nativeMenuModel.conditions);
@@ -589,29 +584,26 @@ class _CatalogRefreshScreenState extends State<CatalogRefreshScreen> with Single
                     ),
                   ),
                   actions: <Widget>[
-                    new Stack(
+                    Stack(
                       children: <Widget>[
                         IconButton(
                             icon: Icon(Icons.favorite),
                             color: InsColor(appBloc).appHeaderTxtColor,
                             onPressed: () {
                               Navigator.of(context).push(MaterialPageRoute(
-                                  builder: (context) => ChangeNotifierProvider(
-                                        create: (context) => ProviderModel(),
-                                        child: WishList(
-                                          categaoryID: widget.categaoryID,
-                                          categaoryName: widget.categaoryName,
-                                          detailsBloc: detailsBloc,
-                                          filterMenus: filterMenus,
-                                        ),
-                                      )));
+                                  builder: (context) => WishList(
+                                    categaoryID: widget.categaoryID,
+                                    categaoryName: widget.categaoryName,
+                                    detailsBloc: detailsBloc,
+                                    filterMenus: filterMenus,
+                                  )));
                             }),
                         Positioned(
                           right: 6,
                           top: 6,
-                          child: new Container(
+                          child: Container(
                             padding: EdgeInsets.all(2),
-                            decoration: new BoxDecoration(
+                            decoration: BoxDecoration(
                               color: Color(int.parse(
                                   "0xFF${appBloc.uiSettingModel.appButtonBgColor.substring(1, 7).toUpperCase()}")),
                               borderRadius: BorderRadius.circular(6),
@@ -730,19 +722,16 @@ class _CatalogRefreshScreenState extends State<CatalogRefreshScreen> with Single
                                   if (element.contentid == widget.contentID) {
                                     Navigator.of(context).pop();
                                     Navigator.of(context).push(MaterialPageRoute(
-                                        builder: (context) => ChangeNotifierProvider(
-                                              create: (context) => ProviderModel(),
-                                              child: CommonDetailScreen(
-                                                screenType: ScreenType.Catalog,
-                                                contentid: element.contentid,
-                                                objtypeId: element.objecttypeid,
-                                                detailsBloc: detailsBloc,
-                                                table2: element,
-                                                isShowShedule: true,
-                                                isFromReschedule: false,
-                                                //nativeModel: widget.nativeMenuModel,
-                                              ),
-                                            )));
+                                        builder: (context) => CommonDetailScreen(
+                                          screenType: ScreenType.Catalog,
+                                          contentid: element.contentid,
+                                          objtypeId: element.objecttypeid,
+                                          detailsBloc: detailsBloc,
+                                          table2: element,
+                                          isShowShedule: true,
+                                          isFromReschedule: false,
+                                          //nativeModel: widget.nativeMenuModel,
+                                        )));
                                   }
                                 });
                               }
@@ -1266,29 +1255,26 @@ class _CatalogRefreshScreenState extends State<CatalogRefreshScreen> with Single
                           ),
                         ),
                         actions: <Widget>[
-                          new Stack(
+                          Stack(
                             children: <Widget>[
-                              new IconButton(
+                              IconButton(
                                   icon: Icon(Icons.favorite),
                                   color: InsColor(appBloc).appHeaderTxtColor,
                                   onPressed: () {
                                     Navigator.of(context).push(MaterialPageRoute(
-                                        builder: (context) => ChangeNotifierProvider(
-                                              create: (context) => ProviderModel(),
-                                              child: WishList(
-                                                categaoryID: widget.categaoryID,
-                                                categaoryName: widget.categaoryName,
-                                                detailsBloc: detailsBloc,
-                                                filterMenus: filterMenus,
-                                              ),
-                                            )));
+                                        builder: (context) => WishList(
+                                          categaoryID: widget.categaoryID,
+                                          categaoryName: widget.categaoryName,
+                                          detailsBloc: detailsBloc,
+                                          filterMenus: filterMenus,
+                                        )));
                                   }),
-                              new Positioned(
+                              Positioned(
                                 right: 6,
                                 top: 6,
-                                child: new Container(
+                                child: Container(
                                   padding: EdgeInsets.all(2),
-                                  decoration: new BoxDecoration(
+                                  decoration: BoxDecoration(
                                     color: Color(int.parse(
                                         "0xFF${appBloc.uiSettingModel.appButtonBgColor.substring(1, 7).toUpperCase()}")),
                                     borderRadius: BorderRadius.circular(6),
@@ -1861,7 +1847,7 @@ class _CatalogRefreshScreenState extends State<CatalogRefreshScreen> with Single
               ),
             ],
           )
-        : new Container();
+        : Container();
   }
 
   Widget widgetMyCatalogListItems(DummyMyCatelogResponseTable2 table2, bool bool, BuildContext context, int i) {
@@ -1921,18 +1907,16 @@ class _CatalogRefreshScreenState extends State<CatalogRefreshScreen> with Single
                     //   ),
                     // ));
                     Navigator.of(context).push(MaterialPageRoute(
-                        builder: (context) => ChangeNotifierProvider(
-                            create: (context) => ProviderModel(),
-                            child: CommonDetailScreen(
-                              screenType: ScreenType.Catalog,
-                              contentid: table2.contentid,
-                              objtypeId: table2.objecttypeid,
-                              detailsBloc: detailsBloc,
-                              table2: table2,
-                              isShowShedule: true,
-                              isFromReschedule: false,
-                              //nativeModel: widget.nativeMenuModel
-                            ))));
+                        builder: (context) => CommonDetailScreen(
+                          screenType: ScreenType.Catalog,
+                          contentid: table2.contentid,
+                          objtypeId: table2.objecttypeid,
+                          detailsBloc: detailsBloc,
+                          table2: table2,
+                          isShowShedule: true,
+                          isFromReschedule: false,
+                          //nativeModel: widget.nativeMenuModel
+                        )));
                   },
                   child: Container(
                     height: ScreenUtil().setHeight(kCellThumbHeight),
@@ -2060,14 +2044,14 @@ class _CatalogRefreshScreenState extends State<CatalogRefreshScreen> with Single
                     child: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: <Widget>[
-                        new Container(
+                        Container(
                             width: ScreenUtil().setWidth(20),
                             height: ScreenUtil().setWidth(20),
-                            decoration: new BoxDecoration(
+                            decoration: BoxDecoration(
                                 shape: BoxShape.circle,
-                                image: new DecorationImage(
+                                image: DecorationImage(
                                     fit: BoxFit.fill,
-                                    image: new NetworkImage(imgUrl)))),
+                                    image: NetworkImage(imgUrl)))),
                         SizedBox(
                           width: ScreenUtil().setWidth(5),
                         ),
@@ -2287,12 +2271,12 @@ class _CatalogRefreshScreenState extends State<CatalogRefreshScreen> with Single
   }
 
   Widget _buildProgressIndicator() {
-    return new Padding(
+    return Padding(
       padding: const EdgeInsets.all(8.0),
-      child: new Center(
-        child: new Opacity(
+      child: Center(
+        child: Opacity(
           opacity: 1.0,
-          child: new CircularProgressIndicator(),
+          child: CircularProgressIndicator(),
         ),
       ),
     );
@@ -2411,7 +2395,7 @@ class _CatalogRefreshScreenState extends State<CatalogRefreshScreen> with Single
         builder: (BuildContext bc) {
           return Container(
             child: SingleChildScrollView(
-              child: new Column(
+              child: Column(
                 children: <Widget>[
                   BottomSheetDragger(),
                   if (menu0)
@@ -2447,7 +2431,7 @@ class _CatalogRefreshScreenState extends State<CatalogRefreshScreen> with Single
                           showDialog(
                               context: context,
                               builder: (BuildContext context) =>
-                                  new AlertDialog(
+                                  AlertDialog(
                                     title: Text(
                                       'Pre-requisite Sequence',
                                       style: TextStyle(
@@ -2495,9 +2479,9 @@ class _CatalogRefreshScreenState extends State<CatalogRefreshScreen> with Single
                                         InsColor(appBloc).appBGColor,
                                     shape: RoundedRectangleBorder(
                                         borderRadius:
-                                            new BorderRadius.circular(5)),
+                                            BorderRadius.circular(5)),
                                     actions: <Widget>[
-                                      new FlatButton(
+                                      FlatButton(
                                         child: Text(appBloc.localstr
                                             .eventsAlertbuttonOkbutton),
                                         textColor: Colors.blue,
@@ -2557,25 +2541,21 @@ class _CatalogRefreshScreenState extends State<CatalogRefreshScreen> with Single
                                         ? Navigator.of(context).push(
                                             MaterialPageRoute(
                                                 builder: (context) =>
-                                                    ChangeNotifierProvider(
-                                                      create: (context) =>
-                                                          ProviderModel(),
-                                                      child: CommonDetailScreen(
-                                                        screenType:
-                                                            ScreenType.Catalog,
-                                                        contentid:
-                                                            table2.contentid,
-                                                        objtypeId:
-                                                            table2.objecttypeid,
-                                                        detailsBloc:
-                                                            detailsBloc,
-                                                        table2: table2,
-                                                        isShowShedule: true,
-                                                        isFromReschedule: false,
-                                                        //isFromMyLearning: true
-                                                        // nativeModel:
-                                                        //     widget.nativeMenuModel,
-                                                      ),
+                                                    CommonDetailScreen(
+                                                      screenType:
+                                                          ScreenType.Catalog,
+                                                      contentid:
+                                                          table2.contentid,
+                                                      objtypeId:
+                                                          table2.objecttypeid,
+                                                      detailsBloc:
+                                                          detailsBloc,
+                                                      table2: table2,
+                                                      isShowShedule: true,
+                                                      isFromReschedule: false,
+                                                      //isFromMyLearning: true
+                                                      // nativeModel:
+                                                      //     widget.nativeMenuModel,
                                                     )))
                                         : catalogBloc.add(
                                             AddToMyLearningEvent(
@@ -2633,20 +2613,17 @@ class _CatalogRefreshScreenState extends State<CatalogRefreshScreen> with Single
                           onTap: () {
                             Navigator.of(context).pop();
                             Navigator.of(context).push(MaterialPageRoute(
-                                builder: (context) => ChangeNotifierProvider(
-                                      create: (context) => ProviderModel(),
-                                      child: CommonDetailScreen(
-                                        screenType: ScreenType.Catalog,
-                                        contentid: table2.contentid,
-                                        objtypeId: table2.objecttypeid,
-                                        detailsBloc: detailsBloc,
-                                        table2: table2,
-                                        isShowShedule: true,
-                                        isFromReschedule: false,
-                                        //isFromMyLearning: true
-                                        filterMenus: filterMenus,
-                                      ),
-                                    )));
+                                builder: (context) => CommonDetailScreen(
+                                  screenType: ScreenType.Catalog,
+                                  contentid: table2.contentid,
+                                  objtypeId: table2.objecttypeid,
+                                  detailsBloc: detailsBloc,
+                                  table2: table2,
+                                  isShowShedule: true,
+                                  isFromReschedule: false,
+                                  //isFromMyLearning: true
+                                  filterMenus: filterMenus,
+                                )));
 
                             // Navigator.of(context).push(MaterialPageRoute(
                             //     builder: (context) => ChangeNotifierProvider(
@@ -2756,7 +2733,7 @@ class _CatalogRefreshScreenState extends State<CatalogRefreshScreen> with Single
                       IconDataSolid(int.parse('0xf1e0')),
                       color: InsColor(appBloc).appIconColor,
                     ),
-                    title: new Text('Share with Connection',
+                    title: Text('Share with Connection',
                         style: TextStyle(
                             color: Color(
                           int.parse(
@@ -2780,7 +2757,7 @@ class _CatalogRefreshScreenState extends State<CatalogRefreshScreen> with Single
                       IconDataSolid(int.parse('0xf079')),
                       color: InsColor(appBloc).appIconColor,
                     ),
-                    title: new Text("Share with People",
+                    title: Text("Share with People",
                         style: TextStyle(
                             color: Color(
                           int.parse(
@@ -2812,13 +2789,13 @@ class _CatalogRefreshScreenState extends State<CatalogRefreshScreen> with Single
     if (privilegeCreateForumIdExists()) {
       if (table2.isaddedtomylearning == 1) {
         if (table2.objecttypeid == 14) {
-          return new ListTile(
+          return ListTile(
             leading: Icon(
               Icons.email,
               //IconDataSolid(int.parse('0xf06e')),
               color: InsColor(appBloc).appIconColor,
             ),
-            title: new Text(
+            title: Text(
                 appBloc.localstr.mylearningsendviaemailnewoption == null
                     ? 'Share via Email'
                     : appBloc.localstr.mylearningsendviaemailnewoption,
@@ -3299,7 +3276,7 @@ class _CatalogRefreshScreenState extends State<CatalogRefreshScreen> with Single
   }
 
   Map<String, String> generateHashMap(List<String> conditionsArray) {
-    Map<String, String> map = new Map();
+    Map<String, String> map = Map();
     if (conditionsArray.length != 0) {
       for (int i = 0; i < conditionsArray.length; i++) {
         var filterArray = conditionsArray[i].split("=");
@@ -3327,7 +3304,7 @@ class _CatalogRefreshScreenState extends State<CatalogRefreshScreen> with Single
 
   checkSubsiteLogding(String response, DummyMyCatelogResponseTable2 table2) {
     SubsiteLoginResponse subsiteLoginResponse =
-        new SubsiteLoginResponse(successFullUserLogin: [], failedUserLogin: []);
+        SubsiteLoginResponse(successFullUserLogin: [], failedUserLogin: []);
     Map<String, dynamic> userloginAry = jsonDecode(response);
     try {
       String succesMessage =

@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:typed_data';
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
@@ -24,6 +25,7 @@ import 'package:flutter_admin_web/framework/repository/profile/provider/profile_
 import 'package:flutter_admin_web/framework/theme/ins_theme.dart';
 import 'package:flutter_admin_web/ui/common/app_colors.dart';
 import 'package:flutter_admin_web/ui/common/common_toast.dart';
+import 'package:uuid/uuid.dart';
 
 class FeedbackScreen extends StatefulWidget {
   final Function updateTitle;
@@ -52,7 +54,7 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
   late FToast flutterToast;
 
   final ImagePicker _picker = ImagePicker();
-  XFile _imageFile = XFile('');
+  Uint8List? _imageFile;
 
   bool imageAttached = false;
 
@@ -133,7 +135,7 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
                         state.status == Status.COMPLETED) {
                       titleController.text = '';
                       descController.text = '';
-                      _imageFile = XFile('');
+                      _imageFile = null;
                       showToast();
                     }
                   },
@@ -303,17 +305,17 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
                                   Padding(
                                     padding: const EdgeInsets.all(16.0),
                                     child: RaisedButton.icon(
-                                        icon: Icon(_imageFile.path.isEmpty
+                                        icon: Icon(_imageFile != null
                                             ? Icons.image
                                             : Icons.highlight_remove),
                                         onPressed: () => {
                                               setState(() {
                                                 feedbackBloc.fileBytes = null;
                                                 feedbackBloc.fileName = '';
-                                                _imageFile = XFile('');
+                                                _imageFile = null;
                                               }),
-                                              MyPrint.printOnConsole('choose file ${_imageFile.path}'),
-                                              _imageFile.path.isEmpty
+                                              MyPrint.printOnConsole('choose file ${_imageFile}'),
+                                              _imageFile == null
                                                   ? showDialog(
                                                       context: context,
                                                       builder: (BuildContext context) =>
@@ -411,7 +413,7 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
                                             .withOpacity(0.5),
                                         color: Color(int.parse(
                                             "0xFF${appBloc.uiSettingModel.appButtonBgColor.substring(1, 7).toUpperCase()}")),
-                                        label: Text(_imageFile.path.isEmpty
+                                        label: Text(_imageFile == null
                                             ? 'Choose Image'
                                             : 'Remove Image'),
                                         textColor: Color(int.parse(
@@ -419,12 +421,12 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
                                   ),
                                   Padding(
                                     padding: const EdgeInsets.all(16.0),
-                                    child: _imageFile.path.isNotEmpty
+                                    child: _imageFile != null
                                         ? ClipRRect(
                                             borderRadius:
                                                 BorderRadius.circular(5.0),
-                                            child: Image.file(
-                                              File(_imageFile.path),
+                                            child: Image.memory(
+                                              _imageFile!,
                                               fit: BoxFit.cover,
                                               width: 105,
                                               height: 105,
@@ -530,7 +532,6 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
   }
 
   Future<void> submitFeedback() async {
-    var filepath = _imageFile.path;
     var descriptionVar = descController.text;
     var titleNameVar = titleController.text;
 
@@ -541,7 +542,8 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
         toastDuration: const Duration(seconds: 4),
       );
       return;
-    } else if (descriptionVar.isEmpty) {
+    }
+    else if (descriptionVar.isEmpty) {
       flutterToast.showToast(
         child: CommonToast(displaymsg: 'Please Enter Feedback'),
         gravity: ToastGravity.BOTTOM,
@@ -550,12 +552,10 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
       return;
     }
 
-    File file = File(_imageFile.path);
-
-    var filname = await AppDirectory.getFileNameWithExtension(file);
+    var filname = "${const Uuid().v1().replaceAll("-", "")}.png";
 
     feedbackBloc.add(FeedbackSubmitEvent(
-        image: _imageFile.path,
+        image: _imageFile,
         feedbackTitle: titleController.text,
         feedbackDesc: descController.text,
         currentUserId: '0',
@@ -572,15 +572,15 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
 
       if (pickedFile != null) {
         var imageName = '${DateTime.now().millisecondsSinceEpoch}.jpg';
-        setState(() {
-          // _imageFile =;
-          MyPrint.printOnConsole('pickedFile.path ${pickedFile.path}');
-          if (titleController.text.isEmpty) {
-           titleController.text = imageName;
-          }
-          // descController.text = pickedFile.path;
-          _imageFile = pickedFile;
-        });
+        // _imageFile =;
+        MyPrint.printOnConsole('pickedFile.path ${pickedFile.path}');
+        if (titleController.text.isEmpty) {
+         titleController.text = imageName;
+        }
+        // descController.text = pickedFile.path;
+        _imageFile = await pickedFile.readAsBytes();
+
+        setState(() {});
         MyPrint.printOnConsole('imageName $imageName');
       }
     } catch (e) {
@@ -590,7 +590,7 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
 
   void updateUIForImage() {
     setState(() {
-      _imageFile = XFile('');
+      _imageFile = null;
     });
   }
 

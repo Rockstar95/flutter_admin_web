@@ -1,8 +1,8 @@
+import 'package:adaptive_dialog/adaptive_dialog.dart';
 import 'package:flick_video_player/flick_video_player.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:flutter_admin_web/framework/bloc/app/bloc/app_bloc.dart';
 import 'package:flutter_admin_web/framework/bloc/mylearning/bloc/mylearning_bloc.dart';
 import 'package:flutter_admin_web/framework/bloc/mylearning/events/mylearning_event.dart';
@@ -12,6 +12,7 @@ import 'package:flutter_admin_web/framework/repository/mylearning/mylearning_rep
 import 'package:flutter_admin_web/utils/my_print.dart';
 import 'package:logger/logger.dart';
 import 'package:video_player/video_player.dart';
+import 'package:webviewx/webviewx.dart';
 
 class InAppWebCourseLaunch extends StatefulWidget {
   InAppWebCourseLaunch(this.url, this.myLearningModel);
@@ -32,10 +33,22 @@ class _InAppWebCourseLaunchState extends State<InAppWebCourseLaunch> {
   late MyLearningBloc myLearningBloc;
   late InstancyContentType contentType;
 
-  InAppWebViewController? webView;
+  WebViewXController? webviewController;
   FlickManager? flickManager;
 
   //String demoUrl = "https://flutter.instancy.com/ajaxcourse/ScoID/13981/ContentTypeId/8/ContentID/0139db3d-3267-43d6-842b-d81b859a815f/AllowCourseTracking/true/trackuserid/302/ismobilecontentview/true/ContentPath/~Content~PublishFiles~586023ec-28a5-4b34-80a0-7fb191529172~start.html%3FnativeappURL=true";
+
+  Future<void> _callPlatformSpecificJsMethod() async {
+    print("_callPlatformSpecificJsMethod called");
+    try {
+      await webviewController?.callJsMethod('testPlatformSpecificMethod', ['Hi']);
+    } catch (e) {
+      showAlertDialog(
+        title: e.toString(),
+        context: context,
+      );
+    }
+  }
 
   bool isFullScreen(DummyMyCatelogResponseTable2 myLearningModel) {
     if ([8, 9, 10].contains(myLearningModel.objecttypeid)) {
@@ -72,6 +85,13 @@ class _InAppWebCourseLaunchState extends State<InAppWebCourseLaunch> {
     else {
       isLoading = true;
     }
+
+    Future.delayed(const Duration(seconds: 10), () {
+      _callPlatformSpecificJsMethod();
+      Future.delayed(const Duration(seconds: 10), () {
+        _callPlatformSpecificJsMethod();
+      });
+    });
 
 
     SystemChrome.setPreferredOrientations([
@@ -121,7 +141,7 @@ class _InAppWebCourseLaunchState extends State<InAppWebCourseLaunch> {
                   ],
                 ),
                 isLoading
-                    ? Center(child: CircularProgressIndicator())
+                    ? const Center(child: CircularProgressIndicator())
                     : Container(),
                 // Positioned(
                 //     top: 0,
@@ -150,7 +170,7 @@ class _InAppWebCourseLaunchState extends State<InAppWebCourseLaunch> {
     }
     else {
       return AppBar(
-        iconTheme: new IconThemeData(
+        iconTheme: IconThemeData(
           color: Color(int.parse(
               "0xFF${appBloc.uiSettingModel.appHeaderTextColor.substring(1, 7).toUpperCase()}")),
         ),
@@ -177,14 +197,13 @@ class _InAppWebCourseLaunchState extends State<InAppWebCourseLaunch> {
           Visibility(
             visible: widget.myLearningModel.mediatypeid != 13,
             child: IconButton(
-              icon: Icon(Icons.refresh),
+              icon: const Icon(Icons.refresh),
               onPressed: () {
                 if (widget.url.contains('https://docs.google.com')) {
                   setState(() {
                     isLoading = true;
                   });
-                  webView?.loadUrl(
-                      urlRequest: URLRequest(url: Uri.tryParse(widget.url)));
+                  webviewController?.loadContent(widget.url, SourceType.url);
                 }
               },
             ),
@@ -199,13 +218,13 @@ class _InAppWebCourseLaunchState extends State<InAppWebCourseLaunch> {
       return getVideoPlayer();
     }
     else {
-      return getWebView();
+      return getWebview(context);
     }
   }
 
   Widget getVideoPlayer() {
     if(flickManager == null) {
-      return SizedBox();
+      return const SizedBox();
     }
 
     return FlickVideoPlayer(
@@ -214,131 +233,85 @@ class _InAppWebCourseLaunchState extends State<InAppWebCourseLaunch> {
         videoFit: BoxFit.contain,
         controls: MyFlickPortraitControls(
           iconSize: 25,
-          controllsPadding: EdgeInsets.symmetric(horizontal: 20, vertical: 25),
+          controllsPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 25),
           progressBarSettings: FlickProgressBarSettings(
-            padding: EdgeInsets.only(bottom: 20),
+            padding: const EdgeInsets.only(bottom: 20),
           ),
         ),
       ),
-      flickVideoWithControlsFullscreen: FlickVideoWithControls(
+      flickVideoWithControlsFullscreen: const FlickVideoWithControls(
         videoFit: BoxFit.contain,
         controls: MyFlickLandscapeControls(),
       ),
     );
   }
 
-  Widget getWebView() {
-    return InAppWebView(
-      initialOptions: InAppWebViewGroupOptions(
-        ///*
-        android: AndroidInAppWebViewOptions(
-          //loadWithOverviewMode: true,
-          //useWideViewPort: true,
-          allowFileAccess: true,
-          allowContentAccess: true,
-          domStorageEnabled: true,
-          layoutAlgorithm: AndroidLayoutAlgorithm.NORMAL,
-          databaseEnabled: true,
-          saveFormData: true,
-          useShouldInterceptRequest: true,
+  Widget getWebview(BuildContext context) {
+    Size size = MediaQuery.of(context).size;
+
+    return WebViewX(
+      width: size.width,
+      height: size.height,
+      initialContent: widget.url.startsWith('www') ? 'https://${widget.url}' : widget.url,
+      initialSourceType: SourceType.url,
+      onWebViewCreated: (WebViewXController controller) {
+        webviewController = controller;
+      },
+      jsContent: const {
+        EmbeddedJsContent(
+          js: "function testPlatformIndependentMethod() { console.log('Hi from JS') }",
         ),
-        ios: IOSInAppWebViewOptions(),
-        //*/
-        /*
-    webSettings.setJavaScriptEnabled(true);
-    webSettings.setCacheMode(WebSettings.LOAD_CACHE_ELSE_NETWORK);
-    webSettings.setLoadWithOverviewMode(true);
-    webSettings.setUseWideViewPort(true);
-    webSettings.setAllowFileAccess(true);
-    webSettings.setAppCacheEnabled(true);
-    webSettings.setDomStorageEnabled(true);
-    webSettings.setLayoutAlgorithm(WebSettings.LayoutAlgorithm.NARROW_COLUMNS);
-    webSettings.getUseWideViewPort();
-    webSettings.setDatabaseEnabled(true);
-    webSettings.setSaveFormData(true);
-    adWebView.setScrollBarStyle(WebView.SCROLLBARS_OUTSIDE_OVERLAY);
-    adWebView.setScrollbarFadingEnabled(false);
-    webSettings.setAllowFileAccessFromFileURLs(true);
-    webSettings.setAllowUniversalAccessFromFileURLs(true);
-    webSettings.setSupportZoom(true);
-    webSettings.setAllowContentAccess(true);
-    webSettings.setPluginState(WebSettings.PluginState.ON);
-    webSettings.setRenderPriority(WebSettings.RenderPriority.HIGH);
-    webSettings.setJavaScriptCanOpenWindowsAutomatically(true);
-    adWebView.setBackgroundColor(getResources().getColor(R.color.colorFaceBookSilver));
-    webSettings.setMediaPlaybackRequiresUserGesture(false);
-    */
-      crossPlatform: InAppWebViewOptions(
-        javaScriptEnabled: true,
-        //useShouldOverrideUrlLoading: true,
-        useOnLoadResource: true,
-        //cacheEnabled: true,
-        //javaScriptCanOpenWindowsAutomatically: true,
-        //mediaPlaybackRequiresUserGesture: true,
-        //supportZoom: true,
-        //useShouldInterceptAjaxRequest: true,
-        //useShouldInterceptFetchRequest: true,
-      ),
-    ),
-      initialUrlRequest: URLRequest(
-          url: Uri.tryParse(widget.url.startsWith('www')
-              ? 'https://${widget.url}'
-              : widget.url),
-          headers: {},
-      ),
-      //initialUrl: demoUrl,
-      onLoadResource: (InAppWebViewController controller, LoadedResource resource) {
-        //logger.e("....onLoadResource.....SAGAR.....${resource.url}");
-        print("InAppWebView onLoadResource called for:${resource.url?.path}");
-
-        /// temp method
-
-        if (
-          (resource.url?.path.toLowerCase().contains("coursetracking/savecontenttrackeddata1") ?? false) ||
-          (resource.url?.path.toLowerCase().contains("blank.html?ioscourseclose=true") ?? false)
-        ) {
-          Navigator.of(context).pop(true);
-        }
+        EmbeddedJsContent(
+          webJs:
+          "function testPlatformSpecificMethod(msg) { TestDartCallback('Web callback says: ' + msg) }",
+          mobileJs:
+          "function testPlatformSpecificMethod(msg) { TestDartCallback.postMessage('Mobile callback says: ' + msg) }",
+        ),
       },
-      shouldOverrideUrlLoading: (InAppWebViewController controller, NavigationAction navigationAction) async {
-        //logger.e("....shouldOverrideUrlLoading.....SAGAR.....${shouldOverrideUrlLoadingRequest.url}");
-        // if (shouldOverrideUrlLoadingRequest.url
-        //         .toLowerCase()
-        //         .contains(
-        //             "coursetracking/savecontenttrackeddata1") ||
-        //     shouldOverrideUrlLoadingRequest.url
-        //         .toLowerCase()
-        //         .contains("blank.html?ioscourseclose=true")) {
-        //   Navigator.of(context).pop();
-        // }
-        //return ShouldOverrideUrlLoadingAction.ALLOW;
-        return NavigationActionPolicy.ALLOW;
+      dartCallBacks: {
+        DartCallback(
+          name: "exitNewCourse",
+          callBack: (dynamic argument) {
+            print("exitNewCourse called:${argument}");
+          },
+        ),
+        DartCallback(
+          name: 'TestDartCallback',
+          callBack: (msg) => print("TestDartCallback called:${msg.toString()}"),
+        )
       },
-      // onProgressChanged: (InAppWebViewController controller,
-      //     int progress) async {
-      //   var urlString = await controller.getUrl();
-      //   if (urlString.toLowerCase().contains(
-      //           "coursetracking/savecontenttrackeddata1") ||
-      //       urlString
-      //           .toLowerCase()
-      //           .contains("blank.html?ioscourseclose=true")) {
-      //     Navigator.of(context).pop();
-      //   }
-      // },
-      onWebViewCreated: (InAppWebViewController controller) {
-        webView = controller;
+      onPageStarted: (String src) {
+        print("On Page Started Src:${ src}");
       },
-      onLoadStart: (InAppWebViewController controller, Uri? url) {
-        Logger().e("....onLoadStart.....SAGAR.....${url?.path}");
-      },
-      onLoadStop: (InAppWebViewController controller, Uri? url) {
-        Logger().e("....onLoadStop.....SAGAR.....${url?.path}");
+      onPageFinished: (String src) {
+        print("On Page Finished Src:${src}");
         setState(() {
           isLoading = false;
         });
+
+        if (src.toLowerCase().contains("coursetracking/savecontenttrackeddata1") || src.toLowerCase().contains("blank.html?ioscourseclose=true")) {
+          Navigator.of(context).pop(true);
+        }
       },
-      onLoadError: (InAppWebViewController controller, Uri? url, int code, String message) {
-        print("InAppWebView onLoadError called for:${url?.path}, Message:$message");
+      onWebResourceError: (WebResourceError error) {
+        print("On Web Resource Error:${error.description}");
+      },
+      javascriptMode: JavascriptMode.unrestricted,
+      webSpecificParams: const WebSpecificParams(
+        webAllowFullscreenContent: true,
+      ),
+      userAgent: "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/78.0.3904.108 Safari/537.36",
+      navigationDelegate: (NavigationRequest navigation) async {
+        print("navigationDelegate source Type:${navigation.content.sourceType}");
+        print("navigationDelegate source:${navigation.content.source}");
+
+        return NavigationDecision.navigate;
+        if(navigation.content.sourceType == SourceType.url && (navigation.content.source.startsWith("http://") || navigation.content.source.startsWith("https://"))) {
+          return NavigationDecision.navigate;
+        }
+        else {
+          return NavigationDecision.prevent;
+        }
       },
     );
   }
@@ -383,7 +356,7 @@ class MyFlickPortraitControls extends StatelessWidget {
                     child: FlickPlayToggle(
                       size: 30,
                       color: Colors.black,
-                      padding: EdgeInsets.all(12),
+                      padding: const EdgeInsets.all(12),
                       decoration: BoxDecoration(
                         color: Colors.white70,
                         borderRadius: BorderRadius.circular(40),
@@ -470,10 +443,10 @@ class MyFlickLandscapeControls extends StatelessWidget {
      /* fontSize: 14,
       iconSize: 30,*/
       iconSize: 25,
-      controllsPadding: EdgeInsets.symmetric(horizontal: 30, vertical: 25),
+      controllsPadding: const EdgeInsets.symmetric(horizontal: 30, vertical: 25),
       progressBarSettings: FlickProgressBarSettings(
         height: 5,
-        padding: EdgeInsets.only(bottom: 20),
+        padding: const EdgeInsets.only(bottom: 20),
       ),
     );
   }

@@ -20,7 +20,6 @@ import 'package:flutter_admin_web/framework/bloc/mylearning/model/dummy_my_catel
 import 'package:flutter_admin_web/framework/common/constants.dart';
 import 'package:flutter_admin_web/framework/common/enums.dart';
 import 'package:flutter_admin_web/framework/helpers/ResponsiveWidget.dart';
-import 'package:flutter_admin_web/framework/helpers/providermodel.dart';
 import 'package:flutter_admin_web/framework/helpers/utils.dart';
 import 'package:flutter_admin_web/framework/theme/ins_theme.dart';
 import 'package:flutter_admin_web/in_app_purchase_controller.dart';
@@ -33,7 +32,6 @@ import 'package:flutter_admin_web/ui/common/common_toast.dart';
 import 'package:flutter_admin_web/ui/common/modal_progress_hud.dart';
 import 'package:flutter_admin_web/utils/mytoast.dart';
 import 'package:intl/intl.dart';
-import 'package:provider/provider.dart';
 
 import '../common/bottomsheet_drager.dart';
 
@@ -61,7 +59,7 @@ class _WishListState extends State<WishList> {
 
   CatalogBloc get catalogBloc => BlocProvider.of<CatalogBloc>(context);
 
-  ScrollController _sc = new ScrollController();
+  ScrollController _sc = ScrollController();
 
   int pageNumber = 0;
   bool isGetCatalogListEvent = false;
@@ -465,7 +463,7 @@ class _WishListState extends State<WishList> {
               ),
             ],
           )
-        : new Container();
+        : Container();
   }
 
   widgetMyCatalogListItems(DummyMyCatelogResponseTable2 table2, bool bool,
@@ -617,14 +615,14 @@ class _WishListState extends State<WishList> {
                 ),
                 Row(
                   children: <Widget>[
-                    new Container(
+                    Container(
                         width: ScreenUtil().setWidth(20),
                         height: ScreenUtil().setWidth(20),
-                        decoration: new BoxDecoration(
+                        decoration: BoxDecoration(
                             shape: BoxShape.circle,
-                            image: new DecorationImage(
+                            image: DecorationImage(
                                 fit: BoxFit.fill,
-                                image: new NetworkImage(imgUrl)))),
+                                image: NetworkImage(imgUrl)))),
                     SizedBox(
                       width: ScreenUtil().setWidth(5),
                     ),
@@ -729,12 +727,12 @@ class _WishListState extends State<WishList> {
   }
 
   Widget _buildProgressIndicator() {
-    return new Padding(
+    return Padding(
       padding: const EdgeInsets.all(8.0),
-      child: new Center(
-        child: new Opacity(
+      child: Center(
+        child: Opacity(
           opacity: 1.0,
-          child: new CircularProgressIndicator(),
+          child: CircularProgressIndicator(),
         ),
       ),
     );
@@ -843,7 +841,7 @@ class _WishListState extends State<WishList> {
           return Container(
             color: InsColor(appBloc).appBGColor,
             child: SingleChildScrollView(
-              child: new Column(
+              child: Column(
                 children: <Widget>[
                   BottomSheetDragger(),
                   menu0
@@ -912,18 +910,15 @@ class _WishListState extends State<WishList> {
                           onTap: () {
                             Navigator.of(context).pop();
                             Navigator.of(context).push(MaterialPageRoute(
-                                builder: (context) => ChangeNotifierProvider(
-                                      create: (context) => ProviderModel(),
-                                      child: CommonDetailScreen(
-                                        screenType: ScreenType.Catalog,
-                                        contentid: table2.contentid,
-                                        objtypeId: table2.objecttypeid,
-                                        detailsBloc: widget.detailsBloc,
-                                        table2: table2,
-                                        isFromReschedule: false,
-                                        filterMenus: widget.filterMenus,
-                                      ),
-                                    )));
+                                builder: (context) => CommonDetailScreen(
+                                  screenType: ScreenType.Catalog,
+                                  contentid: table2.contentid,
+                                  objtypeId: table2.objecttypeid,
+                                  detailsBloc: widget.detailsBloc,
+                                  table2: table2,
+                                  isFromReschedule: false,
+                                  filterMenus: widget.filterMenus,
+                                )));
                           },
                         )
                       : Container(),

@@ -308,8 +308,8 @@ class AttachmentIcon extends StatelessWidget {
       //     ?.files;
       var files = paths?.files ?? [];
       if(files.isNotEmpty) {
-        fileBytes = files.isNotEmpty ? (files.first.bytes) : null;
-        fileName = files.isNotEmpty ? files.first.name : '';
+        fileBytes = (files.first.bytes);
+        fileName = files.first.name;
         uploadFile(msgType, fileName, fileBytes);
       }
     }
