@@ -448,6 +448,21 @@ class AppBloc extends Bloc<AppEvent, AppState> {
       else if (element.name == "AddProfileAdditionalTab") {
         uiSettingModel.setAddProfileAdditionalTab(element.keyvalue.toString());
       }
+      else if (element.name == "EnableChatBot") {
+        uiSettingModel.setEnableChatBot(element.keyvalue.toString());
+      }
+      else if (element.name.trim() == "BeforeLoginKnowledgeBaseID") {
+        uiSettingModel.setBeforeLoginKnowledgeBaseID(element.keyvalue.toString());
+      }
+      else if (element.name == "InstancyBotEndPointURL") {
+        uiSettingModel.setInstancyBotEndPointURL(element.keyvalue.toString());
+      }
+      else if (element.name == "BotChatIcon") {
+        uiSettingModel.setBotChatIcon(element.keyvalue.toString());
+      }
+      else if (element.name == "BotGreetingContent") {
+        uiSettingModel.setBotGreetingContent(element.keyvalue.toString());
+      }
       else if (element.name == "AllowExpiredEventsSubscription") {
         uiSettingModel
             .setAllowExpiredEventsSubscription(element.keyvalue.toString());

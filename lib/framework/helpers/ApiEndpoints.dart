@@ -607,4 +607,8 @@ class ApiEndpoints {
   static String GetPrivaryFields(String intUserID, String intSiteID, String strLocale) => '${strBaseUrl}UserProfile/GetPrivaryFields?intUserID=$intUserID&intSiteID=$intSiteID&strLocale=$strLocale&intCompID=160&intCompInsID=5001&intProfileUserID=0&intProfileSiteID=&viewconnection=true&Type=profile';
 
   static String SavePrivaryFields() => '${strBaseUrl}UserProfile/SavePrivaryFields';
+
+  //region Instabot
+  static String GetInsertBotData() => '$strBaseUrl/Chatbot/InsertBotData';
+  //endregion
 }

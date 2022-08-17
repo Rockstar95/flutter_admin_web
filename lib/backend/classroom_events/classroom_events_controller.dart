@@ -6,7 +6,7 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:in_app_purchase/in_app_purchase.dart';
 import 'package:flutter_admin_web/backend/classroom_events/classroom_events_repository.dart';
-import 'package:flutter_admin_web/configs/app_error_codes.dart';
+import 'package:flutter_admin_web/configs/app_status_codes.dart';
 import 'package:flutter_admin_web/configs/app_strings.dart';
 import 'package:flutter_admin_web/controllers/navigation_controller.dart';
 import 'package:flutter_admin_web/framework/bloc/app/bloc/app_bloc.dart';
@@ -66,7 +66,7 @@ class ClassroomEventsController extends ChangeNotifier {
       });
     }
     else if(response is AppErrorModel) {
-      if(response.code == AppErrorCodes.TOKEN_EXPIRED) {
+      if(response.code == AppApiStatusCodes.TOKEN_EXPIRED) {
         NavigationController().sessionTimeOut();
         return;
       }

@@ -65,6 +65,7 @@ import 'package:http/http.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../common/app_colors.dart';
+import '../instabot/instabot_screen.dart';
 
 //Function to handle Notification data in background.
 // Future<dynamic> backgroundMessageHandler(RemoteMessage message) {
@@ -1454,7 +1455,8 @@ class _ActBaseState extends State<ActBase> {
             );
           }
           */
-        } else if (i == listNativeModel.length) {
+        }
+        else if (i == listNativeModel.length) {
           drawerOptions.add(
             Container(
               //height: 6 * SizeConfig.heightMultiplier,
@@ -1486,6 +1488,35 @@ class _ActBaseState extends State<ActBase> {
               ),
             ),
           );
+
+          MyPrint.printOnConsole("appBloc.uiSettingModel.enableChatBot:${appBloc.uiSettingModel.enableChatBot}");
+          if(appBloc.uiSettingModel.enableChatBot.toLowerCase() == "true") {
+            drawerOptions.add(
+              Container(
+                //height: 6 * SizeConfig.heightMultiplier,
+                child: ListTile(
+                  leading: Image.asset(
+                    "assets/images/chatbot-chat-Icon.png",
+                    height: 30,
+                    width: 30,
+                    errorBuilder: (_, __, ___) => Icon(Icons.info),
+                  ),
+                  title: Text(
+                    "InstaBot",
+                    style: TextStyle(
+                        color: appBloc.uiSettingModel.menuTextColor.isEmpty
+                            ? Colors.white
+                            : Colors.black),
+                  ),
+                  onTap: () async => {
+                    Navigator.pop(context),
+                    Navigator.of(context).push(MaterialPageRoute(builder: (context) => InstaBotScreen()))
+                  },
+                ),
+              ),
+            );
+          }
+
           drawerOptions.add(
             Container(
               //height: 6 * SizeConfig.heightMultiplier,
@@ -1544,7 +1575,8 @@ class _ActBaseState extends State<ActBase> {
               ),
             ),
           );
-        } else {
+        }
+        else {
           NativeMenuModel nativeMenuModel = listNativeModel[i];
           //print("NativeMenuModel:${nativeMenuModel.displayname}");
           drawerOptions.add(
