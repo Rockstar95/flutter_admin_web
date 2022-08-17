@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:typed_data';
 
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/services.dart';
@@ -27,7 +28,7 @@ class DiscussionTopicBloc extends Bloc<DiscussionTopicEvent, DiscussionTopicStat
   bool isLike = false;
   bool isFirstLoading = true;
   bool isSwitched = false;
-  String filePath = '';
+  Uint8List? fileBytes;
   String fileName = "";
   List<PlatformFile> _paths = [];
   String _directoryPath = "";
@@ -173,7 +174,7 @@ class DiscussionTopicBloc extends Bloc<DiscussionTopicEvent, DiscussionTopicStat
         fileName = await openFileExplorer(event.pickingType);
 
         yield OpenFileExplorerState.completed(fileName: fileName);
-        print('file name here $fileName $filePath');
+        print('file name here $fileName $fileBytes');
       } else if (event is DeleteForumTopicEvent) {
         yield DeleteForumTopicState.loading('Please wait');
         Response? apiResponse =
@@ -297,25 +298,29 @@ class DiscussionTopicBloc extends Bloc<DiscussionTopicEvent, DiscussionTopicStat
           yield LikeDislikeState.error('Something went wrong');
         }
         print('apiresposne ${apiResponse?.body}');
-      } else if (event is UploadAttachmentEvent) {
+      }
+      else if (event is UploadAttachmentEvent) {
         yield UploadAttachmentState.loading('Please wait');
         Response? apiResponse = await discussionTopicRepositry.uploadAttachment(
             topicID: event.topicID,
             replyID: event.replyID,
             isTopic: event.isTopic,
             fileName: event.fileName,
-            filePath: event.filePath);
+            fileBytes: event.fileBytes);
         if (apiResponse?.statusCode == 200) {
           isFirstLoading = false;
           yield UploadAttachmentState.completed();
-        } else if (apiResponse?.statusCode == 401) {
+        }
+        else if (apiResponse?.statusCode == 401) {
           yield UploadAttachmentState.error('401');
-        } else {
+        }
+        else {
           yield UploadAttachmentState.error('Something went wrong');
         }
         print('uploadAttachment apiresposne ${apiResponse?.body}');
       }
-    } catch (e, s) {
+    }
+    catch (e, s) {
       isFirstLoading = false;
       print("Error in DiscussionTopicBloc.mapEventToState():$e");
       print(s);
@@ -350,10 +355,7 @@ class DiscussionTopicBloc extends Bloc<DiscussionTopicEvent, DiscussionTopicStat
       fileName = file != null
           ? file.name.replaceAll('(', ' ').replaceAll(')', '')
           : '';
-      filePath = file != null
-          ? (file.path ?? "")
-          : '';
-      filePath = filePath.trim();
+      fileBytes = file.bytes;
       fileName = fileName.trim();
       fileName = Uuid().v1() + fileName.substring(fileName.indexOf("."));
     }

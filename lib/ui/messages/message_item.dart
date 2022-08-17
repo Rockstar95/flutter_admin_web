@@ -1,7 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:chewie/chewie.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:flutter_admin_web/framework/bloc/app/bloc/app_bloc.dart';
 import 'package:flutter_admin_web/framework/bloc/messages/chat_user_response.dart';
 import 'package:flutter_admin_web/framework/common/device_config.dart';
@@ -11,6 +10,7 @@ import 'package:flutter_admin_web/ui/common/app_colors.dart';
 import 'package:flutter_admin_web/utils/my_print.dart';
 import 'package:intl/intl.dart';
 import 'package:video_player/video_player.dart';
+import 'package:webviewx/webviewx.dart';
 
 class MessageItem extends StatelessWidget {
   MessageItem({
@@ -201,9 +201,11 @@ class MessageItem extends StatelessWidget {
                     borderRadius:
                     BorderRadius.circular(deviceData.screenWidth * 0.05),
                     child: AbsorbPointer(
-                        child: InAppWebView(
+                        /*child: InAppWebView(
                             initialUrlRequest:
-                            URLRequest(url: Uri.tryParse(fileUrl)))),
+                            URLRequest(url: Uri.tryParse(fileUrl))),*/
+                      child: WebViewX(width: 150, height: 150, initialSourceType: SourceType.url, initialContent: fileUrl),
+                    ),
                   ),
                   Center(
                     child: Icon(Icons.picture_as_pdf_sharp),
@@ -332,18 +334,13 @@ class FileViewer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    Size size = MediaQuery.of(context).size;
+
     return Scaffold(
       appBar: AppBar(
           //title: Text(Uri.parse(fileUrl).path),
-          ),
-      body: Column(
-        children: [
-          Expanded(
-              child: InAppWebView(
-            initialUrlRequest: URLRequest(url: Uri.tryParse(fileUrl)),
-          )),
-        ],
       ),
+      body: WebViewX(width: size.width, height: size.height, initialSourceType: SourceType.url, initialContent: fileUrl),
     );
   }
 }

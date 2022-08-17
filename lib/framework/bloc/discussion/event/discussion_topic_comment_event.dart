@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 import 'package:equatable/equatable.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter_admin_web/framework/repository/Discussion/discussionTopic/model/discussion_topic_comment_request.dart';
@@ -24,7 +26,7 @@ class GetDiscussionTopicCommentDetails extends DiscussionTopicCommentEvent {
   final String message;
   final String strAttachFil;
   final String strReplyID;
-  final String filePath;
+  final Uint8List? fileBytes;
   final String fileName;
 
   GetDiscussionTopicCommentDetails(
@@ -35,7 +37,7 @@ class GetDiscussionTopicCommentDetails extends DiscussionTopicCommentEvent {
       this.message = "",
       this.strAttachFil = "",
       this.strReplyID = "",
-      this.filePath = "",
+      this.fileBytes,
       this.fileName = ""});
 
   @override
@@ -47,7 +49,6 @@ class GetDiscussionTopicCommentDetails extends DiscussionTopicCommentEvent {
         message,
         strAttachFil,
         strReplyID,
-        filePath,
         fileName
       ];
 }

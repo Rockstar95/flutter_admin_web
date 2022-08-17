@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:typed_data';
 
 import 'package:http/http.dart';
 import 'package:flutter_admin_web/framework/common/constants.dart';
@@ -15,7 +16,7 @@ class FeedbackRepositoryPublic extends FeedbackRepository {
     String imageFileName = "",
     String feedbackDesc = "",
     String currentUrl = "",
-    String image = "",
+    Uint8List? image,
     String currentUserId = "",
     String date2 = "",
     String currentSiteId = "",
@@ -25,13 +26,9 @@ class FeedbackRepositoryPublic extends FeedbackRepository {
       var strUserID = await sharePrefGetString(sharedPref_userid);
       var strSiteID = await sharePrefGetString(sharedPref_siteid);
       List<MultipartFile> files = [];
-      if (image.isNotEmpty) {
+      if (image != null) {
         //imageFile = await dio.MultipartFile.fromFile(image, filename: imageFileName);
-        File imageFile = File(image);
-        files.add(
-          MultipartFile("Image", imageFile.openRead(), imageFile.lengthSync(),
-              filename: imageFileName),
-        );
+        files.add(MultipartFile.fromBytes("Image", image),);
       }
       var nowDate = new DateTime.now();
       Map<String, String> formData = {

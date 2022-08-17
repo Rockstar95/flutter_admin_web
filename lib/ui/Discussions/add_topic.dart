@@ -28,7 +28,7 @@ class AddTopic extends StatefulWidget {
 }
 
 class _AddTopicState extends State<AddTopic> with SingleTickerProviderStateMixin {
-  GlobalKey<ScaffoldState> _scaffoldkey = new GlobalKey<ScaffoldState>();
+  GlobalKey<ScaffoldState> _scaffoldkey = GlobalKey<ScaffoldState>();
 
   AppBloc get appBloc => BlocProvider.of<AppBloc>(context);
   final _formKey = GlobalKey<FormState>();
@@ -46,7 +46,6 @@ class _AddTopicState extends State<AddTopic> with SingleTickerProviderStateMixin
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
 
     discussionTopicBloc = DiscussionTopicBloc(
@@ -91,14 +90,14 @@ class _AddTopicState extends State<AddTopic> with SingleTickerProviderStateMixin
         color:  AppColors.getAppHeaderColor(),
         child: Stack(
           children: <Widget>[
-            new Column(
+            Column(
               children: [
-                new Expanded(
+                Expanded(
                   child: SingleChildScrollView(
                     child: mainWidget(context, itemWidth, itemHeight),
                   ),
                 ),
-                new Padding(
+                Padding(
                     padding: const EdgeInsets.only(
                         top: 0.0, left: 10.0, right: 10.0, bottom: 10.0),
                     child: createTopicButton())
@@ -111,17 +110,17 @@ class _AddTopicState extends State<AddTopic> with SingleTickerProviderStateMixin
   }
 
   Widget mainWidget(BuildContext context, double itemWidth, double itemHeight) {
-    return new Column(
+    return Column(
       children: [
-        new Padding(
+        Padding(
             padding: const EdgeInsets.only(top: 0.0, left: 10.0, right: 10.0),
-            child: new Form(
+            child: Form(
                 key: _formKey,
                 child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
                       Padding(
-                        padding: EdgeInsets.only(
+                        padding: const EdgeInsets.only(
                             top: 20, left: 5.0, right: 10.0, bottom: 10.0),
                         child: Text.rich(
                           TextSpan(
@@ -136,7 +135,7 @@ class _AddTopicState extends State<AddTopic> with SingleTickerProviderStateMixin
                           ),
                         ),
                       ),
-                      new TextFormField(
+                      TextFormField(
                         style: TextStyle(
                           color: AppColors.getAppTextColor(),
                         ),
@@ -154,14 +153,14 @@ class _AddTopicState extends State<AddTopic> with SingleTickerProviderStateMixin
                             color: AppColors.getTextFieldHintColor(),
                           ),
                           hintText: 'Enter your topic here..',
-                          enabledBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.all(Radius.circular(5)),
-                            borderSide: BorderSide(
+                          enabledBorder: const OutlineInputBorder(
+                            borderRadius: BorderRadius.all(const Radius.circular(5)),
+                            borderSide: const BorderSide(
                               color: Color(0xFFDADCE0),
                             ),
                           ),
                           focusedBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.all(Radius.circular(5.0)),
+                            borderRadius: const BorderRadius.all(Radius.circular(5.0)),
                             borderSide: BorderSide(
                               color: AppColors.getAppTextColor(),
                               width: 1,
@@ -172,11 +171,11 @@ class _AddTopicState extends State<AddTopic> with SingleTickerProviderStateMixin
                       ),
 
                       Padding(
-                        padding: EdgeInsets.only(
+                        padding: const EdgeInsets.only(
                             top: 20, left: 5.0, right: 10.0, bottom: 10.0),
-                        child: new Text(
+                        child: Text(
                           'Description',
-                          style: new TextStyle(
+                          style: TextStyle(
                               fontSize: 14.0,
                               color: AppColors.getAppTextColor().withOpacity(0.54),
                               letterSpacing:  0.9
@@ -184,8 +183,8 @@ class _AddTopicState extends State<AddTopic> with SingleTickerProviderStateMixin
                         ),
                       ),
                       Container(
-                        child: new ConstrainedBox(
-                          constraints: BoxConstraints(
+                        child: ConstrainedBox(
+                          constraints: const BoxConstraints(
                             maxHeight: 400.0,
                           ),
                           child: TextFormField(
@@ -203,14 +202,14 @@ class _AddTopicState extends State<AddTopic> with SingleTickerProviderStateMixin
                             decoration: InputDecoration(
                               hintStyle: TextStyle(color: AppColors.getTextFieldHintColor()),
                               hintText: 'Enter your description here..',
-                              enabledBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.all(Radius.circular(5)),
+                              enabledBorder: const OutlineInputBorder(
+                                borderRadius: const BorderRadius.all(Radius.circular(5)),
                                 borderSide: BorderSide(
-                                  color: Color(0xFFDADCE0),
+                                  color: const Color(0xFFDADCE0),
                                 ),
                               ),
                               focusedBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.all(Radius.circular(5.0)),
+                                borderRadius: const BorderRadius.all(const Radius.circular(5.0)),
                                 borderSide: BorderSide(
                                   color: Color(int.parse("0xFF${appBloc.uiSettingModel.appTextColor.substring(1, 7).toUpperCase()}")),
                                   width: 1,
@@ -241,55 +240,55 @@ class _AddTopicState extends State<AddTopic> with SingleTickerProviderStateMixin
         bloc: discussionTopicBloc,
         listener: (context, state) {},
         builder: (context, state) {
-          return new Container(
-            padding: EdgeInsets.only(top: 20.0),
-            child: new Column(
+          return Container(
+            padding: const EdgeInsets.only(top: 20.0),
+            child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Padding(
-                  padding: EdgeInsets.only(
+                  padding: const EdgeInsets.only(
                       top: 20, left: 5.0, right: 10.0, bottom: 10.0),
-                  child: new Text(
+                  child: Text(
                     'Thumbnail',
-                    style: new TextStyle(
+                    style: TextStyle(
                       fontSize: 14.0,
                         color: AppColors.getAppTextColor().withOpacity(0.54),
                       letterSpacing:  0.9
                     ),
                   ),
                 ),
-                new SizedBox(
+                SizedBox(
                   width: useMobileLayout
                       ? double.infinity
                       : MediaQuery.of(context).size.width / 3,
                   child: MaterialButton(
-                      padding: EdgeInsets.all(15.0),
+                      padding: const EdgeInsets.all(15.0),
                       onPressed: () {
-                        if (discussionTopicBloc.filePath.isEmpty) {
+                        if (discussionTopicBloc.fileBytes == null) {
                           discussionTopicBloc.add(
                               OpenFileExplorerTopicEvent(FileType.image));
                         }
                       },
                       minWidth: MediaQuery.of(context).size.width,
                       disabledColor: Color(int.parse("0xFF${appBloc.uiSettingModel.appButtonBgColor.substring(1, 7).toUpperCase()}")).withOpacity(0.5),
-                      color: discussionTopicBloc.filePath.isNotEmpty
+                      color: discussionTopicBloc.fileBytes != null
                           ? Colors.grey
                           : Color(int.parse(
                               "0xFF${appBloc.uiSettingModel.appButtonBgColor.substring(1, 7).toUpperCase()}")),
-                      child: Text('Upload File'),
                       textColor: Color(int.parse(
-                          "0xFF${appBloc.uiSettingModel.appButtonTextColor.substring(1, 7).toUpperCase()}"))),
+                          "0xFF${appBloc.uiSettingModel.appButtonTextColor.substring(1, 7).toUpperCase()}")),
+                      child: const Text('Upload File')),
                 ),
                 Visibility(
                   visible: (discussionTopicBloc.fileName.isNotEmpty && discussionTopicBloc.fileName != '...'),
-                  child: Container(
+                  child: SizedBox(
                     width: useMobileLayout
                         ? double.infinity
                         : MediaQuery.of(context).size.width / 2,
                     child: Padding(
-                      padding: EdgeInsets.only(
+                      padding: const EdgeInsets.only(
                           top: 20.0, left: 5.0, right: 10.0, bottom: 10.0),
-                      child: new Row(
+                      child: Row(
                         children: [
                           Icon(
                             Icons.description,
@@ -297,24 +296,24 @@ class _AddTopicState extends State<AddTopic> with SingleTickerProviderStateMixin
                           ),
                           Expanded(
                             child: Padding(
-                              padding: EdgeInsets.only(
+                              padding: const EdgeInsets.only(
                                 left: 20.0,
                               ),
-                              child: new Column(
+                              child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  new Text(
+                                  Text(
                                     discussionTopicBloc.fileName,
-                                    style: new TextStyle(
+                                    style: TextStyle(
                                         fontSize: 16.0,
                                         color: InsColor(appBloc).appTextColor,
                                         fontWeight: FontWeight.normal),
                                   ),
-                                  new Text(
-                                    discussionTopicBloc.filePath.isNotEmpty && File(discussionTopicBloc.filePath).existsSync()
-                                        ? (File(discussionTopicBloc.filePath).lengthSync() / 1024).toStringAsFixed(0) + 'kb'
+                                  Text(
+                                    discussionTopicBloc.fileBytes != null
+                                        ? '${(discussionTopicBloc.fileBytes!.length / 1024).toStringAsFixed(0)}kb'
                                         : '',
-                                    style: new TextStyle(
+                                    style: TextStyle(
                                         fontSize: 12.0,
                                         color: InsColor(appBloc).appTextColor,
                                         fontWeight: FontWeight.normal),
@@ -323,11 +322,11 @@ class _AddTopicState extends State<AddTopic> with SingleTickerProviderStateMixin
                               ),
                             ),
                           ),
-                          new IconButton(
+                          IconButton(
                               onPressed: () {
                                 setState(() {
                                   discussionTopicBloc.fileName = "";
-                                  discussionTopicBloc.filePath = "";
+                                  discussionTopicBloc.fileBytes = null;
                                 });
                               },
                               icon: Icon(
@@ -356,21 +355,22 @@ class _AddTopicState extends State<AddTopic> with SingleTickerProviderStateMixin
               flutterToast.showToast(
                   child: CommonToast(displaymsg: 'Topic is already Created'),
                   gravity: ToastGravity.BOTTOM,
-                  toastDuration: Duration(seconds: 4));
+                  toastDuration: const Duration(seconds: 4));
             }
             discussionTopicBloc.add(UploadAttachmentEvent(
               topicID: state.data.split('#')[2],
               replyID: '',
               isTopic: true,
               fileName: discussionTopicBloc.fileName,
-              filePath: discussionTopicBloc.filePath,
+              fileBytes: discussionTopicBloc.fileBytes,
             ));
             Navigator.of(context).pop(true);
             flutterToast.showToast(
                 child: CommonToast(displaymsg: 'Topic Created Successfully'),
                 gravity: ToastGravity.BOTTOM,
-                toastDuration: Duration(seconds: 4));
-          } else if (state.status == Status.ERROR) {
+                toastDuration: const Duration(seconds: 4));
+          }
+          else if (state.status == Status.ERROR) {
             if (state.message == "401") {
               AppDirectory.sessionTimeOut(context);
             }
@@ -380,7 +380,7 @@ class _AddTopicState extends State<AddTopic> with SingleTickerProviderStateMixin
                 displaymsg: state.message,
               ),
               gravity: ToastGravity.BOTTOM,
-              toastDuration: Duration(seconds: 2),
+              toastDuration: const Duration(seconds: 2),
             );
           }
         }
@@ -399,10 +399,10 @@ class _AddTopicState extends State<AddTopic> with SingleTickerProviderStateMixin
         else {
           return Align(
             alignment: Alignment.bottomCenter,
-            child: new SizedBox(
+            child: SizedBox(
               width: double.infinity,
               child: MaterialButton(
-                  padding: EdgeInsets.all(15.0),
+                  padding: const EdgeInsets.all(15.0),
                   onPressed: () {
                     validateAddTopicForm();
                   },
@@ -411,9 +411,9 @@ class _AddTopicState extends State<AddTopic> with SingleTickerProviderStateMixin
                           "0xFF${appBloc.uiSettingModel.appButtonBgColor.substring(1, 7).toUpperCase()}"))
                       .withOpacity(0.5),
                   color: Color(int.parse("0xFF${appBloc.uiSettingModel.appButtonBgColor.substring(1, 7).toUpperCase()}")),
-                  child: Text('Create Topic'),
                   textColor: Color(int.parse(
-                      "0xFF${appBloc.uiSettingModel.appButtonTextColor.substring(1, 7).toUpperCase()}"))),
+                      "0xFF${appBloc.uiSettingModel.appButtonTextColor.substring(1, 7).toUpperCase()}")),
+                  child: const Text('Create Topic')),
             ),
           );
         }
@@ -428,7 +428,7 @@ class _AddTopicState extends State<AddTopic> with SingleTickerProviderStateMixin
       flutterToast.showToast(
         child: CommonToast(displaymsg: 'Enter title name'),
         gravity: ToastGravity.BOTTOM,
-        toastDuration: Duration(seconds: 4),
+        toastDuration: const Duration(seconds: 4),
       );
       return;
     }

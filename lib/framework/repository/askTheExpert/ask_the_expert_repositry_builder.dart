@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 import 'package:http/http.dart';
 
 import 'ask_the_expert_repositry_public.dart';
@@ -25,8 +27,8 @@ abstract class AskTheExpertRepository {
       String userQuestion = "",
       String userQuestionDesc = "",
       String userUploadedImageName = "",
-      String filePath = "",
       String fileName = "",
+      Uint8List? fileBytes,
       String skills = "",
       String selectedSkillIds = "",
       int editQueID = 0,
@@ -49,7 +51,7 @@ abstract class AskTheExpertRepository {
       String userCommentImage = "",
       int commentStatus = 0,
       bool isRemoveCommentImage = false,
-      String filePath = "",
+      Uint8List? fileBytes,
       String fileName = ""});
 
   Future<Response?> getSkillCategory();
@@ -80,7 +82,7 @@ abstract class AskTheExpertRepository {
       int responseID = 0,
       int questionID = 0,
       bool isRemoveEditImage = false,
-      String filePath = "",
+      Uint8List? fileBytes,
       String fileName = ""});
 
   Future<Response?> deleteUserResponse(

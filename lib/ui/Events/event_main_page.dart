@@ -24,7 +24,6 @@ import 'package:flutter_admin_web/framework/bloc/mylearning/model/dummy_my_catel
 import 'package:flutter_admin_web/framework/common/constants.dart';
 import 'package:flutter_admin_web/framework/common/enums.dart';
 import 'package:flutter_admin_web/framework/helpers/ResponsiveWidget.dart';
-import 'package:flutter_admin_web/framework/helpers/providermodel.dart';
 import 'package:flutter_admin_web/framework/helpers/utils.dart';
 import 'package:flutter_admin_web/framework/repository/event_module/model/people_listing_tab.dart';
 import 'package:flutter_admin_web/framework/repository/event_module/provider/event_repository_builder.dart';
@@ -69,7 +68,7 @@ class _EventMainPageState extends State<EventMainPage> {
   int selectedIndex = 0;
   String tabValue = 'upcoming';
   late EvntModuleBloc eventModuleBloc;
-  ScrollController _sc = new ScrollController();
+  ScrollController _sc = ScrollController();
 
   List<String> bottomList = ["Upcoming", "Past", "Today"];
 
@@ -841,7 +840,7 @@ class _EventMainPageState extends State<EventMainPage> {
 
     try {
       //print("Date:${table2.eventstartdatedisplay}");
-      if((table2.eventstartdatedisplay?.toString() ?? "").isNotEmpty) startTempDate = new DateFormat("yyyy-MM-ddThh:mm:ss").parse(table2.eventstartdatedisplay);
+      if((table2.eventstartdatedisplay?.toString() ?? "").isNotEmpty) startTempDate = DateFormat("yyyy-MM-ddThh:mm:ss").parse(table2.eventstartdatedisplay);
     }
     catch(e, s) {
       print("Error in Date Format Parsing:$e");
@@ -852,7 +851,7 @@ class _EventMainPageState extends State<EventMainPage> {
 
     try {
       //print("Date:${table2.eventenddatedisplay}");
-      if((table2.eventenddatedisplay?.toString() ?? "").isNotEmpty) endTempDate = new DateFormat("yyyy-MM-ddThh:mm:ss").parse(table2.eventenddatedisplay);
+      if((table2.eventenddatedisplay?.toString() ?? "").isNotEmpty) endTempDate = DateFormat("yyyy-MM-ddThh:mm:ss").parse(table2.eventenddatedisplay);
     }
     catch(e, s) {
       print("Error in Date Format Parsing:$e");
@@ -896,17 +895,14 @@ class _EventMainPageState extends State<EventMainPage> {
                         checkRelatedContent(table2);
                       } else if (menu3) {
                         Navigator.of(context).push(MaterialPageRoute(
-                            builder: (context) => ChangeNotifierProvider(
-                                  create: (context) => ProviderModel(),
-                                  child: CommonDetailScreen(
-                                    screenType: ScreenType.Events,
-                                    contentid: table2.contentid,
-                                    objtypeId: table2.objecttypeid,
-                                    detailsBloc: detailsBloc,
-                                    table2: table2,
-                                    isFromReschedule: false,
-                                  ),
-                                )));
+                            builder: (context) => CommonDetailScreen(
+                              screenType: ScreenType.Events,
+                              contentid: table2.contentid,
+                              objtypeId: table2.objecttypeid,
+                              detailsBloc: detailsBloc,
+                              table2: table2,
+                              isFromReschedule: false,
+                            )));
                       }
                     },
                     child: CachedNetworkImage(
@@ -919,7 +915,7 @@ class _EventMainPageState extends State<EventMainPage> {
                               heightFactor: ScreenUtil().setWidth(20),
                               widthFactor: ScreenUtil().setWidth(20),
                               child: CircularProgressIndicator(
-                                valueColor: new AlwaysStoppedAnimation<Color>(
+                                valueColor: AlwaysStoppedAnimation<Color>(
                                     Colors.orange),
                               ))),
                       errorWidget: (context, url, error) => Image.asset(
@@ -998,14 +994,14 @@ class _EventMainPageState extends State<EventMainPage> {
                   ),
                   Row(
                     children: <Widget>[
-                      new Container(
+                      Container(
                           width: ScreenUtil().setWidth(20),
                           height: ScreenUtil().setWidth(20),
-                          decoration: new BoxDecoration(
+                          decoration: BoxDecoration(
                               shape: BoxShape.circle,
-                              image: new DecorationImage(
+                              image: DecorationImage(
                                   fit: BoxFit.fill,
-                                  image: new NetworkImage(imgUrl)))),
+                                  image: NetworkImage(imgUrl)))),
                       SizedBox(
                         width: ScreenUtil().setWidth(5),
                       ),
@@ -1398,10 +1394,10 @@ class _EventMainPageState extends State<EventMainPage> {
 //                        print("gone in _buildProgressIndicator");
                                 return Padding(
                                   padding: const EdgeInsets.all(8.0),
-                                  child: new Center(
-                                    child: new Opacity(
+                                  child: Center(
+                                    child: Opacity(
                                       opacity: 1.0,
-                                      child: new CircularProgressIndicator(),
+                                      child: CircularProgressIndicator(),
                                     ),
                                   ),
                                 );
@@ -1431,10 +1427,10 @@ class _EventMainPageState extends State<EventMainPage> {
 //                        print("gone in _buildProgressIndicator");
                                 return Padding(
                                   padding: const EdgeInsets.all(8.0),
-                                  child: new Center(
-                                    child: new Opacity(
+                                  child: Center(
+                                    child: Opacity(
                                       opacity: 1.0,
-                                      child: new CircularProgressIndicator(),
+                                      child: CircularProgressIndicator(),
                                     ),
                                   ),
                                 );
@@ -1461,10 +1457,10 @@ class _EventMainPageState extends State<EventMainPage> {
 //                        print("gone in _buildProgressIndicator");
                                 return Padding(
                                   padding: const EdgeInsets.all(8.0),
-                                  child: new Center(
-                                    child: new Opacity(
+                                  child: Center(
+                                    child: Opacity(
                                       opacity: 1.0,
-                                      child: new CircularProgressIndicator(),
+                                      child: CircularProgressIndicator(),
                                     ),
                                   ),
                                 );
@@ -1785,7 +1781,7 @@ class _EventMainPageState extends State<EventMainPage> {
             color: Color(int.parse(
                 "0xFF${appBloc.uiSettingModel.appBGColor.substring(1, 7).toUpperCase()}")),
             child: SingleChildScrollView(
-              child: new Column(
+              child: Column(
                 children: <Widget>[
                   BottomSheetDragger(),
                   menu0
@@ -1860,17 +1856,14 @@ class _EventMainPageState extends State<EventMainPage> {
                           onTap: () {
                             Navigator.of(context).pop();
                             Navigator.of(context).push(MaterialPageRoute(
-                                builder: (context) => ChangeNotifierProvider(
-                                      create: (context) => ProviderModel(),
-                                      child: CommonDetailScreen(
-                                        screenType: ScreenType.Events,
-                                        contentid: table2.contentid,
-                                        objtypeId: table2.objecttypeid,
-                                        detailsBloc: detailsBloc,
-                                        table2: table2,
-                                        isFromReschedule: false,
-                                      ),
-                                    )));
+                                builder: (context) => CommonDetailScreen(
+                                  screenType: ScreenType.Events,
+                                  contentid: table2.contentid,
+                                  objtypeId: table2.objecttypeid,
+                                  detailsBloc: detailsBloc,
+                                  table2: table2,
+                                  isFromReschedule: false,
+                                )));
                           },
                         )
                       : Container(),
@@ -1974,7 +1967,7 @@ class _EventMainPageState extends State<EventMainPage> {
                       IconDataSolid(int.parse('0xf1e0')),
                       color: InsColor(appBloc).appIconColor,
                     ),
-                    title: new Text('Share with Connection',
+                    title: Text('Share with Connection',
                         style: TextStyle(
                             color: Color(
                           int.parse(
@@ -1997,7 +1990,7 @@ class _EventMainPageState extends State<EventMainPage> {
                       IconDataSolid(int.parse('0xf079')),
                       color: InsColor(appBloc).appIconColor,
                     ),
-                    title: new Text("Share with People",
+                    title: Text("Share with People",
                         style: TextStyle(
                             color: Color(
                           int.parse(
@@ -2034,7 +2027,7 @@ class _EventMainPageState extends State<EventMainPage> {
       DummyMyCatelogResponseTable2 table2, String isSuccess) {
     showDialog(
         context: context,
-        builder: (BuildContext context) => new AlertDialog(
+        builder: (BuildContext context) => AlertDialog(
               title: Text(
                 appBloc.localstr.mylearningAlerttitleStringareyousure,
                 style: Theme.of(context)
@@ -2051,9 +2044,9 @@ class _EventMainPageState extends State<EventMainPage> {
                       ?.apply(color: InsColor(appBloc).appTextColor)),
               backgroundColor: InsColor(appBloc).appBGColor,
               shape: RoundedRectangleBorder(
-                  borderRadius: new BorderRadius.circular(5)),
+                  borderRadius: BorderRadius.circular(5)),
               actions: <Widget>[
-                new FlatButton(
+                FlatButton(
                   child: Text(appBloc.localstr.catalogAlertbuttonCancelbutton),
                   textColor: Color(int.parse(
                       "0xFF${appBloc.uiSettingModel.appTextColor.substring(1, 7).toUpperCase()}")),
@@ -2061,7 +2054,7 @@ class _EventMainPageState extends State<EventMainPage> {
                     Navigator.of(context).pop();
                   },
                 ),
-                new FlatButton(
+                FlatButton(
                   child: Text(appBloc.localstr.eventsAlertbuttonOkbutton),
                   textColor: Colors.blue,
                   onPressed: () async {
@@ -2078,7 +2071,7 @@ class _EventMainPageState extends State<EventMainPage> {
 
     bool isCompleted = false;
 
-    DateFormat sdf = new DateFormat("yyyy-MM-dd HH:mm:ss");
+    DateFormat sdf = DateFormat("yyyy-MM-dd HH:mm:ss");
     DateTime? strDate;
     DateTime? currentdate;
 
@@ -2087,7 +2080,7 @@ class _EventMainPageState extends State<EventMainPage> {
     if (!isValidString(eventDate)) return false;
 
     try {
-      var temp = new DateFormat("yyyy-MM-dd").parse(eventDate.split("T")[0]);
+      var temp = DateFormat("yyyy-MM-dd").parse(eventDate.split("T")[0]);
       strDate = sdf.parse(temp.toString());
     } catch (e) {
       print("catch");
@@ -2144,7 +2137,7 @@ class _EventMainPageState extends State<EventMainPage> {
 
       try {
         //print("Date:${element.eventstartdatedisplay}");
-        if((element.eventstartdatedisplay?.toString() ?? "").isNotEmpty) startTime = new DateFormat("yyyy-MM-ddThh:mm:ss").parse(element.eventstartdatedisplay);
+        if((element.eventstartdatedisplay?.toString() ?? "").isNotEmpty) startTime = DateFormat("yyyy-MM-ddThh:mm:ss").parse(element.eventstartdatedisplay);
       }
       catch(e, s) {
         print("Error in Date Format Parsing:$e");
@@ -2196,7 +2189,7 @@ class _EventMainPageState extends State<EventMainPage> {
                 .eventdetailsenrollementAlertsubtitleEventenrollmentlimit;
             showDialog(
                 context: context,
-                builder: (BuildContext context) => new AlertDialog(
+                builder: (BuildContext context) => AlertDialog(
                       title: Text(
                         appBloc.localstr.eventsActionsheetEnrolloption,
                         style: TextStyle(fontWeight: FontWeight.bold,color: Color(int.parse(
@@ -2206,9 +2199,9 @@ class _EventMainPageState extends State<EventMainPage> {
                               "0xFF${appBloc.uiSettingModel.appTextColor.substring(1, 7).toUpperCase()}")),)),
                       backgroundColor: InsColor(appBloc).appBGColor,
                       shape: RoundedRectangleBorder(
-                          borderRadius: new BorderRadius.circular(5)),
+                          borderRadius: BorderRadius.circular(5)),
                       actions: <Widget>[
-                        new FlatButton(
+                        FlatButton(
                           child: Text(appBloc
                               .localstr.mylearningAlertbuttonCancelbutton),
                           textColor: Color(int.parse(
@@ -2217,7 +2210,7 @@ class _EventMainPageState extends State<EventMainPage> {
                             Navigator.of(context).pop();
                           },
                         ),
-                        new FlatButton(
+                        FlatButton(
                           child: Text(
                               appBloc.localstr.myskillAlerttitleStringconfirm),
                           textColor: Colors.blue,
@@ -2288,7 +2281,7 @@ class _EventMainPageState extends State<EventMainPage> {
 
       showDialog(
           context: context,
-          builder: (BuildContext context) => new AlertDialog(
+          builder: (BuildContext context) => AlertDialog(
                 title: Text(
                   appBloc.localstr.detailsAlerttitleStringalert,
                   style: TextStyle(fontWeight: FontWeight.bold),
@@ -2296,9 +2289,9 @@ class _EventMainPageState extends State<EventMainPage> {
                 content: Text(alertMessage),
                 backgroundColor: InsColor(appBloc).appBGColor,
                 shape: RoundedRectangleBorder(
-                    borderRadius: new BorderRadius.circular(5)),
+                    borderRadius: BorderRadius.circular(5)),
                 actions: <Widget>[
-                  new FlatButton(
+                  FlatButton(
                     child: Text(appBloc.localstr.eventsAlertbuttonOkbutton),
                     textColor: Colors.blue,
                     onPressed: () async {

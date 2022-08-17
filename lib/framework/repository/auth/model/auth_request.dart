@@ -16,6 +16,7 @@ class Login {
     this.downloadContent = "",
     this.siteId = "",
     this.isFromSignUp = false,
+    this.isEncrypted = false,
   });
 
   String userName = "";
@@ -24,6 +25,7 @@ class Login {
   String downloadContent = "";
   String siteId = "";
   bool isFromSignUp = false;
+  bool isEncrypted = false;
 
   factory Login.fromJson(Map<String, dynamic> json) => Login(
         userName: json["UserName"],
@@ -32,6 +34,7 @@ class Login {
         downloadContent: json["DownloadContent"],
         siteId: json["SiteID"],
         isFromSignUp: json["isFromSignUp"],
+        isEncrypted: json["isEncrypted"],
       );
 
   Map<String, dynamic> toJson() => {
@@ -41,5 +44,6 @@ class Login {
         "DownloadContent": downloadContent,
         "SiteID": siteId,
         "isFromSignUp": isFromSignUp,
+        "isEncrypted": isEncrypted,
       };
 }

@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:typed_data';
 
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/services.dart';
@@ -25,7 +26,7 @@ class CreateDiscussionBloc extends Bloc<CreateDiscussionEvent, CreateDiscussionS
   bool isCreateLoading = false;
   bool isSwitched = false;
 
-  String filePath = '';
+  Uint8List? fileBytes;
   String fileName = "";
 
   List<PlatformFile> _paths = [];
@@ -86,7 +87,7 @@ class CreateDiscussionBloc extends Bloc<CreateDiscussionEvent, CreateDiscussionS
         fileName = await openFileExplorer(event.pickingType);
 
         yield OpenFileExplorerState.completed(fileName: fileName);
-        print('file name here $fileName $filePath');
+        print('file name here $fileName $fileBytes');
       }
       else if (event is GetDiscussionTopicUserListDetails) {
         yield GetDiscussionTopicUserListDetailsState.loading('Please wait');
@@ -107,7 +108,7 @@ class CreateDiscussionBloc extends Bloc<CreateDiscussionEvent, CreateDiscussionS
 
           userChecked = List.filled(topicUserList.length, false);
 
-          print("size : " + response.toString());
+          print("size : $response");
           yield GetDiscussionTopicUserListDetailsState.completed(
               data: response);
         } else if (apiResponse?.statusCode == 401) {
@@ -142,7 +143,7 @@ class CreateDiscussionBloc extends Bloc<CreateDiscussionEvent, CreateDiscussionS
                 event.allowShare,
                 event.isPrivate,
                 event.allowPinTopic,
-                event.filePath,
+                event.fileBytes,
                 event.fileName);
         print('apiresposne ${apiResponse?.body}');
         if (apiResponse?.statusCode == 200) {
@@ -179,7 +180,7 @@ class CreateDiscussionBloc extends Bloc<CreateDiscussionEvent, CreateDiscussionS
                 : null,
           ))?.files ?? [];
     } on PlatformException catch (e) {
-      print("Unsupported operation" + e.toString());
+      print("Unsupported operation$e");
     } catch (ex) {
       print(ex);
     }
@@ -192,12 +193,9 @@ class CreateDiscussionBloc extends Bloc<CreateDiscussionEvent, CreateDiscussionS
       fileName = file != null
           ? file.name.replaceAll('(', ' ').replaceAll(')', '')
           : '';
-      filePath = file != null
-          ? (file.path ?? "")
-          : '';
+      fileBytes = file.bytes;
       fileName = fileName.trim();
       fileName = Uuid().v1() + fileName.substring(fileName.indexOf("."));
-      filePath = filePath.trim();
     }
     return fileName;
   }
@@ -209,7 +207,7 @@ class CreateDiscussionBloc extends Bloc<CreateDiscussionEvent, CreateDiscussionS
         if (i == 0) {
           selectedUserID = topicUserList[i].userID.toString();
         } else {
-          selectedUserID += ',' + topicUserList[i].userID.toString();
+          selectedUserID += ',${topicUserList[i].userID}';
         }
       }
     }
@@ -223,7 +221,7 @@ class CreateDiscussionBloc extends Bloc<CreateDiscussionEvent, CreateDiscussionS
         if (i == 0) {
           selectedUserID = filterTopicList[i].userID.toString();
         } else {
-          selectedUserID += ',' + filterTopicList[i].userID.toString();
+          selectedUserID += ',${filterTopicList[i].userID}';
         }
       }
     }

@@ -29,7 +29,6 @@ import 'package:flutter_admin_web/framework/common/enums.dart';
 import 'package:flutter_admin_web/framework/common/pref_manger.dart';
 import 'package:flutter_admin_web/framework/helpers/ApiEndpoints.dart';
 import 'package:flutter_admin_web/framework/helpers/ResponsiveWidget.dart';
-import 'package:flutter_admin_web/framework/helpers/providermodel.dart';
 import 'package:flutter_admin_web/framework/helpers/utils.dart';
 import 'package:flutter_admin_web/framework/repository/general/contract/general_repository.dart';
 import 'package:flutter_admin_web/framework/repository/general/provider/general_repository_builder.dart';
@@ -61,7 +60,6 @@ import 'package:flutter_admin_web/ui/profile/profile_page.dart';
 import 'package:flutter_admin_web/utils/my_print.dart';
 import 'package:flutter_admin_web/utils/mytoast.dart';
 import 'package:intl/intl.dart';
-import 'package:provider/provider.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 
 import '../common/common_primary_secondary_button.dart';
@@ -99,7 +97,7 @@ class _CatalogSubScreenState extends State<CatalogSubScreen> {
 
   CatalogBloc get catalogBloc => BlocProvider.of<CatalogBloc>(context);
 
-  ScrollController _sc = new ScrollController();
+  ScrollController _sc = ScrollController();
   ItemScrollController _scrollController = ItemScrollController();
 
   int selectedIndexOfAddedMyLearning = 0;
@@ -249,23 +247,19 @@ class _CatalogSubScreenState extends State<CatalogSubScreen> {
             ? Navigator.of(context)
             .push(MaterialPageRoute(
             builder: (context) =>
-                ChangeNotifierProvider(
-                  create: (context) =>
-                      ProviderModel(),
-                  child: CommonDetailScreen(
-                    screenType:
-                    ScreenType.Catalog,
-                    contentid: table2.contentid,
-                    objtypeId:
-                    table2.objecttypeid,
-                    detailsBloc: detailsBloc,
-                    table2: table2,
-                    // nativeModel:
-                    //     widget.nativeMenuModel,
-                    isFromReschedule: false,
-                    //isFromMyLearning:
-                    //  false, //need implement reschedule
-                  ),
+                CommonDetailScreen(
+                  screenType:
+                  ScreenType.Catalog,
+                  contentid: table2.contentid,
+                  objtypeId:
+                  table2.objecttypeid,
+                  detailsBloc: detailsBloc,
+                  table2: table2,
+                  // nativeModel:
+                  //     widget.nativeMenuModel,
+                  isFromReschedule: false,
+                  //isFromMyLearning:
+                  //  false, //need implement reschedule
                 )))
             .then((value) => {
           if (value) {refresh()}
@@ -306,7 +300,7 @@ class _CatalogSubScreenState extends State<CatalogSubScreen> {
       showDialog(
           context: context,
           builder: (BuildContext context) =>
-          new AlertDialog(
+          AlertDialog(
             title: Text(
               'Pre-requisite Sequence',
               style: TextStyle(
@@ -355,9 +349,9 @@ class _CatalogSubScreenState extends State<CatalogSubScreen> {
             InsColor(appBloc).appBGColor,
             shape: RoundedRectangleBorder(
                 borderRadius:
-                new BorderRadius.circular(5)),
+                BorderRadius.circular(5)),
             actions: <Widget>[
-              new FlatButton(
+              FlatButton(
                 child: Text(appBloc.localstr
                     .eventsAlertbuttonOkbutton),
                 textColor: Colors.blue,
@@ -498,29 +492,26 @@ class _CatalogSubScreenState extends State<CatalogSubScreen> {
                         "0xFF${appBloc.uiSettingModel.appHeaderTextColor.substring(1, 7).toUpperCase()}"))),
               ),
               actions: <Widget>[
-                new Stack(
+                Stack(
                   children: <Widget>[
-                    new IconButton(
+                    IconButton(
                         icon: Icon(Icons.favorite),
                         color: InsColor(appBloc).appHeaderTxtColor,
                         onPressed: () {
                           Navigator.of(context).push(MaterialPageRoute(
-                              builder: (context) => ChangeNotifierProvider(
-                                    create: (context) => ProviderModel(),
-                                    child: WishList(
-                                      categaoryID: 0,
-                                      categaoryName: widget.categaoryName,
-                                      detailsBloc: detailsBloc,
-                                      filterMenus: {},
-                                    ),
-                                  )));
+                              builder: (context) => WishList(
+                                categaoryID: 0,
+                                categaoryName: widget.categaoryName,
+                                detailsBloc: detailsBloc,
+                                filterMenus: {},
+                              )));
                         }),
-                    new Positioned(
+                    Positioned(
                       right: 6,
                       top: 6,
-                      child: new Container(
+                      child: Container(
                         padding: EdgeInsets.all(2),
-                        decoration: new BoxDecoration(
+                        decoration: BoxDecoration(
                           color: Color(int.parse(
                               "0xFF${appBloc.uiSettingModel.appButtonBgColor.substring(1, 7).toUpperCase()}")),
                           borderRadius: BorderRadius.circular(6),
@@ -1938,7 +1929,7 @@ class _CatalogSubScreenState extends State<CatalogSubScreen> {
               ),
             ],
           )
-        : new Container();
+        : Container();
   }
 
   _navigateToGlobalSearchScreen(BuildContext context) async {
@@ -2016,17 +2007,14 @@ class _CatalogSubScreenState extends State<CatalogSubScreen> {
                 child: GestureDetector(
                   onTap: () {
                     Navigator.of(context).push(MaterialPageRoute(
-                        builder: (context) => ChangeNotifierProvider(
-                              create: (context) => ProviderModel(),
-                              child: CommonDetailScreen(
-                                screenType: ScreenType.Catalog,
-                                contentid: table2.contentid,
-                                objtypeId: table2.objecttypeid,
-                                detailsBloc: detailsBloc,
-                                table2: table2,
-                                isFromReschedule: false,
-                              ),
-                            )));
+                        builder: (context) => CommonDetailScreen(
+                          screenType: ScreenType.Catalog,
+                          contentid: table2.contentid,
+                          objtypeId: table2.objecttypeid,
+                          detailsBloc: detailsBloc,
+                          table2: table2,
+                          isFromReschedule: false,
+                        )));
                   },
                   child: Container(
                     height: ScreenUtil().setHeight(kCellThumbHeight),
@@ -2152,14 +2140,14 @@ class _CatalogSubScreenState extends State<CatalogSubScreen> {
                     child: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: <Widget>[
-                        new Container(
+                        Container(
                             width: ScreenUtil().setWidth(20),
                             height: ScreenUtil().setWidth(20),
-                            decoration: new BoxDecoration(
+                            decoration: BoxDecoration(
                                 shape: BoxShape.circle,
-                                image: new DecorationImage(
+                                image: DecorationImage(
                                     fit: BoxFit.fill,
-                                    image: new NetworkImage(imgUrl)))),
+                                    image: NetworkImage(imgUrl)))),
                         SizedBox(
                           width: ScreenUtil().setWidth(5),
                         ),
@@ -2346,12 +2334,12 @@ class _CatalogSubScreenState extends State<CatalogSubScreen> {
   }
 
   Widget _buildProgressIndicator() {
-    return new Padding(
+    return Padding(
       padding: const EdgeInsets.all(8.0),
-      child: new Center(
-        child: new Opacity(
+      child: Center(
+        child: Opacity(
           opacity: 1.0,
-          child: new CircularProgressIndicator(),
+          child: CircularProgressIndicator(),
         ),
       ),
     );
@@ -2502,7 +2490,7 @@ class _CatalogSubScreenState extends State<CatalogSubScreen> {
                             showDialog(
                                 context: context,
                                 builder: (BuildContext context) =>
-                                    new AlertDialog(
+                                    AlertDialog(
                                       title: Text(
                                         'Pre-requisite Sequence',
                                         style: TextStyle(
@@ -2551,9 +2539,9 @@ class _CatalogSubScreenState extends State<CatalogSubScreen> {
                                           InsColor(appBloc).appBGColor,
                                       shape: RoundedRectangleBorder(
                                           borderRadius:
-                                              new BorderRadius.circular(5)),
+                                              BorderRadius.circular(5)),
                                       actions: <Widget>[
-                                        new FlatButton(
+                                        FlatButton(
                                           child: Text(appBloc.localstr
                                               .eventsAlertbuttonOkbutton),
                                           textColor: Colors.blue,
@@ -2607,23 +2595,19 @@ class _CatalogSubScreenState extends State<CatalogSubScreen> {
                                   ? Navigator.of(context)
                                       .push(MaterialPageRoute(
                                           builder: (context) =>
-                                              ChangeNotifierProvider(
-                                                create: (context) =>
-                                                    ProviderModel(),
-                                                child: CommonDetailScreen(
-                                                  screenType:
-                                                      ScreenType.Catalog,
-                                                  contentid: table2.contentid,
-                                                  objtypeId:
-                                                      table2.objecttypeid,
-                                                  detailsBloc: detailsBloc,
-                                                  table2: table2,
-                                                  // nativeModel:
-                                                  //     widget.nativeMenuModel,
-                                                  isFromReschedule: false,
-                                                  //isFromMyLearning:
-                                                  //  false, //need implement reschedule
-                                                ),
+                                              CommonDetailScreen(
+                                                screenType:
+                                                    ScreenType.Catalog,
+                                                contentid: table2.contentid,
+                                                objtypeId:
+                                                    table2.objecttypeid,
+                                                detailsBloc: detailsBloc,
+                                                table2: table2,
+                                                // nativeModel:
+                                                //     widget.nativeMenuModel,
+                                                isFromReschedule: false,
+                                                //isFromMyLearning:
+                                                //  false, //need implement reschedule
                                               )))
                                       .then((value) => {
                                             if (value) {refresh()}
@@ -2682,20 +2666,17 @@ class _CatalogSubScreenState extends State<CatalogSubScreen> {
                         onTap: () {
                           Navigator.of(context).pop();
                           Navigator.of(context).push(MaterialPageRoute(
-                              builder: (context) => ChangeNotifierProvider(
-                                    create: (context) => ProviderModel(),
-                                    child: CommonDetailScreen(
-                                      screenType: ScreenType.Catalog,
-                                      contentid: table2.contentid,
-                                      objtypeId: table2.objecttypeid,
-                                      detailsBloc: detailsBloc,
-                                      table2: table2,
-                                      // nativeModel: widget.nativeMenuModel,
-                                      isFromReschedule: false,
-                                      //isFromMyLearning:
-                                      //true, //neeed implement
-                                    ),
-                                  )));
+                              builder: (context) => CommonDetailScreen(
+                                screenType: ScreenType.Catalog,
+                                contentid: table2.contentid,
+                                objtypeId: table2.objecttypeid,
+                                detailsBloc: detailsBloc,
+                                table2: table2,
+                                // nativeModel: widget.nativeMenuModel,
+                                isFromReschedule: false,
+                                //isFromMyLearning:
+                                //true, //neeed implement
+                              )));
                         },
                       )
                     : Container(),
@@ -2792,7 +2773,7 @@ class _CatalogSubScreenState extends State<CatalogSubScreen> {
                     IconDataSolid(int.parse('0xf1e0')),
                     color: InsColor(appBloc).appIconColor,
                   ),
-                  title: new Text(
+                  title: Text(
                     'Share with Connection',
                     style: Theme.of(context)
                         .textTheme
@@ -2817,7 +2798,7 @@ class _CatalogSubScreenState extends State<CatalogSubScreen> {
                     IconDataSolid(int.parse('0xf079')),
                     color: InsColor(appBloc).appIconColor,
                   ),
-                  title: new Text(
+                  title: Text(
                     "Share with People",
                     style: Theme.of(context)
                         .textTheme
@@ -2849,13 +2830,13 @@ class _CatalogSubScreenState extends State<CatalogSubScreen> {
     // if ((table2?.ShareContentwithUser?.length ?? 0) > 0) {
     if (privilegeCreateForumIdExists()) {
       if (table2.objecttypeid == 14) {
-        return new ListTile(
+        return ListTile(
           leading: Icon(
             Icons.email,
             //IconDataSolid(int.parse('0xf06e')),
             color: InsColor(appBloc).appIconColor,
           ),
-          title: new Text(
+          title: Text(
               appBloc.localstr.mylearningsendviaemailnewoption == null
                   ? 'Share via Email'
                   : appBloc.localstr.mylearningsendviaemailnewoption,

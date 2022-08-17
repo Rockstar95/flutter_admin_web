@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_admin_web/utils/my_print.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
@@ -34,7 +35,7 @@ class AddComment extends StatefulWidget {
 }
 
 class _AddCommentState extends State<AddComment> with SingleTickerProviderStateMixin {
-  GlobalKey<ScaffoldState> _scaffoldkey = new GlobalKey<ScaffoldState>();
+  GlobalKey<ScaffoldState> _scaffoldkey = GlobalKey<ScaffoldState>();
 
   AppBloc get appBloc => BlocProvider.of<AppBloc>(context);
   final _formKey = GlobalKey<FormState>();
@@ -106,18 +107,18 @@ class _AddCommentState extends State<AddComment> with SingleTickerProviderStateM
             "0xFF${appBloc.uiSettingModel.appBGColor.substring(1, 7).toUpperCase()}")),
         child: Stack(
           children: <Widget>[
-            Divider(
+            const Divider(
               height: 2,
               color: Colors.black87,
             ),
-            new Column(
+            Column(
               children: [
-                new Expanded(
+                Expanded(
                   child: SingleChildScrollView(
                     child: mainWidget(),
                   ),
                 ),
-                new Padding(
+                Padding(
                     padding: const EdgeInsets.only(
                         top: 0.0, left: 10.0, right: 10.0, bottom: 10.0),
                     child: addCommentButton())
@@ -130,15 +131,15 @@ class _AddCommentState extends State<AddComment> with SingleTickerProviderStateM
   }
 
   Widget mainWidget() {
-    return new Column(
+    return Column(
       children: [
-        new Padding(
+        Padding(
             padding: const EdgeInsets.only(top: 0.0, left: 10.0, right: 10.0),
             child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
                   Padding(
-                    padding: EdgeInsets.only(
+                    padding: const EdgeInsets.only(
                         top: 20, left: 5.0, right: 10.0, bottom: 10.0),
                     child: Text.rich(
                       TextSpan(
@@ -154,11 +155,11 @@ class _AddCommentState extends State<AddComment> with SingleTickerProviderStateM
                     ),
                   ),
                   Container(
-                    child: new ConstrainedBox(
-                        constraints: BoxConstraints(
+                    child: ConstrainedBox(
+                        constraints: const BoxConstraints(
                           maxHeight: 400.0,
                         ),
-                        child: new Form(
+                        child: Form(
                           key: _formKey,
                           autovalidateMode: _validate
                               ? AutovalidateMode.always
@@ -186,14 +187,14 @@ class _AddCommentState extends State<AddComment> with SingleTickerProviderStateM
                                 color: AppColors.getTextFieldHintColor(),
                               ),
                               hintText: 'Enter your comment here..',
-                              enabledBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.all(Radius.circular(5)),
-                                borderSide: BorderSide(
+                              enabledBorder: const OutlineInputBorder(
+                                borderRadius: const BorderRadius.all(const Radius.circular(5)),
+                                borderSide: const BorderSide(
                                   color: Color(0xFFDADCE0),
                                 ),
                               ),
                               focusedBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.all(Radius.circular(5.0)),
+                                borderRadius: const BorderRadius.all(Radius.circular(5.0)),
                                 borderSide: BorderSide(
                                   color: Color(int.parse("0xFF${appBloc.uiSettingModel.appTextColor.substring(1, 7).toUpperCase()}")),
                                   width: 1,
@@ -255,54 +256,54 @@ class _AddCommentState extends State<AddComment> with SingleTickerProviderStateM
       bloc: discussionTopicCommentBloc,
       listener: (context, state) {},
       builder: (context, state) {
-        return new Container(
-          child: new Column(
+        return Container(
+          child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Padding(
-                padding: EdgeInsets.only(
+                padding: const EdgeInsets.only(
                     top: 20, left: 5.0, right: 10.0, bottom: 10.0),
-                child: new Text(
+                child: Text(
                   'Support Documents',
-                  style: new TextStyle(
+                  style: TextStyle(
                     fontSize: 18.0,
                     color: Color(int.parse(
                         "0xFF${appBloc.uiSettingModel.appTextColor.substring(1, 7).toUpperCase()}")),
                   ),
                 ),
               ),
-              new SizedBox(
+              SizedBox(
                 width: useMobileLayout
                     ? double.infinity
                     : MediaQuery.of(context).size.width / 3,
                 child: RaisedButton(
-                  padding: EdgeInsets.all(15.0),
+                  padding: const EdgeInsets.all(15.0),
                   onPressed: () {
-                    if (discussionTopicCommentBloc.filePath.isEmpty) {
+                    if (discussionTopicCommentBloc.fileBytes == null) {
                       discussionTopicCommentBloc.add(
                           OpenFileExplorerEvent(FileType.image));
                     }
                   },
-                  child:
-                      const Text('Upload File', style: TextStyle(fontSize: 20)),
-                  color: discussionTopicCommentBloc.filePath.isNotEmpty
+                  color: discussionTopicCommentBloc.fileBytes != null
                       ? Colors.grey
                       : Color(int.parse(
                           "0xFF${appBloc.uiSettingModel.appButtonBgColor.substring(1, 7).toUpperCase()}")),
                   textColor: InsColor(appBloc).appBtnTextColor,
                   elevation: 5,
+                  child:
+                      const Text('Upload File', style: TextStyle(fontSize: 20)),
                 ),
               ),
               Visibility(
                 visible: (discussionTopicCommentBloc.fileName.isNotEmpty),
-                child: Container(
+                child: SizedBox(
                   width: useMobileLayout
                       ? double.infinity
                       : MediaQuery.of(context).size.width / 2,
                   child: Padding(
-                    padding: EdgeInsets.only(
+                    padding: const EdgeInsets.only(
                         top: 20.0, left: 5.0, right: 10.0, bottom: 10.0),
-                    child: new Row(
+                    child: Row(
                       children: [
                         Icon(
                           Icons.description,
@@ -311,25 +312,25 @@ class _AddCommentState extends State<AddComment> with SingleTickerProviderStateM
                         ),
                         Expanded(
                           child: Padding(
-                              padding: EdgeInsets.only(
+                              padding: const EdgeInsets.only(
                                 left: 20.0,
                               ),
-                              child: new Column(
+                              child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  new Text(
+                                  Text(
                                     discussionTopicCommentBloc.fileName,
-                                    style: new TextStyle(
+                                    style: TextStyle(
                                         fontSize: 16.0,
                                         color: Color(int.parse(
                                             "0xFF${appBloc.uiSettingModel.appTextColor.substring(1, 7).toUpperCase()}")),
                                         fontWeight: FontWeight.normal),
                                   ),
-                                  new Text(
-                                    discussionTopicCommentBloc.filePath.isNotEmpty && File(discussionTopicCommentBloc.filePath).existsSync()
-                                        ? (File(discussionTopicCommentBloc.filePath).lengthSync() / 1024).toStringAsFixed(0) + 'kb'
+                                  Text(
+                                    discussionTopicCommentBloc.fileBytes != null
+                                        ? '${(discussionTopicCommentBloc.fileBytes!.length / 1024).toStringAsFixed(0)}kb'
                                         : '',
-                                    style: new TextStyle(
+                                    style: TextStyle(
                                         fontSize: 12.0,
                                         color: Color(int.parse(
                                             "0xFF${appBloc.uiSettingModel.appTextColor.substring(1, 7).toUpperCase()}")),
@@ -338,11 +339,11 @@ class _AddCommentState extends State<AddComment> with SingleTickerProviderStateM
                                 ],
                               )),
                         ),
-                        new IconButton(
+                        IconButton(
                             onPressed: () {
                               setState(() {
                                 discussionTopicCommentBloc.fileName = "";
-                                discussionTopicCommentBloc.filePath = "";
+                                discussionTopicCommentBloc.fileBytes = null;
                               });
                             },
                             icon: Icon(
@@ -363,8 +364,7 @@ class _AddCommentState extends State<AddComment> with SingleTickerProviderStateM
   }
 
   Widget addCommentButton() {
-    return BlocConsumer<DiscussionTopicCommentBloc,
-        DiscussionTopicCommentState>(
+    return BlocConsumer<DiscussionTopicCommentBloc, DiscussionTopicCommentState>(
       bloc: discussionTopicCommentBloc,
       listener: (context, state) {
         if (state is GetDiscussionTopicCommentDetailsState) {
@@ -377,17 +377,19 @@ class _AddCommentState extends State<AddComment> with SingleTickerProviderStateM
                 ),
               ),
             );*/
-          } else if (state.status == Status.COMPLETED) {
-            print('aaaaaa : ' + state.data.split('#')[2]);
+          }
+          else if (state.status == Status.COMPLETED) {
+            MyPrint.printOnConsole('aaaaaa : ${state.data.split('#')[2]}');
             discussionTopicBloc.add(UploadAttachmentEvent(
               topicID: widget.topicList.contentID,
               replyID: state.data.split('#')[2],
               isTopic: false,
               fileName: discussionTopicCommentBloc.fileName,
-              filePath: discussionTopicCommentBloc.filePath,
+              fileBytes: discussionTopicCommentBloc.fileBytes,
             ));
             Navigator.of(context).pop(true);
-          } else if (state.status == Status.ERROR) {
+          }
+          else if (state.status == Status.ERROR) {
             FToast flutterToast = FToast();
             flutterToast.init(context);
 
@@ -396,7 +398,7 @@ class _AddCommentState extends State<AddComment> with SingleTickerProviderStateM
                 displaymsg: state.message,
               ),
               gravity: ToastGravity.BOTTOM,
-              toastDuration: Duration(seconds: 2),
+              toastDuration: const Duration(seconds: 2),
             );
           }
         }
@@ -414,20 +416,20 @@ class _AddCommentState extends State<AddComment> with SingleTickerProviderStateM
         } else {
           return Align(
             alignment: Alignment.bottomCenter,
-            child: new SizedBox(
+            child: SizedBox(
               width: double.infinity,
               child: RaisedButton(
-                padding: EdgeInsets.all(15.0),
+                padding: const EdgeInsets.all(15.0),
                 onPressed: () {
                   validate();
                 },
-                child:
-                    const Text('Add Comment', style: TextStyle(fontSize: 20)),
                 color: Color(int.parse(
                     "0xFF${appBloc.uiSettingModel.appButtonBgColor.substring(1, 7).toUpperCase()}")),
                 textColor: Color(int.parse(
                     "0xFF${appBloc.uiSettingModel.appButtonTextColor.substring(1, 7).toUpperCase()}")),
                 elevation: 5,
+                child:
+                    const Text('Add Comment', style: TextStyle(fontSize: 20)),
               ),
             ),
           );
@@ -453,7 +455,7 @@ class _AddCommentState extends State<AddComment> with SingleTickerProviderStateM
         message: ctrTopic.text,
         strAttachFil: discussionTopicCommentBloc.fileName,
         strReplyID: '',
-        filePath: discussionTopicCommentBloc.filePath,
+        fileBytes: discussionTopicCommentBloc.fileBytes,
         fileName: discussionTopicCommentBloc.fileName,
       ));
     } else {

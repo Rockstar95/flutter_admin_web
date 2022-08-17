@@ -61,6 +61,8 @@ class App extends StatefulWidget {
 class _AppState extends State<App> {
   @override
   void initState() {
+    MyPrint.printOnConsole("App init called");
+
     ApiEndpoints.mainSiteURL = widget.mainSiteUrl;
     ApiEndpoints.appAuthURL = widget.appAuthURL;
     ApiEndpoints.appWebApiUrl = widget.appWebApiUrl;
@@ -167,6 +169,7 @@ class _MainAppState extends State<MainApp> {
 
   @override
   void initState() {
+    MyPrint.printOnConsole('MainApp Init Called');
     if(!kIsWeb) {
       bool isUnregisteredPort = IsolateNameServer.removePortNameMapping(DOWNLOAD_COURSE_ISOLATE_NAME);
       MyPrint.printOnConsole("isUnregisteredPort:$isUnregisteredPort");
@@ -213,10 +216,10 @@ class _MainAppState extends State<MainApp> {
         //provides RTL support
         GlobalWidgetsLocalizations.delegate,
       ],
-      supportedLocales: [
-        const Locale("en", ""),
-        const Locale("ar", ""),
-        const Locale("hi", ""),
+      supportedLocales: const [
+        Locale("en", ""),
+        Locale("ar", ""),
+        Locale("hi", ""),
       ],
       locale: BlocProvider.of<AppBloc>(context).appLocale,
     );

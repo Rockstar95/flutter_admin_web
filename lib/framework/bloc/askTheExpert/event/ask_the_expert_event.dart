@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 import 'package:equatable/equatable.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter_admin_web/framework/bloc/app/native_menu_model.dart';
@@ -54,8 +56,8 @@ class AddQuestionEvent extends AskTheExpertEvent {
   final String userQuestion;
   final String userQuestionDesc;
   final String useruploadedImageName;
-  final String filePath;
   final String fileName;
+  final Uint8List? fileBytes;
   final String skills;
   final String seletedSkillIds;
   final int editQueID;
@@ -68,8 +70,8 @@ class AddQuestionEvent extends AskTheExpertEvent {
       this.userQuestion,
       this.userQuestionDesc,
       this.useruploadedImageName,
-      this.filePath,
       this.fileName,
+      this.fileBytes,
       this.skills,
       this.seletedSkillIds,
       this.editQueID,
@@ -84,7 +86,6 @@ class AddQuestionEvent extends AskTheExpertEvent {
         userQuestion,
         userQuestionDesc,
         useruploadedImageName,
-        filePath,
         fileName,
         skills,
         seletedSkillIds,
@@ -125,7 +126,7 @@ class AddAnswerCommentEvent extends AskTheExpertEvent {
   final String userCommentImage;
   final int commentStatus;
   final bool isRemoveCommentImage;
-  final String filePath;
+  final Uint8List? fileBytes;
   final String fileName;
 
   AddAnswerCommentEvent(
@@ -136,7 +137,7 @@ class AddAnswerCommentEvent extends AskTheExpertEvent {
       this.userCommentImage,
       this.commentStatus,
       this.isRemoveCommentImage,
-      this.filePath,
+      this.fileBytes,
       this.fileName);
 
   @override
@@ -149,7 +150,6 @@ class AddAnswerCommentEvent extends AskTheExpertEvent {
         userCommentImage,
         commentStatus,
         isRemoveCommentImage,
-        filePath,
         fileName
       ];
 }
@@ -262,7 +262,7 @@ class AddAnswerEvent extends AskTheExpertEvent {
   final int responseID;
   final int questionID;
   final bool isRemoveEditImage;
-  final String filePath;
+  final Uint8List? fileBytes;
   final String fileName;
 
   AddAnswerEvent(
@@ -273,7 +273,7 @@ class AddAnswerEvent extends AskTheExpertEvent {
       this.responseID = 0,
       this.questionID = 0,
       this.isRemoveEditImage = false,
-      this.filePath = "",
+      this.fileBytes,
       this.fileName = ""});
 
   @override
@@ -286,7 +286,6 @@ class AddAnswerEvent extends AskTheExpertEvent {
         responseID,
         questionID,
         isRemoveEditImage,
-        filePath,
         fileName
       ];
 }

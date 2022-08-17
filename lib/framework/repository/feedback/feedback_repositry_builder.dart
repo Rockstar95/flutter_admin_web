@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 import 'package:http/http.dart';
 import 'package:flutter_admin_web/framework/repository/feedback/feedback_repositry_public.dart';
 
@@ -14,7 +16,7 @@ abstract class FeedbackRepository {
     String imageFileName,
     String feedbackDesc,
     String currentUrl,
-    String image,
+    Uint8List? image,
     String currentUserId,
     String date2,
     String currentSiteId,

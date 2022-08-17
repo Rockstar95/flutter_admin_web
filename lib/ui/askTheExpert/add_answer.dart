@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_admin_web/utils/my_print.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
@@ -23,10 +24,11 @@ class AddAnswer extends StatefulWidget {
   final bool isEdit;
 
   const AddAnswer({
+    Key? key,
     required this.questionList,
     this.answerList,
     this.isEdit = false,
-  });
+  }) : super(key: key);
 
   @override
   State<AddAnswer> createState() => _AddAnswerState();
@@ -34,7 +36,7 @@ class AddAnswer extends StatefulWidget {
 
 class _AddAnswerState extends State<AddAnswer>
     with SingleTickerProviderStateMixin {
-  GlobalKey<ScaffoldState> _scaffoldkey = new GlobalKey<ScaffoldState>();
+  final GlobalKey<ScaffoldState> _scaffoldkey = GlobalKey<ScaffoldState>();
   final _formKey = GlobalKey<FormState>();
   final scaffoldKey = GlobalKey<ScaffoldState>();
 
@@ -53,7 +55,7 @@ class _AddAnswerState extends State<AddAnswer>
 
     ctrAnswer.text = widget.isEdit ? (widget.answerList?.response ?? "") : '';
 
-    askTheExpertBloc = new AskTheExpertBloc(
+    askTheExpertBloc = AskTheExpertBloc(
         askTheExpertRepository: AskTheExpertRepositoryBuilder.repository());
 
     askTheExpertBloc.fileName = widget.isEdit
@@ -62,7 +64,7 @@ class _AddAnswerState extends State<AddAnswer>
             : "")
         : "";
     //askTheExpertBloc.filePath = widget.isEdit ? (widget.answerList?.userResponseImage != '' ? widget.answerList!.userResponseImage : "") : "";
-    print("askTheExpertBloc.fileName:${askTheExpertBloc.fileName}");
+    MyPrint.printOnConsole("askTheExpertBloc.fileName:${askTheExpertBloc.fileName}");
   }
 
   @override
@@ -108,18 +110,18 @@ class _AddAnswerState extends State<AddAnswer>
             "0xFF${appBloc.uiSettingModel.appBGColor.substring(1, 7).toUpperCase()}")),
         child: Stack(
           children: <Widget>[
-            Divider(
+            const Divider(
               height: 2,
               color: Colors.black87,
             ),
-            new Column(
+            Column(
               children: [
-                new Expanded(
+                Expanded(
                   child: SingleChildScrollView(
                     child: mainWidget(context, itemWidth, itemHeight),
                   ),
                 ),
-                new Padding(
+                Padding(
                     padding: const EdgeInsets.only(
                         top: 0.0, left: 10.0, right: 10.0, bottom: 20.0),
                     child: createAnswerButton())
@@ -132,27 +134,27 @@ class _AddAnswerState extends State<AddAnswer>
   }
 
   Widget mainWidget(BuildContext context, double itemWidth, double itemHeight) {
-    return new Column(
+    return Column(
       children: [
-        new Padding(
+        Padding(
             padding: const EdgeInsets.only(top: 0.0, left: 10.0, right: 10.0),
-            child: new Form(
+            child: Form(
                 key: _formKey,
                 child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
                       Padding(
-                        padding: EdgeInsets.only(
+                        padding: const EdgeInsets.only(
                             top: 20, left: 5.0, right: 10.0, bottom: 10.0),
-                        child: new Text(
+                        child: Text(
                           'Answer',
-                          style: new TextStyle(
+                          style: TextStyle(
                               fontSize: 18.0,
                               color: Color(int.parse(
                                   "0xFF${appBloc.uiSettingModel.appTextColor.substring(1, 7).toUpperCase()}"))),
                         ),
                       ),
-                      new TextFormField(
+                      TextFormField(
                         style: Theme.of(context)
                             .textTheme
                             .bodyText1
@@ -170,14 +172,14 @@ class _AddAnswerState extends State<AddAnswer>
                                       "0xFF${appBloc.uiSettingModel.appTextColor.substring(1, 7).toUpperCase()}"))
                                   .withOpacity(0.7)),
                           hintText: 'Enter your text here..',
-                          enabledBorder: OutlineInputBorder(
+                          enabledBorder: const OutlineInputBorder(
                             borderRadius: BorderRadius.all(Radius.circular(5)),
                             borderSide: BorderSide(
                               color: Color(0xFFDADCE0),
                             ),
                           ),
                           focusedBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.all(Radius.circular(5.0)),
+                            borderRadius: const BorderRadius.all(Radius.circular(5.0)),
                             borderSide: BorderSide(
                               color: Color(int.parse("0xFF${appBloc.uiSettingModel.appTextColor.substring(1, 7).toUpperCase()}")),
                               width: 1,
@@ -197,75 +199,75 @@ class _AddAnswerState extends State<AddAnswer>
         bloc: askTheExpertBloc,
         listener: (context, state) {},
         builder: (context, state) {
-          return new Container(
-            padding: EdgeInsets.only(top: 20.0),
-            child: new Column(
+          return Container(
+            padding: const EdgeInsets.only(top: 20.0),
+            child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Padding(
-                  padding: EdgeInsets.only(
+                  padding: const EdgeInsets.only(
                       top: 20, left: 5.0, right: 10.0, bottom: 10.0),
-                  child: new Text(
+                  child: Text(
                     'Support Documents (Optional)',
-                    style: new TextStyle(
+                    style: TextStyle(
                         fontSize: 18.0,
                         color: Color(int.parse(
                             "0xFF${appBloc.uiSettingModel.appTextColor.substring(1, 7).toUpperCase()}"))),
                   ),
                 ),
-                new Container(
+                SizedBox(
                   width: double.infinity,
                   child: MaterialButton(
                       onPressed: () => {
-                            askTheExpertBloc.filePath.isEmpty
-                                ? askTheExpertBloc.add(OpenFileExplorerTopicEvent(FileType.image))
+                            askTheExpertBloc.fileBytes != null
+                                ? askTheExpertBloc.add(const OpenFileExplorerTopicEvent(FileType.image))
                                 : null
                           },
                       minWidth: MediaQuery.of(context).size.width,
-                      color: askTheExpertBloc.filePath.isNotEmpty
+                      color: askTheExpertBloc.fileBytes != null
                           ? Colors.grey
                           : Color(int.parse(
                               "0xFF${appBloc.uiSettingModel.appButtonBgColor.substring(1, 7).toUpperCase()}")),
+                      textColor: Color(int.parse(
+                          "0xFF${appBloc.uiSettingModel.appButtonTextColor.substring(1, 7).toUpperCase()}")),
                       child: Text(
                         'Upload File',
                         style: TextStyle(
                             color: Color(int.parse(
                                 "0xFF${appBloc.uiSettingModel.appButtonTextColor.substring(1, 7).toUpperCase()}"))),
-                      ),
-                      textColor: Color(int.parse(
-                          "0xFF${appBloc.uiSettingModel.appButtonTextColor.substring(1, 7).toUpperCase()}"))),
+                      )),
                 ),
                 Visibility(
-                  visible: askTheExpertBloc.filePath.isNotEmpty,
+                  visible: askTheExpertBloc.fileBytes != null,
                   child: Padding(
-                    padding: EdgeInsets.only(
+                    padding: const EdgeInsets.only(
                         top: 20.0, left: 5.0, right: 10.0, bottom: 10.0),
-                    child: new Row(
+                    child: Row(
                       children: [
                         Icon(
                           Icons.description,
                           color: InsColor(appBloc).appTextColor,
                         ),
-                        new Expanded(
+                        Expanded(
                           child: Padding(
-                              padding: EdgeInsets.only(
+                              padding: const EdgeInsets.only(
                                 left: 20.0,
                               ),
-                              child: new Column(
+                              child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  new Text(
+                                  Text(
                                     askTheExpertBloc.fileName,
-                                    style: new TextStyle(
+                                    style: TextStyle(
                                         fontSize: 16.0,
                                         color: InsColor(appBloc).appTextColor,
                                         fontWeight: FontWeight.normal),
                                   ),
-                                  new Text(
-                                    askTheExpertBloc.filePath.isNotEmpty && File(askTheExpertBloc.filePath).existsSync()
-                                        ? (File(askTheExpertBloc.filePath).lengthSync() /1024).toStringAsFixed(0) +'kb'
+                                  Text(
+                                    askTheExpertBloc.fileBytes != null
+                                        ? '${(askTheExpertBloc.fileBytes!.length /1024).toStringAsFixed(0)}kb'
                                         : '',
-                                    style: new TextStyle(
+                                    style: TextStyle(
                                         fontSize: 12.0,
                                         color: Color(int.parse(
                                             "0xFF${appBloc.uiSettingModel.appTextColor.substring(1, 7).toUpperCase()}")),
@@ -274,11 +276,11 @@ class _AddAnswerState extends State<AddAnswer>
                                 ],
                               )),
                         ),
-                        new IconButton(
+                        IconButton(
                             onPressed: () {
                               setState(() {
                                 askTheExpertBloc.fileName = "";
-                                askTheExpertBloc.filePath = "";
+                                askTheExpertBloc.fileBytes = null;
                               });
                             },
                             icon: Icon(
@@ -308,14 +310,14 @@ class _AddAnswerState extends State<AddAnswer>
                         ? 'Answer edited successfully'
                         : 'Answer added successfully'),
                 gravity: ToastGravity.BOTTOM,
-                toastDuration: Duration(seconds: 4));
+                toastDuration: const Duration(seconds: 4));
           } else if (state.status == Status.ERROR) {
             flutterToast?.showToast(
               child: CommonToast(
                 displaymsg: state.message,
               ),
               gravity: ToastGravity.BOTTOM,
-              toastDuration: Duration(seconds: 2),
+              toastDuration: const Duration(seconds: 2),
             );
           }
         }
@@ -333,9 +335,9 @@ class _AddAnswerState extends State<AddAnswer>
         } else {
           return Container(
             alignment: Alignment.bottomCenter,
-            child: new Row(
+            child: Row(
               children: [
-                new Expanded(
+                Expanded(
                     child: MaterialButton(
                         onPressed: () => {
                               validateAddAnswerForm(),
@@ -346,9 +348,9 @@ class _AddAnswerState extends State<AddAnswer>
                             .withOpacity(0.5),
                         color: Color(int.parse(
                             "0xFF${appBloc.uiSettingModel.appButtonBgColor.substring(1, 7).toUpperCase()}")),
-                        child: Text('Submit'),
                         textColor: Color(int.parse(
-                            "0xFF${appBloc.uiSettingModel.appButtonTextColor.substring(1, 7).toUpperCase()}")))),
+                            "0xFF${appBloc.uiSettingModel.appButtonTextColor.substring(1, 7).toUpperCase()}")),
+                        child: const Text('Submit'))),
               ],
             ),
           );
@@ -358,7 +360,7 @@ class _AddAnswerState extends State<AddAnswer>
   }
 
   void validateAddAnswerForm() {
-    var filepath = askTheExpertBloc.filePath;
+    var filebytes = askTheExpertBloc.fileBytes;
     var fileName = askTheExpertBloc.fileName;
 
     var titleNameVar = ctrAnswer.text;
@@ -367,7 +369,7 @@ class _AddAnswerState extends State<AddAnswer>
       flutterToast?.showToast(
         child: CommonToast(displaymsg: 'Please enter answer'),
         gravity: ToastGravity.BOTTOM,
-        toastDuration: Duration(seconds: 4),
+        toastDuration: const Duration(seconds: 4),
       );
       return;
     }
@@ -380,7 +382,7 @@ class _AddAnswerState extends State<AddAnswer>
             responseID: widget.answerList?.responseID ?? 0,
             questionID: widget.answerList?.questionID ?? 0,
             isRemoveEditImage: false,
-            filePath: filepath,
+            fileBytes: filebytes,
             fileName: fileName,
           ))
         : askTheExpertBloc.add(AddAnswerEvent(
@@ -391,7 +393,7 @@ class _AddAnswerState extends State<AddAnswer>
             responseID: -1,
             questionID: widget.questionList.questionID,
             isRemoveEditImage: false,
-            filePath: filepath,
+            fileBytes: filebytes,
             fileName: fileName,
           ));
   }

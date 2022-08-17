@@ -109,10 +109,14 @@ class AppBloc extends Bloc<AppEvent, AppState> {
           String mobileGetLearningPortalInfoResponsStr = await _getLocalData(mobileGetLearningPortalInfoKey);
           MyPrint.logOnConsole("mobileGetLearningPortalInfoResponsStr:${mobileGetLearningPortalInfoResponsStr}");
 
-          MobileGetLearningPortalInfoResponse mobileGetLearningPortalInfoResponse = mobileGetLearningPortalInfoResponseFromJson(
-            mobileGetLearningPortalInfoResponsStr.isNotEmpty ? mobileGetLearningPortalInfoResponsStr : "{}"
-          );
-          setUiSettingFromMobileGetLearningPortalInfo(mobileGetLearningPortalInfoResponse);
+          try {
+            MobileGetLearningPortalInfoResponse mobileGetLearningPortalInfoResponse = mobileGetLearningPortalInfoResponseFromJson(mobileGetLearningPortalInfoResponsStr);
+            setUiSettingFromMobileGetLearningPortalInfo(mobileGetLearningPortalInfoResponse);
+          }
+          catch(e, s) {
+            print("Error in AppBloc.mapEventToState.SetUiSettingEvent.mobileGetLearningPortalInfoResponseFromJson():${e}");
+            print(s);
+          }
           uiSettingModel.setappname('in');
           uiSettingModel.setExpiredBGColor("#b3b0b8");
           String mobileGetNativeMenusResponseStr = await _getLocalData(mobileGetNativeMenusKey);
@@ -443,6 +447,21 @@ class AppBloc extends Bloc<AppEvent, AppState> {
       }
       else if (element.name == "AddProfileAdditionalTab") {
         uiSettingModel.setAddProfileAdditionalTab(element.keyvalue.toString());
+      }
+      else if (element.name == "EnableChatBot") {
+        uiSettingModel.setEnableChatBot(element.keyvalue.toString());
+      }
+      else if (element.name.trim() == "BeforeLoginKnowledgeBaseID") {
+        uiSettingModel.setBeforeLoginKnowledgeBaseID(element.keyvalue.toString());
+      }
+      else if (element.name == "InstancyBotEndPointURL") {
+        uiSettingModel.setInstancyBotEndPointURL(element.keyvalue.toString());
+      }
+      else if (element.name == "BotChatIcon") {
+        uiSettingModel.setBotChatIcon(element.keyvalue.toString());
+      }
+      else if (element.name == "BotGreetingContent") {
+        uiSettingModel.setBotGreetingContent(element.keyvalue.toString());
       }
       else if (element.name == "AllowExpiredEventsSubscription") {
         uiSettingModel

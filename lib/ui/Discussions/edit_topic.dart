@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_admin_web/utils/my_print.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
@@ -31,7 +32,7 @@ class EditTopic extends StatefulWidget {
 
 class _EditTopicState extends State<EditTopic>
     with SingleTickerProviderStateMixin {
-  GlobalKey<ScaffoldState> _scaffoldkey = new GlobalKey<ScaffoldState>();
+  GlobalKey<ScaffoldState> _scaffoldkey = GlobalKey<ScaffoldState>();
 
   AppBloc get appBloc => BlocProvider.of<AppBloc>(context);
   final _formKey = GlobalKey<FormState>();
@@ -108,18 +109,18 @@ class _EditTopicState extends State<EditTopic>
             "0xFF${appBloc.uiSettingModel.appBGColor.substring(1, 7).toUpperCase()}")),
         child: Stack(
           children: <Widget>[
-            Divider(
+            const Divider(
               height: 2,
               color: Colors.black87,
             ),
-            new Column(
+            Column(
               children: [
-                new Expanded(
+                Expanded(
                   child: SingleChildScrollView(
                     child: mainWidget(context, itemWidth, itemHeight),
                   ),
                 ),
-                new Padding(
+                Padding(
                     padding: const EdgeInsets.only(
                         top: 0.0, left: 10.0, right: 10.0, bottom: 10.0),
                     child: createTopicButton())
@@ -132,11 +133,11 @@ class _EditTopicState extends State<EditTopic>
   }
 
   Widget mainWidget(BuildContext context, double itemWidth, double itemHeight) {
-    return new Column(
+    return Column(
       children: [
-        new Padding(
+        Padding(
             padding: const EdgeInsets.only(top: 0.0, left: 10.0, right: 10.0),
-            child: new Form(
+            child: Form(
                 key: _formKey,
                 autovalidateMode: _validate
                     ? AutovalidateMode.always
@@ -145,17 +146,17 @@ class _EditTopicState extends State<EditTopic>
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
                       Padding(
-                        padding: EdgeInsets.only(
+                        padding: const EdgeInsets.only(
                             top: 20, left: 5.0, right: 10.0, bottom: 10.0),
-                        child: new Text(
+                        child: Text(
                           'Title',
-                          style: new TextStyle(
+                          style: TextStyle(
                               fontSize: 18.0,
                               color: Color(int.parse(
                                   "0xFF${appBloc.uiSettingModel.appTextColor.substring(1, 7).toUpperCase()}"))),
                         ),
                       ),
-                      new TextFormField(
+                      TextFormField(
                         style: TextStyle(
                             fontSize: 14.h,
                             color: Color(int.parse(
@@ -172,14 +173,14 @@ class _EditTopicState extends State<EditTopic>
                         decoration: InputDecoration(
                           hintStyle: TextStyle(color: AppColors.getTextFieldHintColor(),),
                           hintText: 'Enter your topic here..',
-                          enabledBorder: OutlineInputBorder(
+                          enabledBorder: const OutlineInputBorder(
                             borderRadius: BorderRadius.all(Radius.circular(5)),
                             borderSide: BorderSide(
                               color: Color(0xFFDADCE0),
                             ),
                           ),
                           focusedBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.all(Radius.circular(5.0)),
+                            borderRadius: const BorderRadius.all(Radius.circular(5.0)),
                             borderSide: BorderSide(
                               color: Color(int.parse("0xFF${appBloc.uiSettingModel.appTextColor.substring(1, 7).toUpperCase()}")),
                               width: 1,
@@ -190,23 +191,23 @@ class _EditTopicState extends State<EditTopic>
                           // enabledBorder: OutlineInputBorder(borderSide: BorderSide(color: InsColor(appBloc).appTextColor)),
                           // focusedBorder: OutlineInputBorder(borderSide: BorderSide(color: InsColor(appBloc).appTextColor)),
 
-                          contentPadding: new EdgeInsets.symmetric(vertical: 35.0, horizontal: 20.0),
+                          contentPadding: const EdgeInsets.symmetric(vertical: 35.0, horizontal: 20.0),
                         ),
                       ),
                       Padding(
-                        padding: EdgeInsets.only(
+                        padding: const EdgeInsets.only(
                             top: 20, left: 5.0, right: 10.0, bottom: 10.0),
-                        child: new Text(
+                        child: Text(
                           'Description (Optional)',
-                          style: new TextStyle(
+                          style: TextStyle(
                               fontSize: 18.0,
                               color: Color(int.parse(
                                   "0xFF${appBloc.uiSettingModel.appTextColor.substring(1, 7).toUpperCase()}"))),
                         ),
                       ),
                       Container(
-                        child: new ConstrainedBox(
-                          constraints: BoxConstraints(
+                        child: ConstrainedBox(
+                          constraints: const BoxConstraints(
                             maxHeight: 400.0,
                           ),
                           child: TextFormField(
@@ -226,21 +227,21 @@ class _EditTopicState extends State<EditTopic>
                                 color: AppColors.getTextFieldHintColor(),
                               ),
                               hintText: 'Enter your description here..',
-                              enabledBorder: OutlineInputBorder(
+                              enabledBorder: const OutlineInputBorder(
                                 borderRadius: BorderRadius.all(Radius.circular(5)),
                                 borderSide: BorderSide(
                                   color: Color(0xFFDADCE0),
                                 ),
                               ),
                               focusedBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.all(Radius.circular(5.0)),
+                                borderRadius: const BorderRadius.all(Radius.circular(5.0)),
                                 borderSide: BorderSide(
                                   color: Color(int.parse("0xFF${appBloc.uiSettingModel.appTextColor.substring(1, 7).toUpperCase()}")),
                                   width: 1,
                                 ),
                               ),
                               border: OutlineInputBorder(borderRadius: BorderRadius.circular(5.0)),
-                              contentPadding: new EdgeInsets.symmetric(
+                              contentPadding: const EdgeInsets.symmetric(
                                   vertical: 45.0, horizontal: 20.0),
                             ),
                             maxLines: null,
@@ -261,30 +262,29 @@ class _EditTopicState extends State<EditTopic>
         bloc: discussionTopicBloc,
         listener: (context, state) {},
         builder: (context, state) {
-          print(
-              "discussionTopicBloc.fileName:'${discussionTopicBloc.fileName}'");
+          MyPrint.printOnConsole("discussionTopicBloc.fileName:'${discussionTopicBloc.fileName}'");
 
-          return new Container(
-            padding: EdgeInsets.only(top: 20.0),
-            child: new Column(
+          return Container(
+            padding: const EdgeInsets.only(top: 20.0),
+            child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Padding(
-                  padding: EdgeInsets.only(
+                  padding: const EdgeInsets.only(
                       top: 20, left: 5.0, right: 10.0, bottom: 10.0),
-                  child: new Text(
+                  child: Text(
                     'Support Documentss (Optional)',
-                    style: new TextStyle(
+                    style: TextStyle(
                       fontSize: 18.0,
                       color: Color(int.parse(
                           "0xFF${appBloc.uiSettingModel.appTextColor.substring(1, 7).toUpperCase()}")),
                     ),
                   ),
                 ),
-                new SizedBox(
+                SizedBox(
                   width: double.infinity,
                   child: RaisedButton(
-                    padding: EdgeInsets.all(15.0),
+                    padding: const EdgeInsets.all(15.0),
                     onPressed: () {
                       if (discussionTopicBloc.fileName.isEmpty ||
                               discussionTopicBloc.fileName == '...') {
@@ -308,9 +308,9 @@ class _EditTopicState extends State<EditTopic>
                   visible: (discussionTopicBloc.fileName.isNotEmpty &&
                       discussionTopicBloc.fileName != '...'),
                   child: Padding(
-                    padding: EdgeInsets.only(
+                    padding: const EdgeInsets.only(
                         top: 20.0, left: 5.0, right: 10.0, bottom: 10.0),
-                    child: new Row(
+                    child: Row(
                       children: [
                         Icon(
                           Icons.description,
@@ -319,44 +319,38 @@ class _EditTopicState extends State<EditTopic>
                         ),
                         Expanded(
                           child: Padding(
-                            padding: EdgeInsets.only(
+                            padding: const EdgeInsets.only(
                               left: 20.0,
                             ),
-                            child: new Column(
+                            child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                new Text(
+                                Text(
                                   discussionTopicBloc.fileName,
-                                  style: new TextStyle(
+                                  style: TextStyle(
                                       fontSize: 16.0,
                                       color: Color(int.parse(
                                           "0xFF${appBloc.uiSettingModel.appTextColor.substring(1, 7).toUpperCase()}")),
                                       fontWeight: FontWeight.normal),
                                 ),
-                                new Text(
-                                  discussionTopicBloc.filePath.isNotEmpty &&
-                                          discussionTopicBloc.filePath != "..."
-                                      ? (File(discussionTopicBloc.filePath)
-                                                      .lengthSync() /
-                                                  1024)
-                                              .toStringAsFixed(0) +
-                                          'kb'
+                                Text(
+                                  discussionTopicBloc.fileBytes != null
+                                      ? (discussionTopicBloc.fileBytes!.length / 1024).toStringAsFixed(0) + 'kb'
                                       : '',
-                                  style: new TextStyle(
+                                  style: TextStyle(
                                       fontSize: 12.0,
-                                      color: Color(int.parse(
-                                          "0xFF${appBloc.uiSettingModel.appTextColor.substring(1, 7).toUpperCase()}")),
+                                      color: Color(int.parse("0xFF${appBloc.uiSettingModel.appTextColor.substring(1, 7).toUpperCase()}")),
                                       fontWeight: FontWeight.normal),
                                 ),
                               ],
                             ),
                           ),
                         ),
-                        new IconButton(
+                        IconButton(
                             onPressed: () {
                               setState(() {
                                 discussionTopicBloc.fileName = "";
-                                discussionTopicBloc.filePath = "";
+                                discussionTopicBloc.fileBytes = null;
                               });
                             },
                             icon: Icon(
@@ -389,13 +383,13 @@ class _EditTopicState extends State<EditTopic>
               ),
             );*/
           } else if (state.status == Status.COMPLETED) {
-            if (discussionTopicBloc.filePath.isNotEmpty) {
+            if (discussionTopicBloc.fileBytes != null) {
               discussionTopicBloc.add(UploadAttachmentEvent(
                 topicID: widget.topicList.contentID,
                 replyID: "",
                 isTopic: true,
                 fileName: discussionTopicBloc.fileName,
-                filePath: discussionTopicBloc.filePath,
+                fileBytes: discussionTopicBloc.fileBytes,
               ));
             }
             Navigator.of(context).pop(true);
@@ -408,7 +402,7 @@ class _EditTopicState extends State<EditTopic>
                 displaymsg: state.message,
               ),
               gravity: ToastGravity.BOTTOM,
-              toastDuration: Duration(seconds: 2),
+              toastDuration: const Duration(seconds: 2),
             );
           }
         }
@@ -426,10 +420,10 @@ class _EditTopicState extends State<EditTopic>
         } else {
           return Align(
             alignment: Alignment.bottomCenter,
-            child: new SizedBox(
+            child: SizedBox(
               width: double.infinity,
               child: RaisedButton(
-                padding: EdgeInsets.all(15.0),
+                padding: const EdgeInsets.all(15.0),
                 onPressed: () {
                   validateAddTopicForm();
                 },

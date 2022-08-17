@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:typed_data';
 
 import 'package:http/http.dart';
 import 'package:flutter_admin_web/framework/common/constants.dart';
@@ -11,7 +12,7 @@ class WikiUploadRepositoryPublic extends WikiUploadRepository {
   @override
   Future<Response?> uploadWikiFileData(
       {bool isUrl = false,
-      String filepath = "",
+      dynamic fileBytes,
       int mediaTypeID = 0,
       int objectTypeID = 0,
       String title = "",
@@ -35,7 +36,7 @@ class WikiUploadRepositoryPublic extends WikiUploadRepository {
 
       if (isUrl) {
         Map<String, String> formData = {
-          "WebSiteURL": filepath,
+          "WebSiteURL": fileBytes,
           "MediaTypeID": mediaTypeID.toString(),
           "ObjectTypeID": objectTypeID.toString(),
           "Title": title,
@@ -57,8 +58,11 @@ class WikiUploadRepositoryPublic extends WikiUploadRepository {
       }
       else {
         //final file = await dio.MultipartFile.fromFile(filepath, filename: title);
-        print("File Path:$filepath");
-        Map<String, String> fileNamesPaths = {"file" : filepath,};
+        print("File Path:$fileBytes");
+        List<MultipartFile> fileNames = [];
+        if(fileBytes == Uint8List) {
+          fileNames.add(MultipartFile.fromBytes("file", fileBytes));
+        }
 
         Map<String, String> formData = {
           'locale': strLanguage,
@@ -91,7 +95,7 @@ class WikiUploadRepositoryPublic extends WikiUploadRepository {
         request.headers.addAll(headers);
 
         StreamedResponse response = await request.send();*/
-        response = await RestClient.uploadFilesData(ApiEndpoints.postUploadWikiFiles(), formData, fileNamesPaths: fileNamesPaths);
+        response = await RestClient.uploadFilesData(ApiEndpoints.postUploadWikiFiles(), formData, files: fileNames);
 
         print("uploadWikiFileData Response Status:${response?.statusCode}, Body:${response?.body}");
       }
@@ -112,7 +116,6 @@ class WikiUploadRepositoryPublic extends WikiUploadRepository {
       int intComponentID = 0,
       String locale = "",
       String strType = ""}) async {
-    // TODO: implement getWikiCategories
     Response? response;
     try {
       print("......catalog....${ApiEndpoints.GetWikiCategories()}");

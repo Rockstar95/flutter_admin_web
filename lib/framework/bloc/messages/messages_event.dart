@@ -40,24 +40,24 @@ class SendMessageEvent extends MessagesEvent {
 }
 
 class SendAttachmentEvent extends MessagesEvent {
-  final filePath;
+  final fileBytes;
   final fileName;
   final toUserId;
   final msgType;
   final chatRoom;
 
   SendAttachmentEvent(
-      {@required this.filePath,
+      {@required this.fileBytes,
       @required this.fileName,
       @required this.chatRoom,
       this.toUserId,
       this.msgType})
-      : assert(filePath != null, "field must equal value"),
+      : assert(fileBytes != null, "field must equal value"),
         assert(fileName != null, "field must equal value"),
         assert(toUserId != null, "field must equal value"),
         assert(msgType != null, "field must equal value");
 
-  List<Object> get props => [filePath, fileName, toUserId, msgType];
+  List<Object> get props => [fileBytes, fileName, toUserId, msgType];
 }
 
 /*

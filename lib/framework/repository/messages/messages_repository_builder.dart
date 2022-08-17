@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 import 'package:http/http.dart';
 import 'package:flutter_admin_web/framework/common/enums.dart';
 
@@ -24,7 +26,7 @@ abstract class MessagesRepository {
       String chatRoom});
 
   Future<Response?> uploadMessageFileData({
-    String filePath,
+    Uint8List? fileBytes,
     String fileName,
     String toUserId,
     MessageType msgType,

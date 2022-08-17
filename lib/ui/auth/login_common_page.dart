@@ -17,7 +17,6 @@ import 'package:flutter_admin_web/framework/bloc/theme/states/change_theme_state
 import 'package:flutter_admin_web/framework/common/constants.dart';
 import 'package:flutter_admin_web/framework/common/enums.dart';
 import 'package:flutter_admin_web/framework/common/pref_manger.dart';
-import 'package:flutter_admin_web/framework/helpers/providermodel.dart';
 import 'package:flutter_admin_web/framework/repository/auth/provider/auth_repository_builder.dart';
 import 'package:flutter_admin_web/framework/theme/ins_theme.dart';
 import 'package:flutter_admin_web/ui/Setting/site_setting.dart';
@@ -25,7 +24,6 @@ import 'package:flutter_admin_web/ui/auth/dynamic_signup_page.dart';
 import 'package:flutter_admin_web/ui/auth/login_page.dart';
 import 'package:flutter_admin_web/ui/common/app_colors.dart';
 import 'package:flutter_admin_web/ui/home/ActBase.dart';
-import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../common/outline_button.dart';
@@ -119,7 +117,7 @@ class _LoginCommonPageState extends State<LoginCommonPage> {
           : Navigator.of(context).push(MaterialPageRoute(builder: (context) => MembershipSignUpWebView()));
     }
     else {
-      Navigator.push(context, MaterialPageRoute(builder: (context) => ChangeNotifierProvider(create: (context) => ProviderModel(), child: DynamicSignUp(),)));
+      Navigator.push(context, MaterialPageRoute(builder: (context) => DynamicSignUp()));
     }
   }
 
@@ -517,12 +515,9 @@ class _LoginCommonPageState extends State<LoginCommonPage> {
                       //         )));
 
                       Navigator.of(context).push(MaterialPageRoute(
-                          builder: (context) => ChangeNotifierProvider(
-                            create: (context) => ProviderModel(),
-                            child: DynamicSignUp(
-                              membershipId: data.memberShipDurationID,
-                              productId: data.productId,
-                            ),
+                          builder: (context) => DynamicSignUp(
+                            membershipId: data.memberShipDurationID,
+                            productId: data.productId,
                           )));
                     });
                   },
