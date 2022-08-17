@@ -1,5 +1,5 @@
 import 'dart:convert';
-import 'dart:io';
+import 'dart:typed_data';
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
@@ -39,8 +39,7 @@ class _ProfileInfoState extends State<ProfileInfo> {
   // File? _cameraImage;
   String _imageBase64 = "";
   final ImagePicker _picker = ImagePicker();
-  XFile? _imageFile;
-  dynamic _pickImageError;
+  Uint8List? _imageBytes;
   late RegExp regExp;
   String pattern =
       r'^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$';
@@ -173,7 +172,7 @@ class _ProfileInfoState extends State<ProfileInfo> {
                           children: <Widget>[
                             Container(
                               height: 105.h,
-                              child: _imageFile == null
+                              child: _imageBytes == null
                                   ? ClipOval(
                                       child: (widget.profileImg == null ||
                                               widget.profileImg.isEmpty)
@@ -244,8 +243,8 @@ class _ProfileInfoState extends State<ProfileInfo> {
                                             ))
                                   : ClipRRect(
                                       borderRadius: BorderRadius.circular(50),
-                                      child: Image.file(
-                                        File(_imageFile!.path),
+                                      child: Image.memory(
+                                        _imageBytes!,
                                         fit: BoxFit.cover,
                                         width: 105.h,
                                         height: 105.h,
@@ -732,25 +731,19 @@ class _ProfileInfoState extends State<ProfileInfo> {
   void _onImageButtonPressed(ImageSource source,
       {required BuildContext context}) async {
     try {
-      final pickedFile = await _picker.pickImage(
-          source: source, maxWidth: 1000, maxHeight: 1000, imageQuality: 100);
+      final pickedFile = await _picker.pickImage(source: source, maxWidth: 1000, maxHeight: 1000, imageQuality: 100);
       Navigator.of(context).pop();
-      setState(() {
-        _imageFile = pickedFile;
-      });
-      List<int> imageBytes = await _imageFile?.readAsBytes() ?? [];
-      _imageBase64 = base64Encode(imageBytes);
+      _imageBytes = await pickedFile?.readAsBytes();
+      setState(() {});
+      _imageBase64 = base64Encode(_imageBytes?.toList() ?? []);
 
       widget.bloc.add(UploadImage(
           imageBytes: _imageBase64,
           fileName: DateTime.now().millisecondsSinceEpoch.toString() + '.jpg'));
 
       print('imagrbasee $_imageBase64');
-    } catch (e) {
-      setState(() {
-        _pickImageError = e;
-      });
     }
+    catch (e) {}
   }
 
   showToast(String item) async {
