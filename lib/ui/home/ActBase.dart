@@ -64,6 +64,7 @@ import 'package:flutter_admin_web/utils/my_print.dart';
 import 'package:http/http.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../../framework/helpers/parsing_helper.dart';
 import '../common/app_colors.dart';
 import '../instabot/instabot_screen.dart';
 
@@ -92,7 +93,7 @@ class ActBase extends StatefulWidget {
 }
 
 class _ActBaseState extends State<ActBase> {
-  bool isFirst = true;
+  bool isFirst = true, pageMounted = false;
 
   String strTAG = "ActBase";
   String username = "";
@@ -143,25 +144,43 @@ class _ActBaseState extends State<ActBase> {
   bool isDrawerOpened = false;
   Timestamp? lastUpdatedTime, lastGlobalConfigurationUpdated;
   bool isLoading = false, isGlobalConfigurationLoading = false;
-  DocumentReference documentReference = FirebaseFirestore.instance.collection('admin').doc("upgradedenterprise");
+  DocumentReference<Map<String, dynamic>> documentReference = FirebaseFirestore.instance.collection('admin').doc("upgradedenterprise");
   final LocalDataProvider _localHelper = LocalDataProvider(localDataProviderType: LocalDataProviderType.hive);
 
+  Map<String, String> defaultMenuItems = {};
+
+  void mySetState() {
+    if(!mounted) {
+      return;
+    }
+
+    if(pageMounted) {
+      setState(() {});
+    }
+    else {
+      WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+        setState(() {});
+      });
+    }
+  }
 
   void onlineSync(){
     documentReference.snapshots().listen(listenToChangeInData);
   }
 
-  Future<void> listenToChangeInData(DocumentSnapshot event) async {
-    Map<String,dynamic>? data = {};
-    data = event.data() as Map<String, dynamic>?;
-    isDrawerOpened = data!["is_drawer_opened"];
+  Future<void> listenToChangeInData(DocumentSnapshot<Map<String, dynamic>> event) async {
+    Map<String,dynamic> data = event.data() ?? {};
+    /*isDrawerOpened = ParsingHelper.parseBoolMethod(data["is_drawer_opened"]);
+
     if(isDrawerOpened){
       NavigationController().actbaseScaffoldKey.currentState?.openDrawer();
-    } else {
-      NavigationController().actbaseScaffoldKey.currentState?.closeDrawer();
     }
-    if(lastUpdatedTime != null){
-      if(!lastUpdatedTime!.toDate().isAtSameMomentAs(data["last_menus_updated"].toDate())){
+    else {
+      NavigationController().actbaseScaffoldKey.currentState?.closeDrawer();
+    }*/
+
+    if(lastUpdatedTime != null) {
+      if(!lastUpdatedTime!.toDate().isAtSameMomentAs(data["last_menus_updated"].toDate())) {
         setState((){
           isLoading = true;
         });
@@ -182,7 +201,8 @@ class _ActBaseState extends State<ActBase> {
           isLoading = false;
         });
       }
-    } else {
+    }
+    else {
       lastUpdatedTime = data["last_menus_updated"];
       print("date in else");
     }
@@ -200,11 +220,41 @@ class _ActBaseState extends State<ActBase> {
         });
       }
 
-    } else {
+    }
+    else {
       lastGlobalConfigurationUpdated = data["last_global_configuration_updated"];
       // await getAndSetGlobalConfiguration();
     }
 
+    String selectedMenuInFirebase = ParsingHelper.parseStringMethod(data['selected_menu']);
+    List<NativeMenuModel> selectedMenus = appBloc.listNativeModel.where((element) => element.contextmenuId == selectedMenuInFirebase).toList();
+
+    NativeMenuModel? nativeMenuModel;
+    if(selectedMenus.isNotEmpty) {
+      nativeMenuModel = selectedMenus.first;
+    }
+    else {
+      //nativeMenuModel = appBloc.listNativeModel.isNotEmpty ? appBloc.listNativeModel.first : null;
+    }
+
+    if(nativeMenuModel != null) {
+      selectedmenu = nativeMenuModel.contextmenuId;
+      appBarTitle = nativeMenuModel.displayname;
+    }
+    else if(defaultMenuItems.keys.contains(selectedMenuInFirebase)) {
+      selectedmenu = selectedMenuInFirebase;
+      appBarTitle = defaultMenuItems[selectedMenuInFirebase] ?? "Title";
+    }
+    else if(selectedMenuInFirebase == "2003") {
+      if(appBloc.uiSettingModel.enableChatBot.toLowerCase() == "true") {
+         Navigator.of(context).push(MaterialPageRoute(builder: (context) => InstaBotScreen()));
+      }
+    }
+    else if(selectedMenuInFirebase == "2004") {
+      Navigator.of(context).push(MaterialPageRoute(builder: (context) => MessageUsersList()));
+    }
+
+    mySetState();
   }
 
   Future<void> getAndSetGlobalConfiguration() async {
@@ -309,30 +359,35 @@ class _ActBaseState extends State<ActBase> {
         _currentBottomMenuIndex = index;
         selectedmenu = listNativeModel[index].contextmenuId;
         appBarTitle = listNativeModel[index].displayname;
-      } else if (index == 1) {
+      }
+      else if (index == 1) {
         _selectedDrawerIndex = index;
         _currentBottomMenuIndex = index;
         selectedmenu = listNativeModel[index].contextmenuId;
         appBarTitle = listNativeModel[index].displayname;
-      } else if (index == 2) {
+      }
+      else if (index == 2) {
         _selectedDrawerIndex = index;
         _currentBottomMenuIndex = index;
         selectedmenu = listNativeModel[index].contextmenuId;
         appBarTitle = listNativeModel[index].displayname;
-      } else if (index == 3) {
+      }
+      else if (index == 3) {
         _selectedDrawerIndex = index;
         _currentBottomMenuIndex = index;
         selectedmenu = listNativeModel[index].contextmenuId;
         appBarTitle = listNativeModel[index].displayname;
-      } else {
-        print(
-            "ShowMoreActionforBottommenu ${appBloc.uiSettingModel.showMoreActionForBottomMenu}");
+      }
+      else {
+        print("ShowMoreActionforBottommenu ${appBloc.uiSettingModel.showMoreActionForBottomMenu}");
         if (appBloc.uiSettingModel.showMoreActionForBottomMenu != "true") {
           NavigationController().actbaseScaffoldKey.currentState?.openDrawer();
-        } else {
+        }
+        else {
           _settingBottomSheet(context);
         }
       }
+      documentReference.update({"selected_menu":selectedmenu});
 
       isDrawer = true;
     });
@@ -575,7 +630,9 @@ class _ActBaseState extends State<ActBase> {
           ),
           onTap: () async => {
             Navigator.of(context).push(
-                MaterialPageRoute(builder: (context) => MessageUsersList()))
+                MaterialPageRoute(builder: (context) => MessageUsersList()),
+            ),
+            // documentReference.update({"selected_menu":selectedmenu}),
           },
         ),
       ),
@@ -1095,6 +1152,13 @@ class _ActBaseState extends State<ActBase> {
     checkSubSiteLogin();
     appBloc.add(NotificationCountEvent());
     appBloc.add(WishlistCountEvent());
+
+    defaultMenuItems = {
+      "2000" : appBloc.localstr.loginActionsheetSettingsoption,
+      "2001" : appBloc.feedbackTitle,
+      "2002" : "Notifications",
+    };
+
     if (widget.notification != null && widget.isFromNotification) {
       if (widget.notification.toString() == NewConnectionRequest) {
         selectedmenu = '10';
@@ -1243,16 +1307,19 @@ class _ActBaseState extends State<ActBase> {
     print("getMobileAppMenuPosition ${appBloc.uiSettingModel.menuBGColor}");
     getUserDetails();
     getCatalogLandingPage();
-    profileBloc =
-        ProfileBloc(profileRepository: ProfileRepositoryBuilder.repository());
+    profileBloc = ProfileBloc(profileRepository: ProfileRepositoryBuilder.repository());
     profileBloc.add(GetProfileInfo());
-    detailsBloc = MyLearningDetailsBloc(
-        myLearningRepository: MyLearningRepositoryBuilder.repository());
+    detailsBloc = MyLearningDetailsBloc(myLearningRepository: MyLearningRepositoryBuilder.repository());
     onlineSync();
   }
 
   @override
   Widget build(BuildContext context) {
+    pageMounted = false;
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      pageMounted = true;
+    });
+
     //appBloc.count = '';
     var smallestDimension = MediaQuery.of(context).size.shortestSide;
     final useMobileLayout = smallestDimension < 600;
@@ -1323,8 +1390,8 @@ class _ActBaseState extends State<ActBase> {
                   Navigator.of(context).pop();
                   setState(() {
                     selectedmenu = "2000";
-                    appBarTitle =
-                        appBloc.localstr.loginActionsheetSettingsoption;
+                    appBarTitle = appBloc.localstr.loginActionsheetSettingsoption;
+                    documentReference.update({"selected_menu":selectedmenu});
                   });
                 },
               ),
@@ -1361,6 +1428,7 @@ class _ActBaseState extends State<ActBase> {
                           _selectedDrawerIndex = i;
                           selectedmenu = listNativeModel[i].contextmenuId;
                           isDrawer = true;
+                          documentReference.update({"selected_menu":selectedmenu});
                         });
                       }
                     },
@@ -1481,8 +1549,8 @@ class _ActBaseState extends State<ActBase> {
                   Navigator.of(context).pop();
                   setState(() {
                     selectedmenu = "2000";
-                    appBarTitle =
-                        appBloc.localstr.loginActionsheetSettingsoption;
+                    appBarTitle = appBloc.localstr.loginActionsheetSettingsoption;
+                    documentReference.update({"selected_menu":selectedmenu});
                   });
                 },
               ),
@@ -1510,7 +1578,8 @@ class _ActBaseState extends State<ActBase> {
                   ),
                   onTap: () async => {
                     Navigator.pop(context),
-                    Navigator.of(context).push(MaterialPageRoute(builder: (context) => InstaBotScreen()))
+                    Navigator.of(context).push(MaterialPageRoute(builder: (context) => InstaBotScreen())),
+                    // documentReference.update({"selected_menu":"2003"}),
                   },
                 ),
               ),
@@ -1540,6 +1609,7 @@ class _ActBaseState extends State<ActBase> {
                     selectedmenu = "2001";
                     // appBarTitle = 'Feedback';
                     appBarTitle = appBloc.feedbackTitle;
+                    documentReference.update({"selected_menu":selectedmenu});
                   });
                 },
               ),
@@ -1570,6 +1640,7 @@ class _ActBaseState extends State<ActBase> {
                   setState(() {
                     selectedmenu = "2002";
                     appBarTitle = 'Notifications';
+                    documentReference.update({"selected_menu":selectedmenu});
                   });
                 },
               ),
@@ -1591,11 +1662,13 @@ class _ActBaseState extends State<ActBase> {
                       appBarTitle = nativeMenuModel.displayname;
                       _selectedDrawerIndex = i;
                       selectedmenu = nativeMenuModel.contextmenuId;
+                      documentReference.update({"selected_menu":selectedmenu});
                       isDrawer = true;
                       if (isChanged) {
                         isChanged = false;
                         isCatalogChanged = nativeMenuModel.componentId;
-                      } else {
+                      }
+                      else {
                         isChanged = true;
                         isCatalogChanged = nativeMenuModel.componentId;
                       }
@@ -2261,7 +2334,7 @@ class _ActBaseState extends State<ActBase> {
     List<Widget> list = [];
 
     for (int i = 0; i < appBloc.listNativeModel.length; i++) {
-      if (appBloc.listNativeModel[i].parentMenuId == model.menuid)
+      if (appBloc.listNativeModel[i].parentMenuId == model.menuid) {
         list.add(GestureDetector(
             onTap: () {
               Navigator.of(context).pop(); // close the drawer
@@ -2270,6 +2343,7 @@ class _ActBaseState extends State<ActBase> {
                 _selectedDrawerIndex = i;
                 selectedmenu = appBloc.listNativeModel[i].contextmenuId;
                 isDrawer = true;
+                documentReference.update({"selected_menu":selectedmenu});
               });
             },
             child: ListTile(
@@ -2285,6 +2359,7 @@ class _ActBaseState extends State<ActBase> {
                   Icons.arrow_drop_down,
                   color: Colors.white,
                 ))));
+      }
     }
     return list;
   }
