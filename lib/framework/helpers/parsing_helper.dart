@@ -2,7 +2,7 @@
 
 class ParsingHelper {
   static String parseStringMethod(dynamic value, {String defaultValue = ""}) {
-    return value?.toString() ?? '';
+    return value?.toString() ?? defaultValue;
   }
 
   static int parseIntMethod(dynamic value, {int defaultValue = 0}) {

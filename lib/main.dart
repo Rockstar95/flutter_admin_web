@@ -12,6 +12,8 @@ import 'package:flutter_admin_web/controllers/notification_controller.dart';
 import 'package:flutter_admin_web/ui/appModule/app.dart';
 import 'package:flutter_admin_web/ui/common/log_util.dart';
 
+import 'framework/helpers/parsing_helper.dart';
+
 // ?site=https://upgradedenterprise.instancy.com/
 // ?site=https://learning.instancy.com/
 // ?site=https://tfr.franklincoveysa.co.za/
@@ -34,6 +36,18 @@ void main() async {
 
     dynamic site = Uri.base.queryParameters['site'];
     dynamic authToken = Uri.base.queryParameters['authToken'];
+    print("Before collectionName:${ApiEndpoints.syncCollection}");
+
+    String collectionName = ParsingHelper.parseStringMethod(Uri.base.queryParameters['collection'],defaultValue: ApiEndpoints.syncCollection);
+    ApiEndpoints.syncCollection = collectionName;
+    print("After assign collectionName:${ApiEndpoints.syncCollection}");
+
+
+    print("Before assign documentName:${ApiEndpoints.syncDocument}");
+
+    String documentName = ParsingHelper.parseStringMethod(Uri.base.queryParameters['document'],defaultValue: ApiEndpoints.syncDocument);
+    ApiEndpoints.syncDocument = documentName;
+    print("After documentName:${ApiEndpoints.syncDocument}");
 
     if(authToken is String && authToken.isNotEmpty){
       ApiEndpoints.authToken = authToken;
