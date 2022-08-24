@@ -4540,11 +4540,19 @@ getComponentId() async{
         if (table2.objecttypeid == 26) {
           // assignmenturl = await '$assignmenturl/ismobilecontentview/true';
           // print('assignmenturl is : $assignmenturl');
-          await Navigator.of(context).push(
+          await Navigator.of(context)
+              .push(
             MaterialPageRoute(
-              builder: (context) =>
-                  AdvancedWebCourseLaunch(courseUrl, table2.name),
+              builder: (context) => InAppWebCourseLaunch(courseUrl, table2),
             ),
+          )
+              .then(
+                (value) => {
+              if (value ?? true)
+                {
+                  refreshMyLearningContents()
+                }
+            },
           );
         } else {
           // assignmenturl = await '$assignmenturl/ismobilecontentview/true';

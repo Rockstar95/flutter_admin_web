@@ -591,11 +591,13 @@ class MyLearningController {
     required DummyMyCatelogResponseTable2 table2,
     bool isContentisolation = false
   }) async {
-    bool networkAvailable = await AppDirectory.checkInternetConnectivity();
-    bool isCourseDownloaded = await checkIfContentIsAvailableOffline(
-      context: context,
-      table2: table2,
-    );
+    bool networkAvailable = true;
+    // bool networkAvailable = await AppDirectory.checkInternetConnectivity();
+    // bool isCourseDownloaded = await checkIfContentIsAvailableOffline(
+    //   context: context,
+    //   table2: table2,
+    // );
+    bool isCourseDownloaded = false;
     MyPrint.printOnConsole("networkAvailable:$networkAvailable");
     MyPrint.printOnConsole("isCourseDownloaded:$isCourseDownloaded");
 
@@ -796,12 +798,17 @@ class MyLearningController {
               if (table2.objecttypeid == 26) {
                 // assignmenturl = await '$assignmenturl/ismobilecontentview/true';
                 // print('assignmenturl is : $assignmenturl');
-                await Navigator.of(context).push(
-                  MaterialPageRoute(
-                    builder: (context) =>
-                        AdvancedWebCourseLaunch(courseUrl, table2.name),
-                  ),
-                );
+                dynamic value = await Navigator.of(context).push(MaterialPageRoute(
+                  builder: (context) => InAppWebCourseLaunch(courseUrl, table2),
+                ),);
+
+                isGetData = (value is bool) ? value : true;
+                // await Navigator.of(context).push(
+                //   MaterialPageRoute(
+                //     builder: (context) =>
+                //         AdvancedWebCourseLaunch(courseUrl, table2.name),
+                //   ),
+                // );
               }
               else {
                 // assignmenturl = await '$assignmenturl/ismobilecontentview/true';
@@ -850,12 +857,17 @@ class MyLearningController {
         if (table2.objecttypeid == 26) {
           print('Navigation to AdvancedWebCourseLaunch called');
 
-          Navigator.of(context).push(
-            MaterialPageRoute(
-              builder: (context) => AdvancedWebCourseLaunch(url, table2.name),
-            ),
-          );
-          return false;
+          dynamic value = await Navigator.of(context).push(MaterialPageRoute(
+            builder: (context) => InAppWebCourseLaunch(url, table2),
+          ),);
+          return (value is bool) ? value : true;
+          // isGetData = (value is bool) ? value : true;
+          // Navigator.of(context).push(
+          //   MaterialPageRoute(
+          //     builder: (context) => AdvancedWebCourseLaunch(url, table2.name),
+          //   ),
+          // );
+          // return false;
         }
         else {
           print('Navigation to InAppWebCourseLaunch called');

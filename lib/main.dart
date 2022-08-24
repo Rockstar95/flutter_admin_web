@@ -35,6 +35,7 @@ void main() async {
     print("Site Url:${Uri.base.queryParameters['site']}");
 
     dynamic site = Uri.base.queryParameters['site'];
+    dynamic appAuthURL = Uri.base.queryParameters['appAuthURL'];
     dynamic authToken = Uri.base.queryParameters['authToken'];
     print("Before collectionName:${ApiEndpoints.syncCollection}");
 
@@ -56,6 +57,9 @@ void main() async {
     if(site is String && site.isNotEmpty && (site.startsWith("http://") || site.startsWith("https://"))) {
       ApiEndpoints.mainSiteURL = site;
     }
+   if(appAuthURL is String && appAuthURL.isNotEmpty && (appAuthURL.startsWith("http://") || appAuthURL.startsWith("https://"))) {
+        ApiEndpoints.appAuthURL = appAuthURL;
+      }
 
     // Set orientation
     await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
@@ -89,9 +93,9 @@ void main() async {
 
     //For Upgraded Enterprise Site
     runApp(App(
-      // mainSiteUrl: "https://upgradedenterprise.instancy.com/",
+      // mainSiteUrl: "https://upgradedenterprise.instancy.com/ appAuthURL",
       mainSiteUrl: site is String && site.isNotEmpty ? site : "https://upgradedenterprise.instancy.com/",
-      appAuthURL: "https://masterapilive.instancy.com/api/",
+      appAuthURL: appAuthURL is String && appAuthURL.isNotEmpty ? appAuthURL : "https://masterapilive.instancy.com/api/",
       appWebApiUrl: site is String && site.isNotEmpty ? "" : "https://upgradedenterpriseapi.instancy.com/api/",
       splashScreenLogo: "assets/images/playgroundlogo.png",
     ));

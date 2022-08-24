@@ -144,7 +144,7 @@ class _ActBaseState extends State<ActBase> {
   bool isDrawerOpened = false;
   Timestamp? lastUpdatedTime, lastGlobalConfigurationUpdated;
   bool isLoading = false, isGlobalConfigurationLoading = false;
-  DocumentReference<Map<String, dynamic>> documentReference = FirebaseFirestore.instance.collection('admin').doc("upgradedenterprise");
+  late DocumentReference<Map<String, dynamic>> documentReference;
   final LocalDataProvider _localHelper = LocalDataProvider(localDataProviderType: LocalDataProviderType.hive);
 
   Map<String, String> defaultMenuItems = {};
@@ -165,6 +165,7 @@ class _ActBaseState extends State<ActBase> {
   }
 
   void onlineSync(){
+    documentReference = FirebaseFirestore.instance.collection(ApiEndpoints.syncCollection).doc(ApiEndpoints.syncDocument);
     documentReference.snapshots().listen(listenToChangeInData);
   }
 

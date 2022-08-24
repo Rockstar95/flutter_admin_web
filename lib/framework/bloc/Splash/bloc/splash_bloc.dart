@@ -153,6 +153,7 @@ class SplashBloc extends Bloc<SplashEvent, SplashState> {
     sharePrefSaveString(sharedPref_webApiUrl, loginResponce.webApiUrl);
 
     apiEndpoints.setStrBaseUrl(loginResponce.webApiUrl);
+    MyPrint.printOnConsole("setBasicAuthPref loginResponce.webApiUrl ${loginResponce.webApiUrl} ");
     sharePrefSaveString(sharedPref_lmsUrl, loginResponce.lmsUrl);
     sharePrefSaveString(sharedPref_learnerUrl, loginResponce.learnerUrl);
   }
