@@ -64,6 +64,7 @@ import 'package:flutter_admin_web/utils/my_print.dart';
 import 'package:http/http.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../../configs/app_menu_ids.dart';
 import '../../framework/helpers/parsing_helper.dart';
 import '../common/app_colors.dart';
 import '../instabot/instabot_screen.dart';
@@ -113,7 +114,7 @@ class _ActBaseState extends State<ActBase> {
 
   GlobalKey _drawerKey = GlobalKey();
   int taskID = 0;
-  Offset currentOffset = Offset(0, 0);
+  Offset currentOffset = const Offset(0, 0);
   NativeMenuModel? nativeMenuModel;
 
   MyLearningBloc get myLearningBloc => BlocProvider.of<MyLearningBloc>(context);
@@ -228,7 +229,7 @@ class _ActBaseState extends State<ActBase> {
     }
 
     String selectedMenuInFirebase = ParsingHelper.parseStringMethod(data['selected_menu']);
-    List<NativeMenuModel> selectedMenus = appBloc.listNativeModel.where((element) => element.contextmenuId == selectedMenuInFirebase).toList();
+    List<NativeMenuModel> selectedMenus = appBloc.listNativeModel.where((element) => element.menuid == selectedMenuInFirebase).toList();
 
     NativeMenuModel? nativeMenuModel;
     if(selectedMenus.isNotEmpty) {
@@ -246,12 +247,12 @@ class _ActBaseState extends State<ActBase> {
       selectedmenu = selectedMenuInFirebase;
       appBarTitle = defaultMenuItems[selectedMenuInFirebase] ?? "Title";
     }
-    else if(selectedMenuInFirebase == "2003") {
+    else if(selectedMenuInFirebase == AppMenuIds.INSTABOT) {
       if(appBloc.uiSettingModel.enableChatBot.toLowerCase() == "true") {
-         Navigator.of(context).push(MaterialPageRoute(builder: (context) => InstaBotScreen()));
+         Navigator.of(context).push(MaterialPageRoute(builder: (context) => const InstaBotScreen()));
       }
     }
-    else if(selectedMenuInFirebase == "2004") {
+    else if(selectedMenuInFirebase == AppMenuIds.MESSAGES) {
       Navigator.of(context).push(MaterialPageRoute(builder: (context) => MessageUsersList()));
     }
 
@@ -340,9 +341,9 @@ class _ActBaseState extends State<ActBase> {
   Widget getCominSoon(context) {
     return Container(
       margin: EdgeInsets.all(ScreenUtil().setWidth(20)),
-      child: Text(
+      child: const Text(
         "Coming soon... Bottom Navigation bar items",
-        style: TextStyle(color: Colors.grey),
+        style: const TextStyle(color: Colors.grey),
       ),
     );
   }
@@ -399,7 +400,7 @@ class _ActBaseState extends State<ActBase> {
     return BottomNavigationBarItem(
       label: text,
       icon: Padding(
-        padding: EdgeInsets.all(5.0),
+        padding: const EdgeInsets.all(5.0),
         child: Icon(
           icon,
           color: Colors.white,
@@ -541,7 +542,7 @@ class _ActBaseState extends State<ActBase> {
       var strProfileImage =
           await sharePrefGetString(sharedPref_main_tempProfileImage);
       print('passing playground');
-      Divider();
+      const Divider();
       drawerOptions.add(
         Container(
           //height: 6 * SizeConfig.heightMultiplier,
@@ -573,7 +574,7 @@ class _ActBaseState extends State<ActBase> {
                   sharedPref_tempProfileImage, strProfileImage),
               ApiEndpoints.siteID = '374',
               Navigator.of(context).pushAndRemoveUntil(
-                  MaterialPageRoute(builder: (context) => SplashScreen(true)),
+                  MaterialPageRoute(builder: (context) => const SplashScreen(true)),
                   (Route<dynamic> route) => false)
             },
           ),
@@ -611,7 +612,7 @@ class _ActBaseState extends State<ActBase> {
 
   void _addMessageMenu(List<Widget> drawerOptions, BuildContext context) async {
     //Divider();
-    drawerOptions.add(SizedBox(height: 16));
+    drawerOptions.add(const SizedBox(height: 16));
     drawerOptions.add(
       Container(
         //height: 6 * SizeConfig.heightMultiplier,
@@ -647,15 +648,15 @@ class _ActBaseState extends State<ActBase> {
       //print("selectedmenu $selectedmenu");
 
       switch (selectedmenu) {
-        case "3":
+        case AppMenuIds.PROFILE:
           //return new ActSetting();
 
-          return Profile(
+          return const Profile(
             isFromProfile: true,
           );
-        case "1":
+        case AppMenuIds.MY_LEARNING:
           appBloc.listNativeModel.forEach((element) async {
-            if (element.contextmenuId == '1') {
+            if ([AppMenuIds.MY_LEARNING].contains(element.contextmenuId)) {
               nativeMenuModel = element;
               await sharePrefSaveString(
                   sharedPref_ComponentID, element.componentId);
@@ -673,9 +674,9 @@ class _ActBaseState extends State<ActBase> {
             nativeModel: nativeMenuModel!,
             contentId: contentID,
           );
-        case "17":
+        case AppMenuIds.MY_LEARNING_PLUS:
           appBloc.listNativeModel.forEach((element) async {
-            if (element.contextmenuId == '17') {
+            if (element.contextmenuId == AppMenuIds.MY_LEARNING_PLUS) {
               nativeMenuModel = element;
               await sharePrefSaveString(
                   sharedPref_ComponentID, element.componentId);
@@ -688,7 +689,7 @@ class _ActBaseState extends State<ActBase> {
             nativeModel: nativeMenuModel ?? NativeMenuModel(categoryStyle: "",componentId: "",conditions: "",contextTitle: "",contextmenuId: "",displayOrder: 0,displayname: "",image: "",isEnabled: "",isofflineMenu: "",landingpageType: "",menuid: "",parameterString: "",parentMenuId: "",repositoryId: "",siteId: "",siteUrl: "",webMenuId: 0),
             contentId: contentID,
           );
-        case "2":
+        case AppMenuIds.CATALOG:
           // ignore: missing_return
           appBloc.listNativeModel.forEach((element) async {
             if (element.displayname == appBarTitle) {
@@ -731,9 +732,9 @@ class _ActBaseState extends State<ActBase> {
           }
           //return CatalogSubCategoryScreen(categaoryID: 0,categaoryName: "",);
           break;
-        case "4":
+        case AppMenuIds.DISCUSSION:
           appBloc.listNativeModel.forEach((element) async {
-            if (element.contextmenuId == '4') {
+            if (element.contextmenuId == AppMenuIds.DISCUSSION) {
               nativeMenuModel = element;
               await sharePrefSaveString(
                   sharedPref_ComponentID, element.componentId);
@@ -750,9 +751,9 @@ class _ActBaseState extends State<ActBase> {
                   : DiscussionMain(
                       isFromPush: false,
                     );
-        case "5":
+        case AppMenuIds.QnA:
           appBloc.listNativeModel.forEach((element) async {
-            if (element.contextmenuId == '5') {
+            if (element.contextmenuId == AppMenuIds.QnA) {
               nativeMenuModel = element;
               await sharePrefSaveString(
                   sharedPref_ComponentID, element.componentId);
@@ -763,9 +764,9 @@ class _ActBaseState extends State<ActBase> {
           return UserQuestionsList(
             nativeMenuModel: nativeMenuModel,
           );
-        case "11":
+        case AppMenuIds.MY_COMPETENCIES:
           appBloc.listNativeModel.forEach((element) async {
-            if (element.contextmenuId == '11') {
+            if (element.contextmenuId == AppMenuIds.MY_COMPETENCIES) {
               nativeMenuModel = element;
               await sharePrefSaveString(
                   sharedPref_ComponentID, element.componentId);
@@ -776,9 +777,9 @@ class _ActBaseState extends State<ActBase> {
           return JobRoleSkills(
             nativeMenuModel: nativeMenuModel!,
           );
-        case "14":
+        case AppMenuIds.PROGRESS_REPORT:
           appBloc.listNativeModel.forEach((element) async {
-            if (element.contextmenuId == '14') {
+            if ([AppMenuIds.PROGRESS_REPORT].contains(element.contextmenuId)) {
               nativeMenuModel = element;
               await sharePrefSaveString(
                   sharedPref_ComponentID, element.componentId);
@@ -789,12 +790,12 @@ class _ActBaseState extends State<ActBase> {
           return ProgressReportGraph(
             nativeMenuModel: nativeMenuModel!,
           );
-        case "7":
+        case AppMenuIds.WEB_PAGE_SCREEN:
           String parmString = "";
           appBloc.listNativeModel.forEach((element) async {
             print("displayname ${element.displayname}");
             print("parameterString ${element.parameterString}");
-            if (element.contextmenuId == "7") {
+            if (element.contextmenuId == AppMenuIds.WEB_PAGE_SCREEN) {
               parmString = element.parameterString;
             }
           });
@@ -808,20 +809,20 @@ class _ActBaseState extends State<ActBase> {
                 parmString.split("=")[1];
           }
           return WebPageScreen(urlStr);
-        case "8":
+        case AppMenuIds.CLASSROOM_EVENTS:
           appBloc.listNativeModel.forEach((element) async {
             //print("Display Name:${element.displayname}");
-            if (element.contextmenuId == "8") {
+            if ([AppMenuIds.CLASSROOM_EVENTS].contains(element.contextmenuId)) {
               await sharePrefSaveString(
                   sharedPref_ComponentID, element.componentId);
               await sharePrefSaveString(
                   sharedPref_RepositoryId, element.repositoryId);
             }
           });
-          return EventMainPage();
-        case "9":
+          return const EventMainPage();
+        case AppMenuIds.COMMUNITIES:
           appBloc.listNativeModel.forEach((element) async {
-            if (element.contextmenuId == '9') {
+            if (element.contextmenuId == AppMenuIds.COMMUNITIES) {
               nativeMenuModel = element;
               await sharePrefSaveString(
                   sharedPref_ComponentID, element.componentId);
@@ -830,9 +831,9 @@ class _ActBaseState extends State<ActBase> {
             }
           });
           return LearningCommunitiesScreen(nativeMenuModel: nativeMenuModel!);
-        case "12": // leaderboard
+        case AppMenuIds.LEADERBOARD: // leaderboard
           appBloc.listNativeModel.forEach((element) async {
-            if (element.contextmenuId == '12') {
+            if (element.contextmenuId == AppMenuIds.LEADERBOARD) {
               nativeMenuModel = element;
               await sharePrefSaveString(
                   sharedPref_ComponentID, element.componentId);
@@ -841,9 +842,9 @@ class _ActBaseState extends State<ActBase> {
             }
           });
           return MyDashBoardScreen(nativeMenuModel: nativeMenuModel!);
-        case "13": // Myachivements
+        case AppMenuIds.MyAchivements: // Myachivements
           appBloc.listNativeModel.forEach((element) async {
-            if (element.contextmenuId == '13') {
+            if (element.contextmenuId == AppMenuIds.MyAchivements) {
               nativeMenuModel = element;
               await sharePrefSaveString(
                   sharedPref_ComponentID, element.componentId);
@@ -852,25 +853,14 @@ class _ActBaseState extends State<ActBase> {
             }
           });
           return MyDashBoardScreen(nativeMenuModel: nativeMenuModel!);
-        case "17": // Myachivements
-          appBloc.listNativeModel.forEach((element) async {
-            if (element.contextmenuId == '17') {
-              nativeMenuModel = element;
-              await sharePrefSaveString(
-                  sharedPref_ComponentID, element.componentId);
-              await sharePrefSaveString(
-                  sharedPref_RepositoryId, element.repositoryId);
-            }
-          });
-          return MyDashBoardScreen(nativeMenuModel: nativeMenuModel!);
-        case "2000":
+        case AppMenuIds.SETTINGS:
           //return new ActSetting();
           return SiteSetting(refresh, true);
-        case "2001":
+        case AppMenuIds.FEEDBACK:
           return FeedbackScreen(updateTitle);
-        case '2002':
+        case AppMenuIds.NOTIFICATIONS:
           appBloc.listNativeModel.forEach((element) async {
-            if (element.contextmenuId == '2002') {
+            if (element.contextmenuId == AppMenuIds.NOTIFICATIONS) {
               nativeMenuModel = element;
               await sharePrefSaveString(
                   sharedPref_ComponentID, element.componentId);
@@ -880,10 +870,10 @@ class _ActBaseState extends State<ActBase> {
           });
           return Notifications(
               nativeMenuModel: nativeMenuModel ?? NativeMenuModel(categoryStyle: "",componentId: "",conditions: "",contextTitle: "",contextmenuId: "",displayOrder: 0,displayname: "",image: "",isEnabled: "",isofflineMenu: "",landingpageType: "",menuid: "",parameterString: "",parentMenuId: "",repositoryId: "",siteId: "",siteUrl: "",webMenuId: 0));
-        case "10":
+        case AppMenuIds.MY_CONNECTIONS:
           return ConnectionIndexScreen();
         default:
-          return Text(
+          return const Text(
             "Work in PROGRESS Drawer",
             style: TextStyle(color: Colors.grey),
           );
@@ -906,7 +896,7 @@ class _ActBaseState extends State<ActBase> {
           if (landingpageType == "1") {
             return CatalogMainScreen();
           } else if (landingpageType == "2") {
-            return CatalogSubCategoryScreen(
+            return const CatalogSubCategoryScreen(
               categaoryID: 0,
               categaoryName: "",
             );
@@ -940,7 +930,7 @@ class _ActBaseState extends State<ActBase> {
                   sharedPref_RepositoryId, element.repositoryId);
             }
           });
-          return EventMainPage();
+          return const EventMainPage();
         default:
           return getCominSoon(context);
       }
@@ -1088,11 +1078,11 @@ class _ActBaseState extends State<ActBase> {
                 } else {
                   return ExpansionTile(
                       trailing: _buildList(listNativeModel[pos]).length == 0
-                          ? Icon(
+                          ? const Icon(
                               Icons.arrow_drop_down,
                               color: Colors.white,
                             )
-                          : Icon(Icons.keyboard_arrow_down),
+                          : const Icon(Icons.keyboard_arrow_down),
                       leading: Icon((listNativeModel[pos].image != null &&
                               listNativeModel[pos].image.length > 0)
                           ? listNativeModel[pos].image.contains("-")
@@ -1155,9 +1145,9 @@ class _ActBaseState extends State<ActBase> {
     appBloc.add(WishlistCountEvent());
 
     defaultMenuItems = {
-      "2000" : appBloc.localstr.loginActionsheetSettingsoption,
-      "2001" : appBloc.feedbackTitle,
-      "2002" : "Notifications",
+      AppMenuIds.SETTINGS : appBloc.localstr.loginActionsheetSettingsoption,
+      AppMenuIds.FEEDBACK : appBloc.feedbackTitle,
+      AppMenuIds.NOTIFICATIONS : "Notifications",
     };
 
     if (widget.notification != null && widget.isFromNotification) {
@@ -1375,7 +1365,7 @@ class _ActBaseState extends State<ActBase> {
             Container(
               //height: 6 * SizeConfig.heightMultiplier,
               child: ListTile(
-                leading: Icon(
+                leading: const Icon(
                   Icons.settings,
                   color: Colors.grey,
                 ),
@@ -1415,11 +1405,11 @@ class _ActBaseState extends State<ActBase> {
                           '0x${"f02d"}',
                         ))),
                   trailing: _buildList(listNativeModel[i]).length == 0
-                      ? Icon(
+                      ? const Icon(
                           Icons.arrow_drop_down,
                           color: Colors.white,
                         )
-                      : Icon(Icons.keyboard_arrow_down),
+                      : const Icon(Icons.keyboard_arrow_down),
                   title: GestureDetector(
                     onTap: () {
                       if (_buildList(listNativeModel[i]).length == 0) {
@@ -1568,7 +1558,7 @@ class _ActBaseState extends State<ActBase> {
                     "assets/images/chatbot-chat-Icon.png",
                     height: 30,
                     width: 30,
-                    errorBuilder: (_, __, ___) => Icon(Icons.info),
+                    errorBuilder: (_, __, ___) => const Icon(Icons.info),
                   ),
                   title: Text(
                     "InstaBot",
@@ -1579,7 +1569,7 @@ class _ActBaseState extends State<ActBase> {
                   ),
                   onTap: () async => {
                     Navigator.pop(context),
-                    Navigator.of(context).push(MaterialPageRoute(builder: (context) => InstaBotScreen())),
+                    Navigator.of(context).push(MaterialPageRoute(builder: (context) => const InstaBotScreen())),
                     // documentReference.update({"selected_menu":"2003"}),
                   },
                 ),
@@ -1693,10 +1683,10 @@ class _ActBaseState extends State<ActBase> {
                           Icons.arrow_drop_down,
                           color: Color(int.parse("0xFF${appBloc.uiSettingModel.menuBGColor.substring(1, 7).toUpperCase()}")),
                         )
-                      : Icon(Icons.keyboard_arrow_down),
+                      : const Icon(Icons.keyboard_arrow_down),
                   title: Text(
                     nativeMenuModel.displayname,
-                    style: TextStyle(
+                    style: const TextStyle(
                       color: Colors.black)
                         // color: (appBarTitle == nativeMenuModel.displayname)
                         //     ? Color(int.parse("0xFF${appBloc.uiSettingModel.appButtonBgColor.substring(1, 7).toUpperCase()}"))
@@ -1820,7 +1810,7 @@ class _ActBaseState extends State<ActBase> {
         isGlobalConfigurationLoading
             ? Container(
             color: Colors.black.withOpacity(0.3),
-            child: SpinKitFadingCircle(color: Colors.green,))
+            child: const SpinKitFadingCircle(color: Colors.green,))
             : Container()
       ],
     );
@@ -1892,14 +1882,14 @@ class _ActBaseState extends State<ActBase> {
                 right:selectedmenu =="4"? 0: 11,
                 top: 12,
                 child: Container(
-                  padding: EdgeInsets.all(2),
+                  padding: const EdgeInsets.all(2),
                   decoration: BoxDecoration(
                     //color: Color(int.parse("0xFF${appBloc.uiSettingModel.appButtonBgColor.isNotEmpty ? appBloc.uiSettingModel.appButtonBgColor.substring(1, 7).toUpperCase() : "000000"}")),
                     color: lableColor,
                     shape: BoxShape.circle,
                     border: Border.all(color: backgroundColor),
                   ),
-                  constraints: BoxConstraints(
+                  constraints: const BoxConstraints(
                     minWidth: 14,
                     minHeight: 14,
                   ),
@@ -2042,7 +2032,7 @@ class _ActBaseState extends State<ActBase> {
                     right: 6,
                     top: 6,
                     child: Container(
-                      padding: EdgeInsets.all(2),
+                      padding: const EdgeInsets.all(2),
                       decoration: BoxDecoration(
                         // color: Color(int.parse(
                         //     "0xFF${appBloc.uiSettingModel.appButtonBgColor.substring(1, 7).toUpperCase()}")),
@@ -2050,13 +2040,13 @@ class _ActBaseState extends State<ActBase> {
                         shape: BoxShape.circle,
                         border: Border.all(color: backgroundColor),
                       ),
-                      constraints: BoxConstraints(
+                      constraints: const BoxConstraints(
                         minWidth: 14,
                         minHeight: 14,
                       ),
                       child: Text(
                         appBloc.wishlistcount,
-                        style: TextStyle(
+                        style: const TextStyle(
                           color: Colors.white,
                           fontSize: 8,
                         ),
@@ -2112,7 +2102,7 @@ class _ActBaseState extends State<ActBase> {
                     right: 6,
                     top: 14,
                     child: Container(
-                      padding: EdgeInsets.all(1),
+                      padding: const EdgeInsets.all(1),
                       decoration: BoxDecoration(
                         color: lableColor,
                         shape: BoxShape.circle,
@@ -2121,7 +2111,7 @@ class _ActBaseState extends State<ActBase> {
                         //     "0xFF${appBloc.uiSettingModel.appButtonBgColor.substring(1, 7).toUpperCase()}")),
                         // borderRadius: BorderRadius.circular(6),
                       ),
-                      constraints: BoxConstraints(
+                      constraints: const BoxConstraints(
                         minWidth: 14,
                         minHeight: 14,
                       ),
@@ -2158,7 +2148,7 @@ class _ActBaseState extends State<ActBase> {
                           color: Color(int.parse(
                               "0xFF${appBloc.uiSettingModel.appHeaderColor.substring(1, 7).toUpperCase()}")),
                           child: Padding(
-                              padding: EdgeInsets.only(right: 8.0),
+                              padding: const EdgeInsets.only(right: 8.0),
                               child: Icon(
                                 Icons.list,
                                 color: Color(int.parse(
@@ -2222,7 +2212,7 @@ class _ActBaseState extends State<ActBase> {
             color: Colors.white,
             child: SafeArea(
               child: Stack(children: <Widget>[
-              isLoading ? SpinKitFadingCircle(color: Colors.green,) : Column(
+              isLoading ? const SpinKitFadingCircle(color: Colors.green,) : Column(
                   children: <Widget>[
                     DrawerHeaderWidget(
                       signOutFunc: signOutFunc,
@@ -2356,7 +2346,7 @@ class _ActBaseState extends State<ActBase> {
                               "0xFF${appBloc.uiSettingModel.appTextColor.substring(1, 7).toUpperCase()}"))
                           : Colors.black),
                 ),
-                leading: Icon(
+                leading: const Icon(
                   Icons.arrow_drop_down,
                   color: Colors.white,
                 ))));
