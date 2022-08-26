@@ -3906,12 +3906,14 @@ class _EventTrackListState extends State<EventTrackList> with TickerProviderStat
     required DummyMyCatelogResponseTable2 table2,
     bool isContentisolation = false
   }) async {
-    bool networkAvailable = await AppDirectory.checkInternetConnectivity();
-    bool isCourseDownloaded = await EventTrackController().checkIfContentIsAvailableOffline(
-      context: context,
-      parentMyLearningModel: widget.myLearningModel,
-      table2: table2,
-    );
+    // bool networkAvailable = await AppDirectory.checkInternetConnectivity();
+    // bool isCourseDownloaded = await EventTrackController().checkIfContentIsAvailableOffline(
+    //   context: context,
+    //   parentMyLearningModel: widget.myLearningModel,
+    //   table2: table2,
+    // );
+    bool networkAvailable =true;
+    bool isCourseDownloaded = false;
 
     if (networkAvailable && isCourseDownloaded) {
       // launch offline
@@ -3985,7 +3987,7 @@ class _EventTrackListState extends State<EventTrackList> with TickerProviderStat
     if (url.isNotEmpty) {
       if (table2.objecttypeid == 26) {
         await Navigator.of(context).push(MaterialPageRoute(
-            builder: (context) => AdvancedWebCourseLaunch(url, table2.name)));
+            builder: (context) => InAppWebCourseLaunch(url, table2)));
       } else {
         await Navigator.of(context).push(MaterialPageRoute(
             builder: (context) => InAppWebCourseLaunch(url, table2)));
@@ -4074,11 +4076,29 @@ class _EventTrackListState extends State<EventTrackList> with TickerProviderStat
 
         if (table2.objecttypeid == 26) {
           // assignmenturl = await '$assignmenturl/ismobilecontentview/true';
-          await Navigator.of(context).push(
+          // await Navigator.of(context).push(
+          //   MaterialPageRoute(
+          //     builder: (context) =>
+          //         AdvancedWebCourseLaunch(courseUrl, table2.name),
+          //   ),
+          // );
+          await Navigator.of(context)
+              .push(
             MaterialPageRoute(
-              builder: (context) =>
-                  AdvancedWebCourseLaunch(courseUrl, table2.name),
+              builder: (context) => InAppWebCourseLaunch(courseUrl, table2),
             ),
+          )
+              .then(
+                (value) => {
+              if (value ?? true)
+                {
+                  /*eventTrackBloc.add(GetTrackListData(
+                isInternet: true,
+                appBloc: appBloc,
+                isTraxkList: widget.isTraxkList,
+                myLearningModel: widget.myLearningModel)),*/
+                }
+            },
           );
         } else {
           // assignmenturl = await '$assignmenturl/ismobilecontentview/true';
@@ -5123,6 +5143,23 @@ class _EventTrackListState extends State<EventTrackList> with TickerProviderStat
     Navigator.of(context).push(MaterialPageRoute(
         builder: (context) =>
             AdvancedWebCourseLaunch(urlpath.trim(), refItem.title)));
+    // Navigator.of(context).push(
+    //   MaterialPageRoute(
+    //     builder: (context) => InAppWebCourseLaunch(urlpath.trim(), refItem),
+    //   ),
+    // )
+    //     .then(
+    //       (value) => {
+    //     if (value ?? true)
+    //       {
+    //         /*eventTrackBloc.add(GetTrackListData(
+    //             isInternet: true,
+    //             appBloc: appBloc,
+    //             isTraxkList: widget.isTraxkList,
+    //             myLearningModel: widget.myLearningModel)),*/
+    //       }
+    //   },
+    // );
   }
 
   /*

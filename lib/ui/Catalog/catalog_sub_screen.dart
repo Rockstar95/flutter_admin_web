@@ -2923,7 +2923,7 @@ class _CatalogSubScreenState extends State<CatalogSubScreen> {
       if (url.isNotEmpty) {
         if (table2.objecttypeid == 26) {
           await Navigator.of(context).push(MaterialPageRoute(
-              builder: (context) => AdvancedWebCourseLaunch(url, table2.name)));
+              builder: (context) => InAppWebCourseLaunch(url, table2)));
         } else {
           await Navigator.of(context).push(MaterialPageRoute(
               builder: (context) => InAppWebCourseLaunch(url, table2)));

@@ -86,16 +86,17 @@ class GotoCourseLaunchContentisolation {
 
     String base64lrsAuthKey = authKey + ":" + authPassword;
 
-    String dir = await AppDirectory.getDocumentsDirectory();
+    // String dir = await AppDirectory.getDocumentsDirectory();
 
-    String downloadDestFolderPath = dir + "/.Mydownloads/Contentdownloads" + "/" + contentid;
-
-    String finalDownloadedFilePath = downloadDestFolderPath + "/" + startPage;
-
-    print('downlaodedfile $finalDownloadedFilePath');
-
-    File myFile = new File(finalDownloadedFilePath);
-    bool isDownloadFileExists = await myFile.exists();
+    // String downloadDestFolderPath = dir + "/.Mydownloads/Contentdownloads" + "/" + contentid;
+    //
+    // String finalDownloadedFilePath = downloadDestFolderPath + "/" + startPage;
+    //
+    // print('downlaodedfile $finalDownloadedFilePath');
+    //
+    // File myFile = new File(finalDownloadedFilePath);
+    // bool isDownloadFileExists = await myFile.exists();
+    bool isDownloadFileExists = false;
     String offlinePath = "";
 
     /// need to ask what we need to do here and when this condition accours
@@ -108,161 +109,161 @@ class GotoCourseLaunchContentisolation {
     }
 
     if (isDownloadFileExists && objecttypeid != "70") {
-      print('if___course_launch_ogjtypr $objecttypeid');
-
-      ///TIN CAN OPTIONS
-
-      String lrsEndPoint = "";
-
-      String lrsActor = "{\"name\":[\"" +
-          userName +
-          "\"],\"account\":[{\"accountServiceHomePage\":\"" +
-          ApiEndpoints.mainSiteURL +
-          "\",\"accountName\":\"" +
-          password +
-          "|" +
-          strUserID +
-          "\"}],\"objectType\":\"Agent\"}&activity_id=" +
-          activityid +
-          "&grouping=" +
-          activityid;
-
-      String lrsAuthorizationKey = "";
-
-      String enabletincanSupportforco = "";
-
-      String enabletincanSupportforao = "";
-
-      String enabletincanSupportforlt = "";
-
-      String isTinCan = "";
-
-      String autKey = "";
-
-      try {
-        if (tinCanData != null) {
-          lrsEndPoint = tinCanData.lrsendpoint;
-          autKey = base64lrsAuthKey;
-          enabletincanSupportforco = tinCanData.enabletincansupportforco;
-          enabletincanSupportforao = tinCanData.enabletincansupportforao;
-          enabletincanSupportforlt = tinCanData.enabletincansupportforlt;
-          isTinCan = tinCanData.istincan;
-        }
-      } catch (e) {
-        //e.printStackTrace();
-      }
-
-      Uint8List encrpt = utf8.encode(autKey) as Uint8List;
-      String base64 = base64Encode(encrpt);
-      lrsAuthorizationKey = "Basic%20" + base64;
-
-      ///End TIN CAN OPTIONS
-
-      /// Generate Offline Path
-
-      if (objecttypeid == "8" || objecttypeid == "9" || objecttypeid == "10") {
-        /// get something from database is pending
-
-        /// Remove this line
-        offlinePath = "file://" + finalDownloadedFilePath;
-      }
-      else if (objecttypeid == "102") {
-        String encodedString = lrsActor;
-
-        offlinePath = "file://" + offlinePath;
-        offlinePath = offlinePath +
-            "?&endpoint=" +
-            lrsEndPoint +
-            "&auth=" +
-            lrsAuthorizationKey +
-            "&actor=" +
-            encodedString +
-            "&cid=0&nativeappURL=true&IsInstancyContent=true";
-      }
-      else if (objecttypeid == "688") {
-      }
-      else if (objecttypeid == "26") {
-        offlinePath = "file://" +
-            dir +
-            "/Mydownloads/Content/LaunchCourse.html?contentpath=file://" +
-            offlinePath;
-      }
-      else if (objecttypeid == "52") {
-        String cerName = contentid + "/Certificate";
-
-        offlinePath = offlinePath + "/" + userid + "/" + cerName + ".pdf";
-      }
-      else if (objecttypeid == "11" || objecttypeid == "14" || objecttypeid == "21" || objecttypeid == "36" || objecttypeid == "28") {
-        offlinePath = "file://" + offlinePath;
-
-        /// CMIModel ,LearnerSessionModel
-
-        if (myLearningModel.actualstatus == "Not Started" ||
-            myLearningModel.actualstatus == "") {
-          // need to save CMI model
-
-          CMIModel model = CMIModel(
-              datecompleted: "",
-              siteId: myLearningModel.siteid.toString(),
-              userId: myLearningModel.userid,
-              startdate: await getCurrentDateTimeInStr(),
-              scoId: myLearningModel.scoid,
-              isupdate: "false",
-              status: "incomplete",
-              seqNum: "0",
-              percentageCompleted: "50",
-              timespent: "",
-              objecttypeid: myLearningModel.objecttypeid.toString(),
-              sitrurl: myLearningModel.siteurl);
-
-          ///databaseH.injectIntoCMITable(model, "false");
-
-          /// need to find getLatestAttempt
-          //int attempts = databaseH.getLatestAttempt(myLearningModel);
-
-          int attempts = 0;
-
-          LearnerSessionModel learnerSessionModel = new LearnerSessionModel(
-            siteID: myLearningModel.siteid.toString(),
-            userID: myLearningModel.userid.toString(),
-            scoID: myLearningModel.scoid.toString(),
-            attemptNumber: (attempts + 1).toString(),
-            sessionDateTime: await getCurrentDateTimeInStr(),
-          );
-
-          ///databaseH.insertUserSession(learnerSessionModel);
-
-        }
-      }
-      else {
-        offlinePath = "file://" + finalDownloadedFilePath;
-      }
-
-      String offlinePathEncode = offlinePath.replaceAll(" ", "%20");
-
-      print("final....offlinePathEncode....path.....$offlinePathEncode");
-      print("final....finalDownloadedFilePath....path.....$finalDownloadedFilePath");
-
-      if (finalDownloadedFilePath.contains(".mp4")) {
-        Navigator.of(context).push(MaterialPageRoute(
-            builder: (context) => VideoCourseLaunch(
-                  myFile: myFile,
-                  pdfBytes: myFile.readAsBytesSync(),
-                )));
-      }
-      else if (finalDownloadedFilePath.toLowerCase().contains(".xlsx") ||
-          finalDownloadedFilePath.toLowerCase().contains(".xls") ||
-          finalDownloadedFilePath.toLowerCase().contains(".ppt") ||
-          finalDownloadedFilePath.toLowerCase().contains(".pptx") ||
-          finalDownloadedFilePath.toLowerCase().contains(".pdf") ||
-          finalDownloadedFilePath.toLowerCase().contains(".doc") ||
-          finalDownloadedFilePath.toLowerCase().contains(".docx")) {
-        await openFile(finalDownloadedFilePath);
-      } else {
-        print('finalDownloadedFilePath $finalDownloadedFilePath');
-
-        alertDialog(context);
-      }
+    //   print('if___course_launch_ogjtypr $objecttypeid');
+    //
+    //   ///TIN CAN OPTIONS
+    //
+    //   String lrsEndPoint = "";
+    //
+    //   String lrsActor = "{\"name\":[\"" +
+    //       userName +
+    //       "\"],\"account\":[{\"accountServiceHomePage\":\"" +
+    //       ApiEndpoints.mainSiteURL +
+    //       "\",\"accountName\":\"" +
+    //       password +
+    //       "|" +
+    //       strUserID +
+    //       "\"}],\"objectType\":\"Agent\"}&activity_id=" +
+    //       activityid +
+    //       "&grouping=" +
+    //       activityid;
+    //
+    //   String lrsAuthorizationKey = "";
+    //
+    //   String enabletincanSupportforco = "";
+    //
+    //   String enabletincanSupportforao = "";
+    //
+    //   String enabletincanSupportforlt = "";
+    //
+    //   String isTinCan = "";
+    //
+    //   String autKey = "";
+    //
+    //   try {
+    //     if (tinCanData != null) {
+    //       lrsEndPoint = tinCanData.lrsendpoint;
+    //       autKey = base64lrsAuthKey;
+    //       enabletincanSupportforco = tinCanData.enabletincansupportforco;
+    //       enabletincanSupportforao = tinCanData.enabletincansupportforao;
+    //       enabletincanSupportforlt = tinCanData.enabletincansupportforlt;
+    //       isTinCan = tinCanData.istincan;
+    //     }
+    //   } catch (e) {
+    //     //e.printStackTrace();
+    //   }
+    //
+    //   Uint8List encrpt = utf8.encode(autKey) as Uint8List;
+    //   String base64 = base64Encode(encrpt);
+    //   lrsAuthorizationKey = "Basic%20" + base64;
+    //
+    //   ///End TIN CAN OPTIONS
+    //
+    //   /// Generate Offline Path
+    //
+    //   if (objecttypeid == "8" || objecttypeid == "9" || objecttypeid == "10") {
+    //     /// get something from database is pending
+    //
+    //     /// Remove this line
+    //     offlinePath = "file://" + finalDownloadedFilePath;
+    //   }
+    //   else if (objecttypeid == "102") {
+    //     String encodedString = lrsActor;
+    //
+    //     offlinePath = "file://" + offlinePath;
+    //     offlinePath = offlinePath +
+    //         "?&endpoint=" +
+    //         lrsEndPoint +
+    //         "&auth=" +
+    //         lrsAuthorizationKey +
+    //         "&actor=" +
+    //         encodedString +
+    //         "&cid=0&nativeappURL=true&IsInstancyContent=true";
+    //   }
+    //   else if (objecttypeid == "688") {
+    //   }
+    //   else if (objecttypeid == "26") {
+    //     offlinePath = "file://" +
+    //         dir +
+    //         "/Mydownloads/Content/LaunchCourse.html?contentpath=file://" +
+    //         offlinePath;
+    //   }
+    //   else if (objecttypeid == "52") {
+    //     String cerName = contentid + "/Certificate";
+    //
+    //     offlinePath = offlinePath + "/" + userid + "/" + cerName + ".pdf";
+    //   }
+    //   else if (objecttypeid == "11" || objecttypeid == "14" || objecttypeid == "21" || objecttypeid == "36" || objecttypeid == "28") {
+    //     offlinePath = "file://" + offlinePath;
+    //
+    //     /// CMIModel ,LearnerSessionModel
+    //
+    //     if (myLearningModel.actualstatus == "Not Started" ||
+    //         myLearningModel.actualstatus == "") {
+    //       // need to save CMI model
+    //
+    //       CMIModel model = CMIModel(
+    //           datecompleted: "",
+    //           siteId: myLearningModel.siteid.toString(),
+    //           userId: myLearningModel.userid,
+    //           startdate: await getCurrentDateTimeInStr(),
+    //           scoId: myLearningModel.scoid,
+    //           isupdate: "false",
+    //           status: "incomplete",
+    //           seqNum: "0",
+    //           percentageCompleted: "50",
+    //           timespent: "",
+    //           objecttypeid: myLearningModel.objecttypeid.toString(),
+    //           sitrurl: myLearningModel.siteurl);
+    //
+    //       ///databaseH.injectIntoCMITable(model, "false");
+    //
+    //       /// need to find getLatestAttempt
+    //       //int attempts = databaseH.getLatestAttempt(myLearningModel);
+    //
+    //       int attempts = 0;
+    //
+    //       LearnerSessionModel learnerSessionModel = new LearnerSessionModel(
+    //         siteID: myLearningModel.siteid.toString(),
+    //         userID: myLearningModel.userid.toString(),
+    //         scoID: myLearningModel.scoid.toString(),
+    //         attemptNumber: (attempts + 1).toString(),
+    //         sessionDateTime: await getCurrentDateTimeInStr(),
+    //       );
+    //
+    //       ///databaseH.insertUserSession(learnerSessionModel);
+    //
+    //     }
+    //   }
+    //   else {
+    //     offlinePath = "file://" + finalDownloadedFilePath;
+    //   }
+    //
+    //   String offlinePathEncode = offlinePath.replaceAll(" ", "%20");
+    //
+    //   print("final....offlinePathEncode....path.....$offlinePathEncode");
+    //   print("final....finalDownloadedFilePath....path.....$finalDownloadedFilePath");
+    //
+    //   if (finalDownloadedFilePath.contains(".mp4")) {
+    //     Navigator.of(context).push(MaterialPageRoute(
+    //         builder: (context) => VideoCourseLaunch(
+    //               myFile: myFile,
+    //               pdfBytes: myFile.readAsBytesSync(),
+    //             )));
+    //   }
+    //   else if (finalDownloadedFilePath.toLowerCase().contains(".xlsx") ||
+    //       finalDownloadedFilePath.toLowerCase().contains(".xls") ||
+    //       finalDownloadedFilePath.toLowerCase().contains(".ppt") ||
+    //       finalDownloadedFilePath.toLowerCase().contains(".pptx") ||
+    //       finalDownloadedFilePath.toLowerCase().contains(".pdf") ||
+    //       finalDownloadedFilePath.toLowerCase().contains(".doc") ||
+    //       finalDownloadedFilePath.toLowerCase().contains(".docx")) {
+    //     await openFile(finalDownloadedFilePath);
+    //   } else {
+    //     print('finalDownloadedFilePath $finalDownloadedFilePath');
+    //
+    //     alertDialog(context);
+    //   }
     }
 
     /// this is offline part

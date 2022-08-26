@@ -1327,9 +1327,10 @@ class EventTrackBloc extends Bloc<EventTrackEvent, EventTrackState> {
       String contentId = "${parentContentId}_${table2.contentid}";
       //MyPrint.printOnConsole("checkifFileExist called for contentid:${contentId}");
       if(removedFromDownloadsMap[contentId] != true) {
-        String downloadDestFolderPath = await generateDownloadPath(parentContentId, table2, appBloc);
+        // String downloadDestFolderPath = await generateDownloadPath(parentContentId, table2, appBloc);
         //MyPrint.printOnConsole("checking exist for downloadDestFolderPath:${downloadDestFolderPath}");
-        table2.isdownloaded = await checkFile(downloadDestFolderPath);
+        // table2.isdownloaded = await checkFile(downloadDestFolderPath);
+        table2.isdownloaded = false;
         //MyPrint.printOnConsole("isdownloaded for ${contentId} with name:${table2.name}:${table2.isdownloaded}");
       }
       else {

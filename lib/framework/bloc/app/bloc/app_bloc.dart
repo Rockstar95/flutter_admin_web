@@ -605,8 +605,7 @@ class AppBloc extends Bloc<AppEvent, AppState> {
     listNativeModel = [];
 
     mobileGetNativeMenusResponse.table.forEach((element) {
-      developer.log(
-          "listNativeModel Title:${element.displayname}, Conditions:${element.conditions}");
+      developer.log("listNativeModel Title:${element.displayname}, Conditions:${element.conditions}, Id:${element.contextmenuid}");
       nativeMenuModel = new NativeMenuModel(categoryStyle: "",componentId: "",conditions: "",contextTitle: "",contextmenuId: "",displayOrder: 0,displayname: "",image: "",isEnabled: "",isofflineMenu: "",landingpageType: "",menuid: "",parameterString: "",parentMenuId: "",repositoryId: "",siteId: "",siteUrl: "",webMenuId: 0);
       if (element.menuid != 0) {
         nativeMenuModel.setmenuid(element.menuid.toString());

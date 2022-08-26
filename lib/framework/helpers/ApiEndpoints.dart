@@ -12,6 +12,7 @@ class ApiEndpoints {
   // //static String mainSiteURL = "https://learning.instancy.com/";
   // //static String mainSiteURL = "https://enterprisedemo.instancy.net/";
 
+
   // //static String mainSiteURL = "https://entmobileGetLearningPortalInfoResponseerprisedemo.instancy.net/";
   // //static String appAuthURL = "https://newazureplatform.instancy.com/api/";
   static String appAuthURL = "https://masterapilive.instancy.com/api/";
@@ -67,6 +68,11 @@ class ApiEndpoints {
   // static String mainSiteURL = "https://www.iamalwaysastudent.com/";
   // static String appWebApiUrl = "https://api.iamalwaysastudent.com/api/";
   // static String appAuthURL = "https://masterapilive.instancy.com/api/";
+
+  static String syncCollection = "admin_demo_staging";
+  static String syncDocument = "upgradedenterprise";
+
+
 
   static String _strBaseUrl = "";
 

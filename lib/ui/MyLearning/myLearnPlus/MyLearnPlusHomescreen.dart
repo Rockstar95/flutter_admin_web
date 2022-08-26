@@ -1137,9 +1137,10 @@ class MyLearnPlusHome extends State<MyLearnPlusHomeScreen> with SingleTickerProv
         if (table2.objecttypeid == 26) {
           // assignmenturl = await '$assignmenturl/ismobilecontentview/true';
           // print('assignmenturl is : $assignmenturl');
-          await Navigator.of(context).push(MaterialPageRoute(
+          await Navigator.of(context)
+              .push(MaterialPageRoute(
               builder: (context) =>
-                  AdvancedWebCourseLaunch(courseUrl, table2.name)));
+                  InAppWebCourseLaunch(courseUrl, table2)));
         } else {
           // assignmenturl = await '$assignmenturl/ismobilecontentview/true';
           //print('assignmenturl is : $assignmenturl');
@@ -3429,8 +3430,19 @@ class MyLearnPlusHome extends State<MyLearnPlusHomeScreen> with SingleTickerProv
       print('urldataaaaa $url');
       if (url!.isNotEmpty) {
         if (table2.objecttypeid == 26) {
-          Navigator.of(context).push(MaterialPageRoute(
-              builder: (context) => AdvancedWebCourseLaunch(url, table2.name)));
+          Navigator.of(context)
+              .push(MaterialPageRoute(
+              builder: (context) => InAppWebCourseLaunch(url, table2)))
+              .then((value) => {
+            if (value)
+              {
+                //  ApicallingByinput(currentTabStatus,'',tabInfo)
+                myLearningBloc.add(GetListEvent(pageNumber: 1, pageSize: 10, searchText: myLearningBloc.searchMyCourseString))
+
+                // myLearningBloc.add(GetListEvent(
+                //     pageNumber: 1, pageSize: 100, searchText: ""))
+              }
+          });
         } else {
           Navigator.of(context)
               .push(MaterialPageRoute(

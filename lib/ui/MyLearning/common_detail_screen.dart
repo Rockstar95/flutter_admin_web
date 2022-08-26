@@ -3338,8 +3338,7 @@ class _CommonDetailScreenState extends State<CommonDetailScreen> with SingleTick
         if (url.isNotEmpty) {
           if (table2.objecttypeid == 26) {
             await Navigator.of(context).push(MaterialPageRoute(
-                builder: (context) =>
-                    AdvancedWebCourseLaunch(url, table2.name)));
+                builder: (context) => InAppWebCourseLaunch(url, table2)));
           } else {
             await Navigator.of(context).push(MaterialPageRoute(
                 builder: (context) => InAppWebCourseLaunch(url, table2)));
@@ -3519,8 +3518,7 @@ class _CommonDetailScreenState extends State<CommonDetailScreen> with SingleTick
 
         if (table2.objecttypeid == 26) {
           await Navigator.of(context).push(MaterialPageRoute(
-              builder: (context) =>
-                  AdvancedWebCourseLaunch(courseUrl, table2.name)));
+              builder: (context) => InAppWebCourseLaunch(courseUrl, table2)));
         }
         else {
           await Navigator.of(context).push(MaterialPageRoute(
@@ -5048,7 +5046,7 @@ class _CommonDetailScreenState extends State<CommonDetailScreen> with SingleTick
       if (url.isNotEmpty) {
         if (table2.objecttypeid == 26) {
           await Navigator.of(context).push(MaterialPageRoute(
-              builder: (context) => AdvancedWebCourseLaunch(url, table2.name)));
+              builder: (context) => InAppWebCourseLaunch(url, table2)));
         } else {
           await Navigator.of(context).push(MaterialPageRoute(
               builder: (context) => InAppWebCourseLaunch(url, table2)));
