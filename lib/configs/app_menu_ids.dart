@@ -1,0 +1,47 @@
+class AppMenuIds {
+  static const String PROFILE = "3";
+  static const String MY_LEARNING = "1";
+  static const String MY_LEARNING_PLUS = "17";
+  static const String CATALOG = "2";
+  static const String DISCUSSION = "4";
+  static const String QnA = "5";
+  static const String MY_COMPETENCIES = "11";
+  static const String PROGRESS_REPORT = "14";
+  static const String WEB_PAGE_SCREEN = "7";
+  static const String CLASSROOM_EVENTS = "8";
+  static const String COMMUNITIES = "9";
+  static const String LEADERBOARD = "12";
+  static const String MyAchivements = "13";
+  static const String MY_CONNECTIONS = "10";
+  static const String MY_DOWNLOADS = "2008";
+  static const String SETTINGS = "2000";
+  static const String FEEDBACK = "2001";
+  static const String NOTIFICATIONS = "2002";
+  static const String INSTABOT = "2003";
+  static const String MESSAGES = "2004";
+
+  /*static const String PROFILE = "62";
+  static const String MY_LEARNING = "3093";
+  static const String COMPONENTS = "77";
+  static const String MY_LEARNING_PLUS = "76";
+  static const String CATALOG = "2";
+  static const String DISCUSSION = "63";
+  static const String QnA = "16";
+  static const String MY_COMPETENCIES = "18";
+  static const String PROGRESS_REPORT = "69";
+  static const String PROGRESS_REPORT2 = "39";
+  static const String WEB_PAGE_SCREEN = "7";
+  static const String CLASSROOM_EVENTS = "19";
+  static const String EVENT_CATALOG = "43";
+  static const String COMMUNITIES = "13";
+  static const String LEADERBOARD = "79";
+  static const String MyAchivements = "68";
+  static const String MY_CONNECTIONS = "65";
+  static const String MY_CONNECTIONS2 = "20";
+  static const String MY_DOWNLOADS = "2008";
+  static const String SETTINGS = "2000";
+  static const String FEEDBACK = "2001";
+  static const String NOTIFICATIONS = "2002";
+  static const String INSTABOT = "2003";
+  static const String MESSAGES = "2004";*/
+}
