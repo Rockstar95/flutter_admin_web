@@ -19,6 +19,7 @@ class AppMenuIds {
   static const String NOTIFICATIONS = "2002";
   static const String INSTABOT = "2003";
   static const String MESSAGES = "2004";
+  static const String NOT_IMPLEMENTED = "18";
 
   /*static const String PROFILE = "62";
   static const String MY_LEARNING = "3093";
