@@ -229,6 +229,7 @@ class _ActBaseState extends State<ActBase> {
     }
 
     String selectedMenuInFirebase = ParsingHelper.parseStringMethod(data['selected_menu']);
+    MyPrint.printOnConsole("selectedMenuInFirebase:$selectedMenuInFirebase");
     List<NativeMenuModel> selectedMenus = appBloc.listNativeModel.where((element) => element.menuid == selectedMenuInFirebase).toList();
 
     NativeMenuModel? nativeMenuModel;
@@ -360,25 +361,7 @@ class _ActBaseState extends State<ActBase> {
       }
     });
     setState(() {
-      if (index == 0) {
-        _selectedDrawerIndex = index;
-        _currentBottomMenuIndex = index;
-        selectedmenu = listNativeModel[index].contextmenuId;
-        appBarTitle = listNativeModel[index].displayname;
-      }
-      else if (index == 1) {
-        _selectedDrawerIndex = index;
-        _currentBottomMenuIndex = index;
-        selectedmenu = listNativeModel[index].contextmenuId;
-        appBarTitle = listNativeModel[index].displayname;
-      }
-      else if (index == 2) {
-        _selectedDrawerIndex = index;
-        _currentBottomMenuIndex = index;
-        selectedmenu = listNativeModel[index].contextmenuId;
-        appBarTitle = listNativeModel[index].displayname;
-      }
-      else if (index == 3) {
+      if ([0, 1, 2, 3].contains(index)) {
         _selectedDrawerIndex = index;
         _currentBottomMenuIndex = index;
         selectedmenu = listNativeModel[index].contextmenuId;
@@ -393,7 +376,7 @@ class _ActBaseState extends State<ActBase> {
           _settingBottomSheet(context);
         }
       }
-      documentReference.update({"selected_menu":selectedmenu});
+      documentReference.update({"selected_menu":listNativeModel[index].menuid});
 
       isDrawer = true;
     });
@@ -1425,7 +1408,7 @@ class _ActBaseState extends State<ActBase> {
                           _selectedDrawerIndex = i;
                           selectedmenu = listNativeModel[i].contextmenuId;
                           isDrawer = true;
-                          documentReference.update({"selected_menu":selectedmenu});
+                          documentReference.update({"selected_menu":listNativeModel[i].menuid});
                         });
                       }
                     },
@@ -1659,7 +1642,7 @@ class _ActBaseState extends State<ActBase> {
                       appBarTitle = nativeMenuModel.displayname;
                       _selectedDrawerIndex = i;
                       selectedmenu = nativeMenuModel.contextmenuId;
-                      documentReference.update({"selected_menu":selectedmenu});
+                      documentReference.update({"selected_menu":nativeMenuModel.menuid});
                       isDrawer = true;
                       if (isChanged) {
                         isChanged = false;
@@ -1806,7 +1789,7 @@ class _ActBaseState extends State<ActBase> {
                 ),
               ),
               onDrawerChanged: (bool val){
-                documentReference.update({"is_drawer_opened":val});
+                //documentReference.update({"is_drawer_opened":val});
               },
               drawer: getDrawer(useMobileLayout, drawerOptions),
               bottomNavigationBar: getBottomNavigationBar(bottomOptions),
@@ -2340,7 +2323,7 @@ class _ActBaseState extends State<ActBase> {
                 _selectedDrawerIndex = i;
                 selectedmenu = appBloc.listNativeModel[i].contextmenuId;
                 isDrawer = true;
-                documentReference.update({"selected_menu":selectedmenu});
+                documentReference.update({"selected_menu":appBloc.listNativeModel[i].menuid});
               });
             },
             child: ListTile(
