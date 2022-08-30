@@ -255,6 +255,10 @@ class _ActBaseState extends State<ActBase> {
     else if(selectedMenuInFirebase == AppMenuIds.MESSAGES) {
       Navigator.of(context).push(MaterialPageRoute(builder: (context) => MessageUsersList()));
     }
+    else {
+      selectedmenu = AppMenuIds.NOT_IMPLEMENTED;
+      appBarTitle = "Coming Soon";
+    }
 
     mySetState();
   }
@@ -873,9 +877,11 @@ class _ActBaseState extends State<ActBase> {
         case AppMenuIds.MY_CONNECTIONS:
           return ConnectionIndexScreen();
         default:
-          return const Text(
-            "Work in PROGRESS Drawer",
-            style: TextStyle(color: Colors.grey),
+          return const Center(
+            child: Text(
+              "Work in PROGRESS Drawer",
+              style: TextStyle(color: Colors.grey),
+            ),
           );
       }
     }
