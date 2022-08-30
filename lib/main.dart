@@ -37,15 +37,13 @@ void main() async {
     dynamic site = Uri.base.queryParameters['site'];
     dynamic appAuthURL = Uri.base.queryParameters['appAuthURL'];
     dynamic authToken = Uri.base.queryParameters['authToken'];
-    print("Before collectionName:${ApiEndpoints.syncCollection}");
 
+    print("Before collectionName:${ApiEndpoints.syncCollection}");
     String collectionName = ParsingHelper.parseStringMethod(Uri.base.queryParameters['collection'],defaultValue: ApiEndpoints.syncCollection);
     ApiEndpoints.syncCollection = collectionName;
     print("After assign collectionName:${ApiEndpoints.syncCollection}");
 
-
     print("Before assign documentName:${ApiEndpoints.syncDocument}");
-
     String documentName = ParsingHelper.parseStringMethod(Uri.base.queryParameters['document'],defaultValue: ApiEndpoints.syncDocument);
     ApiEndpoints.syncDocument = documentName;
     print("After documentName:${ApiEndpoints.syncDocument}");
@@ -58,8 +56,8 @@ void main() async {
       ApiEndpoints.mainSiteURL = site;
     }
    if(appAuthURL is String && appAuthURL.isNotEmpty && (appAuthURL.startsWith("http://") || appAuthURL.startsWith("https://"))) {
-        ApiEndpoints.appAuthURL = appAuthURL;
-      }
+     ApiEndpoints.appAuthURL = appAuthURL;
+   }
 
     // Set orientation
     await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);

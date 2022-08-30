@@ -71,7 +71,8 @@ class SplashBloc extends Bloc<SplashEvent, SplashState> {
         print("Splash Bloc siteURL $siteURL");
         if (siteURL.isEmpty) {
           apiEndpoints.setstrSiteUrl(ApiEndpoints.mainSiteURL);
-        } else {
+        }
+        else {
           apiEndpoints.setstrSiteUrl(siteURL);
         }
         print("Splash Bloc siteURL ${ApiEndpoints.strSiteUrl}");

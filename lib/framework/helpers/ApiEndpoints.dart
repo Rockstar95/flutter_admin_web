@@ -8,7 +8,8 @@ class ApiEndpoints {
   //static String mainSiteURL = "https://qaseac.instancy.com/";
   //static String mainSiteURL = "https://enterprisedemo.instancy.com/";
   static String mainSiteURL = "https://upgradedenterprise.instancy.com/";
-  static String authToken = "eaaf0fa5-d6b4-4553-91f2-8cc1defb50f8";
+  static String authToken = "";
+  // static String authToken = "eaaf0fa5-d6b4-4553-91f2-8cc1defb50f8";
   // //static String mainSiteURL = "https://learning.instancy.com/";
   // //static String mainSiteURL = "https://enterprisedemo.instancy.net/";
 
