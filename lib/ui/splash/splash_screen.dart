@@ -225,9 +225,18 @@ class _SplashScreenState extends State<SplashScreen> {
     // print("isLoggedIn : $isLoggedIn" );
     // if (isLoggedIn == 'true') {
 
-    appBloc.userid = await sharePrefGetString(sharedPref_userid);
-    Map<String,dynamic> userIdPass = await AuthenticationRepository().gettingSiteMetadata(ApiEndpoints.authToken);
-    bool loggedIn = await AuthenticationRepository().doLogin(userIdPass["email"], userIdPass["pass"], ApiEndpoints.strSiteUrl, '', '374', false,isEncrypted: true);
+    // appBloc.userid = await sharePrefGetString(sharedPref_userid);
+
+    bool loggedIn = false;
+    if(ApiEndpoints.authToken.isNotEmpty) {
+      Map<String,dynamic> userIdPass = await AuthenticationRepository().gettingSiteMetadata(ApiEndpoints.authToken);
+      String email = userIdPass['email'] is String ? userIdPass['email'] : "";
+      String pass = userIdPass['pass'] is String ? userIdPass['pass'] : "";
+
+      if(email.isNotEmpty && pass.isNotEmpty) {
+        loggedIn = await AuthenticationRepository().doLogin(email, pass, ApiEndpoints.strSiteUrl, '', '374', false,isEncrypted: true);
+      }
+    }
 
     MyPrint.printOnConsole("loggedIn:$loggedIn");
     if(loggedIn) {
