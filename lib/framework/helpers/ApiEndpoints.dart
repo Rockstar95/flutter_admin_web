@@ -98,7 +98,7 @@ class ApiEndpoints {
       "${strBaseUrl}MobileLMS/MobileGetLearningPortalInfo?SiteURL=$strSiteUrl";
 
   static String apiMobileGetNativeMenus(String locale) =>
-      "${strBaseUrl}MobileLMS/MobileGetNativeMenus?SiteURL=$strSiteUrl&Locale=$locale";
+      "${strBaseUrl}MobileLMS/MobileGetNativeMenus?SiteURL=$strSiteUrl&Locale=$locale&fromFlutterWeb=true";
 
   static String apiMobileTinCanConfigurations(String locale) =>
       "${strBaseUrl}MobileLMS/MobileTinCanConfigurations?SiteURL=$strSiteUrl&Locale=$locale";
