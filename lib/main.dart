@@ -5,9 +5,9 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_admin_web/configs/client_urls.dart';
 import 'package:flutter_admin_web/framework/helpers/ApiEndpoints.dart';
 import 'package:flutter_admin_web/utils/my_print.dart';
-import 'package:flutter_downloader/flutter_downloader.dart';
 import 'package:flutter_admin_web/controllers/notification_controller.dart';
 import 'package:flutter_admin_web/ui/appModule/app.dart';
 import 'package:flutter_admin_web/ui/common/log_util.dart';
@@ -94,8 +94,8 @@ void main() async {
     //For Upgraded Enterprise Site
     runApp(App(
       // mainSiteUrl: "https://upgradedenterprise.instancy.com/ appAuthURL",
-      mainSiteUrl: site is String && site.isNotEmpty ? site : "https://upgradedenterprise.instancy.com/",
-      appAuthURL: appAuthURL is String && appAuthURL.isNotEmpty ? appAuthURL : "https://masterapilive.instancy.com/api/",
+      mainSiteUrl: site is String && site.isNotEmpty ? site : ClientUrls.upgradedEnterpriseClientUrl,
+      appAuthURL: appAuthURL is String && appAuthURL.isNotEmpty ? appAuthURL : ClientUrls.getAuthUrl(ClientUrls.upgradedEnterpriseClientUrl),
       appWebApiUrl: site is String && site.isNotEmpty ? "" : "https://upgradedenterpriseapi.instancy.com/api/",
       splashScreenLogo: "assets/images/playgroundlogo.png",
     ));
