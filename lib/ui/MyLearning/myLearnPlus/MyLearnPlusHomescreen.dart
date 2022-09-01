@@ -302,789 +302,778 @@ class MyLearnPlusHome extends State<MyLearnPlusHomeScreen> with SingleTickerProv
     flutterToast = FToast();
     flutterToast.init(context);	
     return Scaffold(
-      body: (widget.nativeModel.parameterString == "") ? Container(
-                child: const Center(
-                  child: AbsorbPointer(
-                    child: SpinKitCircle(
-                      color: Colors.grey,
-                      size: 70,
-                    ),
-                  ),
-                ),
-          ): BlocConsumer<MyLearningBloc, MyLearningState>(
-            bloc: myLearningBloc,
-            listener: (context, state) {
-              if (state is GetGameslistLearnPlusState) {
-                if (state.status == Status.COMPLETED) {
-                  dropdownValue = myLearningBloc.gameslist.isNotEmpty
-                      ? myLearningBloc.gameslist[0].gameName
-                      : "Select game";
-                  dropdownGameID = myLearningBloc.gameslist.isNotEmpty
-                      ? "${myLearningBloc.gameslist[0].gameID}"
-                      : "1";
-                } else if (state.status == Status.ERROR) {}
-              } else if (state is GetListState) {
-                if (state.status == Status.COMPLETED) {
+      body: BlocConsumer<MyLearningBloc, MyLearningState>(
+        bloc: myLearningBloc,
+        listener: (context, state) {
+          if (state is GetGameslistLearnPlusState) {
+            if (state.status == Status.COMPLETED) {
+              dropdownValue = myLearningBloc.gameslist.isNotEmpty
+                  ? myLearningBloc.gameslist[0].gameName
+                  : "Select game";
+              dropdownGameID = myLearningBloc.gameslist.isNotEmpty
+                  ? "${myLearningBloc.gameslist[0].gameID}"
+                  : "1";
+            } else if (state.status == Status.ERROR) {}
+          } else if (state is GetListState) {
+            if (state.status == Status.COMPLETED) {
 //            print('List size ${state.list.length}');
-                  if (appBloc.uiSettingModel.isFromPush) {
-                    print(
-                        'Data data : ${myLearningBloc.list.length}');
-                    myLearningBloc.list.asMap().forEach((i, element) {
-                      if (element.contentid == contentId) {
-                        Navigator.of(context)
-                            .push(
-                              MaterialPageRoute(
-                                builder: (context) => CommonDetailScreen(
-                                  screenType: ScreenType.MyLearning,
-                                  contentid: contentId,
-                                  objtypeId: element.objecttypeid,
-                                  detailsBloc: detailsBloc,
-                                  table2: element,
-                                  pos: i,
-                                  mylearninglist: myLearningBloc.list,
-                                  isFromReschedule: false,
-                                ),
-                              ),
-                            )
-                            .then((value) => {
-                                  if (value ?? true)
-                                    {
-                                      appBloc.uiSettingModel
-                                          .setIsFromPush(false),
-                                      contentId = '',
-                                      myLearningBloc.add(GetListEvent(
-                                          pageNumber: pageNumber,
-                                          pageSize: 10,
-                                          searchText: myLearningBloc.searchMyCourseString))
-                                    }
-                                });
-                      }
-                    });
+              if (appBloc.uiSettingModel.isFromPush) {
+                print(
+                    'Data data : ${myLearningBloc.list.length}');
+                myLearningBloc.list.asMap().forEach((i, element) {
+                  if (element.contentid == contentId) {
+                    Navigator.of(context)
+                        .push(
+                          MaterialPageRoute(
+                            builder: (context) => CommonDetailScreen(
+                              screenType: ScreenType.MyLearning,
+                              contentid: contentId,
+                              objtypeId: element.objecttypeid,
+                              detailsBloc: detailsBloc,
+                              table2: element,
+                              pos: i,
+                              mylearninglist: myLearningBloc.list,
+                              isFromReschedule: false,
+                            ),
+                          ),
+                        )
+                        .then((value) => {
+                              if (value ?? true)
+                                {
+                                  appBloc.uiSettingModel
+                                      .setIsFromPush(false),
+                                  contentId = '',
+                                  myLearningBloc.add(GetListEvent(
+                                      pageNumber: pageNumber,
+                                      pageSize: 10,
+                                      searchText: myLearningBloc.searchMyCourseString))
+                                }
+                            });
                   }
-                  setState(() {
-                    isGetListEvent = true;
-                    pageNumber++;
-                  });
-                } else if (state.status == Status.ERROR) {
-                  //if (state.message == '401') {
-                    AppDirectory.sessionTimeOut(context);
-                 // }
-                }
+                });
               }
-              else if (state is GetArchiveListState) {
-                if (state.status == Status.COMPLETED) {
+              setState(() {
+                isGetListEvent = true;
+                pageNumber++;
+              });
+            } else if (state.status == Status.ERROR) {
+              //if (state.message == '401') {
+                AppDirectory.sessionTimeOut(context);
+             // }
+            }
+          }
+          else if (state is GetArchiveListState) {
+            if (state.status == Status.COMPLETED) {
 //            print("List size ${state.list.length}");
-                 // listArchiveList = [];
-                  listArchiveList = myLearningBloc.listArchive;
-                  print('archieve list length : ${listArchiveList.length}');
-                  setState(() {
-                    isGetArchiveListEvent = true;
-                    pageArchiveNumber++;
-                  });
-                } else if (state.status == Status.ERROR) {
+             // listArchiveList = [];
+              listArchiveList = myLearningBloc.listArchive;
+              print('archieve list length : ${listArchiveList.length}');
+              setState(() {
+                isGetArchiveListEvent = true;
+                pageArchiveNumber++;
+              });
+            } else if (state.status == Status.ERROR) {
 //            print("listner Error ${state.message}");
-                  if (state.message == "401") {
-                    AppDirectory.sessionTimeOut(context);
-                  }
-                }
-              } else if (state is RemovetoArchiveCallState) {
-                if (state.status == Status.COMPLETED) {
-                  flutterToast.showToast(
-                    child: CommonToast(
-                        displaymsg: appBloc
-                            .localstr.mylearningAlertsubtitleUnarchivedsuccesfully),
-                    gravity: ToastGravity.BOTTOM,
-                    toastDuration: const Duration(seconds: 2),
-                  );
-
-                  //myLearningBloc.isArchiveFirstLoading = true;
-                  myLearningBloc.isFirstLoading = true;
-                  setState(() {
-                    pageNumber = 1;
-                    //pageArchiveNumber = 1;
-                  });
-                  /* myLearningBloc.add(GetArchiveListEvent(
-                pageNumber: pageArchiveNumber, pageSize: 10, searchText: ""));*/
-                  myLearningBloc.add(GetListEvent(
-                      pageNumber: pageNumber, pageSize: 10, searchText: ""));
-                } else if (state.status == Status.ERROR) {
-                  if (state.message == "401") {
-                    AppDirectory.sessionTimeOut(context);
-                  }
-                }
+              if (state.message == "401") {
+                AppDirectory.sessionTimeOut(context);
               }
-              else if(state is AddtoArchiveCallState){
-                if(state.status == Status.COMPLETED){
-                 flutterToast.showToast(
-                  child: CommonToast(displaymsg: 'Added to Archive.'),
-                  gravity: ToastGravity.BOTTOM,
-                  toastDuration: const Duration(seconds: 2),
-                );
-                  myLearningBloc.isFirstLoading = true;
-                  setState(() {
-                    pageNumber = 1;
-                    //pageArchiveNumber = 1;
-                  });
+            }
+          } else if (state is RemovetoArchiveCallState) {
+            if (state.status == Status.COMPLETED) {
+              flutterToast.showToast(
+                child: CommonToast(
+                    displaymsg: appBloc
+                        .localstr.mylearningAlertsubtitleUnarchivedsuccesfully),
+                gravity: ToastGravity.BOTTOM,
+                toastDuration: const Duration(seconds: 2),
+              );
 
-                  myLearningBloc.add(GetListEvent(
-                      pageNumber: pageNumber, pageSize: 10, searchText: ""));
-
-                }
-                else if (state.status == Status.ERROR) {
-                  if (state.message == "401") {
-                    AppDirectory.sessionTimeOut(context);
-                  }
-                }
+              //myLearningBloc.isArchiveFirstLoading = true;
+              myLearningBloc.isFirstLoading = true;
+              setState(() {
+                pageNumber = 1;
+                //pageArchiveNumber = 1;
+              });
+              /* myLearningBloc.add(GetArchiveListEvent(
+            pageNumber: pageArchiveNumber, pageSize: 10, searchText: ""));*/
+              myLearningBloc.add(GetListEvent(
+                  pageNumber: pageNumber, pageSize: 10, searchText: ""));
+            } else if (state.status == Status.ERROR) {
+              if (state.message == "401") {
+                AppDirectory.sessionTimeOut(context);
               }
+            }
+          }
+          else if(state is AddtoArchiveCallState){
+            if(state.status == Status.COMPLETED){
+             flutterToast.showToast(
+              child: CommonToast(displaymsg: 'Added to Archive.'),
+              gravity: ToastGravity.BOTTOM,
+              toastDuration: const Duration(seconds: 2),
+            );
+              myLearningBloc.isFirstLoading = true;
+              setState(() {
+                pageNumber = 1;
+                //pageArchiveNumber = 1;
+              });
+
+              myLearningBloc.add(GetListEvent(
+                  pageNumber: pageNumber, pageSize: 10, searchText: ""));
+
+            }
+            else if (state.status == Status.ERROR) {
+              if (state.message == "401") {
+                AppDirectory.sessionTimeOut(context);
+              }
+            }
+          }
 
 
 
-              // else if (state is GetMenuComponentsState) {
-              //   if (state.status == Status.COMPLETED) {
-              //     componentsResponse = state.menuresponse;
-              //     String paramstr = componentsResponse.table1[0].parameterString;
-              //     var dataSp = paramstr.split('&');
-              //     Map<String, String> mapData = Map();
-              //     dataSp.forEach((element) =>
-              //     mapData[element.split('=')[0]] =
-              //     element.split('=')[1]);
-              //      showPoints = mapData["showPoints"];
-              //      showBadges = mapData["showBadges"];
-              //      showLevels = mapData["showLevels"];
-              //      HeaderBackgroundColor = mapData["HeaderBackgroundColor"];
-              //      HeaderTextColor = mapData["HeaderTextColor"];
-              //      BannerBackgroundType = mapData["BannerBackgroundType"];
-              //     String ss = "";
-              //   } else if (state.status == Status.ERROR) {
-              //     componentsResponse = new MenuComponentsResponse();
-              //   }
-              // }
-              else if (state is GetUserAchievementDataPlusState) {
-                if (state.status == Status.COMPLETED) {
-                  userAchievementResponse = state.userAchievementResponse;
-                  //progress = (userAchievementResponse.userOverAllData.overAllPoints)/(userAchievementResponse.userOverAllData.overAllPoints + userAchievementResponse.userOverAllData.neededPoints)*100;
-                } else if (state.status == Status.ERROR) {
-                  userAchievementResponse = UserAchievementResponse();
-                }
-              }else if(state is GetFilterMenusState){
-                if(state.status == Status.COMPLETED){
-                  myLearningBloc.isFilterMenu = true;
-                }
-               }
-               else if (state is GetDynamicTabsPlusState) {
-                if (state.status == Status.COMPLETED) {
-                  dynamicTabList = state.dynamicTabList;
-                  tabList = state.tabList;
-                  ConnectionDynamicTab dynamicTabobj = ConnectionDynamicTab();
-                  dynamicTabobj.tabId = "Archive";
-                  dynamicTabobj.mobileDisplayName = "Archive";
-                  dynamicTabobj.parameterString = 'sree = sds&dsd = dsds&ds = dsd';
-                  dynamicTabList.add(dynamicTabobj);
-                  _tabController = TabController(
-                      length: dynamicTabList.length, vsync: this);
-                  print("Build level tabList ${tabList.length}  ${dynamicTabList.length}");    
-                  // tabList.add(dynamicTabobj);   
+          // else if (state is GetMenuComponentsState) {
+          //   if (state.status == Status.COMPLETED) {
+          //     componentsResponse = state.menuresponse;
+          //     String paramstr = componentsResponse.table1[0].parameterString;
+          //     var dataSp = paramstr.split('&');
+          //     Map<String, String> mapData = Map();
+          //     dataSp.forEach((element) =>
+          //     mapData[element.split('=')[0]] =
+          //     element.split('=')[1]);
+          //      showPoints = mapData["showPoints"];
+          //      showBadges = mapData["showBadges"];
+          //      showLevels = mapData["showLevels"];
+          //      HeaderBackgroundColor = mapData["HeaderBackgroundColor"];
+          //      HeaderTextColor = mapData["HeaderTextColor"];
+          //      BannerBackgroundType = mapData["BannerBackgroundType"];
+          //     String ss = "";
+          //   } else if (state.status == Status.ERROR) {
+          //     componentsResponse = new MenuComponentsResponse();
+          //   }
+          // }
+          else if (state is GetUserAchievementDataPlusState) {
+            if (state.status == Status.COMPLETED) {
+              userAchievementResponse = state.userAchievementResponse;
+              //progress = (userAchievementResponse.userOverAllData.overAllPoints)/(userAchievementResponse.userOverAllData.overAllPoints + userAchievementResponse.userOverAllData.neededPoints)*100;
+            } else if (state.status == Status.ERROR) {
+              userAchievementResponse = UserAchievementResponse();
+            }
+          }else if(state is GetFilterMenusState){
+            if(state.status == Status.COMPLETED){
+              myLearningBloc.isFilterMenu = true;
+            }
+           }
+           else if (state is GetDynamicTabsPlusState) {
+            if (state.status == Status.COMPLETED) {
+              dynamicTabList = state.dynamicTabList;
+              tabList = state.tabList;
+              ConnectionDynamicTab dynamicTabobj = ConnectionDynamicTab();
+              dynamicTabobj.tabId = "Archive";
+              dynamicTabobj.mobileDisplayName = "Archive";
+              dynamicTabobj.parameterString = 'sree = sds&dsd = dsds&ds = dsd';
+              dynamicTabList.add(dynamicTabobj);
+              _tabController = TabController(
+                  length: dynamicTabList.length, vsync: this);
+              print("Build level tabList ${tabList.length}  ${dynamicTabList.length}");
+              // tabList.add(dynamicTabobj);
 
-                  for (ConnectionDynamicTab tab in dynamicTabList) {
+              for (ConnectionDynamicTab tab in dynamicTabList) {
 
-                    if (tab.tabId == 'Dashboard') {
+                if (tab.tabId == 'Dashboard') {
 
-                      //  ApicallingByinput(tab.tabId,'');
+                  //  ApicallingByinput(tab.tabId,'');
 
-                      String parameter = tab.parameterString;
-                      var dataSp = parameter.split('&');
-                      Map<String, String> mapData = Map();
-                      dataSp.forEach((element) =>
-                      mapData[element.split('=')[0]] =
-                      element.split('=')[1]);
-                      String filterContentType = mapData["FilterContentType"] ?? "";
-                      dueDateListView = mapData["DueDateListView"] ?? "";
-                      dueDateCalendarView = mapData["DueDateCalendarView"] ?? "";
-                      showLeaderboard = mapData["ShowLeaderboard"] ?? "";
-                      showLevelDash = mapData["ShowLevel"] ?? "";
-                      showPointDash = mapData["ShowPoint"] ?? "";
-                      showBadgesDash = mapData["ShowBadges"] ?? "";
+                  String parameter = tab.parameterString;
+                  var dataSp = parameter.split('&');
+                  Map<String, String> mapData = Map();
+                  dataSp.forEach((element) =>
+                  mapData[element.split('=')[0]] =
+                  element.split('=')[1]);
+                  String filterContentType = mapData["FilterContentType"] ?? "";
+                  dueDateListView = mapData["DueDateListView"] ?? "";
+                  dueDateCalendarView = mapData["DueDateCalendarView"] ?? "";
+                  showLeaderboard = mapData["ShowLeaderboard"] ?? "";
+                  showLevelDash = mapData["ShowLevel"] ?? "";
+                  showPointDash = mapData["ShowPoint"] ?? "";
+                  showBadgesDash = mapData["ShowBadges"] ?? "";
 
-                      if(dueDateListView == "false"){
-                        if(dueDateCalendarView == "false"){
-                          if(showLeaderboard == "false"){
-                            gridCond = false;
-                            calendarCond = false;
-                            leaderCond = false;
-                            globalCondition = '';
-                            dashTitle = '';
-                          }else{
-                            gridCond = false;
-                            calendarCond = false;
-                            leaderCond = true;
-                            globalCondition = 'lead';
-                            dashTitle = 'Leaderboard';
-                          }
-                        }else {
-                          gridCond = false;
-                          calendarCond = true;
-                          leaderCond = false;
-                          globalCondition = 'cal';
-                          dashTitle = 'Your Schedule';
-                        }
-                      }else {
-                        gridCond = true;
+                  if(dueDateListView == "false"){
+                    if(dueDateCalendarView == "false"){
+                      if(showLeaderboard == "false"){
+                        gridCond = false;
                         calendarCond = false;
                         leaderCond = false;
-                        globalCondition = 'grid';
-                        dashTitle = 'Your Schedule';
+                        globalCondition = '';
+                        dashTitle = '';
+                      }else{
+                        gridCond = false;
+                        calendarCond = false;
+                        leaderCond = true;
+                        globalCondition = 'lead';
+                        dashTitle = 'Leaderboard';
                       }
-
-                      myLearningBloc.add(GetUserAchievementDataPlusEvent(
-                        gameID: '3',
-                        locale: 'en-us',
-                        componentID: widget.nativeModel.componentId,
-                        componentInsID: widget.nativeModel.repositoryId,
-                        //componentInsID: '4232',
-                        siteID: '374',
-                        userID: '',
-                      ));
-
-                      myLearningBloc.add(GetLeaderboardLearnPlusEvent(
-                        gameID: '3',
-                        locale: 'en-us',
-                        componentID: widget.nativeModel.componentId,
-                        componentInsID: widget.nativeModel.repositoryId,
-                        //componentInsID: '4232',
-                        siteID: '',
-                        userID: '',
-                      ));
-
-                      // myLearningBloc.add(GetEventResourceCalEvent(
-                      //     componentinsid: widget.nativeModel.repositoryId,
-                      //     //componentinsid: '4232',
-                      //     componentid: widget.nativeModel.componentId,
-                      //     enddate: '2021-12-01',
-                      //     startdate: '2021-11-01',
-                      //     eventid: '',
-                      //     multiLocation: '',
-                      //     objecttypes:'$FilterContentType'));
-                      myLearningBloc.add(GetMyLearnPlusLearningObjectsEvent(
-                          pageNumber: pageNumber,
-                          pageSize: 10,
-                          searchText: '',
-                          isWishlistCount: 0,
-                          isWait: false,
-                          dateFilter: 'today',
-                          contentStatus: '',
-                          componentId: tab.componentId, //'316',
-                          componentInsId: tab.tabComponentInstanceId, //'4233',
-                          //componentid: '316',componentInsId: '4233',
-                          objectTypeId: '$filterContentType',
-                          type: 'today'));
-
-                      myLearningBloc.add(GetMyLearnPlusLearningObjectsEvent(
-                          pageNumber: pageNumber,
-                          pageSize: 10,
-                          searchText: "",
-                          isWishlistCount: 0,
-                          isWait: false,
-                          dateFilter: 'thisweek',
-                          componentId: tab.componentId, //'316',
-                          componentInsId: tab.tabComponentInstanceId, //'4233',
-                          //componentid: '316',componentInsId: '4233',
-                          contentStatus: '',
-                          objectTypeId: '$filterContentType',
-                          type: 'thisweek'));
-
-                      myLearningBloc.add(GetMyLearnPlusLearningObjectsEvent(
-                          pageNumber: pageNumber,
-                          pageSize: 10,
-                          searchText: '',
-                          isWishlistCount: 0,
-                          isWait: false,
-                          dateFilter: 'thismonth',
-                          componentId: tab.componentId, //'316',
-                          componentInsId: tab.tabComponentInstanceId, //'4233',
-                          //componentid: '316',componentInsId: '4233',
-                          objectTypeId: '$filterContentType',
-                          contentStatus: '',
-                          type: 'thismonth'));
-
-                      myLearningBloc.add(GetMyLearnPlusLearningObjectsEvent(
-                          pageNumber: pageNumber,
-                          pageSize: 10,
-                          searchText: '',
-                          isWishlistCount: 0,
-                          isWait: false,
-                          dateFilter: 'future',
-                          componentId: tab.componentId, //'316',
-                          componentInsId: tab.tabComponentInstanceId, //'4233',
-                         // componentid: '316',componentInsId: '4233',
-                          objectTypeId: '$filterContentType',
-                          contentStatus: '',
-                          type: 'future'));
+                    }else {
+                      gridCond = false;
+                      calendarCond = true;
+                      leaderCond = false;
+                      globalCondition = 'cal';
+                      dashTitle = 'Your Schedule';
                     }
-
-                    // if (tab.tabId == 'NotStarted') {
-                    //   HashMap<String, String> map =
-                    //       new HashMap<String, String>();
-                    //   String parameter = tab.parameterString;
-                    //   var dataSp = parameter.split('&');
-                    //   Map<String, String> mapData = Map();
-                    //   dataSp.forEach((element) =>
-                    //       mapData[element.split('=')[0]] =
-                    //           element.split('=')[1]);
-                    //   String contentstatus = mapData["contentstatus"];
-                    //   myLearningBloc.add(getMyLearnPlusLearningObjectsEvent(
-                    //       pageNumber: pageNumber,
-                    //       pageSize: 100,
-                    //       searchText: "",
-                    //       Contentstatus: contentstatus,
-                    //       componentid: widget.nativeModel.componentId,
-                    //       componentInsId: widget.nativeModel.repositoryId,
-                    //       //componentInsId: '4232',
-                    //       iswait: false,
-                    //       iswishlistcount: 0,
-                    //       Datefilter: "",
-                    //       type: 'NotStarted'));
-                    // }
-                    // if (tab.tabId == 'MyWishList') {
-                    //   List<WishListTable> WishListDetails = appBloc.wishlistResponse.WishListDetails;
-                    //   for(WishListTable table in WishListDetails){
-                    //     myLearningBloc.add(GetWishListPlusEvent(
-                    //         pageIndex: pageNumber, categaoryID: 0,type: 'plus',compid: table.componentid,compinsid: table.componentinstanceid));
-                    //   }
-                    // }
-                    // if (tab.tabId == 'WaitingList') {
-                    //   HashMap<String, String> map =
-                    //       new HashMap<String, String>();
-                    //   String parameter = tab.parameterString;
-                    //   var dataSp = parameter.split('&');
-                    //   Map<String, String> mapData = Map();
-                    //   dataSp.forEach((element) =>
-                    //       mapData[element.split('=')[0]] =
-                    //           element.split('=')[1]);
-                    //   String contentstatus = mapData["contentstatus"];
-                    //   myLearningBloc.add(getMyLearnPlusLearningObjectsEvent(
-                    //       pageNumber: pageNumber,
-                    //       pageSize: 100,
-                    //       searchText: "",
-                    //       iswishlistcount: 0,
-                    //       Contentstatus: contentstatus,
-                    //       iswait: true,
-                    //       Datefilter: "",
-                    //       type: 'waitlist'));
-                    // }
-                    // if (tab.tabId == 'Attending') {
-                    //   HashMap<String, String> map =
-                    //       new HashMap<String, String>();
-                    //   String parameter = tab.parameterString;
-                    //   var dataSp = parameter.split('&');
-                    //   Map<String, String> mapData = Map();
-                    //   dataSp.forEach((element) =>
-                    //       mapData[element.split('=')[0]] =
-                    //           element.split('=')[1]);
-                    //   String contentstatus = mapData["contentstatus"];
-                    //   myLearningBloc.add(getMyLearnPlusLearningObjectsEvent(
-                    //       pageNumber: pageNumber,
-                    //       pageSize: 100,
-                    //       searchText: "",
-                    //       Contentstatus: contentstatus,
-                    //       iswait: false,
-                    //       iswishlistcount: 0,
-                    //       Datefilter: "",
-                    //       type: 'attending'));
-                    // }
-                    //
-                    // if (tab.tabId == 'InProgress') {
-                    //   HashMap<String, String> map =
-                    //       new HashMap<String, String>();
-                    //   String parameter = tab.parameterString;
-                    //   var dataSp = parameter.split('&');
-                    //   Map<String, String> mapData = Map();
-                    //   dataSp.forEach((element) =>
-                    //       mapData[element.split('=')[0]] =
-                    //           element.split('=')[1]);
-                    //   String contentstatus = mapData["contentstatus"];
-                    //   myLearningBloc.add(getMyLearnPlusLearningObjectsEvent(
-                    //       pageNumber: pageNumber,
-                    //       pageSize: 100,
-                    //       searchText: "",
-                    //       iswishlistcount: 0,
-                    //       iswait: false,
-                    //       Datefilter: "",
-                    //       Contentstatus: contentstatus,
-                    //       type: 'inprogress'));
-                    // }
-                    // if (tab.tabId == 'Completed') {
-                    //   HashMap<String, String> map =
-                    //       new HashMap<String, String>();
-                    //   String parameter = tab.parameterString;
-                    //   var dataSp = parameter.split('&');
-                    //   Map<String, String> mapData = Map();
-                    //   dataSp.forEach((element) =>
-                    //       mapData[element.split('=')[0]] =
-                    //           element.split('=')[1]);
-                    //   String contentstatus = mapData["contentstatus"];
-                    //   myLearningBloc.add(getMyLearnPlusLearningObjectsEvent(
-                    //       pageNumber: pageNumber,
-                    //       pageSize: 100,
-                    //       searchText: "",
-                    //       iswishlistcount: 0,
-                    //       Datefilter: "",
-                    //       iswait: false,
-                    //       Contentstatus: contentstatus,
-                    //       type: 'completed'));
-                    // }
-                    // if (tab.tabId == 'Archive') {
-                    //
-                    //   myLearningBloc.add(GetArchiveListEvent(
-                    //       pageNumber: pageArchiveNumber, pageSize: 10, searchText:''));
-                    //
-                    // }
+                  }else {
+                    gridCond = true;
+                    calendarCond = false;
+                    leaderCond = false;
+                    globalCondition = 'grid';
+                    dashTitle = 'Your Schedule';
                   }
 
+                  myLearningBloc.add(GetUserAchievementDataPlusEvent(
+                    gameID: '3',
+                    locale: 'en-us',
+                    componentID: widget.nativeModel.componentId,
+                    componentInsID: widget.nativeModel.repositoryId,
+                    //componentInsID: '4232',
+                    siteID: '374',
+                    userID: '',
+                  ));
 
+                  myLearningBloc.add(GetLeaderboardLearnPlusEvent(
+                    gameID: '3',
+                    locale: 'en-us',
+                    componentID: widget.nativeModel.componentId,
+                    componentInsID: widget.nativeModel.repositoryId,
+                    //componentInsID: '4232',
+                    siteID: '',
+                    userID: '',
+                  ));
 
-                } else if (state.status == Status.ERROR) {
-                  userAchievementResponse = UserAchievementResponse();
+                  // myLearningBloc.add(GetEventResourceCalEvent(
+                  //     componentinsid: widget.nativeModel.repositoryId,
+                  //     //componentinsid: '4232',
+                  //     componentid: widget.nativeModel.componentId,
+                  //     enddate: '2021-12-01',
+                  //     startdate: '2021-11-01',
+                  //     eventid: '',
+                  //     multiLocation: '',
+                  //     objecttypes:'$FilterContentType'));
+                  myLearningBloc.add(GetMyLearnPlusLearningObjectsEvent(
+                      pageNumber: pageNumber,
+                      pageSize: 10,
+                      searchText: '',
+                      isWishlistCount: 0,
+                      isWait: false,
+                      dateFilter: 'today',
+                      contentStatus: '',
+                      componentId: tab.componentId, //'316',
+                      componentInsId: tab.tabComponentInstanceId, //'4233',
+                      //componentid: '316',componentInsId: '4233',
+                      objectTypeId: '$filterContentType',
+                      type: 'today'));
+
+                  myLearningBloc.add(GetMyLearnPlusLearningObjectsEvent(
+                      pageNumber: pageNumber,
+                      pageSize: 10,
+                      searchText: "",
+                      isWishlistCount: 0,
+                      isWait: false,
+                      dateFilter: 'thisweek',
+                      componentId: tab.componentId, //'316',
+                      componentInsId: tab.tabComponentInstanceId, //'4233',
+                      //componentid: '316',componentInsId: '4233',
+                      contentStatus: '',
+                      objectTypeId: '$filterContentType',
+                      type: 'thisweek'));
+
+                  myLearningBloc.add(GetMyLearnPlusLearningObjectsEvent(
+                      pageNumber: pageNumber,
+                      pageSize: 10,
+                      searchText: '',
+                      isWishlistCount: 0,
+                      isWait: false,
+                      dateFilter: 'thismonth',
+                      componentId: tab.componentId, //'316',
+                      componentInsId: tab.tabComponentInstanceId, //'4233',
+                      //componentid: '316',componentInsId: '4233',
+                      objectTypeId: '$filterContentType',
+                      contentStatus: '',
+                      type: 'thismonth'));
+
+                  myLearningBloc.add(GetMyLearnPlusLearningObjectsEvent(
+                      pageNumber: pageNumber,
+                      pageSize: 10,
+                      searchText: '',
+                      isWishlistCount: 0,
+                      isWait: false,
+                      dateFilter: 'future',
+                      componentId: tab.componentId, //'316',
+                      componentInsId: tab.tabComponentInstanceId, //'4233',
+                     // componentid: '316',componentInsId: '4233',
+                      objectTypeId: '$filterContentType',
+                      contentStatus: '',
+                      type: 'future'));
                 }
-              } else if (state is GetWishListPlusState) {
-                if (state.status == Status.COMPLETED) {
-                  //mylearningplusdummyWishlist = [];
-                 // mylearningplusWishlist = [];
-                  myLearningPlusDummyWishlist = myLearningBloc.catalogCatgoryWishlist;
-                 // mylearningplusWishlist = myLearningBloc.catalogCatgoryWishlist;
-                  if (myLearningPlusDummyWishlist.isNotEmpty) {
-                    myLearningPlusWishlist.addAll(myLearningPlusDummyWishlist);
-                  }
-                  print(
-                      'The wish list count is : ${myLearningPlusWishlist.length}');
-                } else if (state.status == Status.ERROR) {
-                  myLearningPlusWishlist = [];
-                }
-              } else if (state is GetMyLearnPlusLearningObjectsState) {
-                if (state.status == Status.COMPLETED) {
-                 // print("SUCCESSCOMPLETED ${state.list[0].datefilter}");
-                 // print("SUCCESSCOMPLETED -----${state.list[0].actualstatus} ${state.list[0].datefilter}");
-                 // mylearningplusinprolist = state.list;
 
-                //  if (state.status == Status.COMPLETED) {
-                //   dashgridlist = [];
-                //   mylearningplusdashdayWishlist = state.list;
-                //   DashGridResponse gridResponse = new DashGridResponse();
-                //   gridResponse.title = 'Future';
-                //   gridResponse.dashcommonlist = mylearningplusdashdayWishlist;
-                //   dashgridlist.add(gridResponse);
-                // } else if (state.status == Status.ERROR) {
-                //   mylearningplusdashdayWishlist = [];
+                // if (tab.tabId == 'NotStarted') {
+                //   HashMap<String, String> map =
+                //       new HashMap<String, String>();
+                //   String parameter = tab.parameterString;
+                //   var dataSp = parameter.split('&');
+                //   Map<String, String> mapData = Map();
+                //   dataSp.forEach((element) =>
+                //       mapData[element.split('=')[0]] =
+                //           element.split('=')[1]);
+                //   String contentstatus = mapData["contentstatus"];
+                //   myLearningBloc.add(getMyLearnPlusLearningObjectsEvent(
+                //       pageNumber: pageNumber,
+                //       pageSize: 100,
+                //       searchText: "",
+                //       Contentstatus: contentstatus,
+                //       componentid: widget.nativeModel.componentId,
+                //       componentInsId: widget.nativeModel.repositoryId,
+                //       //componentInsId: '4232',
+                //       iswait: false,
+                //       iswishlistcount: 0,
+                //       Datefilter: "",
+                //       type: 'NotStarted'));
                 // }
-
-                myLearningPlusCompletedList = [];//mylearningplusWishlist = [];
+                // if (tab.tabId == 'MyWishList') {
+                //   List<WishListTable> WishListDetails = appBloc.wishlistResponse.WishListDetails;
+                //   for(WishListTable table in WishListDetails){
+                //     myLearningBloc.add(GetWishListPlusEvent(
+                //         pageIndex: pageNumber, categaoryID: 0,type: 'plus',compid: table.componentid,compinsid: table.componentinstanceid));
+                //   }
+                // }
+                // if (tab.tabId == 'WaitingList') {
+                //   HashMap<String, String> map =
+                //       new HashMap<String, String>();
+                //   String parameter = tab.parameterString;
+                //   var dataSp = parameter.split('&');
+                //   Map<String, String> mapData = Map();
+                //   dataSp.forEach((element) =>
+                //       mapData[element.split('=')[0]] =
+                //           element.split('=')[1]);
+                //   String contentstatus = mapData["contentstatus"];
+                //   myLearningBloc.add(getMyLearnPlusLearningObjectsEvent(
+                //       pageNumber: pageNumber,
+                //       pageSize: 100,
+                //       searchText: "",
+                //       iswishlistcount: 0,
+                //       Contentstatus: contentstatus,
+                //       iswait: true,
+                //       Datefilter: "",
+                //       type: 'waitlist'));
+                // }
+                // if (tab.tabId == 'Attending') {
+                //   HashMap<String, String> map =
+                //       new HashMap<String, String>();
+                //   String parameter = tab.parameterString;
+                //   var dataSp = parameter.split('&');
+                //   Map<String, String> mapData = Map();
+                //   dataSp.forEach((element) =>
+                //       mapData[element.split('=')[0]] =
+                //           element.split('=')[1]);
+                //   String contentstatus = mapData["contentstatus"];
+                //   myLearningBloc.add(getMyLearnPlusLearningObjectsEvent(
+                //       pageNumber: pageNumber,
+                //       pageSize: 100,
+                //       searchText: "",
+                //       Contentstatus: contentstatus,
+                //       iswait: false,
+                //       iswishlistcount: 0,
+                //       Datefilter: "",
+                //       type: 'attending'));
+                // }
                 //
-                  // mylearningpluscompletedlist = state.list;
-                  if(state.list.isNotEmpty && (state.list[0].actualstatus == "completed" || state.list[0].actualstatus == "registered") && (state.list[0].datefilter == "today" || state.list[0].datefilter == "thisweek" || state.list[0].datefilter == "thismonth" || state.list[0].datefilter == "future")){ // Dashbaord
-                  // dashgridlist = [];
-                 // mylearningplusdashdayWishlist = state.list;
-                 //if(state.list.length > 1){
-                 //state.list.forEach((element) {
-                  DashGridResponse gridResponse = DashGridResponse();
-                  gridResponse.dashcommonlist.addAll(state.list);
-                   print("gridResponse length ${gridResponse.dashcommonlist}");
-                 // if(!dashgridlist.contains(gridResponse))
-                  dashGridList.add(gridResponse);
-                  print("dashgrid length ${dashGridList.length}");
-
-                 //});
-                 //}
-                //  else{
-                //   DashGridResponse gridResponse = new DashGridResponse();
-                //   gridResponse.dashcommonlist = state.list;
-                //    print("gridResponse length ${gridResponse.dashcommonlist}");
-                //  // if(!dashgridlist.contains(gridResponse))
-                //   dashgridlist.add(gridResponse);
-                //   print("dashgrid length ${dashgridlist.length}");
-
-                //  }
-
-                  //gridResponse.title = 'In the Future';
-                  //dashtitle = 'In the Future';
-
-
-                }
-                else if (state.list.isNotEmpty && ((state.list[0].actualstatus == "completed") || (state.list[0].actualstatus == "passed") || (state.list[0].actualstatus == "failed"))) { //Completed
-                    myLearningPlusCompletedList.addAll(state.list);
-                 }
-                 else if(state.list.isNotEmpty && state.list[0].actualstatus == "incomplete"){ //In Progress ("inprogress,incomplete,grade")
-                 //mylearningplusinprolist.clear();
-                 myLearningPlusInProList = state.list;
-                 }
-                 else if(state.list.isNotEmpty && (state.list[0].actualstatus == "not attempted" || state.list[0].actualstatus == "registered")){ //Not started
-                 myLearningPlusNotStartProList = state.list;
-                 }
-                 else if(state.list.isNotEmpty && ((state.list[0].actualstatus == "attended") || (state.list[0].actualstatus == "notattended"))){  //Attending
-                 myLearningPlusAttendProList = state.list;
-                 }
-                else if(state.list.isNotEmpty && (state.list[0].datefilter == "today" || state.list[0].datefilter == "thisweek" || state.list[0].datefilter == "future")){ // Dashbaord //state.list[0].datefilter == "thismonth" ||
-                   //dashgridlist = [];
-                  myLearningPlusDashDayWishlist = state.list;
-                  DashGridResponse gridResponse = DashGridResponse();
-                  //gridResponse.title = 'In the Future';
-                  //dashtitle = 'In the Future';
-                  gridResponse.dashcommonlist = myLearningPlusDashDayWishlist;
-                  dashGridList.add(gridResponse);
-                }
-                else if (state.status == Status.ERROR) {
-                  //print("ERROR FROM API ${state.list}");
-                  myLearningPlusInProList = [];
-                }
-                }
-                 else if (state.status == Status.ERROR) {
-                  print("ERROR FROM API ${state.list}");
-                  myLearningPlusInProList = [];
-                }
-              } else if (state
-                  is GetMyLearnPlusLearningObjectsNotStartedState) {
-                if (state.status == Status.COMPLETED) {
-                  myLearningPlusNotStartProList = state.list;
-                } else if (state.status == Status.ERROR) {
-                  myLearningPlusNotStartProList = [];
-                }
-              } else if (state is GetMyLearnPlusLearningObjectsCompleteState) {
-                if (state.status == Status.COMPLETED) {
-
-                  myLearningPlusCompletedList = [];//mylearningplusWishlist = [];
-                  myLearningPlusCompletedList = state.list;
-                  if (myLearningPlusCompletedList.isNotEmpty) {
-                    myLearningPlusCompletedList.addAll(myLearningPlusCompletedList);
-                  }
-                  // mylearningpluscompletedlist = [];
-                  // mylearningpluscompletedlist.addAll(state.list);
-                  // //mylearningpluscompletedlist = state.list;
-                } else if (state.status == Status.ERROR) {
-                 // print("ERROR FROM API ${state.list}");
-                  myLearningPlusCompletedList = [];
-                }
-              } else if (state is GetMyLearnPlusLearningObjectsAttendState) {
-                if (state.status == Status.COMPLETED) {
-                  myLearningPlusAttendProList = state.list;
-                } else if (state.status == Status.ERROR) {
-                  myLearningPlusAttendProList = [];
-                }
-              } else if (state is GetWaitListState) {
-                if (state.status == Status.COMPLETED) {
-                  myLearningPlusWaitProList = state.list;
-                } else if (state.status == Status.ERROR) {
-                  myLearningPlusWaitProList = [];
-                }
+                // if (tab.tabId == 'InProgress') {
+                //   HashMap<String, String> map =
+                //       new HashMap<String, String>();
+                //   String parameter = tab.parameterString;
+                //   var dataSp = parameter.split('&');
+                //   Map<String, String> mapData = Map();
+                //   dataSp.forEach((element) =>
+                //       mapData[element.split('=')[0]] =
+                //           element.split('=')[1]);
+                //   String contentstatus = mapData["contentstatus"];
+                //   myLearningBloc.add(getMyLearnPlusLearningObjectsEvent(
+                //       pageNumber: pageNumber,
+                //       pageSize: 100,
+                //       searchText: "",
+                //       iswishlistcount: 0,
+                //       iswait: false,
+                //       Datefilter: "",
+                //       Contentstatus: contentstatus,
+                //       type: 'inprogress'));
+                // }
+                // if (tab.tabId == 'Completed') {
+                //   HashMap<String, String> map =
+                //       new HashMap<String, String>();
+                //   String parameter = tab.parameterString;
+                //   var dataSp = parameter.split('&');
+                //   Map<String, String> mapData = Map();
+                //   dataSp.forEach((element) =>
+                //       mapData[element.split('=')[0]] =
+                //           element.split('=')[1]);
+                //   String contentstatus = mapData["contentstatus"];
+                //   myLearningBloc.add(getMyLearnPlusLearningObjectsEvent(
+                //       pageNumber: pageNumber,
+                //       pageSize: 100,
+                //       searchText: "",
+                //       iswishlistcount: 0,
+                //       Datefilter: "",
+                //       iswait: false,
+                //       Contentstatus: contentstatus,
+                //       type: 'completed'));
+                // }
+                // if (tab.tabId == 'Archive') {
+                //
+                //   myLearningBloc.add(GetArchiveListEvent(
+                //       pageNumber: pageArchiveNumber, pageSize: 10, searchText:''));
+                //
+                // }
               }
-               else if (state is GetMyLearnPlusLearningObjectsDashdayState) {
-                if (state.status == Status.COMPLETED) {
-                  dashGridList = [];
-                  myLearningPlusDashDayWishlist = state.list;
-                  DashGridResponse gridResponse = DashGridResponse();
-                  gridResponse.title = 'Today';
-                  gridResponse.dashcommonlist = myLearningPlusDashDayWishlist;
-                  dashGridList.add(gridResponse);
-                } else if (state.status == Status.ERROR) {
-                  myLearningPlusDashDayWishlist = [];
-                }
-              } else if (state is GetMyLearnPlusLearningObjectsDashWeekState) {
-                if (state.status == Status.COMPLETED) {
-                  myLearningPlusDashWeekList = state.list;
-                  DashGridResponse gridResponse = DashGridResponse();
-                  gridResponse.title = 'This Week';
-                  gridResponse.dashcommonlist = myLearningPlusDashWeekList;
-                  dashGridList.add(gridResponse);
-                } else if (state.status == Status.ERROR) {
-                  myLearningPlusDashWeekList = [];
-                }
-              } else if (state is GetMyLearnPlusLearningObjectsDashMonthState) {
-                if (state.status == Status.COMPLETED) {
-                  myLearningPlusDashMonthList = state.list;
-                  DashGridResponse gridResponse = DashGridResponse();
-                  gridResponse.title = 'This Month';
-                  gridResponse.dashcommonlist = myLearningPlusDashMonthList;
-                  dashGridList.add(gridResponse);
-                } else if (state.status == Status.ERROR) {
-                  myLearningPlusDashMonthList = [];
-                }
-              } else if (state
-                  is GetMyLearnPlusLearningObjectsDashFutureState) {
-                if (state.status == Status.COMPLETED) {
-                  myLearningPlusDashFutureList = state.list;
-                  DashGridResponse gridResponse = DashGridResponse();
-                  gridResponse.title = 'In The Future';
-                  gridResponse.dashcommonlist = myLearningPlusDashFutureList;
-                  dashGridList.add(gridResponse);
-                } else if (state.status == Status.ERROR) {
-                  myLearningPlusDashFutureList = [];
-                }
-              } else if (state is GetLeaderboardLearnPlusState) {
-                if (state.status == Status.COMPLETED) {
-                  leaderBoardResponse = state.leaderBoardResponse;
-                } else if (state.status == Status.ERROR) {
-                  leaderBoardResponse = LeaderBoardResponse(leaderBoardList: []);
-                }
-              } else if (state is GetMyLearnPlusEventResourceState) {
-                if (state.status == Status.COMPLETED) {
-                  getEventResourceList = state.list;
-                  String ss = "";
-                } else if (state.status == Status.ERROR) {
-                  getEventResourceList = [];
-                }
-              }else if (state is CourseTrackingState) {
-                if (state.status == Status.COMPLETED) {
-                  print(state.response);
-                   myLearningBloc.add(GetListEvent(pageNumber: 1, pageSize: 10, searchText: myLearningBloc.searchMyCourseString));
-                  if (isValidString(state.response)) {
-                    myLearningBloc.add(TokenFromSessionIdEvent(
-                        table2: state.table2,
-                        contentID: state.table2.contentid,
-                        objecttypeId: "${state.table2.objecttypeid}",
-                        userID: "${state.table2.objecttypeid}",
-                        courseName: "${state.table2.name}",
-                        courseURL: state.courseUrl,
-                        learnerSCOID: "${state.table2.scoid}",
-                        learnerSessionID: state.response.toString()));
-                  }
-                } else if (state.status == Status.ERROR) {
-                  if (state.message == "401") {
-                    AppDirectory.sessionTimeOut(context);
-                  }
-                }
-              }else if (state is TokenFromSessionIdState) {
-                if (state.status == Status.COMPLETED) {
-                   myLearningBloc.add(GetListEvent(pageNumber: 1, pageSize: 10, searchText: myLearningBloc.searchMyCourseString));
-                  if (isValidString(state.response) &&
-                      state.response.contains('failed')) {
-                    launchCourse(state.table2, context, true, tabInfo: ConnectionDynamicTab());
-                  } else {
-                    launchCourseContentisolation(
-                        state.table2, context, state.response.toString());
-                  }
-                } else if (state.status == Status.ERROR) {
-                  if (state.message == "401") {
-                    AppDirectory.sessionTimeOut(context);
-                  }
-                }
+
+
+
+            } else if (state.status == Status.ERROR) {
+              userAchievementResponse = UserAchievementResponse();
+            }
+          } else if (state is GetWishListPlusState) {
+            if (state.status == Status.COMPLETED) {
+              //mylearningplusdummyWishlist = [];
+             // mylearningplusWishlist = [];
+              myLearningPlusDummyWishlist = myLearningBloc.catalogCatgoryWishlist;
+             // mylearningplusWishlist = myLearningBloc.catalogCatgoryWishlist;
+              if (myLearningPlusDummyWishlist.isNotEmpty) {
+                myLearningPlusWishlist.addAll(myLearningPlusDummyWishlist);
               }
-              // else if (state is SetCompleteState) {
-              //         if (state.status == Status.LOADING) {
-              //           flutterToast.showToast(
-              //             child: CommonToast(displaymsg: 'Please wait'),
-              //             gravity: ToastGravity.BOTTOM,
-              //             toastDuration: Duration(seconds: 2),
-              //           );
-              //         } else if (state.status == Status.COMPLETED) {
-              //           flutterToast.showToast(
-              //             child: CommonToast(
-              //                 displaymsg: 'Course completed successfully'),
-              //             gravity: ToastGravity.BOTTOM,
-              //             toastDuration: Duration(seconds: 2),
-              //           );
-              //           setState(() {
-              //             myLearningBloc.isFirstLoading = true;
-              //             pageNumber = 1;
-              //             myLearningBloc.add(GetListEvent(
-              //                 pageNumber: pageNumber,
-              //                 pageSize: 10,
-              //                 searchText: myLearningBloc.SearchMyCourseString));
-              //           });
-              //         } else if (state.status == Status.ERROR) {
-              //           flutterToast.showToast(
-              //             child: CommonToast(
-              //                 displaymsg: 'Filed to update course status'),
-              //             gravity: ToastGravity.BOTTOM,
-              //             toastDuration: Duration(seconds: 2),
-              //           );
-              //         }
-              //       }
-            },
-            builder: (context, state) {
-              if (state.status == Status.LOADING) {
-                return Center(
-                  child: AbsorbPointer(
-                    child: SpinKitCircle(
-                      color: Color(
-                        int.parse(
-                            "0xFF${appBloc.uiSettingModel.appTextColor.substring(1, 7).toUpperCase()}"),
-                      ),
-                      size: 70,
+              print(
+                  'The wish list count is : ${myLearningPlusWishlist.length}');
+            } else if (state.status == Status.ERROR) {
+              myLearningPlusWishlist = [];
+            }
+          } else if (state is GetMyLearnPlusLearningObjectsState) {
+            if (state.status == Status.COMPLETED) {
+             // print("SUCCESSCOMPLETED ${state.list[0].datefilter}");
+             // print("SUCCESSCOMPLETED -----${state.list[0].actualstatus} ${state.list[0].datefilter}");
+             // mylearningplusinprolist = state.list;
+
+            //  if (state.status == Status.COMPLETED) {
+            //   dashgridlist = [];
+            //   mylearningplusdashdayWishlist = state.list;
+            //   DashGridResponse gridResponse = new DashGridResponse();
+            //   gridResponse.title = 'Future';
+            //   gridResponse.dashcommonlist = mylearningplusdashdayWishlist;
+            //   dashgridlist.add(gridResponse);
+            // } else if (state.status == Status.ERROR) {
+            //   mylearningplusdashdayWishlist = [];
+            // }
+
+            myLearningPlusCompletedList = [];//mylearningplusWishlist = [];
+            //
+              // mylearningpluscompletedlist = state.list;
+              if(state.list.isNotEmpty && (state.list[0].actualstatus == "completed" || state.list[0].actualstatus == "registered") && (state.list[0].datefilter == "today" || state.list[0].datefilter == "thisweek" || state.list[0].datefilter == "thismonth" || state.list[0].datefilter == "future")){ // Dashbaord
+              // dashgridlist = [];
+             // mylearningplusdashdayWishlist = state.list;
+             //if(state.list.length > 1){
+             //state.list.forEach((element) {
+              DashGridResponse gridResponse = DashGridResponse();
+              gridResponse.dashcommonlist.addAll(state.list);
+               print("gridResponse length ${gridResponse.dashcommonlist}");
+             // if(!dashgridlist.contains(gridResponse))
+              dashGridList.add(gridResponse);
+              print("dashgrid length ${dashGridList.length}");
+
+             //});
+             //}
+            //  else{
+            //   DashGridResponse gridResponse = new DashGridResponse();
+            //   gridResponse.dashcommonlist = state.list;
+            //    print("gridResponse length ${gridResponse.dashcommonlist}");
+            //  // if(!dashgridlist.contains(gridResponse))
+            //   dashgridlist.add(gridResponse);
+            //   print("dashgrid length ${dashgridlist.length}");
+
+            //  }
+
+              //gridResponse.title = 'In the Future';
+              //dashtitle = 'In the Future';
+
+
+            }
+            else if (state.list.isNotEmpty && ((state.list[0].actualstatus == "completed") || (state.list[0].actualstatus == "passed") || (state.list[0].actualstatus == "failed"))) { //Completed
+                myLearningPlusCompletedList.addAll(state.list);
+             }
+             else if(state.list.isNotEmpty && state.list[0].actualstatus == "incomplete"){ //In Progress ("inprogress,incomplete,grade")
+             //mylearningplusinprolist.clear();
+             myLearningPlusInProList = state.list;
+             }
+             else if(state.list.isNotEmpty && (state.list[0].actualstatus == "not attempted" || state.list[0].actualstatus == "registered")){ //Not started
+             myLearningPlusNotStartProList = state.list;
+             }
+             else if(state.list.isNotEmpty && ((state.list[0].actualstatus == "attended") || (state.list[0].actualstatus == "notattended"))){  //Attending
+             myLearningPlusAttendProList = state.list;
+             }
+            else if(state.list.isNotEmpty && (state.list[0].datefilter == "today" || state.list[0].datefilter == "thisweek" || state.list[0].datefilter == "future")){ // Dashbaord //state.list[0].datefilter == "thismonth" ||
+               //dashgridlist = [];
+              myLearningPlusDashDayWishlist = state.list;
+              DashGridResponse gridResponse = DashGridResponse();
+              //gridResponse.title = 'In the Future';
+              //dashtitle = 'In the Future';
+              gridResponse.dashcommonlist = myLearningPlusDashDayWishlist;
+              dashGridList.add(gridResponse);
+            }
+            else if (state.status == Status.ERROR) {
+              //print("ERROR FROM API ${state.list}");
+              myLearningPlusInProList = [];
+            }
+            }
+             else if (state.status == Status.ERROR) {
+              print("ERROR FROM API ${state.list}");
+              myLearningPlusInProList = [];
+            }
+          } else if (state
+              is GetMyLearnPlusLearningObjectsNotStartedState) {
+            if (state.status == Status.COMPLETED) {
+              myLearningPlusNotStartProList = state.list;
+            } else if (state.status == Status.ERROR) {
+              myLearningPlusNotStartProList = [];
+            }
+          } else if (state is GetMyLearnPlusLearningObjectsCompleteState) {
+            if (state.status == Status.COMPLETED) {
+
+              myLearningPlusCompletedList = [];//mylearningplusWishlist = [];
+              myLearningPlusCompletedList = state.list;
+              if (myLearningPlusCompletedList.isNotEmpty) {
+                myLearningPlusCompletedList.addAll(myLearningPlusCompletedList);
+              }
+              // mylearningpluscompletedlist = [];
+              // mylearningpluscompletedlist.addAll(state.list);
+              // //mylearningpluscompletedlist = state.list;
+            } else if (state.status == Status.ERROR) {
+             // print("ERROR FROM API ${state.list}");
+              myLearningPlusCompletedList = [];
+            }
+          } else if (state is GetMyLearnPlusLearningObjectsAttendState) {
+            if (state.status == Status.COMPLETED) {
+              myLearningPlusAttendProList = state.list;
+            } else if (state.status == Status.ERROR) {
+              myLearningPlusAttendProList = [];
+            }
+          } else if (state is GetWaitListState) {
+            if (state.status == Status.COMPLETED) {
+              myLearningPlusWaitProList = state.list;
+            } else if (state.status == Status.ERROR) {
+              myLearningPlusWaitProList = [];
+            }
+          }
+           else if (state is GetMyLearnPlusLearningObjectsDashdayState) {
+            if (state.status == Status.COMPLETED) {
+              dashGridList = [];
+              myLearningPlusDashDayWishlist = state.list;
+              DashGridResponse gridResponse = DashGridResponse();
+              gridResponse.title = 'Today';
+              gridResponse.dashcommonlist = myLearningPlusDashDayWishlist;
+              dashGridList.add(gridResponse);
+            } else if (state.status == Status.ERROR) {
+              myLearningPlusDashDayWishlist = [];
+            }
+          } else if (state is GetMyLearnPlusLearningObjectsDashWeekState) {
+            if (state.status == Status.COMPLETED) {
+              myLearningPlusDashWeekList = state.list;
+              DashGridResponse gridResponse = DashGridResponse();
+              gridResponse.title = 'This Week';
+              gridResponse.dashcommonlist = myLearningPlusDashWeekList;
+              dashGridList.add(gridResponse);
+            } else if (state.status == Status.ERROR) {
+              myLearningPlusDashWeekList = [];
+            }
+          } else if (state is GetMyLearnPlusLearningObjectsDashMonthState) {
+            if (state.status == Status.COMPLETED) {
+              myLearningPlusDashMonthList = state.list;
+              DashGridResponse gridResponse = DashGridResponse();
+              gridResponse.title = 'This Month';
+              gridResponse.dashcommonlist = myLearningPlusDashMonthList;
+              dashGridList.add(gridResponse);
+            } else if (state.status == Status.ERROR) {
+              myLearningPlusDashMonthList = [];
+            }
+          } else if (state
+              is GetMyLearnPlusLearningObjectsDashFutureState) {
+            if (state.status == Status.COMPLETED) {
+              myLearningPlusDashFutureList = state.list;
+              DashGridResponse gridResponse = DashGridResponse();
+              gridResponse.title = 'In The Future';
+              gridResponse.dashcommonlist = myLearningPlusDashFutureList;
+              dashGridList.add(gridResponse);
+            } else if (state.status == Status.ERROR) {
+              myLearningPlusDashFutureList = [];
+            }
+          } else if (state is GetLeaderboardLearnPlusState) {
+            if (state.status == Status.COMPLETED) {
+              leaderBoardResponse = state.leaderBoardResponse;
+            } else if (state.status == Status.ERROR) {
+              leaderBoardResponse = LeaderBoardResponse(leaderBoardList: []);
+            }
+          } else if (state is GetMyLearnPlusEventResourceState) {
+            if (state.status == Status.COMPLETED) {
+              getEventResourceList = state.list;
+              String ss = "";
+            } else if (state.status == Status.ERROR) {
+              getEventResourceList = [];
+            }
+          }else if (state is CourseTrackingState) {
+            if (state.status == Status.COMPLETED) {
+              print(state.response);
+               myLearningBloc.add(GetListEvent(pageNumber: 1, pageSize: 10, searchText: myLearningBloc.searchMyCourseString));
+              if (isValidString(state.response)) {
+                myLearningBloc.add(TokenFromSessionIdEvent(
+                    table2: state.table2,
+                    contentID: state.table2.contentid,
+                    objecttypeId: "${state.table2.objecttypeid}",
+                    userID: "${state.table2.objecttypeid}",
+                    courseName: "${state.table2.name}",
+                    courseURL: state.courseUrl,
+                    learnerSCOID: "${state.table2.scoid}",
+                    learnerSessionID: state.response.toString()));
+              }
+            } else if (state.status == Status.ERROR) {
+              if (state.message == "401") {
+                AppDirectory.sessionTimeOut(context);
+              }
+            }
+          }else if (state is TokenFromSessionIdState) {
+            if (state.status == Status.COMPLETED) {
+               myLearningBloc.add(GetListEvent(pageNumber: 1, pageSize: 10, searchText: myLearningBloc.searchMyCourseString));
+              if (isValidString(state.response) &&
+                  state.response.contains('failed')) {
+                launchCourse(state.table2, context, true, tabInfo: ConnectionDynamicTab());
+              } else {
+                launchCourseContentisolation(
+                    state.table2, context, state.response.toString());
+              }
+            } else if (state.status == Status.ERROR) {
+              if (state.message == "401") {
+                AppDirectory.sessionTimeOut(context);
+              }
+            }
+          }
+          // else if (state is SetCompleteState) {
+          //         if (state.status == Status.LOADING) {
+          //           flutterToast.showToast(
+          //             child: CommonToast(displaymsg: 'Please wait'),
+          //             gravity: ToastGravity.BOTTOM,
+          //             toastDuration: Duration(seconds: 2),
+          //           );
+          //         } else if (state.status == Status.COMPLETED) {
+          //           flutterToast.showToast(
+          //             child: CommonToast(
+          //                 displaymsg: 'Course completed successfully'),
+          //             gravity: ToastGravity.BOTTOM,
+          //             toastDuration: Duration(seconds: 2),
+          //           );
+          //           setState(() {
+          //             myLearningBloc.isFirstLoading = true;
+          //             pageNumber = 1;
+          //             myLearningBloc.add(GetListEvent(
+          //                 pageNumber: pageNumber,
+          //                 pageSize: 10,
+          //                 searchText: myLearningBloc.SearchMyCourseString));
+          //           });
+          //         } else if (state.status == Status.ERROR) {
+          //           flutterToast.showToast(
+          //             child: CommonToast(
+          //                 displaymsg: 'Filed to update course status'),
+          //             gravity: ToastGravity.BOTTOM,
+          //             toastDuration: Duration(seconds: 2),
+          //           );
+          //         }
+          //       }
+        },
+        builder: (context, state) {
+          if (state.status == Status.LOADING || _tabController == null) {
+            return Center(
+              child: AbsorbPointer(
+                child: SpinKitCircle(
+                  color: Color(
+                    int.parse(
+                        "0xFF${appBloc.uiSettingModel.appTextColor.substring(1, 7).toUpperCase()}"),
+                  ),
+                  size: 70,
+                ),
+              ),
+            );
+          }
+          return SafeArea(
+                  child: Container(
+                    width: MediaQuery.of(context).size.width * 1,
+                    height: MediaQuery.of(context).size.height,
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: <Widget>[
+                        (userAchievementResponse.userOverAllData != null)
+                            ? showAchievements == "true" ? getAppBarView(context, userAchievementResponse):Container()
+                            : Container(),
+                          Container(
+                          decoration: const BoxDecoration(color: Colors.white),
+                          child: TabBar(
+                              isScrollable: dynamicTabList.length > 3 ? true : false,
+                              controller: _tabController,
+                              unselectedLabelColor: Colors.black,
+                              indicatorColor: Color(int.parse("0xFF1D293F")),
+                              indicatorSize: TabBarIndicatorSize.tab,
+                              labelColor: Colors.black,
+                              onTap: (index){
+                                currentTabStatus = dynamicTabList[index].tabId;
+                                String selectedTab = dynamicTabList[index].tabId;
+                                selectedTabObj = dynamicTabList[index];
+                                if (currentTabStatus == 'Dashboard') {
+                                  apiCallingByInput(currentTabStatus,'',dynamicTabList[index]);
+                                }
+                                if (currentTabStatus == 'NotStarted') {
+                                  myLearningPlusNotStartProList = [];
+                                  apiCallingByInput(currentTabStatus,'',dynamicTabList[index]);
+                                }
+                                if (currentTabStatus == 'MyWishList') {
+                                  apiCallingByInput(currentTabStatus,'',dynamicTabList[index]);
+                                }
+                                if (currentTabStatus == 'WaitingList') {
+                                  apiCallingByInput(currentTabStatus,'',dynamicTabList[index]);
+                                }
+                                if (currentTabStatus == 'Attending') {
+                                  apiCallingByInput(currentTabStatus,'',dynamicTabList[index]);
+                                }
+
+                                if (currentTabStatus == 'InProgress') {
+                                  myLearningPlusInProList.clear();
+                                  apiCallingByInput(currentTabStatus,'',dynamicTabList[index]);
+                                }
+                                if (currentTabStatus == 'Completed') {
+                                  apiCallingByInput(currentTabStatus,'',dynamicTabList[index]);
+                                }
+                                if (currentTabStatus == 'Archive') {
+                                  apiCallingByInput(currentTabStatus,'',dynamicTabList[index]);
+                                }
+                                //  ApicallingByinput(tab.tabId,'');
+                              },
+                              tabs: tabList),
+                        ),
+                       // (dynamicTabList.isNotEmpty) ?
+                             Expanded(
+                                child: Container(height: 100,
+                                  child: TabBarView(
+                                    controller: _tabController,
+                                    children: getList(),
+                                    physics: const NeverScrollableScrollPhysics(),//PageScrollPhysics(),
+                                  ),
+                                ),
+                              )//: SizedBox(),
+
+                      ],
                     ),
                   ),
                 );
-              }
-              return (userAchievementResponse.userOverAllData != null)
-                  ? SafeArea(
-                      child: Container(
-                        width: MediaQuery.of(context).size.width * 1,
-                        height: MediaQuery.of(context).size.height,
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: <Widget>[
-                            (userAchievementResponse.userOverAllData != null)
-                                ? showAchievements == "true" ? getAppBarView(context, userAchievementResponse):Container()
-                                : Container(),
-                              Container(
-                              decoration: const BoxDecoration(color: Colors.white),
-                              child: TabBar(
-                                  isScrollable: dynamicTabList.length > 3 ? true : false,
-                                  controller: _tabController,
-                                  unselectedLabelColor: Colors.black,
-                                  indicatorColor: Color(int.parse("0xFF1D293F")),
-                                  indicatorSize: TabBarIndicatorSize.tab,
-                                  labelColor: Colors.black,
-                                  onTap: (index){
-                                    currentTabStatus = dynamicTabList[index].tabId;
-                                    String selectedTab = dynamicTabList[index].tabId;
-                                    selectedTabObj = dynamicTabList[index];
-                                    if (currentTabStatus == 'Dashboard') {
-                                      apiCallingByInput(currentTabStatus,'',dynamicTabList[index]);
-                                    }
-                                    if (currentTabStatus == 'NotStarted') {
-                                      myLearningPlusNotStartProList = [];
-                                      apiCallingByInput(currentTabStatus,'',dynamicTabList[index]);
-                                    }
-                                    if (currentTabStatus == 'MyWishList') {
-                                      apiCallingByInput(currentTabStatus,'',dynamicTabList[index]);
-                                    }
-                                    if (currentTabStatus == 'WaitingList') {
-                                      apiCallingByInput(currentTabStatus,'',dynamicTabList[index]);
-                                    }
-                                    if (currentTabStatus == 'Attending') {
-                                      apiCallingByInput(currentTabStatus,'',dynamicTabList[index]);
-                                    }
-
-                                    if (currentTabStatus == 'InProgress') {
-                                      myLearningPlusInProList.clear();
-                                      apiCallingByInput(currentTabStatus,'',dynamicTabList[index]);
-                                    }
-                                    if (currentTabStatus == 'Completed') {
-                                      apiCallingByInput(currentTabStatus,'',dynamicTabList[index]);
-                                    }
-                                    if (currentTabStatus == 'Archive') {
-                                      apiCallingByInput(currentTabStatus,'',dynamicTabList[index]);
-                                    }
-                                    //  ApicallingByinput(tab.tabId,'');
-                                  },
-                                  tabs: tabList),
-                            ),
-                           // (dynamicTabList.isNotEmpty) ?
-                                 Expanded(
-                                    child: Container(height: 100,
-                                      child: TabBarView(
-                                        controller: _tabController,
-                                        children: getList(),                
-                                        physics: const NeverScrollableScrollPhysics(),//PageScrollPhysics(),
-                                      ),
-                                    ),
-                                  )//: SizedBox(),
-                               
-                          ],
-                        ),
-                      ),
-                    )
-                  : Container();
-            },
-          ),
+        },
+      ),
     );
   }
 

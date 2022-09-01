@@ -627,19 +627,13 @@ class _MyDashBoardScreenState extends State<MyDashBoardScreen> with TickerProvid
   }
 
   Widget creditsAndCertificatesCard() {
-    String certificatecount = "";
-    String creditcount = "";
+    String certificatecount = "0";
+    String creditcount = "Beginner";
 
-    if (myDashBoardBloc.myCreditCertificateresponse.table != null) {
-      certificatecount =
-          myDashBoardBloc.myCreditCertificateresponse.table1.isNotEmpty
-              ? myDashBoardBloc
-                  .myCreditCertificateresponse.table1[0].certificatecount
-              : "0";
+    if (myDashBoardBloc.myCreditCertificateresponse.table.isNotEmpty) {
+      certificatecount = myDashBoardBloc.myCreditCertificateresponse.table1[0].certificatecount;
 
-      creditcount = myDashBoardBloc.myCreditCertificateresponse.table1 != null
-          ? myDashBoardBloc.myCreditCertificateresponse.table1[0].creditcount
-          : "Beginner";
+      creditcount = myDashBoardBloc.myCreditCertificateresponse.table1[0].creditcount;
     }
     return Wrap(
       children: [
