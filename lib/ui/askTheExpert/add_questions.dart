@@ -127,11 +127,21 @@ class _AddQuestionState extends State<AddQuestion> with SingleTickerProviderStat
                 Padding(
                   padding: const EdgeInsets.only(
                       top: 20, left: 5.0, right: 10.0, bottom: 10.0),
-                  child: Text(
-                    'Question*',
-                    style: TextStyle(
-                        fontSize: 14.0,
-                        color: AppColors.getAppTextColor()),
+                  child: Text.rich(
+                    TextSpan(
+                        text: "Question ",
+                        style: TextStyle(
+                            fontSize: 15.0,
+                            letterSpacing: 0.9,
+                            fontWeight: FontWeight.w500,
+                            color:Colors.black.withOpacity(0.54)),
+                        children: [
+                          TextSpan(
+                            text: "*",
+                            style: TextStyle(color: AppColors.getMandatoryStarColor(),),
+                          ),
+                        ]
+                    ),
                   ),
                 ),
                 TextFormField(
@@ -178,8 +188,11 @@ class _AddQuestionState extends State<AddQuestion> with SingleTickerProviderStat
                   child: Text(
                     'Description',
                     style: TextStyle(
-                        fontSize: 14.0,
-                        color: AppColors.getAppTextColor()),
+                        fontSize: 15.0,
+                        letterSpacing: 0.9,
+                        fontWeight: FontWeight.w500,
+                        color:Colors.black.withOpacity(0.54),
+                    ),
                   ),
                 ),
                 TextFormField(
@@ -220,14 +233,23 @@ class _AddQuestionState extends State<AddQuestion> with SingleTickerProviderStat
                   ),
                 ),
                 Padding(
-                  padding:
-                      const EdgeInsets.only(top: 20.0, left: 5.0, right: 10.0),
-                  child: Text(
-                    "Skills*",
-                    textAlign: TextAlign.left,
-                    style: TextStyle(
-                        fontSize: 14.0,
-                        color: AppColors.getAppTextColor()),
+                  padding: const EdgeInsets.only(top: 20.0, left: 5.0, right: 10.0),
+                  child: Text.rich(
+                    TextSpan(
+                        text: "Skills ",
+                        style: TextStyle(
+                            fontSize: 15.0,
+                            letterSpacing: 0.9,
+                            fontWeight: FontWeight.w500,
+                            color:Colors.black.withOpacity(0.54),
+                        ),
+                        children: [
+                          TextSpan(
+                            text: "*",
+                            style: TextStyle(color: AppColors.getMandatoryStarColor(),),
+                          ),
+                        ]
+                    ),
                   ),
                 ),
                 Padding(
@@ -288,8 +310,11 @@ class _AddQuestionState extends State<AddQuestion> with SingleTickerProviderStat
                 child: Text(
                   'Attachments',
                   style: TextStyle(
-                      fontSize: 14.0,
-                      color: AppColors.getAppTextColor()),
+                      fontSize: 15.0,
+                      letterSpacing: 0.9,
+                      fontWeight: FontWeight.w500,
+                      color:Colors.black.withOpacity(0.54),
+                  ),
                 ),
               ),
               Padding(

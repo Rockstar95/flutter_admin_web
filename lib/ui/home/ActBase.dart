@@ -1916,71 +1916,6 @@ class _ActBaseState extends State<ActBase> {
                 width: ScreenUtil().setWidth(20),
               )
             : Container(),
-        /* (selectedmenu == '4')? new DropdownButtonHideUnderline(
-                child:  DropdownButton(
-                  icon: Icon(Icons.filter_list),
-                  items: arrFilter.map((String value) {
-                    return new DropdownMenuItem<String>(
-                      value: value,
-                      child: new Text(value),
-                    );
-                  }).toList(),
-                  onChanged: (String value) {
-                     setState(() {
-                       FilterInterface().clickFilter(value);
-                     });
-                  },
-                )
-              ) : Container(),
-              selectedmenu == "4"
-                  ? SizedBox(
-                width: ScreenUtil().setWidth(20),
-              )
-                  : Container(),*/
-        /*selectedmenu == "5"
-            ? Container(
-                // color: Color(int.parse(
-                //     "0xFF${appBloc.uiSettingModel.appBGColor.substring(1, 7).toUpperCase()}")),
-                child: new Theme(
-                    data: Theme.of(context).copyWith(
-                      canvasColor: Color(int.parse(
-                          "0xFF${appBloc.uiSettingModel.appBGColor.substring(1, 7).toUpperCase()}")),
-                    ),
-                    child: PopupMenuButton(
-                      color: Color(int.parse(
-                          "0xFF${appBloc.uiSettingModel.appBGColor.substring(1, 7).toUpperCase()}")),
-                      child: Padding(
-                          padding: EdgeInsets.only(right: 8.0),
-                          child: Icon(
-                            Icons.filter_list,
-                            color: lableColor,
-                            // Color(int.parse(
-                            //     "0xFF${appBloc.uiSettingModel.appHeaderTextColor.substring(1, 7).toUpperCase()}")),
-
-                            // color: Color(int.parse(
-                            //     "0xFF${appBloc.uiSettingModel.appTextColor.substring(1, 7).toUpperCase()}")),
-                          )),
-                      elevation: 3.2,
-                      onSelected: (String value) {
-                        setState(() {
-                          appBloc.filterValue = value;
-                        });
-                      },
-                      itemBuilder: (BuildContext context) {
-                        return arrFilter.map((String choice) {
-                          return PopupMenuItem<String>(
-                            value: choice,
-                            child: Text(
-                              choice,
-                              style: TextStyle(
-                                  color: Color(int.parse(
-                                      "0xFF${appBloc.uiSettingModel.appTextColor.substring(1, 7).toUpperCase()}"))),
-                            ),
-                          );
-                        }).toList();
-                      },
-                    )))
-            : Container(),*/
         selectedmenu == "4"
             ? SizedBox(
                 width: ScreenUtil().setWidth(20),
@@ -2045,25 +1980,6 @@ class _ActBaseState extends State<ActBase> {
                   )
                 ],
               )
-            // GestureDetector(
-            //         onTap: () {
-            //           Navigator.of(context).push(MaterialPageRoute(
-            //               builder: (context) => ChangeNotifierProvider(
-            //                     create: (context) => ProviderModel(),
-            //                     child: WishList(
-            //                       categaoryID: 0,
-            //                       categaoryName: "",
-            //                       detailsBloc: detailsBloc,
-            //                       filterMenus: filterMenus,
-            //                     ),
-            //                   )));
-            //         },
-            //         child: Icon(
-            //           Icons.favorite,
-            //           color: Color(int.parse(
-            //               "0xFF${appBloc.uiSettingModel.appHeaderTextColor.substring(1, 7).toUpperCase()}")),
-            //         )),
-
             : Container(),
         (selectedmenu == "8")
             ? Stack(

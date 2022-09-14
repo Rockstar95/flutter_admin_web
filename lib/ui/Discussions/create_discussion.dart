@@ -298,7 +298,7 @@ class _CreateDiscussionState extends State<CreateDiscussion> with SingleTickerPr
                   Expanded(
                     child: Text.rich(
                       TextSpan(
-                        text: "Select moderators ",
+                        text: "Select Moderators ",
                         style: TextStyle(color: AppColors.getAppTextColor()),
                         children: [
                           TextSpan(
@@ -865,28 +865,50 @@ class _SelectModeratorsDialogState extends State<SelectModeratorsDialog> {
     return Dialog(
       backgroundColor: AppColors.getAppBGColor(),
       insetPadding: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
-      child: Container(
-        constraints: BoxConstraints(
-          maxHeight: MediaQuery.of(context).size.height * 0.7,
-        ),
-        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            getTitle(),
-            getSearchTextfield(),
-            Expanded(
-              child: getListView(),
+      child: Stack(
+        clipBehavior: Clip.none,
+        children: [
+          Container(
+            constraints: BoxConstraints(
+              maxHeight: MediaQuery.of(context).size.height * 0.7,
             ),
-            const SizedBox(height: 10,),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
+            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                getDoneButton(),
+                getTitle(),
+                getSearchTextfield(),
+                Expanded(
+                  child: getListView(),
+                ),
+                const SizedBox(height: 10,),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    getDoneButton(),
+                  ],
+                ),
               ],
             ),
-          ],
-        ),
+          ),
+          Positioned(
+            right: -12,
+            top: -12,
+            child: InkWell(
+              onTap: (){
+                Navigator.pop(context);
+              },
+              child: Container(
+                  decoration: const BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: Colors.black
+                  ),
+                  padding: const EdgeInsets.all(8.0),
+                  child: const Icon(Icons.close,color: Colors.white,),
+              ),
+            ),
+          )
+        ],
       ),
     );
   }
@@ -1053,13 +1075,14 @@ class _SelectModeratorsDialogState extends State<SelectModeratorsDialog> {
 
 class GetConnectionCard extends StatelessWidget {
   final DiscussionTopicUserListResponse response;
-  final bool userChecked;
+  final bool userChecked, isUserCheckedIconVisible;
   final void Function(bool) onCheck;
 
   const GetConnectionCard({
     Key? key,
     required this.response,
     required this.userChecked,
+    this.isUserCheckedIconVisible = true,
     required this.onCheck,
   }) : super(key: key);
 
@@ -1100,19 +1123,23 @@ class GetConnectionCard extends StatelessWidget {
             ),
           ),
           const Spacer(),
-          InkWell(
-            onTap: () {
-              onCheck(!userChecked);
-            },
-            child: Icon(
-              userChecked == false
-                  ? Icons.remove_circle_outlined
-                  : Icons.add_circle,
-              color: userChecked == false
-                  ? AppColors.getAppTextColor()
-                  : AppColors.getAppButtonBGColor(),
+          Visibility(
+            visible: true,
+            // visible: isUserCheckedIconVisible,
+            child: InkWell(
+              onTap: () {
+                onCheck(!userChecked);
+              },
+              child: Icon(
+                userChecked != false
+                    ? Icons.remove_circle_outlined
+                    : Icons.add_circle,
+                color: userChecked != false
+                    ? AppColors.getAppTextColor()
+                    : AppColors.getAppButtonBGColor(),
+              ),
             ),
-          )
+          ),
         ],
       ),
     );

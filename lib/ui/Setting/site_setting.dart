@@ -847,7 +847,7 @@ class _SiteSettingState extends State<SiteSetting> {
         commonListTile(onPressed: (){}, icon: Icons.color_lens_outlined, title: "Dark Theme", subTitle: "Will never turn on/off automatically",
             trailingWidget: Switch(
               value: isSwitched,
-              activeColor: Colors.blue,
+              activeColor: AppColors.getAppButtonBGColor(),
               onChanged: (toggle) {
                 isSwitched = toggle;
                 isSwitched

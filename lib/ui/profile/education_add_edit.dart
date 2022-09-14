@@ -688,7 +688,7 @@ class _EducationAddState extends State<EducationAdd> {
                                                     setState(() {
                                                       _selectedendDate = newValue ?? "2022";
                                                       startDate.text = newValue ?? "2022";
-                                                      _selectedLocation = "2022";
+                                                      // _selectedLocation = "2022";
                                                     });
                                                     FocusScope.of(context).unfocus();
                                                   },

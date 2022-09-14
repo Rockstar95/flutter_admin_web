@@ -1848,7 +1848,7 @@ class _CatalogSubScreenState extends State<CatalogSubScreen> {
                     fontSize: 14,
                     //fontWeight: FontWeight.w600,
                     decoration: isClickable ? TextDecoration.underline : null,
-                    color: Color(0xff1D293F),
+                    color:isClickable?AppColors.getSiteBrandingLinkColor(): Color(0xff1D293F),
                   ),
                 ),
               );

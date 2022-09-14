@@ -128,6 +128,12 @@ class AppColors {
   static Color getBorderColor() {
     return getColorFromString("#E1E1E1");
   }
+  static Color getDisableBorderColor() {
+    return getColorFromString("#DADCE0");
+  }
+  static Color getEnabledBorderColor() {
+    return getColorFromString("#202124");
+  }
 
   static Color getFilterIconColor() {
     return getColorFromString("#B5BBC6");
@@ -139,6 +145,9 @@ class AppColors {
 
   static Color getContentStatusTagColor() {
     return getColorFromString("#047BFE");
+  }
+  static Color getSiteBrandingLinkColor() {
+    return getColorFromString("#3498db");
   }
 
   static Color getMandatoryStarColor() {
