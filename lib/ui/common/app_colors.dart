@@ -125,6 +125,19 @@ class AppColors {
     return getColorFromString("#595959");
   }
 
+  static Color getNoteCompletedProgressIndicatorColor() {
+    return getColorFromString("#D8D8D8");
+  }
+
+  static Color getContentTypeTextColor() {
+    return getColorFromString("#757575");
+  }
+
+  static Color getLoadingColor() {
+    return getColorFromString("#000000");
+  }
+
+
   static Color getBorderColor() {
     return getColorFromString("#E1E1E1");
   }
