@@ -19,6 +19,8 @@ import 'package:flutter_admin_web/framework/repository/SplashRepository/contract
 import 'package:flutter_admin_web/framework/repository/SplashRepository/model/basicAuthResponse.dart';
 import 'package:flutter_admin_web/utils/my_print.dart';
 
+import '../../../../configs/client_urls.dart';
+
 ApiEndpoints apiEndpoints = new ApiEndpoints();
 
 class SplashBloc extends Bloc<SplashEvent, SplashState> {
@@ -75,6 +77,12 @@ class SplashBloc extends Bloc<SplashEvent, SplashState> {
         else {
           apiEndpoints.setstrSiteUrl(siteURL);
         }
+
+        String appAuthUrl = ClientUrls.getAuthUrl(ApiEndpoints.strSiteUrl);
+        if(appAuthUrl.isNotEmpty) {
+          ApiEndpoints.appAuthURL = appAuthUrl;
+        }
+
         print("Splash Bloc siteURL ${ApiEndpoints.strSiteUrl}");
 
         yield GetAppLogoState(url: appLogoUrl);
