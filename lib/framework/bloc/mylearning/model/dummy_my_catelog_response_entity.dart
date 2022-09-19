@@ -648,5 +648,9 @@ class DummyMyCatelogResponseTable2 extends HiveObject
   @HiveField(206)
   String datefilter = "";
 
+  @HiveField(207)
+  bool allowednavigation = true;
+
+  @HiveField(208)
   String wstatus = "";
 }
