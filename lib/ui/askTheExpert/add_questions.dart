@@ -308,7 +308,7 @@ class _AddQuestionState extends State<AddQuestion> with SingleTickerProviderStat
                 padding: const EdgeInsets.only(
                     top: 20, left: 5.0, right: 10.0, bottom: 10.0),
                 child: Text(
-                  'Attachments',
+                  'Attachment',
                   style: TextStyle(
                       fontSize: 15.0,
                       letterSpacing: 0.9,

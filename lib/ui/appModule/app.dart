@@ -79,7 +79,7 @@ class _AppState extends State<App> {
         ChangeNotifierProvider<ActBaseProvider>(create: (_) => ActBaseProvider(),),
         ChangeNotifierProvider<MyLearningDownloadProvider>(create: (_) => MyLearningDownloadProvider(),),
         ChangeNotifierProvider<DiscussionForumProvider>(create: (_) => DiscussionForumProvider(),),
-        ChangeNotifierProvider<ClassroomEventsController>(create: (_) => ClassroomEventsController(),),
+        ChangeNotifierProvider<ClassroomEventsController>(create: (_) => ClassroomEventsController(mainMapOfEvents: {}),),
       ],
       child: MultiBlocProvider(
         providers: [

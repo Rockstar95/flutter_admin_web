@@ -58,7 +58,7 @@ class MyLearningController {
     generalRepository = GeneralRepositoryBuilder.repository();
   }
 
-  Future<void> getMyDownloads({bool isRefresh = true, bool withoutNotify = false, bool isSyncWithOfflineData = true}) async {
+  Future<void> getMyDownloads({bool isRefresh = true, bool withoutNotify = false, bool isSyncWithOfflineData = true, MyLearningDownloadProvider? provider}) async {
     if(kIsWeb) return;
 
     String uuid = Uuid().v1().replaceAll("-", "");
@@ -71,7 +71,7 @@ class MyLearningController {
     }
 
     MyLearningBloc myLearningBloc = BlocProvider.of<MyLearningBloc>(NavigationController().mainNavigatorKey.currentContext!, listen: false);
-    MyLearningDownloadProvider myLearningDownloadProvider = Provider.of<MyLearningDownloadProvider>(NavigationController().mainNavigatorKey.currentContext!, listen: false);
+    MyLearningDownloadProvider myLearningDownloadProvider = provider ?? Provider.of<MyLearningDownloadProvider>(NavigationController().mainNavigatorKey.currentContext!, listen: false);
 
     if(isRefresh) {
       myLearningDownloadProvider.isLoadingMyDownloads = false;
