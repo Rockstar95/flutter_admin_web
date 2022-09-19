@@ -173,6 +173,9 @@ class UISettingModel {
   String _enableMembership = "";
   String _selfRegistrationAllowed = "";
   String _enableEcommerce = "";
+  String _dateFormat = "";
+  String _dateTimeFormat = "";
+  String _eventDateTimeFormat = "";
   String _siteLanguage = "";
   String _enablePushNotification = "";
   String _commonPasswordValue = "";
@@ -299,6 +302,21 @@ class UISettingModel {
 
   void setEnableEcommerce(String value) {
     _enableEcommerce = value;
+  }
+
+  String get dateFormat => _dateFormat;
+  void setDateFormat(String value) {
+    _dateFormat = value;
+  }
+
+  String get dateTimeFormat => _dateTimeFormat;
+  void setDateTimeFormat(String value) {
+    _dateTimeFormat = value;
+  }
+
+  String get eventDateTimeFormat => _eventDateTimeFormat;
+  void setEventDateTimeFormat(String value) {
+    _eventDateTimeFormat = value;
   }
 
   String get siteLanguage => _siteLanguage;
