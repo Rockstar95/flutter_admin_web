@@ -335,6 +335,15 @@ class AppBloc extends Bloc<AppEvent, AppState> {
       else if (element.name == "EnableEcommerce") {
         uiSettingModel.setEnableEcommerce(element.keyvalue.toString());
       }
+      else if (element.name == "DateFormat") {
+        uiSettingModel.setDateFormat(element.keyvalue.toString());
+      }
+      else if (element.name == "DateTimeFormat") {
+        uiSettingModel.setDateTimeFormat(element.keyvalue.toString());
+      }
+      else if (element.name == "EventDateTimeFormat") {
+        uiSettingModel.setEventDateTimeFormat(element.keyvalue.toString());
+      }
       else if (element.name == "SiteLanguage") {
         uiSettingModel.setSiteLanguage(element.keyvalue.toString());
       }
