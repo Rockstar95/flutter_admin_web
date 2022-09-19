@@ -1994,13 +1994,6 @@ class _ActBaseState extends State<ActBase> {
                     child: Icon(Icons.favorite, color: lableColor,size: 25.h),
                   )),
                 ),
-                // IconButton(
-                //     icon: Icon(Icons.favorite),
-                //     color: InsColor(appBloc).appHeaderTxtColor,
-                //     onPressed: () {
-                //       Navigator.of(context).push(MaterialPageRoute(
-                //           builder: (context) => EventWishListScreen()));
-                //     }),
                 Visibility(
                   visible: (int.tryParse(appBloc.wishlistcount) ?? 0) > 0,
                   child: Positioned(
@@ -2012,9 +2005,6 @@ class _ActBaseState extends State<ActBase> {
                         color: lableColor,
                         shape: BoxShape.circle,
                         border: Border.all(color: backgroundColor),
-                        // color: Color(int.parse(
-                        //     "0xFF${appBloc.uiSettingModel.appButtonBgColor.substring(1, 7).toUpperCase()}")),
-                        // borderRadius: BorderRadius.circular(6),
                       ),
                       constraints: const BoxConstraints(
                         minWidth: 14,
