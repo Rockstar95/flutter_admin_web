@@ -1,5 +1,6 @@
-import 'package:flutter_admin_web/framework/bloc/mylearning/model/dummy_my_catelog_response_entity.dart';
-import 'package:flutter_admin_web/utils/my_print.dart';
+
+import '../../../framework/bloc/mylearning/model/dummy_my_catelog_response_entity.dart';
+import '../../../utils/my_print.dart';
 
 /*Download Status Values Mapping
 undefined = 0;
@@ -13,6 +14,7 @@ paused = 6;*/
 class MyLearningDownloadModel {
   double downloadPercentage = 0;
   DummyMyCatelogResponseTable2 table2;
+  DummyMyCatelogResponseTable2? trackModel;
   String taskId = "", contentId = "", downloadFileUrl = "", downloadFilePath = "", trackContentId = "", trackContentName = "";
   int downloadStatus = 0;
   bool isZip = false, isFileDownloading = false, isFileDownloadingPaused = false, isFileDownloaded = false, isFileExtracted = false,
@@ -21,6 +23,7 @@ class MyLearningDownloadModel {
   MyLearningDownloadModel({
     this.downloadPercentage = 0,
     required this.table2,
+    this.trackModel,
     this.taskId = "",
     this.contentId = "",
     this.downloadFileUrl = "",
@@ -54,9 +57,20 @@ class MyLearningDownloadModel {
       }
     }
 
+    Map<String, dynamic> trackMap = {};
+    if(map['trackModel'] is Map) {
+      try {
+        trackMap = Map.castFrom<dynamic, dynamic, String, dynamic>(map['trackModel']);
+      }
+      catch(e, s) {
+        MyPrint.printOnConsole(s);
+      }
+    }
+
     MyLearningDownloadModel myLearningDownloadModel = MyLearningDownloadModel(
       downloadPercentage: map['downloadPercentage']?.toDouble() ?? 0,
       table2: DummyMyCatelogResponseTable2().fromJson(table2),
+      trackModel: trackMap.isNotEmpty ? DummyMyCatelogResponseTable2().fromJson(trackMap) : null,
       taskId: map['taskId']?.toString() ?? "",
       contentId: map['contentId']?.toString() ?? "",
       downloadFileUrl: map['downloadFileUrl']?.toString() ?? "",
@@ -84,6 +98,7 @@ class MyLearningDownloadModel {
     return {
       "downloadPercentage" : downloadPercentage,
       "table2" : table2.toJson(),
+      "trackModel" : trackModel?.toJson(),
       "taskId" : taskId,
       "contentId" : contentId,
       "downloadFileUrl" : downloadFileUrl,
