@@ -62,11 +62,18 @@ import 'package:flutter_admin_web/ui/progressReport/progress_report.dart';
 import 'package:flutter_admin_web/ui/splash/splash_screen.dart';
 import 'package:flutter_admin_web/utils/my_print.dart';
 import 'package:http/http.dart';
+import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../../backend/classroom_events/classroom_events_controller.dart';
 import '../../configs/app_menu_ids.dart';
+import '../../configs/app_strings.dart';
 import '../../framework/helpers/parsing_helper.dart';
+import '../../providers/my_learning_download_provider.dart';
+import '../MyLearning/my_downloads_screen.dart';
+import '../classroom_events/event_main_page2.dart';
 import '../common/app_colors.dart';
+import '../common/bottomsheet_option_tile.dart';
 import '../instabot/instabot_screen.dart';
 
 //Function to handle Notification data in background.
@@ -599,7 +606,7 @@ class _ActBaseState extends State<ActBase> {
 
   void _addMessageMenu(List<Widget> drawerOptions, BuildContext context) async {
     //Divider();
-    drawerOptions.add(const SizedBox(height: 16));
+    // drawerOptions.add(const SizedBox(height: 16));
     drawerOptions.add(
       Container(
         //height: 6 * SizeConfig.heightMultiplier,
@@ -806,7 +813,7 @@ class _ActBaseState extends State<ActBase> {
                   sharedPref_RepositoryId, element.repositoryId);
             }
           });
-          return const EventMainPage();
+          return EventMainPage2(classroomEventsController: Provider.of<ClassroomEventsController>(context, listen: false),);
         case AppMenuIds.COMMUNITIES:
           appBloc.listNativeModel.forEach((element) async {
             if (element.contextmenuId == AppMenuIds.COMMUNITIES) {
@@ -857,7 +864,13 @@ class _ActBaseState extends State<ActBase> {
           });
           return Notifications(
               nativeMenuModel: nativeMenuModel ?? NativeMenuModel(categoryStyle: "",componentId: "",conditions: "",contextTitle: "",contextmenuId: "",displayOrder: 0,displayname: "",image: "",isEnabled: "",isofflineMenu: "",landingpageType: "",menuid: "",parameterString: "",parentMenuId: "",repositoryId: "",siteId: "",siteUrl: "",webMenuId: 0));
-        case AppMenuIds.MY_CONNECTIONS:
+
+        case AppMenuIds.MY_DOWNLOADS: {
+          return MyDownloadsScreen(
+            myLearningBloc: myLearningBloc,
+            myLearningDownloadProvider: Provider.of<MyLearningDownloadProvider>(NavigationController().mainNavigatorKey.currentContext!, listen: false),
+          );
+        } case AppMenuIds.MY_CONNECTIONS:
           return ConnectionIndexScreen();
         default:
           return const Center(
@@ -919,7 +932,7 @@ class _ActBaseState extends State<ActBase> {
                   sharedPref_RepositoryId, element.repositoryId);
             }
           });
-          return const EventMainPage();
+          return EventMainPage2(classroomEventsController: Provider.of<ClassroomEventsController>(context, listen: false),);
         default:
           return getCominSoon(context);
       }
@@ -1597,8 +1610,8 @@ class _ActBaseState extends State<ActBase> {
           );
           drawerOptions.add(
             Container(
-              width: 40,
-              height: 40,
+              // width: 40,
+              // height: 40,
               //height: 6 * SizeConfig.heightMultiplier,
               child: ListTile(
                 leading: Icon(Icons.notifications,
@@ -1621,6 +1634,26 @@ class _ActBaseState extends State<ActBase> {
                     selectedmenu = "2002";
                     appBarTitle = 'Notifications';
                     documentReference.update({"selected_menu":selectedmenu});
+                  });
+                },
+              ),
+            ),
+          );
+          drawerOptions.add(
+            Container(
+              /*width: 40,
+              height: 40,*/
+              //color: Colors.red,
+              //height: 6 * SizeConfig.heightMultiplier,
+              child: BottomsheetOptionTile(
+                iconData: Icons.download,
+                text: AppStrings.my_downloads,
+                iconColor: AppColors.getMenuTextColor(),
+                onTap: () {
+                  Navigator.of(context).pop();
+                  setState(() {
+                    selectedmenu = AppMenuIds.MY_DOWNLOADS;
+                    appBarTitle = AppStrings.my_downloads;
                   });
                 },
               ),
