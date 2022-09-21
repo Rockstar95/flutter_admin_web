@@ -1,10 +1,10 @@
-extension c on String {
+extension StringExtension on String {
   String capitalize() {
     String  text = "";
-    if(this.isNotEmpty) {
+    if(isNotEmpty) {
       text += this[0].toUpperCase();
-      if(this.length > 1) {
-        text += this.substring(1).toLowerCase();
+      if(length > 1) {
+        text += substring(1).toLowerCase();
       }
     }
     return text;

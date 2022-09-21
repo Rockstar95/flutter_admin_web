@@ -294,7 +294,7 @@ class RestClient {
     String newId = Uuid().v1().replaceAll("-", "");
     print("$newId Url:$endpoint");
     print("$newId Header:$headers");
-    print("$newId Data:${jsonEncode(data)}");
+    MyPrint.logOnConsole("$newId Data:${jsonEncode(data)}");
 
     try {
       response = await post(Uri.parse(endpoint), body: jsonEncode(data), headers: headers);

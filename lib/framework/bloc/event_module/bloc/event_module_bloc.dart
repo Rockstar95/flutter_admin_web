@@ -16,6 +16,7 @@ import 'package:flutter_admin_web/framework/repository/event_module/model/sessio
 import 'package:flutter_admin_web/framework/repository/event_module/model/waiting_list_response.dart';
 import 'package:flutter_admin_web/generated/json/dummy_my_catelog_response_entity_helper.dart';
 
+import '../../../../ui/common/log_util.dart';
 import '../../../../utils/my_print.dart';
 
 class EvntModuleBloc extends Bloc<EvntModuleEvent, EvntModuleState> {
@@ -115,7 +116,8 @@ class EvntModuleBloc extends Bloc<EvntModuleEvent, EvntModuleState> {
               isSucces: true, eventRecordingResponse: recordingResponse);
         } else if (response?.statusCode == 401) {
           yield ViewRecordingState.error('401');
-        } else {
+        }
+        else {
           yield ViewRecordingState.error('Something went wrong');
         }
       }
@@ -264,14 +266,14 @@ class EvntModuleBloc extends Bloc<EvntModuleEvent, EvntModuleState> {
       }
       else if (event is DownloadCompleteEvent) {
         try {
-          Response? response = await eventModuleRepository.downloadCompleteInfo(
-              event.contentId, event.ScoID);
+          Response? response = await eventModuleRepository.downloadCompleteInfo(event.contentId, event.ScoID);
 
           print("Downloadcompleteinfo Response ${response?.body}");
 
           if (response?.statusCode == 200) {
             yield DownloadCompleteState.completed(isSucces: true);
-          } else {
+          }
+          else {
             print(response?.statusCode);
             yield DownloadCompleteState.error("${response?.statusCode}");
           }
@@ -355,18 +357,18 @@ class EvntModuleBloc extends Bloc<EvntModuleEvent, EvntModuleState> {
       else if (event is EventSession) {
         yield GetSessionEventState.loading('Please wait');
 
-        Response? response =
-            await eventModuleRepository.getSessionList(event.contentid);
+        Response? response = await eventModuleRepository.getSessionList(event.contentid);
 
         if (response?.statusCode == 200) {
-          SessionEventResponse sessionEventResponse =
-              sessionEventResponseFromJson(response?.body ?? "{}");
+          SessionEventResponse sessionEventResponse = sessionEventResponseFromJson(response?.body ?? "{}");
           sessionCourseList = sessionEventResponse.courseList;
 
           yield GetSessionEventState.completed(isSucces: true);
-        } else if (response?.statusCode == 401) {
+        }
+        else if (response?.statusCode == 401) {
           yield GetSessionEventState.error('401');
-        } else {
+        }
+        else {
           yield GetSessionEventState.error('Something went wrong');
         }
       }
@@ -375,8 +377,7 @@ class EvntModuleBloc extends Bloc<EvntModuleEvent, EvntModuleState> {
         Response? response;
 
         try {
-          response =
-              await eventModuleRepository.badCancelEnroll(event.contentid);
+          response = await eventModuleRepository.badCancelEnroll(event.contentid);
         } catch (e) {
           print("repo Error $e");
         }
@@ -384,9 +385,11 @@ class EvntModuleBloc extends Bloc<EvntModuleEvent, EvntModuleState> {
         if (response?.statusCode == 200) {
           yield BadCancelEnrollmentState.completed(
               isSucces: response?.body ?? "{}", table2: event.table2);
-        } else if (response?.statusCode == 401) {
+        }
+        else if (response?.statusCode == 401) {
           yield BadCancelEnrollmentState.error("401");
-        } else {
+        }
+        else {
           yield BadCancelEnrollmentState.error("Something went wrong");
         }
       }
@@ -395,8 +398,7 @@ class EvntModuleBloc extends Bloc<EvntModuleEvent, EvntModuleState> {
         Response? response;
 
         try {
-          response = await eventModuleRepository.cancelEnroll(
-              event.strContentID, event.isBadCancel);
+          response = await eventModuleRepository.cancelEnroll(event.strContentID, event.isBadCancel);
         } catch (e) {
           print("repo Error $e");
         }
@@ -452,16 +454,15 @@ class EvntModuleBloc extends Bloc<EvntModuleEvent, EvntModuleState> {
         Response? response;
 
         try {
-          response =
-              await eventModuleRepository.waitingList(event.strContentID);
+          response = await eventModuleRepository.waitingList(event.strContentID);
 
           print('waitinglistresp ${response?.body}');
-        } catch (e) {
+        }
+        catch (e) {
           print("repo Error $e");
         }
         if (response?.statusCode == 200) {
-          WaitingListResponse waitingListResponse =
-              waitingListResponseFromJson(response?.body ?? "{}");
+          WaitingListResponse waitingListResponse = waitingListResponseFromJson(response?.body ?? "{}");
           yield WaitingListState.completed(
               isSucces: response.toString(),
               table2: event.table2,
@@ -472,7 +473,9 @@ class EvntModuleBloc extends Bloc<EvntModuleEvent, EvntModuleState> {
           yield WaitingListState.error("Something went wrong");
         }
       }
-    } catch (e, s) {
+    }
+    catch (e, s) {
+      LogUtil().printLog(message: 'Error is ===> $e');
       MyPrint.printOnConsole("Error in EvntModuleBloc.mapEventToState():$e");
       MyPrint.printOnConsole(s);
     }

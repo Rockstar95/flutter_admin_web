@@ -179,6 +179,9 @@ class MyLearningDownloadController {
         trackData: trackData,
       );
     }
+    else if([70].contains(table2.objecttypeid)) {
+      return false;
+    }
     else {
       GotoCourseLaunch courseLaunch = GotoCourseLaunch(
         context,
@@ -445,6 +448,7 @@ class MyLearningDownloadController {
         MyLearningDownloadModel myLearningDownloadModel = MyLearningDownloadModel(
           contentId: contentId,
           table2: learningModel,
+          trackModel: trackData,
           downloadFileUrl: downloadFileUrl,
           downloadFilePath: destinationFilePath,
           trackContentId: trackData?.contentid ?? "",
@@ -631,116 +635,36 @@ class MyLearningDownloadController {
   }
 
   Future<void> resumeDownload(MyLearningDownloadModel downloadModel) async {
-    String? newTaskId =
-        await FlutterDownloader.resume(taskId: downloadModel.taskId);
+    String? newTaskId = await FlutterDownloader.resume(taskId: downloadModel.taskId);
     downloadModel.taskId = newTaskId ?? "";
   }
 
   Future<void> cancelDownload(MyLearningDownloadModel downloadModel) async {
     MyPrint.printOnConsole(
         "MyLearningDownloadController.cancelDownload():${downloadModel.taskId}");
-    //await FlutterDownloader.cancel(taskId: downloadModel.taskId).then((value) {
-    await FlutterDownloader.remove(taskId: downloadModel.taskId, shouldDeleteContent: true).then((value) {
-      MyPrint.printOnConsole("FlutterDownloader.cancel successful");
 
-      MyLearningBloc myLearningBloc = BlocProvider.of<MyLearningBloc>(
-          NavigationController().mainNavigatorKey.currentContext!,
-          listen: false);
-      if (myLearningBloc.list.isNotEmpty) {
-        List<DummyMyCatelogResponseTable2> list = myLearningBloc.list
-            .where((element) =>
-                element.contentid == downloadModel.table2.contentid)
-            .toList();
-        if (list.isNotEmpty) {
-          list.forEach((element) {
-            element.isDownloading = false;
-            element.isdownloaded = false;
+    try {
+      FlutterDownloader.remove(taskId: downloadModel.taskId, shouldDeleteContent: true).then((value) {
+        MyPrint.printOnConsole("FlutterDownloader.cancel successful");
+      }).catchError((e) {
+        MyPrint.printOnConsole("FlutterDownloader.cancel failed:$e");
+      });
+    }
+    catch(e, s) {
+      MyPrint.printOnConsole("Error in Removing Download Task from FlutterDownloader in CancelDownload:$e");
+      MyPrint.printOnConsole(s);
+    }
 
-            AppBloc appBloc = BlocProvider.of<AppBloc>(
-                NavigationController().mainNavigatorKey.currentContext!,
-                listen: false);
-            String mylearningHiveCollectionName =
-                "$myLearningCollection-${appBloc.userid}";
-            HiveDbHandler().createData(
-              mylearningHiveCollectionName,
-              element.contentid,
-              element.toJson(),
-            );
-          });
-        }
-      }
-      if (myLearningBloc.listArchive.isNotEmpty) {
-        List<DummyMyCatelogResponseTable2> list = myLearningBloc.listArchive
-            .where((element) =>
-                element.contentid == downloadModel.table2.contentid)
-            .toList();
-        if (list.isNotEmpty) {
-          list.forEach((element) {
-            element.isDownloading = false;
-            element.isdownloaded = false;
-
-            AppBloc appBloc = BlocProvider.of<AppBloc>(
-                NavigationController().mainNavigatorKey.currentContext!,
-                listen: false);
-            String archiveHiveCollectionName = "$archiveList-${appBloc.userid}";
-            HiveDbHandler().createData(
-              archiveHiveCollectionName,
-              element.contentid,
-              element.toJson(),
-            );
-          });
-        }
-      }
-
-      AppBloc appBloc = BlocProvider.of<AppBloc>(
-          NavigationController().mainNavigatorKey.currentContext!,
-          listen: false);
-      String hiveMyDownloadsTable = "$MY_DOWNLOADS_HIVE_COLLECTION_NAME-${appBloc.userid}";
-
-      HiveDbHandler().deleteData(hiveMyDownloadsTable, keys: [downloadModel.contentId]);
-
-      MyLearningDownloadProvider myLearningDownloadProvider = Provider.of<MyLearningDownloadProvider>(
-              NavigationController().mainNavigatorKey.currentContext!,
-              listen: false);
-      myLearningDownloadProvider.downloads.remove(downloadModel);
-      myLearningDownloadProvider.notifyListeners();
-    }).catchError((e) {
-      MyPrint.printOnConsole("FlutterDownloader.cancel failed:$e");
-    });
-  }
-
-  Future<void> removeFromDownload(MyLearningDownloadModel downloadModel) async {
-    MyPrint.printOnConsole(
-        "MyLearningDownloadController.removeFromDownload():${downloadModel.taskId}");
-
-    MyLearningDownloadProvider myLearningDownloadProvider = Provider.of<MyLearningDownloadProvider>(
-      NavigationController().mainNavigatorKey.currentContext!,
-      listen: false,
-    );
-
-    downloadModel.table2.isDownloading = false;
-    downloadModel.table2.isdownloaded = false;
-
-    MyLearningDownloadController().changeDownloadStatusOfContent(learningModel: downloadModel.table2, isDownloaded: false);
-
-    MyLearningBloc myLearningBloc = BlocProvider.of<MyLearningBloc>(
-        NavigationController().mainNavigatorKey.currentContext!,
-        listen: false);
+    MyLearningBloc myLearningBloc = BlocProvider.of<MyLearningBloc>(NavigationController().mainNavigatorKey.currentContext!, listen: false);
     if (myLearningBloc.list.isNotEmpty) {
-      List<DummyMyCatelogResponseTable2> list = myLearningBloc.list
-          .where(
-              (element) => element.contentid == downloadModel.table2.contentid)
-          .toList();
+      List<DummyMyCatelogResponseTable2> list = myLearningBloc.list.where((element) => element.contentid == downloadModel.table2.contentid).toList();
       if (list.isNotEmpty) {
         list.forEach((element) {
           element.isDownloading = false;
           element.isdownloaded = false;
 
-          AppBloc appBloc = BlocProvider.of<AppBloc>(
-              NavigationController().mainNavigatorKey.currentContext!,
-              listen: false);
-          String mylearningHiveCollectionName =
-              "$myLearningCollection-${appBloc.userid}";
+          AppBloc appBloc = BlocProvider.of<AppBloc>(NavigationController().mainNavigatorKey.currentContext!, listen: false);
+          String mylearningHiveCollectionName = "$myLearningCollection-${appBloc.userid}";
           HiveDbHandler().createData(
             mylearningHiveCollectionName,
             element.contentid,
@@ -750,18 +674,13 @@ class MyLearningDownloadController {
       }
     }
     if (myLearningBloc.listArchive.isNotEmpty) {
-      List<DummyMyCatelogResponseTable2> list = myLearningBloc.listArchive
-          .where(
-              (element) => element.contentid == downloadModel.table2.contentid)
-          .toList();
+      List<DummyMyCatelogResponseTable2> list = myLearningBloc.listArchive.where((element) => element.contentid == downloadModel.table2.contentid).toList();
       if (list.isNotEmpty) {
         list.forEach((element) {
           element.isDownloading = false;
           element.isdownloaded = false;
 
-          AppBloc appBloc = BlocProvider.of<AppBloc>(
-              NavigationController().mainNavigatorKey.currentContext!,
-              listen: false);
+          AppBloc appBloc = BlocProvider.of<AppBloc>(NavigationController().mainNavigatorKey.currentContext!, listen: false);
           String archiveHiveCollectionName = "$archiveList-${appBloc.userid}";
           HiveDbHandler().createData(
             archiveHiveCollectionName,
@@ -772,13 +691,76 @@ class MyLearningDownloadController {
       }
     }
 
-    /*String hiveMyDownloadsTable = "${MY_DOWNLOADS_HIVE_COLLECTION_NAME}-${appBloc.userid}";
-    HiveDbHandler().deleteData(hiveMyDownloadsTable, keys: [downloadModel.contentId]);*/
+    AppBloc appBloc = BlocProvider.of<AppBloc>(NavigationController().mainNavigatorKey.currentContext!, listen: false);
+    String hiveMyDownloadsTable = "$MY_DOWNLOADS_HIVE_COLLECTION_NAME-${appBloc.userid}";
+
+    HiveDbHandler().deleteData(hiveMyDownloadsTable, keys: [downloadModel.contentId]);
+
+    MyLearningDownloadProvider myLearningDownloadProvider = Provider.of<MyLearningDownloadProvider>(NavigationController().mainNavigatorKey.currentContext!, listen: false);
+    myLearningDownloadProvider.downloads.remove(downloadModel);
+    myLearningDownloadProvider.notifyListeners();
+  }
+
+  Future<void> removeFromDownload(MyLearningDownloadModel downloadModel) async {
+    MyPrint.printOnConsole("MyLearningDownloadController.removeFromDownload():${downloadModel.taskId}");
+
+    MyLearningDownloadController().changeDownloadStatusOfContent(learningModel: downloadModel.table2, isDownloaded: false);
+    setRemoveFromDownloadsForContent(contentid: downloadModel.contentId, isRemoved: true);
+    cancelDownload(downloadModel);
+
+    /*MyLearningDownloadProvider myLearningDownloadProvider = Provider.of<MyLearningDownloadProvider>(
+      NavigationController().mainNavigatorKey.currentContext!,
+      listen: false,
+    );
+
+    downloadModel.table2.isDownloading = false;
+    downloadModel.table2.isdownloaded = false;
+
+    MyLearningDownloadController().changeDownloadStatusOfContent(learningModel: downloadModel.table2, isDownloaded: false);
+
+    MyLearningBloc myLearningBloc = BlocProvider.of<MyLearningBloc>(NavigationController().mainNavigatorKey.currentContext!, listen: false);
+    if (myLearningBloc.list.isNotEmpty) {
+      List<DummyMyCatelogResponseTable2> list = myLearningBloc.list.where((element) => element.contentid == downloadModel.table2.contentid).toList();
+      if (list.isNotEmpty) {
+        list.forEach((element) {
+          element.isDownloading = false;
+          element.isdownloaded = false;
+
+          AppBloc appBloc = BlocProvider.of<AppBloc>(NavigationController().mainNavigatorKey.currentContext!, listen: false);
+          String mylearningHiveCollectionName = "$myLearningCollection-${appBloc.userid}";
+          HiveDbHandler().createData(
+            mylearningHiveCollectionName,
+            element.contentid,
+            element.toJson(),
+          );
+        });
+      }
+    }
+    if (myLearningBloc.listArchive.isNotEmpty) {
+      List<DummyMyCatelogResponseTable2> list = myLearningBloc.listArchive.where((element) => element.contentid == downloadModel.table2.contentid).toList();
+      if (list.isNotEmpty) {
+        list.forEach((element) {
+          element.isDownloading = false;
+          element.isdownloaded = false;
+
+          AppBloc appBloc = BlocProvider.of<AppBloc>(NavigationController().mainNavigatorKey.currentContext!, listen: false);
+          String archiveHiveCollectionName = "$archiveList-${appBloc.userid}";
+          HiveDbHandler().createData(
+            archiveHiveCollectionName,
+            element.contentid,
+            element.toJson(),
+          );
+        });
+      }
+    }
+
+    *//*String hiveMyDownloadsTable = "${MY_DOWNLOADS_HIVE_COLLECTION_NAME}-${appBloc.userid}";
+    HiveDbHandler().deleteData(hiveMyDownloadsTable, keys: [downloadModel.contentId]);*//*
 
     setRemoveFromDownloadsForContent(contentid: downloadModel.contentId, isRemoved: true);
 
     myLearningDownloadProvider.downloads.remove(downloadModel);
-    myLearningDownloadProvider.notifyListeners();
+    myLearningDownloadProvider.notifyListeners();*/
   }
 
   //endregion
@@ -861,11 +843,9 @@ class MyLearningDownloadController {
     AppBloc appBloc = BlocProvider.of<AppBloc>(
         NavigationController().mainNavigatorKey.currentContext!,
         listen: false);
-    String removedFromDownloadsHiveCollectionName =
-        "$MY_REMOVE_FROM_DOWNLOADS_HIVE_COLLECTION_NAME-${appBloc.userid}";
+    String removedFromDownloadsHiveCollectionName = "$MY_REMOVE_FROM_DOWNLOADS_HIVE_COLLECTION_NAME-${appBloc.userid}";
 
-    List<Map<String, dynamic>> list =
-        await HiveDbHandler().readData(removedFromDownloadsHiveCollectionName);
+    List<Map<String, dynamic>> list = await HiveDbHandler().readData(removedFromDownloadsHiveCollectionName);
     MyPrint.printOnConsole("RemovedFromDownload List:$list");
     list.forEach((Map<String, dynamic> map) {
       map.forEach((String key, dynamic value) {
