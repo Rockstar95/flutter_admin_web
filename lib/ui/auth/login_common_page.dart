@@ -24,8 +24,11 @@ import 'package:flutter_admin_web/ui/auth/dynamic_signup_page.dart';
 import 'package:flutter_admin_web/ui/auth/login_page.dart';
 import 'package:flutter_admin_web/ui/common/app_colors.dart';
 import 'package:flutter_admin_web/ui/home/ActBase.dart';
+import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../../configs/constants.dart';
+import '../../framework/helpers/providermodel.dart';
 import '../common/outline_button.dart';
 import 'membership_signup.dart';
 
@@ -117,7 +120,7 @@ class _LoginCommonPageState extends State<LoginCommonPage> {
           : Navigator.of(context).push(MaterialPageRoute(builder: (context) => MembershipSignUpWebView()));
     }
     else {
-      Navigator.push(context, MaterialPageRoute(builder: (context) => DynamicSignUp()));
+      Navigator.push(context, MaterialPageRoute(builder: (context) => ChangeNotifierProvider(create: (context) => ProviderModel(), child: DynamicSignUp(),)));
     }
   }
 
@@ -177,10 +180,7 @@ class _LoginCommonPageState extends State<LoginCommonPage> {
     return Center(
       child: stateval.status == Status.LOADING
           ? AbsorbPointer(
-              child: SpinKitCircle(
-              color: Colors.grey,
-              size: 70.h,
-            ))
+              child: AppConstants().getLoaderWidget(iconSize: 70))
           : Container(),
     );
   }
@@ -440,8 +440,8 @@ class _LoginCommonPageState extends State<LoginCommonPage> {
 
     for (var membershipRes in membershipList) {
       newItems.add(Container(
-        decoration: new BoxDecoration(
-          border: new Border.all(width: 3.0, color: InsColor(appBloc).appBtnBgColor),
+        decoration: BoxDecoration(
+          border: Border.all(width: 3.0, color: InsColor(appBloc).appBtnBgColor),
           borderRadius: const BorderRadius.all(const Radius.circular(2.0)),
         ),
         //height: 300,
@@ -479,7 +479,7 @@ class _LoginCommonPageState extends State<LoginCommonPage> {
             ]),
             Column(
               children: List.generate(membershipRes.radioData.length, (index) {
-                return new InkWell(
+                return InkWell(
                   onTap: () {
                     setState(() {
                       authBloc.memberShipPlansList
@@ -515,9 +515,12 @@ class _LoginCommonPageState extends State<LoginCommonPage> {
                       //         )));
 
                       Navigator.of(context).push(MaterialPageRoute(
-                          builder: (context) => DynamicSignUp(
-                            membershipId: data.memberShipDurationID,
-                            productId: data.productId,
+                          builder: (context) => ChangeNotifierProvider(
+                            create: (context) => ProviderModel(),
+                            child: DynamicSignUp(
+                              membershipId: data.memberShipDurationID,
+                              productId: data.productId,
+                            ),
                           )));
                     });
                   },

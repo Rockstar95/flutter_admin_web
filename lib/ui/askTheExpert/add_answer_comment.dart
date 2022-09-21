@@ -2,7 +2,6 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:flutter_admin_web/framework/bloc/app/bloc/app_bloc.dart';
 import 'package:flutter_admin_web/framework/bloc/askTheExpert/bloc/ask_the_expert_bloc.dart';
@@ -13,6 +12,8 @@ import 'package:flutter_admin_web/framework/common/enums.dart';
 import 'package:flutter_admin_web/framework/repository/askTheExpert/ask_the_expert_repositry_builder.dart';
 import 'package:flutter_admin_web/framework/theme/ins_theme.dart';
 import 'package:flutter_admin_web/ui/common/common_toast.dart';
+
+import '../../configs/constants.dart';
 
 class AddAnswerComment extends StatefulWidget {
   final Table1 table1;
@@ -290,14 +291,14 @@ class _AddAnswerCommentState extends State<AddAnswerComment>
             flutterToast.showToast(
                 child: CommonToast(displaymsg: 'Comment added successfully'),
                 gravity: ToastGravity.BOTTOM,
-                toastDuration: const Duration(seconds: 4));
+                toastDuration: Duration(seconds: 4));
           } else if (state.status == Status.ERROR) {
             flutterToast.showToast(
               child: CommonToast(
                 displaymsg: state.message,
               ),
               gravity: ToastGravity.BOTTOM,
-              toastDuration: const Duration(seconds: 2),
+              toastDuration: Duration(seconds: 2),
             );
           }
         }
@@ -306,10 +307,7 @@ class _AddAnswerCommentState extends State<AddAnswerComment>
         if (state.status == Status.LOADING) {
           return Align(
             child: AbsorbPointer(
-              child: SpinKitCircle(
-                color: Colors.grey,
-                size: 70.h,
-              ),
+              child: AppConstants().getLoaderWidget(iconSize: 70)
             ),
           );
         } else {

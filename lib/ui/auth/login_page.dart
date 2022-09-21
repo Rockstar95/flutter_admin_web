@@ -29,8 +29,11 @@ import 'package:flutter_admin_web/ui/auth/dynamic_signup_page.dart';
 import 'package:flutter_admin_web/ui/auth/forgot_password.dart';
 import 'package:flutter_admin_web/ui/common/common_toast.dart';
 import 'package:flutter_admin_web/ui/home/ActBase.dart';
+import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../../configs/constants.dart';
+import '../../framework/helpers/providermodel.dart';
 import 'membership_signup.dart';
 
 class LoginPage extends StatefulWidget {
@@ -129,6 +132,7 @@ class _LoginPageState extends State<LoginPage> {
       builder: (context) {
         return StatefulBuilder(
           builder: (context, setState) {
+            Size size = MediaQuery.of(context).size;
             var memItems = planItems(membershipList, currency);
             return AlertDialog(
               scrollable: true,
@@ -240,12 +244,12 @@ class _LoginPageState extends State<LoginPage> {
     //   }
     // });
 
-    _firebaseMessaging.getToken(vapidKey: 'BH7mCZr5oMSu4K8m3FSj37tmj4Ccq00s1Hd9C_1XbohIvnraXJmUQHedddY3Vs_lKpxxhKOiPPU35fuBO4k7JF4').then((String? token) {
-      _homeScreenText = token ?? "";
-      /*if(mounted) {
-        setState(() {});
-      }*/
-      MyPrint.printOnConsole("fcm token $_homeScreenText");
+    _firebaseMessaging.getToken().then((String? token) {
+      assert(token != null);
+      setState(() {
+        _homeScreenText = token ?? "";
+      });
+      print("fcm token $_homeScreenText");
     });
 
     if (widget.isAutologin) {
@@ -608,7 +612,11 @@ class _LoginPageState extends State<LoginPage> {
                                           else {
                                             Navigator.of(context).push(MaterialPageRoute(
                                                 builder: (context) =>
-                                                    DynamicSignUp()));
+                                                    ChangeNotifierProvider(
+                                                      create: (context) =>
+                                                          ProviderModel(),
+                                                      child: DynamicSignUp(),
+                                                    )));
                                           }
 
                                           //
@@ -644,10 +652,7 @@ class _LoginPageState extends State<LoginPage> {
                     Center(
                       child: authstate.status == Status.LOADING
                           ? AbsorbPointer(
-                              child: SpinKitCircle(
-                              color: Colors.grey,
-                              size: 48.h,
-                            ))
+                              child: AppConstants().getLoaderWidget())
                           : Container(),
                     ),
                   ],
@@ -725,9 +730,12 @@ class _LoginPageState extends State<LoginPage> {
                           membershipRes.memberShipId)
                           .radioData[index];
                       print(data.memberShipDurationID);
+                      var productId = '';
                       if (data.productId == 'Gold 1') {
                         //Temporary until productId from server response
+                        productId = 'com.instancy.goldyearplan';
                       } else if (data.productId.toLowerCase() == 'silver') {
+                        productId = 'com.instancy.silveronemonth';
                       }
                       Navigator.pop(context);
                       // Navigator.of(context).push(MaterialPageRoute(
@@ -737,9 +745,12 @@ class _LoginPageState extends State<LoginPage> {
                       //         )));
 
                       Navigator.of(context).push(MaterialPageRoute(
-                          builder: (context) => DynamicSignUp(
-                            membershipId: data.memberShipDurationID,
-                            productId: data.productId,
+                          builder: (context) => ChangeNotifierProvider(
+                            create: (context) => ProviderModel(),
+                            child: DynamicSignUp(
+                              membershipId: data.memberShipDurationID,
+                              productId: data.productId,
+                            ),
                           )));
                     });
                   },

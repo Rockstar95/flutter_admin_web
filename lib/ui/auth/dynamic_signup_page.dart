@@ -6,7 +6,6 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:in_app_purchase/in_app_purchase.dart';
@@ -26,6 +25,7 @@ import 'package:flutter_admin_web/utils/mytoast.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 import 'package:url_launcher/url_launcher_string.dart';
 
+import '../../configs/constants.dart';
 import '../common/app_colors.dart';
 
 class DynamicSignUp extends StatefulWidget {
@@ -52,8 +52,8 @@ class _DynamicSignUpState extends State<DynamicSignUp> {
   String userEmailID = ""; //'upendranath@instancy.com';
   String userPassword = ""; // = 'abcxyz';
 
-  bool isPassVisible = false;
-  bool isConfPassVisible = false;
+  bool isPassVisible = true;
+  bool isConfPassVisible = true;
 
   late RegExp regExp;
   String pattern =
@@ -208,7 +208,7 @@ class _DynamicSignUpState extends State<DynamicSignUp> {
                 flutterToast.showToast(
                   child: CommonToast(displaymsg: state.message),
                   gravity: ToastGravity.CENTER,
-                  toastDuration: Duration(seconds: 2),
+                  toastDuration: const Duration(seconds: 2),
                 );
               }
             }
@@ -238,7 +238,7 @@ class _DynamicSignUpState extends State<DynamicSignUp> {
                 flutterToast.showToast(
                   child: CommonToast(displaymsg: state.message),
                   gravity: ToastGravity.BOTTOM,
-                  toastDuration: Duration(seconds: 2),
+                  toastDuration: const Duration(seconds: 2),
                 );
               }
             }
@@ -315,13 +315,10 @@ class _DynamicSignUpState extends State<DynamicSignUp> {
                                   dynamicSignUpBloc.isLoading
                                       ? Center(
                                           child: AbsorbPointer(
-                                            child: SpinKitCircle(
-                                              color: Colors.grey,
-                                              size: 70.h,
-                                            ),
+                                            child: AppConstants().getLoaderWidget(iconSize: 70)
                                           ),
                                         )
-                                      : SizedBox(height: 1)
+                                      : const SizedBox(height: 1)
                                 ],
                               ),
                              /*(dynamicSignUpBloc.isRegistered != null && !(dynamicSignUpBloc.isRegistered)) ? Center(
@@ -386,7 +383,7 @@ class _DynamicSignUpState extends State<DynamicSignUp> {
                                       var dividerVal = appBloc.uiSettingModel.enableMembership == 'True'
                                           ? ':'
                                           : '=';
-                                      signUpVal = signUpVal + '${dynamicSignUpBloc.resDyanicSignUp.profileconfigdata[i].datafieldname.toLowerCase()}$dividerVal${fieldval.trim()},';
+                                      signUpVal = '$signUpVal${dynamicSignUpBloc.resDyanicSignUp.profileconfigdata[i].datafieldname.toLowerCase()}$dividerVal${fieldval.trim()},';
                                     }
 
                                     setState(() {
@@ -413,7 +410,7 @@ class _DynamicSignUpState extends State<DynamicSignUp> {
                                 },
                               ),
                             )
-                          : SizedBox(height: 1,),
+                          : const SizedBox(height: 1,),
                     ],
                   ),
                 ),
@@ -431,13 +428,7 @@ class _DynamicSignUpState extends State<DynamicSignUp> {
           "0xFF${appBloc.uiSettingModel.appBGColor.substring(1, 7).toUpperCase()}")),
       child: Center(
         child: AbsorbPointer(
-          child: SpinKitCircle(
-            color: Color(
-              int.parse(
-                  "0xFF${appBloc.uiSettingModel.appTextColor.substring(1, 7).toUpperCase()}"),
-            ),
-            size: 70.h,
-          ),
+          child: AppConstants().getLoaderWidget(iconSize: 70)
         ),
       ),
     );
@@ -457,6 +448,9 @@ class _DynamicSignUpState extends State<DynamicSignUp> {
     return listings;
   }
 
+  bool isValidEmail = true;
+
+
   Widget getWidget(int i, List<Profileconfigdatum> profileConfigData, ChangeThemeState themeState, DynamicSignUpBloc dynamicSignUpBloc) {
     Widget fieldWidget = Container();
 
@@ -468,7 +462,7 @@ class _DynamicSignUpState extends State<DynamicSignUp> {
     // comparing Attribut
     int attributeConfigId = item.attributeconfigid;
     bool termsExists = false;
-
+    // TextEditingController controller = new TextEditingController();
     // this is for labelField , EditTextHint ,
     String displayText = item.displaytext;
     if (attributeConfigId == 522) {
@@ -501,7 +495,7 @@ class _DynamicSignUpState extends State<DynamicSignUp> {
         children: <Widget>[
           Expanded(
             child: Container(
-              margin: EdgeInsets.only(top: 10),
+              margin: const EdgeInsets.only(top: 10),
               //color: Colors.red,
               padding: const EdgeInsets.only(left: 20, right: 20, top: 10),
               child: Column(
@@ -514,7 +508,7 @@ class _DynamicSignUpState extends State<DynamicSignUp> {
                             fontSize: 14,
                           ),
                           children: [
-                        TextSpan(text: isRequired ? " *":"",style: TextStyle(color: Colors.red)),
+                        TextSpan(text: isRequired ? " *":"",style: const TextStyle(color: Colors.red)),
                       ] )),
                       // Flexible(
                       //   child: Container(
@@ -533,7 +527,7 @@ class _DynamicSignUpState extends State<DynamicSignUp> {
                       // ),
                     ],
                   ),
-                  SizedBox(height: 10,),
+                  const SizedBox(height: 10,),
                   Row(
                     children: <Widget>[
                       Flexible(
@@ -546,17 +540,19 @@ class _DynamicSignUpState extends State<DynamicSignUp> {
                               color: AppColors.getAppTextColor(),
                               fontWeight: FontWeight.w400,
                             ),
+                            // controller: controller,
                             maxLength: item.maxlength,
                             obscureText: isPassword && isPassVisible,
                             keyboardType: keyboardType,
                             decoration: InputDecoration(
-                              contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 15),
+                              contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 15),
                               counterStyle: TextStyle(
                                 fontSize: 11.h,
                                 color: Color(int.parse("0xFF${appBloc.uiSettingModel.appTextColor.substring(1, 7).toUpperCase()}"),),
                                 fontWeight: FontWeight.w400,
                               ),
                               hintText: displayText,
+                              errorStyle: const TextStyle(color: Colors.red,fontWeight: FontWeight.w400),
                               hintStyle: TextStyle(
                                 fontWeight: FontWeight.w300,
                                 color: AppColors.getTextFieldHintColor(),
@@ -565,8 +561,9 @@ class _DynamicSignUpState extends State<DynamicSignUp> {
                               border: OutlineInputBorder(borderSide: BorderSide(color: AppColors.getTextFieldBorderColor())),
                               enabledBorder: OutlineInputBorder(borderSide: BorderSide(color: AppColors.getTextFieldBorderColor())),
                               focusedBorder: OutlineInputBorder(borderSide: BorderSide(color: AppColors.getTextFieldBorderColor())),
-                              errorBorder: OutlineInputBorder(borderSide: BorderSide(color: Colors.red)),
-                              suffixIcon: isPassword ? InkWell(
+                              focusedErrorBorder:const OutlineInputBorder(borderSide: BorderSide(color: Colors.red,)) ,
+                              errorBorder: const OutlineInputBorder(borderSide: BorderSide(color: Colors.red,)),
+                              suffixIcon: isEmail ? isValidEmail == false ? const Icon(Icons.info, color:Colors.red): const Icon(Icons.access_time,color: Colors.transparent,): isPassword ? InkWell(
                                 onTap: (){
                                   isPassVisible = !isPassVisible;
                                   setState((){});
@@ -574,18 +571,28 @@ class _DynamicSignUpState extends State<DynamicSignUp> {
                                 child: Icon(isPassVisible ? FontAwesomeIcons.eyeSlash:FontAwesomeIcons.eye,size: 20,color: Colors.grey,),
                               ) : null,
                             ),
+
                             validator: isEmail ? (String? value) {
+
                               if(value?.isNotEmpty ?? false) {
                                 if(RegExp(r"([0-9a-zA-Z].*?@([0-9a-zA-Z].*\.\w{2,4}))").hasMatch(value!)) {
+                                  isValidEmail = true;
+                                  setState(() {});
                                   return null;
                                 }
                                 else {
+                                  isValidEmail = false;
+                                  setState(() {});
                                   return "Invalid Email";
                                 }
                               }
                               else {
-                                return "Email Cannot be empty";
+                                  isValidEmail = false;
+                                  setState(() {});
+                                  return "Email Cannot be empty";
                               }
+
+
                             } : null,
                             onEditingComplete: () {
                               FocusScope.of(context).unfocus();
@@ -607,7 +614,7 @@ class _DynamicSignUpState extends State<DynamicSignUp> {
                   ),
                   (attributeConfigId == 6)
                       ? Container(
-                        margin: EdgeInsets.only(top: 20),
+                        margin: const EdgeInsets.only(top: 20),
                         child: Column(
                           children: [
                             Row(
@@ -635,7 +642,7 @@ class _DynamicSignUpState extends State<DynamicSignUp> {
                                 ),
                               ],
                             ),
-                            SizedBox(height: 10,),
+                            const SizedBox(height: 10,),
                             Row(
                               children: <Widget>[
                                 Flexible(
@@ -650,7 +657,7 @@ class _DynamicSignUpState extends State<DynamicSignUp> {
                                     obscureText: isConfPassVisible,
                                     keyboardType: keyboardType,
                                     decoration: InputDecoration(
-                                      contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 15),
+                                      contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 15),
                                       counterStyle: TextStyle(
                                         fontSize: 11.h,
                                         color: Color(int.parse("0xFF${appBloc.uiSettingModel.appTextColor.substring(1, 7).toUpperCase()}"),),
@@ -665,7 +672,7 @@ class _DynamicSignUpState extends State<DynamicSignUp> {
                                       border: OutlineInputBorder(borderSide: BorderSide(color: AppColors.getTextFieldBorderColor())),
                                       enabledBorder: OutlineInputBorder(borderSide: BorderSide(color: AppColors.getTextFieldBorderColor())),
                                       focusedBorder: OutlineInputBorder(borderSide: BorderSide(color: AppColors.getTextFieldBorderColor())),
-                                      errorBorder: OutlineInputBorder(borderSide: BorderSide(color: Colors.red)),
+                                      errorBorder: const OutlineInputBorder(borderSide: BorderSide(color: Colors.red)),
                                       suffixIcon: InkWell(
                                         onTap: (){
                                           isConfPassVisible = !isConfPassVisible;
@@ -709,7 +716,7 @@ class _DynamicSignUpState extends State<DynamicSignUp> {
         children: <Widget>[
           Expanded(
             child: Padding(
-              padding: const EdgeInsets.only(left: 20, right: 20, top: 10),
+              padding:  const EdgeInsets.only(left: 20, right: 20, top: 10),
               child: Column(
                 children: <Widget>[
                   Row(
@@ -717,7 +724,7 @@ class _DynamicSignUpState extends State<DynamicSignUp> {
                       Flexible(
                         child: Text(
                           //displayText + " " + i.toString() + ".....uiControl = $uiControlTypeId"+"...ConfigId = $attributeConfigId",
-                          isRequired ? displayText + " *" : displayText,
+                          isRequired ? "$displayText *" : displayText,
                           style: TextStyle(
                               color: themeState.themeData.primaryColor,
                               fontSize: 12),
@@ -732,7 +739,7 @@ class _DynamicSignUpState extends State<DynamicSignUp> {
                     ),
                     value: item.selectedSpinerObj,
                     isExpanded: true,
-                    icon: Icon(Icons.arrow_drop_down),
+                    icon: const Icon(Icons.arrow_drop_down),
                     iconSize: 24,
                     elevation: 16,
                     style: TextStyle(
@@ -783,7 +790,7 @@ class _DynamicSignUpState extends State<DynamicSignUp> {
                       Flexible(
                         child: Text(
                           //displayText + " " + i.toString() + ".....uiControl = $uiControlTypeId"+"...ConfigId = $attributeConfigId",
-                          isRequired ? displayText + " *" : displayText,
+                          isRequired ? "$displayText *" : displayText,
                           style: TextStyle(
                               color: themeState.themeData.primaryColor,
                               fontSize: 12),
@@ -814,7 +821,7 @@ class _DynamicSignUpState extends State<DynamicSignUp> {
 
 //
 //
-    if (termsExists && dynamicSignUpBloc.termsofWebPage.length != 0) {
+    if (termsExists && dynamicSignUpBloc.termsofWebPage.isNotEmpty) {
       fieldWidget = getTnC(
         dynamicSignUpBloc.termsofWebPage,
       );
@@ -841,7 +848,7 @@ class _DynamicSignUpState extends State<DynamicSignUp> {
         }
       }
       else if (!element.isrequired && element.attributeconfigid == 15) {
-        if (element.valueName != null && element.valueName.length > 0) {
+        if (element.valueName != null && element.valueName.isNotEmpty) {
           if (regExp.hasMatch(element.valueName)) {
             isValidate = true;
           } else {
@@ -864,10 +871,10 @@ class _DynamicSignUpState extends State<DynamicSignUp> {
       }
       else if (element.isrequired && element.valueName.isEmpty) {
         isValidate = false;
-        showToast(element.displaytext + " is required");
+        showToast("${element.displaytext} is required");
         break;
       }
-      else if ((dynamicSignUpBloc.termsofWebPage != null || dynamicSignUpBloc.termsofWebPage.length > 0) && element.attributeconfigid == 522) {
+      else if ((dynamicSignUpBloc.termsofWebPage != null || dynamicSignUpBloc.termsofWebPage.isNotEmpty) && element.attributeconfigid == 522) {
         if (checkedValue) {
           isValidate = true;
         } else {
@@ -877,7 +884,7 @@ class _DynamicSignUpState extends State<DynamicSignUp> {
         }
       }
       if (element.attributeconfigid == 15) {
-        if (element.valueName != null && element.valueName.length > 0) {
+        if (element.valueName != null && element.valueName.isNotEmpty) {
           if (regExp.hasMatch(element.valueName)) {
             userEmailID = element.valueName;
           }
@@ -898,7 +905,7 @@ class _DynamicSignUpState extends State<DynamicSignUp> {
     flutterToast.showToast(
       child: disToast(item),
       gravity: ToastGravity.CENTER,
-      toastDuration: Duration(seconds: 2),
+      toastDuration: const Duration(seconds: 2),
     );
   }
 
@@ -919,7 +926,7 @@ class _DynamicSignUpState extends State<DynamicSignUp> {
             color: Color(int.parse(
                 "0xFF${appBloc.uiSettingModel.appButtonTextColor.substring(1, 7).toUpperCase()}")),
           ),
-          SizedBox(
+          const SizedBox(
             width: 12.0,
           ),
           Text("$displaytext",
@@ -935,7 +942,7 @@ class _DynamicSignUpState extends State<DynamicSignUp> {
     flutterToast.showToast(
       child: CommonToast(displaymsg: message),
       gravity: ToastGravity.CENTER,
-      toastDuration: Duration(seconds: 2),
+      toastDuration: const Duration(seconds: 2),
     );
     print('after payment doShowMsg userPassword $userPassword');
     print('after payment doShowMsg userEmailID $userEmailID');
@@ -952,7 +959,7 @@ class _DynamicSignUpState extends State<DynamicSignUp> {
 
   Widget getTnC(List<Termsofusewebpage> termsofWebPage) {
     print('termsofweb ${termsofWebPage.length}');
-    if (termsofWebPage != null || termsofWebPage.length != 0) {
+    if (termsofWebPage != null || termsofWebPage.isNotEmpty) {
       return CheckboxListTile(
         activeColor: Color(int.parse(
             "0xFF${appBloc.uiSettingModel.appButtonBgColor.substring(1, 7).toUpperCase()}")),

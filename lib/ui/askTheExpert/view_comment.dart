@@ -16,7 +16,9 @@ import 'package:flutter_admin_web/framework/repository/askTheExpert/ask_the_expe
 import 'package:flutter_admin_web/framework/theme/ins_theme.dart';
 import 'package:flutter_admin_web/ui/common/Viewimagenew.dart';
 
+import '../../configs/constants.dart';
 import '../common/bottomsheet_drager.dart';
+import '../common/bottomsheet_option_tile.dart';
 import 'edit_answer_comment.dart';
 
 class ViewComments extends StatefulWidget {
@@ -30,7 +32,7 @@ class ViewComments extends StatefulWidget {
 
 class _ViewCommentsState extends State<ViewComments>
     with SingleTickerProviderStateMixin {
-  GlobalKey<ScaffoldState> _scaffoldkey = new GlobalKey<ScaffoldState>();
+  final GlobalKey<ScaffoldState> _scaffoldkey = GlobalKey<ScaffoldState>();
   final scaffoldKey = GlobalKey<ScaffoldState>();
 
   AppBloc get appBloc => BlocProvider.of<AppBloc>(context);
@@ -40,7 +42,7 @@ class _ViewCommentsState extends State<ViewComments>
   @override
   void initState() {
     super.initState();
-    askTheExpertBloc = new AskTheExpertBloc(
+    askTheExpertBloc = AskTheExpertBloc(
         askTheExpertRepository: AskTheExpertRepositoryBuilder.repository());
     refresh();
   }
@@ -83,9 +85,9 @@ class _ViewCommentsState extends State<ViewComments>
       body: Container(
           color: Color(int.parse(
               "0xFF${appBloc.uiSettingModel.appBGColor.substring(1, 7).toUpperCase()}")),
-          child: new Column(
+          child: Column(
             children: [
-              Divider(
+              const Divider(
                 height: 2,
                 color: Colors.black87,
               ),
@@ -115,10 +117,7 @@ class _ViewCommentsState extends State<ViewComments>
             askTheExpertBloc.isQuestionFirstLoading == true) {
           return Center(
             child: AbsorbPointer(
-              child: SpinKitCircle(
-                color: Colors.grey,
-                size: 70.0,
-              ),
+              child: AppConstants().getLoaderWidget(iconSize: 70)
             ),
           );
         } else if (askTheExpertBloc.commentList.length == 0) {
@@ -130,13 +129,13 @@ class _ViewCommentsState extends State<ViewComments>
             },
             color: Color(int.parse(
                 "0xFF${appBloc.uiSettingModel.appButtonBgColor.substring(1, 7).toUpperCase()}")),
-            child: new Container(
-              padding: EdgeInsets.all(10.0),
-              child: new ListView.separated(
-                  physics: AlwaysScrollableScrollPhysics(),
+            child: Container(
+              padding: const EdgeInsets.all(10.0),
+              child: ListView.separated(
+                  physics: const AlwaysScrollableScrollPhysics(),
                   shrinkWrap: true,
                   itemCount: askTheExpertBloc.commentList.length,
-                  separatorBuilder: (context, index) => Divider(
+                  separatorBuilder: (context, index) => const Divider(
                         color: Colors.grey,
                       ),
                   itemBuilder: (context, index) {
@@ -147,25 +146,25 @@ class _ViewCommentsState extends State<ViewComments>
                     print(
                         "LoggedIn User id:${appBloc.userid}, Comment UserId:${comment.commentUserID}");
 
-                    return new GestureDetector(
+                    return GestureDetector(
                       onTap: () => {
                         //openDiscussionTopic(index),
                       },
-                      child: new Container(
+                      child: Container(
                         color: Color(int.parse(
                             "0xFF${appBloc.uiSettingModel.appBGColor.substring(1, 7).toUpperCase()}")),
-                        child: new Column(
+                        child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            new Row(
+                            Row(
                               children: [
-                                new Container(
+                                Container(
                                   width: 50.0,
                                   height: 50.0,
-                                  padding: EdgeInsets.all(20.0),
-                                  decoration: new BoxDecoration(
+                                  padding: const EdgeInsets.all(20.0),
+                                  decoration: BoxDecoration(
                                     color: const Color(0xff7c94b6),
-                                    image: new DecorationImage(
+                                    image: DecorationImage(
                                       image: askTheExpertBloc
                                                   .commentList[index].picture !=
                                               ""
@@ -174,24 +173,24 @@ class _ViewCommentsState extends State<ViewComments>
                                                   .startsWith("http")
                                               ? askTheExpertBloc
                                                   .commentList[index].picture
-                                              : '${ApiEndpoints.strSiteUrl + askTheExpertBloc.commentList[index].picture}')
-                                          : AssetImage(
+                                              : ApiEndpoints.strSiteUrl + askTheExpertBloc.commentList[index].picture)
+                                          : const AssetImage(
                                               'assets/user.png',
                                             ) as ImageProvider,
                                       fit: BoxFit.fill,
                                     ),
-                                    borderRadius: new BorderRadius.all(
-                                        new Radius.circular(50.0)),
+                                    borderRadius: const BorderRadius.all(
+                                        Radius.circular(50.0)),
                                   ),
                                 ),
                                 Expanded(
-                                    child: new Row(
+                                    child: Row(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     Padding(
-                                        padding: EdgeInsets.only(
+                                        padding: const EdgeInsets.only(
                                             left: 20, right: 1.0),
-                                        child: new Text(
+                                        child: Text(
                                             askTheExpertBloc.commentList[index]
                                                 .commentedUserName,
                                             style: Theme.of(context)
@@ -202,14 +201,13 @@ class _ViewCommentsState extends State<ViewComments>
                                                         .appTextColor))),
                                     Flexible(
                                       child: Padding(
-                                          padding: EdgeInsets.only(
+                                          padding: const EdgeInsets.only(
                                             left: 1.0,
                                           ),
-                                          child: new Text(
-                                              ' commented ' +
-                                                  askTheExpertBloc
+                                          child: Text(
+                                              ' commented ${askTheExpertBloc
                                                       .commentList[index]
-                                                      .commentedDate,
+                                                      .commentedDate}',
                                               softWrap: true,
                                               style: Theme.of(context)
                                                   .textTheme
@@ -237,14 +235,14 @@ class _ViewCommentsState extends State<ViewComments>
                                 ),
                               ],
                             ),
-                            new Column(
+                            Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               mainAxisAlignment: MainAxisAlignment.start,
                               children: [
                                 Padding(
                                     padding:
-                                        EdgeInsets.only(left: 20, top: 15.0),
-                                    child: new Text(
+                                        const EdgeInsets.only(left: 20, top: 15.0),
+                                    child: Text(
                                         askTheExpertBloc.commentList[index]
                                             .commentDescription,
                                         style: Theme.of(context)
@@ -255,12 +253,12 @@ class _ViewCommentsState extends State<ViewComments>
                                                     .appTextColor
                                                     .withOpacity(0.5)))),
                                 Padding(
-                                  padding: EdgeInsets.only(top: 10, left: 15.0),
+                                  padding: const EdgeInsets.only(top: 10, left: 15.0),
                                   child: askTheExpertBloc.commentList[index]
                                           .userCommentImagePath.isNotEmpty
                                       ? CircleAvatar(
                                           radius: 10,
-                                          backgroundColor: Color(0xffFDCF09),
+                                          backgroundColor: const Color(0xffFDCF09),
                                           child: InkWell(
                                             child: CircleAvatar(
                                               radius: 10,
@@ -272,7 +270,7 @@ class _ViewCommentsState extends State<ViewComments>
                                                       ? askTheExpertBloc
                                                           .commentList[index]
                                                           .userCommentImagePath
-                                                      : '${ApiEndpoints.strSiteUrl + askTheExpertBloc.commentList[index].userCommentImagePath}'),
+                                                      : ApiEndpoints.strSiteUrl + askTheExpertBloc.commentList[index].userCommentImagePath),
                                               backgroundColor:
                                                   Colors.grey.shade100,
                                             ),
@@ -305,7 +303,7 @@ class _ViewCommentsState extends State<ViewComments>
                                                 .commentList[index].userCommentImagePath}')): Container(),*/
                                 ),
                                 Padding(
-                                    padding: EdgeInsets.only(
+                                    padding: const EdgeInsets.only(
                                       top: 10,
                                     ),
                                     child: IconButton(
@@ -331,7 +329,7 @@ class _ViewCommentsState extends State<ViewComments>
                                                 blnIsLiked: false,
                                               ));
                                       },
-                                      padding: new EdgeInsets.only(
+                                      padding: const EdgeInsets.only(
                                           bottom: 1.0, left: 5),
                                       icon: Icon(Icons.thumb_up,
                                           size: 16.0,
@@ -381,7 +379,7 @@ class _ViewCommentsState extends State<ViewComments>
               )
             ],
           )
-        : new Container();
+        : Container();
   }
 
   void refresh() {
@@ -392,6 +390,7 @@ class _ViewCommentsState extends State<ViewComments>
 
   void _settingModalBottomSheet(context, index) {
     showModalBottomSheet(
+        shape: AppConstants().bottomSheetShapeBorder(),
         context: context,
         builder: (BuildContext bc) {
           return BlocConsumer<AskTheExpertBloc, AskTheExpertState>(
@@ -400,19 +399,13 @@ class _ViewCommentsState extends State<ViewComments>
                 if (state.status == Status.COMPLETED) {}
               },
               builder: (context, state) {
-                return Container(
-                  color: InsColor(appBloc).appBGColor,
-                  child: new Wrap(
+                return AppConstants().bottomSheetContainer(
+                  child: Wrap(
                     children: <Widget>[
-                      BottomSheetDragger(),
-                      new ListTile(
-                        leading: Icon(Icons.edit,
-                            color: InsColor(appBloc).appTextColor),
-                        title: new Text(
-                          'Edit',
-                          style:
-                              TextStyle(color: InsColor(appBloc).appTextColor),
-                        ),
+                      const BottomSheetDragger(),
+                      BottomsheetOptionTile(
+                        iconData:Icons.edit,
+                        text:'Edit',
                         onTap: () => {
                           Navigator.pop(context),
                           Navigator.of(context)
@@ -426,14 +419,9 @@ class _ViewCommentsState extends State<ViewComments>
                           })
                         },
                       ),
-                      new ListTile(
-                        leading: new Icon(Icons.delete,
-                            color: InsColor(appBloc).appTextColor),
-                        title: new Text(
-                          'Delete',
-                          style:
-                              TextStyle(color: InsColor(appBloc).appTextColor),
-                        ),
+                      BottomsheetOptionTile(
+                        iconData: Icons.delete,
+                          text:'Delete',
                         onTap: () => {showAlertDialog(context, index)},
                       ),
                     ],
@@ -446,14 +434,14 @@ class _ViewCommentsState extends State<ViewComments>
   showAlertDialog(BuildContext context, int index) {
     // Create button
     Widget cancelButton = FlatButton(
-      child: Text("No"),
+      child: const Text("No"),
       onPressed: () {
         Navigator.of(context).pop(true);
       },
     );
 
     Widget deleteButton = FlatButton(
-      child: Text(
+      child: const Text(
         "Yes, delete",
         style: TextStyle(color: Colors.red),
       ),
