@@ -17,6 +17,7 @@ import 'package:flutter_admin_web/framework/common/enums.dart';
 import 'package:flutter_admin_web/framework/repository/Discussion/discussionTopic/discussion_topic_repositry_builder.dart';
 import 'package:flutter_admin_web/ui/common/common_toast.dart';
 
+import '../../configs/constants.dart';
 import '../common/app_colors.dart';
 
 class EditTopic extends StatefulWidget {
@@ -292,8 +293,6 @@ class _EditTopicState extends State<EditTopic>
                             .add(OpenFileExplorerTopicEvent(FileType.image));
                       }
                     },
-                    child: const Text('Upload File',
-                        style: TextStyle(fontSize: 20)),
                     color: discussionTopicBloc.fileName.isNotEmpty &&
                             discussionTopicBloc.fileName != '...'
                         ? Colors.grey
@@ -302,6 +301,8 @@ class _EditTopicState extends State<EditTopic>
                     textColor: Color(int.parse(
                         "0xFF${appBloc.uiSettingModel.appTextColor.substring(1, 7).toUpperCase()}")),
                     elevation: 5,
+                    child: const Text('Upload File',
+                        style: TextStyle(fontSize: 20)),
                   ),
                 ),
                 Visibility(
@@ -411,10 +412,7 @@ class _EditTopicState extends State<EditTopic>
         if (state.status == Status.LOADING) {
           return Align(
             child: AbsorbPointer(
-              child: SpinKitCircle(
-                color: Colors.grey,
-                size: 70.h,
-              ),
+              child: AppConstants().getLoaderWidget(iconSize: 70)
             ),
           );
         } else {
@@ -427,12 +425,12 @@ class _EditTopicState extends State<EditTopic>
                 onPressed: () {
                   validateAddTopicForm();
                 },
-                child:
-                    const Text('Update Topic', style: TextStyle(fontSize: 20)),
                 color: Color(int.parse(
                     "0xFF${appBloc.uiSettingModel.appButtonBgColor.substring(1, 7).toUpperCase()}")),
                 textColor: Colors.white,
                 elevation: 5,
+                child:
+                    const Text('Update Topic', style: TextStyle(fontSize: 20)),
               ),
             ),
           );

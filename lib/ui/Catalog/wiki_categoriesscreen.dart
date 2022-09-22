@@ -10,6 +10,7 @@ import 'package:flutter_admin_web/framework/bloc/mylearning/bloc/mylearning_bloc
 import 'package:flutter_admin_web/framework/common/enums.dart';
 import 'package:flutter_admin_web/framework/repository/Catalog/wikiuploadrepo/wikiupload_repositry_builder.dart';
 
+import '../../configs/constants.dart';
 import '../common/outline_button.dart';
 
 class WikiCategoryScreen extends StatefulWidget {
@@ -98,10 +99,7 @@ class _WikiCategoryScreenState extends State<WikiCategoryScreen> {
                 if (state.status == Status.LOADING) {
                   return Center(
                     child: AbsorbPointer(
-                      child: SpinKitCircle(
-                        color: Colors.grey,
-                        size: 70.0,
-                      ),
+                      child: AppConstants().getLoaderWidget(iconSize: 70)
                     ),
                   );
                 }
@@ -118,21 +116,21 @@ class _WikiCategoryScreenState extends State<WikiCategoryScreen> {
                 return ListView.builder(
                   itemCount: wikiUploadBloc.wikiCategorieslist.length,
                   itemBuilder: (BuildContext context, int index) {
-                    return new Card(
+                    return Card(
                       color: Color(
                         int.parse(
                             "0xFF${appBloc.uiSettingModel.appBGColor.substring(1, 7).toUpperCase()}"),
                       ),
-                      child: new Container(
-                        padding: new EdgeInsets.all(1.0),
-                        child: new Column(
+                      child: Container(
+                        padding: const EdgeInsets.all(1.0),
+                        child: Column(
                           children: <Widget>[
-                            new CheckboxListTile(
+                            CheckboxListTile(
                                 activeColor: Color(int.parse(
                                     "0xFF${appBloc.uiSettingModel.appButtonBgColor.substring(1, 7).toUpperCase()}")),
                                 value: wikiUploadBloc
                                     .wikiCategorieslist[index].isSelected,
-                                title: new Text(
+                                title: Text(
                                   wikiUploadBloc.wikiCategorieslist[index].name,
                                   style: TextStyle(
                                     color: Color(int.parse(
@@ -170,7 +168,7 @@ class _WikiCategoryScreenState extends State<WikiCategoryScreen> {
                   },
                 ),
               ),
-              SizedBox(
+              const SizedBox(
                 width: 5,
               ),
               Expanded(
@@ -217,7 +215,7 @@ class _WikiCategoryScreenState extends State<WikiCategoryScreen> {
   }
 
   void getWikiCategories() {
-    wikiUploadBloc.add(GetWikiCategoriesEvent(
+    wikiUploadBloc.add(const GetWikiCategoriesEvent(
       intUserID: 1,
       intSiteID: 2,
       intComponentID: 2,

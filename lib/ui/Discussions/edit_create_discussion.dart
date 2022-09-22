@@ -20,6 +20,8 @@ import 'package:flutter_admin_web/ui/Discussions/create_discussion.dart';
 import 'package:flutter_admin_web/ui/common/app_colors.dart';
 import 'package:flutter_admin_web/ui/common/common_toast.dart';
 
+import '../../configs/constants.dart';
+
 class EditCreateDiscussion extends StatefulWidget {
   final ForumList forumList;
 
@@ -235,43 +237,45 @@ class _EditCreateDiscussionState extends State<EditCreateDiscussion> with Single
                                 "0xFF${appBloc.uiSettingModel.appTextColor.substring(1, 7).toUpperCase()}"))),
                       ),
                     ),
-                    ConstrainedBox(
-                      constraints: const BoxConstraints(
-                        maxHeight: 400.0,
-                      ),
-                      child: TextFormField(
-                        style: TextStyle(
-                            fontSize: 14.h,
-                            color: Color(int.parse(
-                                "0xFF${appBloc.uiSettingModel.appTextColor.substring(1, 7).toUpperCase()}"))),
-                        focusNode: reqFocusDescription,
-                        controller: ctrDescription,
-                        textInputAction: TextInputAction.next,
-                        onSaved: (val) => ctrDescription.text = val ?? "",
-                        onChanged: (val) {
-                          setState(() {});
-                        },
-                        decoration: InputDecoration(
-                          hintStyle: TextStyle(color: AppColors.getTextFieldHintColor()),
-                          hintText: 'Enter your description here..',
-                          enabledBorder: const OutlineInputBorder(
-                            borderRadius: BorderRadius.all(Radius.circular(5)),
-                            borderSide: BorderSide(
-                              color: Color(0xFFDADCE0),
-                            ),
-                          ),
-                          focusedBorder: OutlineInputBorder(
-                            borderRadius: const BorderRadius.all(Radius.circular(5.0)),
-                            borderSide: BorderSide(
-                              color: Color(int.parse("0xFF${appBloc.uiSettingModel.appTextColor.substring(1, 7).toUpperCase()}")),
-                              width: 1,
-                            ),
-                          ),
-                          border: OutlineInputBorder(borderRadius: BorderRadius.circular(5.0)),
-                          contentPadding: const EdgeInsets.symmetric(
-                              vertical: 45.0, horizontal: 20.0),
+                    Container(
+                      child: new ConstrainedBox(
+                        constraints: BoxConstraints(
+                          maxHeight: 400.0,
                         ),
-                        maxLines: null,
+                        child: TextFormField(
+                          style: TextStyle(
+                              fontSize: 14.h,
+                              color: Color(int.parse(
+                                  "0xFF${appBloc.uiSettingModel.appTextColor.substring(1, 7).toUpperCase()}"))),
+                          focusNode: reqFocusDescription,
+                          controller: ctrDescription,
+                          textInputAction: TextInputAction.next,
+                          onSaved: (val) => ctrDescription.text = val ?? "",
+                          onChanged: (val) {
+                            setState(() {});
+                          },
+                          decoration: InputDecoration(
+                            hintStyle: TextStyle(color: AppColors.getTextFieldHintColor()),
+                            hintText: 'Enter your description here..',
+                            enabledBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.all(Radius.circular(5)),
+                              borderSide: BorderSide(
+                                color: Color(0xFFDADCE0),
+                              ),
+                            ),
+                            focusedBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.all(Radius.circular(5.0)),
+                              borderSide: BorderSide(
+                                color: Color(int.parse("0xFF${appBloc.uiSettingModel.appTextColor.substring(1, 7).toUpperCase()}")),
+                                width: 1,
+                              ),
+                            ),
+                            border: OutlineInputBorder(borderRadius: BorderRadius.circular(5.0)),
+                            contentPadding: new EdgeInsets.symmetric(
+                                vertical: 45.0, horizontal: 20.0),
+                          ),
+                          maxLines: null,
+                        ),
                       ),
                     ),
                   ],
@@ -697,10 +701,7 @@ class _EditCreateDiscussionState extends State<EditCreateDiscussion> with Single
         if(state is CreateDiscussionDetailsState && state.status == Status.LOADING) {
           return Center(
             child: AbsorbPointer(
-              child: SpinKitCircle(
-                color: Colors.grey,
-                size: 70.h,
-              ),
+              child: AppConstants().getLoaderWidget(iconSize: 70)
             ),
           );
         }
@@ -830,17 +831,19 @@ class _EditCreateDiscussionState extends State<EditCreateDiscussion> with Single
             children: <Widget>[
               Padding(
                 padding: const EdgeInsets.all(8.0),
-                child: Center(
-                  child: Text(
-                      appBloc.localstr.commoncomponentLabelNodatalabel,
-                      style: TextStyle(
-                          color: Color(int.parse(
-                              "0xFF${appBloc.uiSettingModel.appTextColor.substring(1, 7).toUpperCase()}")),
-                          fontSize: 24)),
+                child: Container(
+                  child: Center(
+                    child: Text(
+                        appBloc.localstr.commoncomponentLabelNodatalabel,
+                        style: TextStyle(
+                            color: Color(int.parse(
+                                "0xFF${appBloc.uiSettingModel.appTextColor.substring(1, 7).toUpperCase()}")),
+                            fontSize: 24)),
+                  ),
                 ),
               )
             ],
           )
-        : Container();
+        : new Container();
   }
 }

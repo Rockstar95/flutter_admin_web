@@ -6,7 +6,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_breadcrumb/flutter_breadcrumb.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:in_app_purchase/in_app_purchase.dart';
@@ -60,8 +59,12 @@ import 'package:flutter_admin_web/ui/profile/profile_page.dart';
 import 'package:flutter_admin_web/utils/my_print.dart';
 import 'package:flutter_admin_web/utils/mytoast.dart';
 import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 
+import '../../configs/constants.dart';
+import '../../framework/helpers/providermodel.dart';
+import '../common/bottomsheet_option_tile.dart';
 import '../common/common_primary_secondary_button.dart';
 import '../global_search_screen.dart';
 
@@ -247,19 +250,23 @@ class _CatalogSubScreenState extends State<CatalogSubScreen> {
             ? Navigator.of(context)
             .push(MaterialPageRoute(
             builder: (context) =>
-                CommonDetailScreen(
-                  screenType:
-                  ScreenType.Catalog,
-                  contentid: table2.contentid,
-                  objtypeId:
-                  table2.objecttypeid,
-                  detailsBloc: detailsBloc,
-                  table2: table2,
-                  // nativeModel:
-                  //     widget.nativeMenuModel,
-                  isFromReschedule: false,
-                  //isFromMyLearning:
-                  //  false, //need implement reschedule
+                ChangeNotifierProvider(
+                  create: (context) =>
+                      ProviderModel(),
+                  child: CommonDetailScreen(
+                    screenType:
+                    ScreenType.Catalog,
+                    contentid: table2.contentid,
+                    objtypeId:
+                    table2.objecttypeid,
+                    detailsBloc: detailsBloc,
+                    table2: table2,
+                    // nativeModel:
+                    //     widget.nativeMenuModel,
+                    isFromReschedule: false,
+                    //isFromMyLearning:
+                    //  false, //need implement reschedule
+                  ),
                 )))
             .then((value) => {
           if (value) {refresh()}
@@ -276,7 +283,7 @@ class _CatalogSubScreenState extends State<CatalogSubScreen> {
             displaymsg:
             'Not a member of ${table2.sitename}'),
         gravity: ToastGravity.BOTTOM,
-        toastDuration: Duration(seconds: 2),
+        toastDuration: const Duration(seconds: 2),
       );
       checkUserLogin(table2);
     }
@@ -328,7 +335,7 @@ class _CatalogSubScreenState extends State<CatalogSubScreen> {
                             .toString()
                             .split('#%')[1]
                             .split('\$;')[0],
-                    style: TextStyle(
+                    style: const TextStyle(
                       fontSize: 16.0,
                       color: Colors.blue,
                     )),
@@ -468,10 +475,7 @@ class _CatalogSubScreenState extends State<CatalogSubScreen> {
           inAsyncCall: isLoading,
           progressIndicator: Center(
             child: AbsorbPointer(
-              child: SpinKitCircle(
-                color: InsColor(appBloc).appIconColor,
-                size: 70.h,
-              ),
+              child: AppConstants().getLoaderWidget(iconSize:70)
             ),
           ),
           child: Scaffold(
@@ -494,47 +498,72 @@ class _CatalogSubScreenState extends State<CatalogSubScreen> {
               actions: <Widget>[
                 Stack(
                   children: <Widget>[
-                    IconButton(
-                        icon: Icon(Icons.favorite),
-                        color: InsColor(appBloc).appHeaderTxtColor,
-                        onPressed: () {
-                          Navigator.of(context).push(MaterialPageRoute(
-                              builder: (context) => WishList(
+                    InkWell(
+                      onTap: (){
+                        Navigator.of(context).push(MaterialPageRoute(
+                            builder: (context) => ChangeNotifierProvider(
+                              create: (context) => ProviderModel(),
+                              child: WishList(
                                 categaoryID: 0,
                                 categaoryName: widget.categaoryName,
                                 detailsBloc: detailsBloc,
                                 filterMenus: {},
-                              )));
-                        }),
-                    Positioned(
-                      right: 6,
-                      top: 6,
-                      child: Container(
-                        padding: EdgeInsets.all(2),
-                        decoration: BoxDecoration(
-                          color: Color(int.parse(
-                              "0xFF${appBloc.uiSettingModel.appButtonBgColor.substring(1, 7).toUpperCase()}")),
-                          borderRadius: BorderRadius.circular(6),
-                        ),
-                        constraints: BoxConstraints(
-                          minWidth: 14,
-                          minHeight: 14,
-                        ),
-                        child: Text(
-                          appBloc.wishlistResponse != null
-                              ? appBloc.wishlistcount
-                              : '',
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 8,
+                              ),
+                            )));
+                      },
+                      child: Center(child: Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 11.0),
+                        child: Icon(Icons.favorite, color:  InsColor(appBloc).appHeaderTxtColor,size: 25.h),
+                      )),
+                    ),
+                    // new IconButton(
+                    //     icon: Icon(Icons.favorite),
+                    //     color: InsColor(appBloc).appHeaderTxtColor,
+                    //     onPressed: () {
+                    //       Navigator.of(context).push(MaterialPageRoute(
+                    //           builder: (context) => ChangeNotifierProvider(
+                    //                 create: (context) => ProviderModel(),
+                    //                 child: WishList(
+                    //                   categaoryID: 0,
+                    //                   categaoryName: widget.categaoryName,
+                    //                   detailsBloc: detailsBloc,
+                    //                   filterMenus: {},
+                    //                 ),
+                    //               )));
+                    //     }),
+                    Visibility(
+                      visible: (int.tryParse(appBloc.wishlistcount) ?? 0) > 0,
+                      // visible: true,
+                      child: new Positioned(
+                        right: 6,
+                        top: 14,
+                        child: new Container(
+                          padding: const EdgeInsets.all(2),
+                          decoration: new BoxDecoration(
+                            color: Color(int.parse(
+                                "0xFF${appBloc.uiSettingModel.appButtonBgColor.substring(1, 7).toUpperCase()}")),
+                            borderRadius: BorderRadius.circular(6),
                           ),
-                          textAlign: TextAlign.center,
+                          constraints: const BoxConstraints(
+                            minWidth: 14,
+                            minHeight: 14,
+                          ),
+                          child: Text(
+                            appBloc.wishlistResponse != null
+                                ? appBloc.wishlistcount
+                                : '',
+                            style: const TextStyle(
+                              color: Colors.white,
+                              fontSize: 8,
+                            ),
+                            textAlign: TextAlign.center,
+                          ),
                         ),
                       ),
                     )
                   ],
                 ),
-                SizedBox(
+                const SizedBox(
                   width: 10,
                 ),
 
@@ -586,10 +615,10 @@ class _CatalogSubScreenState extends State<CatalogSubScreen> {
                       });
 //sreekanth
                       if (addToMyLearn) {
-                        Timer(Duration(seconds: 1), () {
+                        Timer(const Duration(seconds: 1), () {
                           _scrollController.scrollTo(
                               index: selectedIndexOfAddedMyLearning,
-                              duration: Duration(seconds: 1));
+                              duration: const Duration(seconds: 1));
                         });
                       }
                       appBloc.add(WishlistCountEvent());
@@ -690,31 +719,38 @@ class _CatalogSubScreenState extends State<CatalogSubScreen> {
                           serachString: catalogBloc.searchCatalogString,
                           myLearningBloc: myLearningBloc));
                       if (state is AddToWishListState) {
+                        MyPrint.printOnConsole("mmmmyyyy toasttt -- : ${appBloc.localstr.catalogAlertsubtitleThiscontentitemhasbeenaddedto}");
+
                         flutterToast.showToast(
+
                           child: CommonToast(
                               displaymsg: appBloc.localstr
                                   .catalogAlertsubtitleItemaddedtowishlistsuccesfully),
                           gravity: ToastGravity.BOTTOM,
-                          toastDuration: Duration(seconds: 2),
+                          toastDuration: const Duration(seconds: 2),
                         );
                       }
                       if (state is RemoveFromWishListState) {
+                        MyPrint.printOnConsole("mmmmyyyy toasttt -- : ${appBloc.localstr.catalogAlertsubtitleThiscontentitemhasbeenaddedto}");
+
                         flutterToast.showToast(
                           child: CommonToast(
                               displaymsg: appBloc.localstr
                                   .catalogActionsheetRemovefromwishlistoption),
                           gravity: ToastGravity.BOTTOM,
-                          toastDuration: Duration(seconds: 2),
+                          toastDuration: const Duration(seconds: 2),
                         );
                       }
                       if (state is AddToMyLearningState) {
-                        flutterToast.showToast(
-                          child: CommonToast(
-                              displaymsg: appBloc.localstr
-                                  .catalogAlertsubtitleThiscontentitemhasbeenaddedto),
-                          gravity: ToastGravity.BOTTOM,
-                          toastDuration: Duration(seconds: 2),
-                        );
+                        MyPrint.printOnConsole("mmmmyyyy toasttt -- : ${appBloc.localstr.catalogAlertsubtitleThiscontentitemhasbeenaddedto}");
+                        MyToast.showToast(context, appBloc.localstr.catalogAlertsubtitleThiscontentitemhasbeenaddedto);
+                        // flutterToast.showToast(
+                        //   child: CommonToast(
+                        //       displaymsg: appBloc.localstr
+                        //           .catalogAlertsubtitleThiscontentitemhasbeenaddedto),
+                        //   gravity: ToastGravity.BOTTOM,
+                        //   toastDuration: Duration(seconds: 2),
+                        // );
                         addToMyLearn = true;
                       }
                     }
@@ -740,10 +776,7 @@ class _CatalogSubScreenState extends State<CatalogSubScreen> {
                   if (state.status == Status.LOADING) {
                     return Center(
                       child: AbsorbPointer(
-                        child: SpinKitCircle(
-                          color: Colors.grey,
-                          size: 70.h,
-                        ),
+                        child: AppConstants().getLoaderWidget(iconSize:70)
                       ),
                     );
                   }
@@ -783,7 +816,7 @@ class _CatalogSubScreenState extends State<CatalogSubScreen> {
                                                       myLearningBloc:
                                                           myLearningBloc));
                                             },
-                                            icon: Icon(
+                                            icon: const Icon(
                                               Icons.close,
                                             ),
                                           )
@@ -970,7 +1003,7 @@ class _CatalogSubScreenState extends State<CatalogSubScreen> {
                                                       myLearningBloc:
                                                           myLearningBloc));
                                             },
-                                            icon: Icon(
+                                            icon: const Icon(
                                               Icons.close,
                                             ),
                                           )
@@ -1174,7 +1207,7 @@ class _CatalogSubScreenState extends State<CatalogSubScreen> {
                                         }
                                       }),
                                   web: GridView.builder(
-                                      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                                      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                                         crossAxisCount: 5,
                                         childAspectRatio: 0.65,
                                       ),
@@ -1226,10 +1259,7 @@ class _CatalogSubScreenState extends State<CatalogSubScreen> {
           inAsyncCall: isLoading,
           progressIndicator: Center(
             child: AbsorbPointer(
-              child: SpinKitCircle(
-                color: InsColor(appBloc).appIconColor,
-                size: 70.h,
-              ),
+              child: AppConstants().getLoaderWidget(iconSize: 70)
             ),
           ),
           child: Scaffold(
@@ -1249,10 +1279,10 @@ class _CatalogSubScreenState extends State<CatalogSubScreen> {
                       });
 
                       if (addToMyLearn) {
-                        Timer(Duration(seconds: 1), () {
+                        Timer(const Duration(seconds: 1), () {
                           _scrollController.scrollTo(
                               index: selectedIndexOfAddedMyLearning,
-                              duration: Duration(seconds: 1));
+                              duration: const Duration(seconds: 1));
                         });
                       }
                     } else if (state.status == Status.ERROR) {
@@ -1342,7 +1372,7 @@ class _CatalogSubScreenState extends State<CatalogSubScreen> {
                               displaymsg: appBloc.localstr
                                   .catalogAlertsubtitleItemaddedtowishlistsuccesfully),
                           gravity: ToastGravity.BOTTOM,
-                          toastDuration: Duration(seconds: 2),
+                          toastDuration: const Duration(seconds: 2),
                         );
                       }
                       if (state is RemoveFromWishListState) {
@@ -1351,16 +1381,18 @@ class _CatalogSubScreenState extends State<CatalogSubScreen> {
                               displaymsg: appBloc.localstr
                                   .catalogActionsheetRemovefromwishlistoption),
                           gravity: ToastGravity.BOTTOM,
-                          toastDuration: Duration(seconds: 2),
+                          toastDuration: const Duration(seconds: 2),
                         );
                       }
                       if (state is AddToMyLearningState) {
+                        MyPrint.printOnConsole("mmmmyyyy toasttt -- : ${appBloc.localstr.catalogAlertsubtitleThiscontentitemhasbeenaddedto}");
+
                         flutterToast.showToast(
                           child: CommonToast(
                               displaymsg: appBloc.localstr
                                   .catalogAlertsubtitleThiscontentitemhasbeenaddedto),
                           gravity: ToastGravity.BOTTOM,
-                          toastDuration: Duration(seconds: 2),
+                          toastDuration: const Duration(seconds: 2),
                         );
 
                         // _scrollController.jumpTo(
@@ -1398,10 +1430,7 @@ class _CatalogSubScreenState extends State<CatalogSubScreen> {
                   if (state.status == Status.LOADING) {
                     return Center(
                       child: AbsorbPointer(
-                        child: SpinKitCircle(
-                          color: Colors.grey,
-                          size: 70.h,
-                        ),
+                        child: AppConstants().getLoaderWidget(iconSize: 70)
                       ),
                     );
                   }
@@ -1441,7 +1470,7 @@ class _CatalogSubScreenState extends State<CatalogSubScreen> {
                                                       myLearningBloc:
                                                           myLearningBloc));
                                             },
-                                            icon: Icon(
+                                            icon: const Icon(
                                               Icons.close,
                                             ),
                                           )
@@ -1469,7 +1498,7 @@ class _CatalogSubScreenState extends State<CatalogSubScreen> {
                                               )
                                             : null,
                                     onSubmitAction: (value) {
-                                      if (value.toString().length > 0) {
+                                      if (value.toString().isNotEmpty) {
                                         catalogBloc.isFirstLoadingCatalog = true;
                                         catalogBloc.isCatalogSearch = true;
                                         catalogBloc.searchCatalogString =
@@ -1625,7 +1654,7 @@ class _CatalogSubScreenState extends State<CatalogSubScreen> {
                                                       myLearningBloc:
                                                           myLearningBloc));
                                             },
-                                            icon: Icon(
+                                            icon: const Icon(
                                               Icons.close,
                                             ),
                                           )
@@ -1759,7 +1788,7 @@ class _CatalogSubScreenState extends State<CatalogSubScreen> {
                                     },
                                   ),
                                   web: GridView.builder(
-                                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                                    gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                                       crossAxisCount: 5,
                                       childAspectRatio: 0.65,
                                     ),
@@ -1769,8 +1798,7 @@ class _CatalogSubScreenState extends State<CatalogSubScreen> {
                                         : catalogBloc
                                         .notificationCatalogCatgorylist.length,
                                     itemBuilder: (context, i) {
-                                      if (catalogBloc.catalogCatgorylist.length ==
-                                          0) {
+                                      if (catalogBloc.catalogCatgorylist.isEmpty) {
                                         if (state.status == Status.LOADING) {
 //                          print("gone in _buildProgressIndicator");
                                           return _buildProgressIndicator();
@@ -1819,7 +1847,7 @@ class _CatalogSubScreenState extends State<CatalogSubScreen> {
 
   Widget getBreadcrumbWidget() {
     if(widget.categaoryName.isEmpty) {
-      return SizedBox();
+      return const SizedBox();
     }
 
     return SizedBox(
@@ -1827,7 +1855,7 @@ class _CatalogSubScreenState extends State<CatalogSubScreen> {
       width: double.maxFinite,
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 5),
-        decoration: BoxDecoration(
+        decoration: const BoxDecoration(
           color: Color(0xffF0F0F0),
           //color: AppColors.getAppBGColor().withAlpha(200),
         ),
@@ -1848,7 +1876,7 @@ class _CatalogSubScreenState extends State<CatalogSubScreen> {
                     fontSize: 14,
                     //fontWeight: FontWeight.w600,
                     decoration: isClickable ? TextDecoration.underline : null,
-                    color:isClickable?AppColors.getSiteBrandingLinkColor(): Color(0xff1D293F),
+                    color:isClickable?AppColors.getSiteBrandingLinkColor(): const Color(0xff1D293F),
                   ),
                 ),
               );
@@ -1861,7 +1889,7 @@ class _CatalogSubScreenState extends State<CatalogSubScreen> {
                     },
                     child: Text(
                       '${widget.categaoryName}',
-                      style: TextStyle(
+                      style: const TextStyle(
                         fontSize: 14,
                         color: Color(0xff1D293F),
                       ),
@@ -1938,7 +1966,7 @@ class _CatalogSubScreenState extends State<CatalogSubScreen> {
     final result = await Navigator.push(
       context,
       // Create the SelectionScreen in the next step.
-      MaterialPageRoute(builder: (context) => GlobalSearchScreen(menuId: 3091)),
+      MaterialPageRoute(builder: (context) => const GlobalSearchScreen(menuId: 3091)),
     );
 
     print(result);
@@ -2007,14 +2035,17 @@ class _CatalogSubScreenState extends State<CatalogSubScreen> {
                 child: GestureDetector(
                   onTap: () {
                     Navigator.of(context).push(MaterialPageRoute(
-                        builder: (context) => CommonDetailScreen(
-                          screenType: ScreenType.Catalog,
-                          contentid: table2.contentid,
-                          objtypeId: table2.objecttypeid,
-                          detailsBloc: detailsBloc,
-                          table2: table2,
-                          isFromReschedule: false,
-                        )));
+                        builder: (context) => ChangeNotifierProvider(
+                              create: (context) => ProviderModel(),
+                              child: CommonDetailScreen(
+                                screenType: ScreenType.Catalog,
+                                contentid: table2.contentid,
+                                objtypeId: table2.objecttypeid,
+                                detailsBloc: detailsBloc,
+                                table2: table2,
+                                isFromReschedule: false,
+                              ),
+                            )));
                   },
                   child: Container(
                     height: ScreenUtil().setHeight(kCellThumbHeight),
@@ -2048,7 +2079,7 @@ class _CatalogSubScreenState extends State<CatalogSubScreen> {
                   child: Visibility(
                       visible: kShowContentTypeIcon,
                       child: Container(
-                        padding: EdgeInsets.all(2.0),
+                        padding: const EdgeInsets.all(2.0),
                         color: Colors.white,
                         child: CachedNetworkImage(
                           height: 30,
@@ -2334,12 +2365,12 @@ class _CatalogSubScreenState extends State<CatalogSubScreen> {
   }
 
   Widget _buildProgressIndicator() {
-    return Padding(
-      padding: const EdgeInsets.all(8.0),
+    return const Padding(
+      padding: EdgeInsets.all(8.0),
       child: Center(
-        child: Opacity(
+        child: const Opacity(
           opacity: 1.0,
-          child: CircularProgressIndicator(),
+          child: const CircularProgressIndicator(),
         ),
       ),
     );
@@ -2449,376 +2480,292 @@ class _CatalogSubScreenState extends State<CatalogSubScreen> {
       }
     }
     showModalBottomSheet(
-      backgroundColor: Color(
-        int.parse(
-            "0xFF${appBloc.uiSettingModel.appBGColor.substring(1, 7).toUpperCase()}"),
-      ),
+      shape: AppConstants().bottomSheetShapeBorder(),
+      backgroundColor: AppColors.getAppBGColor(),
       context: context,
       builder: (BuildContext bc) {
         return Container(
+          decoration: BoxDecoration(
+              color:AppColors.getAppBGColor(),
+              borderRadius: AppConstants().borderRadiusGeometry() ),
           child: SingleChildScrollView(
-            child: Column(
-              children: <Widget>[
-                BottomSheetDragger(),
-                menu0
-                    ? ListTile(
-                        title:
-                            Text(appBloc.localstr.catalogActionsheetViewoption,
-                                style: TextStyle(
-                                  color: InsColor(appBloc).appTextColor,
-                                )),
-                        leading: Icon(
-                          IconDataSolid(int.parse('0xf06e')),
-                          color: InsColor(appBloc).appIconColor,
-                        ),
-                        onTap: () {
-                          //print("imageurl---${table2.imageData}");
-                          if (isValidString(
-                              table2.viewprerequisitecontentstatus ?? "")) {
-                            print('ifdataaaaa');
-                            Navigator.of(context).pop();
-                            String alertMessage = appBloc
-                                .localstr.prerequistesalerttitle6Alerttitle6;
-                            alertMessage = alertMessage +
-                                "  \"" +
-                                appBloc
-                                    .localstr.prerequisLabelContenttypelabel +
-                                "\" " +
-                                appBloc.localstr
-                                    .prerequistesalerttitle5Alerttitle7;
+            child: Container(
+              color: Colors.transparent,
+              padding: const EdgeInsets.fromLTRB(0, 0, 0, 20),
+              child: Column(
+                children: <Widget>[
+                  const BottomSheetDragger(),
+                  menu0
+                      ? BottomsheetOptionTile(
+                          text: appBloc.localstr.catalogActionsheetViewoption,
+                            iconData:IconDataSolid(int.parse('0xf06e')),
+                          onTap: () {
+                            //print("imageurl---${table2.imageData}");
+                            if (isValidString(
+                                table2.viewprerequisitecontentstatus ?? "")) {
+                              print('ifdataaaaa');
+                              Navigator.of(context).pop();
+                              String alertMessage = appBloc
+                                  .localstr.prerequistesalerttitle6Alerttitle6;
+                              alertMessage = alertMessage +
+                                  "  \"" +
+                                  appBloc
+                                      .localstr.prerequisLabelContenttypelabel +
+                                  "\" " +
+                                  appBloc.localstr
+                                      .prerequistesalerttitle5Alerttitle7;
 
-                            showDialog(
-                                context: context,
-                                builder: (BuildContext context) =>
-                                    AlertDialog(
-                                      title: Text(
-                                        'Pre-requisite Sequence',
-                                        style: TextStyle(
-                                            color: Color(
-                                              int.parse(
-                                                  "0xFF${appBloc.uiSettingModel.appTextColor.substring(1, 7).toUpperCase()}"),
-                                            ),
-                                            fontWeight: FontWeight.bold),
-                                      ),
-                                      content: Column(
-                                        mainAxisSize: MainAxisSize.min,
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          Text(alertMessage,
-                                              style: TextStyle(
-                                                  color: Color(
+                              showDialog(
+                                  context: context,
+                                  builder: (BuildContext context) =>
+                                      new AlertDialog(
+                                        title: Text(
+                                          'Pre-requisite Sequence',
+                                          style: TextStyle(
+                                              color: Color(
                                                 int.parse(
                                                     "0xFF${appBloc.uiSettingModel.appTextColor.substring(1, 7).toUpperCase()}"),
-                                              ))),
-                                          Text(
-                                              '\n' +
-                                                  table2
-                                                      .viewprerequisitecontentstatus
-                                                      .toString()
-                                                      .split('#%')[1]
-                                                      .split('\$;')[0],
-                                              style: TextStyle(
-                                                fontSize: 16.0,
-                                                color: Colors.blue,
-                                              )),
-                                          Text(
-                                              table2
-                                                  .viewprerequisitecontentstatus
-                                                  .toString()
-                                                  .split('#%')[1]
-                                                  .split('\$;')[1],
-                                              style: TextStyle(
-                                                  color: Color(
-                                                int.parse(
-                                                    "0xFF${appBloc.uiSettingModel.appTextColor.substring(1, 7).toUpperCase()}"),
-                                              )))
-                                        ],
-                                      ),
-                                      backgroundColor:
-                                          InsColor(appBloc).appBGColor,
-                                      shape: RoundedRectangleBorder(
-                                          borderRadius:
-                                              BorderRadius.circular(5)),
-                                      actions: <Widget>[
-                                        FlatButton(
-                                          child: Text(appBloc.localstr
-                                              .eventsAlertbuttonOkbutton),
-                                          textColor: Colors.blue,
-                                          onPressed: () async {
-                                            Navigator.of(context).pop();
-                                          },
+                                              ),
+                                              fontWeight: FontWeight.bold),
                                         ),
-                                      ],
-                                    ));
-                          } else {
-                            if (table2.isaddedtomylearning == 1) {
-                              launchCourse(table2, context);
+                                        content: Column(
+                                          mainAxisSize: MainAxisSize.min,
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            Text(alertMessage,
+                                                style: TextStyle(
+                                                    color: Color(
+                                                  int.parse(
+                                                      "0xFF${appBloc.uiSettingModel.appTextColor.substring(1, 7).toUpperCase()}"),
+                                                ))),
+                                            Text(
+                                                '\n' +
+                                                    table2
+                                                        .viewprerequisitecontentstatus
+                                                        .toString()
+                                                        .split('#%')[1]
+                                                        .split('\$;')[0],
+                                                style: const TextStyle(
+                                                  fontSize: 16.0,
+                                                  color: Colors.blue,
+                                                )),
+                                            Text(
+                                                table2
+                                                    .viewprerequisitecontentstatus
+                                                    .toString()
+                                                    .split('#%')[1]
+                                                    .split('\$;')[1],
+                                                style: TextStyle(
+                                                    color: Color(
+                                                  int.parse(
+                                                      "0xFF${appBloc.uiSettingModel.appTextColor.substring(1, 7).toUpperCase()}"),
+                                                )))
+                                          ],
+                                        ),
+                                        backgroundColor:
+                                            InsColor(appBloc).appBGColor,
+                                        shape: RoundedRectangleBorder(
+                                            borderRadius:
+                                                new BorderRadius.circular(5)),
+                                        actions: <Widget>[
+                                          new FlatButton(
+                                            child: Text(appBloc.localstr
+                                                .eventsAlertbuttonOkbutton),
+                                            textColor: Colors.blue,
+                                            onPressed: () async {
+                                              Navigator.of(context).pop();
+                                            },
+                                          ),
+                                        ],
+                                      ));
                             } else {
-                              launchCoursePreview(table2, context);
+                              if (table2.isaddedtomylearning == 1) {
+                                launchCourse(table2, context);
+                              } else {
+                                launchCoursePreview(table2, context);
+                              }
                             }
-                          }
-                        },
-                      )
-                    : Container(),
-                menu1
-                    ? ListTile(
-                        title: Text(
-                          appBloc
-                              .localstr.catalogActionsheetAddtomylearningoption,
-                          style: Theme.of(context)
-                              .textTheme
-                              .subtitle1
-                              ?.apply(color: InsColor(appBloc).appTextColor),
-                        ),
-                        leading: Icon(
-                          Icons.add_circle,
-                          color: InsColor(appBloc).appIconColor,
-                        ),
-                        onTap: () {
-                          if (table2.userid != null && table2.userid != "-1") {
-                            Navigator.pop(context);
-                            if (table2.isaddedtomylearning == 2) {
-                              catalogBloc.add(
-                                GetPrequisiteDetailsEvent(
-                                    contentId: table2.contentid,
-                                    userID: table2.userid),
+                          },
+                        )
+                      : Container(),
+                  menu1
+                      ? BottomsheetOptionTile(
+                          text:
+                            appBloc
+                                .localstr.catalogActionsheetAddtomylearningoption,
+                            iconData:Icons.add_circle,
+                          onTap: () {
+                            if (table2.userid != null && table2.userid != "-1") {
+                              Navigator.pop(context);
+                              if (table2.isaddedtomylearning == 2) {
+                                catalogBloc.add(
+                                  GetPrequisiteDetailsEvent(
+                                      contentId: table2.contentid,
+                                      userID: table2.userid),
+                                );
+                              } else {
+                                setState(() {
+                                  selectedIndexOfAddedMyLearning = i;
+                                });
+                                (table2.objecttypeid == 70 &&
+                                            table2.eventscheduletype == 1) ||
+                                        (table2.objecttypeid == 70 &&
+                                            table2.eventscheduletype == 2)
+                                    ? Navigator.of(context)
+                                        .push(MaterialPageRoute(
+                                            builder: (context) =>
+                                                ChangeNotifierProvider(
+                                                  create: (context) =>
+                                                      ProviderModel(),
+                                                  child: CommonDetailScreen(
+                                                    screenType:
+                                                        ScreenType.Catalog,
+                                                    contentid: table2.contentid,
+                                                    objtypeId:
+                                                        table2.objecttypeid,
+                                                    detailsBloc: detailsBloc,
+                                                    table2: table2,
+                                                    // nativeModel:
+                                                    //     widget.nativeMenuModel,
+                                                    isFromReschedule: false,
+                                                    //isFromMyLearning:
+                                                    //  false, //need implement reschedule
+                                                  ),
+                                                )))
+                                        .then((value) => {
+                                              if (value) {refresh()}
+                                            })
+                                    : catalogBloc.add(
+                                        AddToMyLearningEvent(
+                                            contentId: table2.contentid,
+                                            table2: table2),
+                                      );
+                              }
+                            } else {
+                              flutterToast.showToast(
+                                child: CommonToast(
+                                    displaymsg:
+                                        'Not a member of ${table2.sitename}'),
+                                gravity: ToastGravity.BOTTOM,
+                                toastDuration: const Duration(seconds: 2),
                               );
-                            } else {
-                              setState(() {
-                                selectedIndexOfAddedMyLearning = i;
-                              });
-                              (table2.objecttypeid == 70 &&
-                                          table2.eventscheduletype == 1) ||
-                                      (table2.objecttypeid == 70 &&
-                                          table2.eventscheduletype == 2)
-                                  ? Navigator.of(context)
-                                      .push(MaterialPageRoute(
-                                          builder: (context) =>
-                                              CommonDetailScreen(
-                                                screenType:
-                                                    ScreenType.Catalog,
-                                                contentid: table2.contentid,
-                                                objtypeId:
-                                                    table2.objecttypeid,
-                                                detailsBloc: detailsBloc,
-                                                table2: table2,
-                                                // nativeModel:
-                                                //     widget.nativeMenuModel,
-                                                isFromReschedule: false,
-                                                //isFromMyLearning:
-                                                //  false, //need implement reschedule
-                                              )))
-                                      .then((value) => {
-                                            if (value) {refresh()}
-                                          })
-                                  : catalogBloc.add(
-                                      AddToMyLearningEvent(
-                                          contentId: table2.contentid,
-                                          table2: table2),
-                                    );
+                              checkUserLogin(table2);
                             }
-                          } else {
-                            flutterToast.showToast(
-                              child: CommonToast(
-                                  displaymsg:
-                                      'Not a member of ${table2.sitename}'),
-                              gravity: ToastGravity.BOTTOM,
-                              toastDuration: Duration(seconds: 2),
-                            );
-                            checkUserLogin(table2);
-                          }
-                        },
-                      )
-                    : Container(),
-                menu2
-                    ? ListTile(
-                        title: Text(
-                          appBloc.localstr.catalogActionsheetBuyoption,
-                          style: Theme.of(context)
-                              .textTheme
-                              .subtitle1
-                              ?.apply(color: InsColor(appBloc).appTextColor),
-                        ),
-                        leading: Icon(
-                          IconDataSolid(int.parse('0xf144')),
-                          color: InsColor(appBloc).appIconColor,
-                        ),
-                        onTap: () {
-                          Navigator.of(context).pop();
-                          _buyProduct(table2);
-                        },
-                      )
-                    : Container(),
-                menu3
-                    ? ListTile(
-                        title: Text(
-                          appBloc.localstr.catalogActionsheetDetailsoption,
-                          style: Theme.of(context)
-                              .textTheme
-                              .subtitle1
-                              ?.apply(color: InsColor(appBloc).appTextColor),
-                        ),
-                        leading: Icon(
-                          IconDataSolid(int.parse('0xf570')),
-                          color: InsColor(appBloc).appIconColor,
-                        ),
-                        onTap: () {
-                          Navigator.of(context).pop();
-                          Navigator.of(context).push(MaterialPageRoute(
-                              builder: (context) => CommonDetailScreen(
-                                screenType: ScreenType.Catalog,
-                                contentid: table2.contentid,
-                                objtypeId: table2.objecttypeid,
-                                detailsBloc: detailsBloc,
-                                table2: table2,
-                                // nativeModel: widget.nativeMenuModel,
-                                isFromReschedule: false,
-                                //isFromMyLearning:
-                                //true, //neeed implement
-                              )));
-                        },
-                      )
-                    : Container(),
-                menu4
-                    ? ListTile(
-                        title: Text(
-                          appBloc.localstr.catalogActionsheetDeleteoption,
-                          style: Theme.of(context)
-                              .textTheme
-                              .subtitle1
-                              ?.apply(color: InsColor(appBloc).appTextColor),
-                        ),
-                        leading: Icon(
-                          IconDataSolid(int.parse('0xf144')),
-                          color: InsColor(appBloc).appIconColor,
-                        ),
-                      )
-                    : Container(),
-                menu5
-                    ? ListTile(
-                        title: Text(
-                          appBloc.localstr.mylearningActionsheetDownloadoption,
-                          style: Theme.of(context)
-                              .textTheme
-                              .subtitle1
-                              ?.apply(color: InsColor(appBloc).appTextColor),
-                        ),
-                        leading: Icon(
-                          IconDataSolid(int.parse('0xf144')),
-                          color: Colors.black54,
-                        ),
-                      )
-                    : Container(),
-                menu6
-                    ? ListTile(
-                        title: Text(
-                          appBloc.localstr.catalogActionsheetWishlistoption,
-                          style: Theme.of(context)
-                              .textTheme
-                              .subtitle1
-                              ?.apply(color: InsColor(appBloc).appTextColor),
-                        ),
-                        leading: Icon(
-                          Icons.favorite_border,
-                          color: InsColor(appBloc).appIconColor,
-                        ),
-                        onTap: () {
-                          catalogBloc.add(
-                              AddToWishListEvent(contentId: table2.contentid));
-                          Navigator.of(context).pop();
-                        },
-                      )
-                    : Container(),
-                menu7
-                    ? ListTile(
-                        title: Text(
-                          appBloc.localstr
-                              .catalogActionsheetRemovefromwishlistoption,
-                          style: Theme.of(context)
-                              .textTheme
-                              .subtitle1
-                              ?.apply(color: InsColor(appBloc).appTextColor),
-                        ),
-                        leading: Icon(
-                          Icons.favorite,
-                          color: InsColor(appBloc).appIconColor,
-                        ),
-                        onTap: () {
-                          catalogBloc.add(RemoveFromWishListEvent(
-                              contentId: table2.contentid));
-                          Navigator.of(context).pop();
-                        },
-                      )
-                    : Container(),
-                menu8
-                    ? ListTile(
-                        title: Text(
-                          appBloc.localstr.learningtrackLabelEventviewrecording,
-                          style: Theme.of(context)
-                              .textTheme
-                              .subtitle1
-                              ?.apply(color: InsColor(appBloc).appTextColor),
-                        ),
-                        leading: Icon(
-                          IconDataSolid(int.parse('0xf144')),
-                          color: InsColor(appBloc).appIconColor,
-                        ),
-                      )
-                    : Container(),
-                /*(table2.suggesttoconnlink != null)
-                    ?(table2.suggesttoconnlink.isNotEmpty)?*/
-                ListTile(
-                  leading: Icon(
-                    IconDataSolid(int.parse('0xf1e0')),
-                    color: InsColor(appBloc).appIconColor,
-                  ),
-                  title: Text(
-                    'Share with Connection',
-                    style: Theme.of(context)
-                        .textTheme
-                        .subtitle1
-                        ?.apply(color: InsColor(appBloc).appTextColor),
-                  ),
-                  onTap: () {
-                    Navigator.pop(context);
+                          },
+                        )
+                      : Container(),
+                  menu2
+                      ? BottomsheetOptionTile(
+                            text: appBloc.localstr.catalogActionsheetBuyoption,
+                            iconData:IconDataSolid(int.parse('0xf144')),
+                          onTap: () {
+                            Navigator.of(context).pop();
+                            _buyProduct(table2);
+                          },
+                        )
+                      : Container(),
+                  menu3
+                      ? BottomsheetOptionTile(
+                            text:appBloc.localstr.catalogActionsheetDetailsoption,
+                            iconData:IconDataSolid(int.parse('0xf570')),
+                          onTap: () {
+                            Navigator.of(context).pop();
+                            Navigator.of(context).push(MaterialPageRoute(
+                                builder: (context) => ChangeNotifierProvider(
+                                      create: (context) => ProviderModel(),
+                                      child: CommonDetailScreen(
+                                        screenType: ScreenType.Catalog,
+                                        contentid: table2.contentid,
+                                        objtypeId: table2.objecttypeid,
+                                        detailsBloc: detailsBloc,
+                                        table2: table2,
+                                        // nativeModel: widget.nativeMenuModel,
+                                        isFromReschedule: false,
+                                        //isFromMyLearning:
+                                        //true, //neeed implement
+                                      ),
+                                    )));
+                          },
+                        )
+                      : Container(),
+                  menu4
+                      ? BottomsheetOptionTile(
+                            text:appBloc.localstr.catalogActionsheetDeleteoption,
+                            iconData:IconDataSolid(int.parse('0xf144')),
+                        )
+                      : Container(),
+                  menu5
+                      ? BottomsheetOptionTile(
+                            text:appBloc.localstr.mylearningActionsheetDownloadoption,
+                            iconData:IconDataSolid(int.parse('0xf144')),
+                        )
+                      : Container(),
+                  menu6
+                      ? BottomsheetOptionTile(
+                            text:appBloc.localstr.catalogActionsheetWishlistoption,
+                            iconData:Icons.favorite_border,
+                          onTap: () {
+                            catalogBloc.add(
+                                AddToWishListEvent(contentId: table2.contentid));
+                            Navigator.of(context).pop();
+                          },
+                        )
+                      : Container(),
+                  menu7
+                      ? BottomsheetOptionTile(
+                            text:appBloc.localstr
+                                .catalogActionsheetRemovefromwishlistoption,
+                            iconData:Icons.favorite,
+                          onTap: () {
+                            catalogBloc.add(RemoveFromWishListEvent(
+                                contentId: table2.contentid));
+                            Navigator.of(context).pop();
+                          },
+                        )
+                      : Container(),
+                  menu8
+                      ? BottomsheetOptionTile(
+                            text:appBloc.localstr.learningtrackLabelEventviewrecording,
+                            iconData:IconDataSolid(int.parse('0xf144')),
+                        )
+                      : Container(),
+                  /*(table2.suggesttoconnlink != null)
+                      ?(table2.suggesttoconnlink.isNotEmpty)?*/
+                  BottomsheetOptionTile(
+                      iconData:IconDataSolid(int.parse('0xf1e0')),
+                      text:'Share with Connection',
+                    onTap: () {
+                      Navigator.pop(context);
 
-                    Navigator.of(context).push(MaterialPageRoute(
-                        builder: (context) => ShareWithConnections(
-                            false, false, table2.name, table2.contentid)));
-                  },
-                ) /*: Container()
-                    : Container()*/
-                ,
-                /*table2.suggestwithfriendlink != null
-                    ?(table2.suggestwithfriendlink.isNotEmpty)
-                    ?*/
-                ListTile(
-                  leading: Icon(
-                    IconDataSolid(int.parse('0xf079')),
-                    color: InsColor(appBloc).appIconColor,
-                  ),
-                  title: Text(
-                    "Share with People",
-                    style: Theme.of(context)
-                        .textTheme
-                        .subtitle1
-                        ?.apply(color: InsColor(appBloc).appTextColor),
-                  ),
-                  onTap: () {
-                    Navigator.pop(context);
+                      Navigator.of(context).push(MaterialPageRoute(
+                          builder: (context) => ShareWithConnections(
+                              false, false, table2.name, table2.contentid)));
+                    },
+                  ) /*: Container()
+                      : Container()*/
+                  ,
+                  /*table2.suggestwithfriendlink != null
+                      ?(table2.suggestwithfriendlink.isNotEmpty)
+                      ?*/
+                  BottomsheetOptionTile(
+                      iconData:IconDataSolid(int.parse('0xf079')),
+                      text:"Share with People",
+                    onTap: () {
+                      Navigator.pop(context);
 
-                    Navigator.of(context).push(MaterialPageRoute(
-                        builder: (context) => ShareMainScreen(true, false,
-                            false, table2.contentid, table2.name)));
-                  },
-                ),
-                /*: Container()
-                    : Container()*/
-                //sreekanth commmented
-                // (table2?.ShareContentwithUser?.length ?? 0) > 0
-                displaySendViaEmail(table2),
-              ],
+                      Navigator.of(context).push(MaterialPageRoute(
+                          builder: (context) => ShareMainScreen(true, false,
+                              false, table2.contentid, table2.name)));
+                    },
+                  ),
+                  /*: Container()
+                      : Container()*/
+                  //sreekanth commmented
+                  // (table2?.ShareContentwithUser?.length ?? 0) > 0
+                  displaySendViaEmail(table2),
+                ],
+              ),
             ),
           ),
         );
@@ -2830,21 +2777,11 @@ class _CatalogSubScreenState extends State<CatalogSubScreen> {
     // if ((table2?.ShareContentwithUser?.length ?? 0) > 0) {
     if (privilegeCreateForumIdExists()) {
       if (table2.objecttypeid == 14) {
-        return ListTile(
-          leading: Icon(
-            Icons.email,
-            //IconDataSolid(int.parse('0xf06e')),
-            color: InsColor(appBloc).appIconColor,
-          ),
-          title: Text(
-              appBloc.localstr.mylearningsendviaemailnewoption == null
+        return new BottomsheetOptionTile(
+            iconData:Icons.email,
+              text:appBloc.localstr.mylearningsendviaemailnewoption == null
                   ? 'Share via Email'
                   : appBloc.localstr.mylearningsendviaemailnewoption,
-              style: TextStyle(
-                  color: Color(
-                int.parse(
-                    "0xFF${appBloc.uiSettingModel.appTextColor.substring(1, 7).toUpperCase()}"),
-              ))),
           onTap: () {
             Navigator.pop(context);
             Navigator.of(context).push(MaterialPageRoute(
@@ -2923,7 +2860,7 @@ class _CatalogSubScreenState extends State<CatalogSubScreen> {
       if (url.isNotEmpty) {
         if (table2.objecttypeid == 26) {
           await Navigator.of(context).push(MaterialPageRoute(
-              builder: (context) => InAppWebCourseLaunch(url, table2)));
+              builder: (context) => AdvancedWebCourseLaunch(url, table2.name)));
         } else {
           await Navigator.of(context).push(MaterialPageRoute(
               builder: (context) => InAppWebCourseLaunch(url, table2)));
@@ -3077,8 +3014,8 @@ class _CatalogSubScreenState extends State<CatalogSubScreen> {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Expanded(
-              child: Text(
+            const Expanded(
+              child: const Text(
                 'View Prerequisites',
                 style: TextStyle(fontSize: 14.0),
               ),
@@ -3103,9 +3040,9 @@ class _CatalogSubScreenState extends State<CatalogSubScreen> {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Text(
+            const Text(
               'Cancel',
-              style: TextStyle(fontSize: 14.0),
+              style: const TextStyle(fontSize: 14.0),
             ),
           ],
         ),
@@ -3117,7 +3054,7 @@ class _CatalogSubScreenState extends State<CatalogSubScreen> {
     // Create AlertDialog
     AlertDialog alert = AlertDialog(
       backgroundColor: InsColor(appBloc).appBGColor,
-      title: Text("Pre-requisite Sequence"),
+      title: const Text("Pre-requisite Sequence"),
       content: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         //position
