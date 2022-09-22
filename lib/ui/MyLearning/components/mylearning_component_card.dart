@@ -1,6 +1,5 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_admin_web/configs/extensions.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_admin_web/framework/bloc/app/bloc/app_bloc.dart';
@@ -736,7 +735,7 @@ class _MyLearningComponentCardState extends State<MyLearningComponentCard> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
               Text(
-                widget.table2.medianame.capitalize(),
+                widget.table2.medianame,
                 style: TextStyle(
                     fontSize: ScreenUtil().setSp(13),
                     color: AppColors.getAppTextColor().withOpacity(0.5) ),

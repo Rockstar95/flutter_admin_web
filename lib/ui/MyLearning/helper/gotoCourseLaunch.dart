@@ -75,6 +75,10 @@ class GotoCourseLaunch {
     //String startPage = myLearningModel.startpage.toString();
     // String endDurationDate = myLearningModel.durationenddate.toString();
 
+    if(myLearningModel.objecttypeid == 28) {
+      return startPage;
+    }
+
     String mobileGetNativeMenusResponseStr = await _getLocalData(mobileTinCanConfigurationsKey);
     String tempTinCanData = mobileGetNativeMenusResponseStr.replaceAll("'", '"');
     if (tempTinCanData.startsWith('"')) tempTinCanData = tempTinCanData.substring(1);

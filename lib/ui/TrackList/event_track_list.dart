@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:add_2_calendar/add_2_calendar.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_downloader/flutter_downloader.dart';
@@ -72,11 +73,13 @@ import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher_string.dart';
 
+import '../../configs/constants.dart';
 import '../../framework/helpers/sync_helper.dart';
 import '../../models/my_learning/download_feature/mylearning_download_model.dart';
 import '../../providers/my_learning_download_provider.dart';
 import '../common/app_colors.dart';
 import '../common/bottomsheet_drager.dart';
+import '../common/bottomsheet_option_tile.dart';
 import '../common/outline_button.dart';
 import '../common/rounded_square_progress_indicator.dart';
 
@@ -328,7 +331,8 @@ class _EventTrackListState extends State<EventTrackList> with TickerProviderStat
                           learnerSCOID: "${state.table2.scoid}",
                           learnerSessionID: state.response.toString()));
                     }
-                  } else if (state.status == Status.ERROR) {
+                  }
+                  else if (state.status == Status.ERROR) {
                     if (state.message == "401") {
                       AppDirectory.sessionTimeOut(context);
                     }
@@ -336,12 +340,11 @@ class _EventTrackListState extends State<EventTrackList> with TickerProviderStat
                 }
                 else if (state is TokenFromSessionIdState) {
                   if (state.status == Status.COMPLETED) {
-                    if (AppDirectory.isValidString(state.response) &&
-                        state.response.contains('failed')) {
+                    if (AppDirectory.isValidString(state.response) && state.response.contains('failed')) {
                       launchCourse(state.table2, context, true);
-                    } else {
-                      launchCourseContentisolation(
-                          state.table2, context, state.response.toString());
+                    }
+                    else {
+                      launchCourseContentisolation(state.table2, context, state.response.toString());
                     }
                   } else if (state.status == Status.ERROR) {
                     if (state.message == "401") {
@@ -589,7 +592,9 @@ class _EventTrackListState extends State<EventTrackList> with TickerProviderStat
                                   'mystateuscomplete ${state.table2.percentcompleted}');
 
                               createParentUrl(widget.myLearningModel);
-                            } else if (state.status == Status.ERROR) {
+                              refreshContent(null);
+                            }
+                            else if (state.status == Status.ERROR) {
                               if (state.message == "401") {
                                 AppDirectory.sessionTimeOut(context);
                               }
@@ -625,39 +630,33 @@ class _EventTrackListState extends State<EventTrackList> with TickerProviderStat
                           }
                           else if (state is ParentTrackGetContentStatusState) {
                             if (state.status == Status.COMPLETED) {
-                              print(
-                                  "Got Content Status for parent scoid:${state.table2.scoid}, content status:${state.contentstatus.contentStatus}, Progress:${state.contentstatus.progress}");
+                              print("Got Content Status for parent scoid:${state.table2.scoid}, content status:${state.contentstatus.contentStatus}, Progress:${state.contentstatus.progress}");
 
                               setState(() {
-                                widget.myLearningModel.actualstatus =
-                                    state.contentstatus.name;
-                                widget.myLearningModel.corelessonstatus =
-                                    state.contentstatus.contentStatus;
-                                widget.myLearningModel.progress =
-                                    state.contentstatus.progress;
+                                widget.myLearningModel.actualstatus = state.contentstatus.name;
+                                widget.myLearningModel.corelessonstatus = state.contentstatus.contentStatus;
+                                widget.myLearningModel.progress = state.contentstatus.progress;
                                 if (state.contentstatus.progress != '0') {
-                                  widget.myLearningModel.percentcompleted =
-                                      state.contentstatus.progress;
-                                  if (widget.myLearningModel.corelessonstatus ==
-                                          "Completed" &&
-                                      widget.myLearningModel.percentcompleted !=
-                                          "100.00") {
-                                    widget.myLearningModel.percentcompleted =
-                                        "100.00";
+                                  widget.myLearningModel.percentcompleted = state.contentstatus.progress;
+                                  if (widget.myLearningModel.corelessonstatus == "Completed" && widget.myLearningModel.percentcompleted != "100.00") {
+                                    widget.myLearningModel.percentcompleted = "100.00";
                                     widget.myLearningModel.progress = "100.00";
                                   }
                                 }
                               });
-                            } else if (state.status == Status.ERROR) {
+                            }
+                            else if (state.status == Status.ERROR) {
                               if (state.message == "401") {
                                 AppDirectory.sessionTimeOut(context);
                               }
                             }
-//                  print('getcontentstatusvl ${state.contentstatus.name} ${state.contentstatus.progress} ${state.contentstatus.contentStatus}');
+                            // print('getcontentstatusvl ${state.contentstatus.name} ${state.contentstatus.progress} ${state.contentstatus.contentStatus}');
 
                           }
                         },
                         builder: (context, state) {
+                          // MyPrint.printOnConsole("isFirst:$isFirst");
+
                           if (state.status == Status.LOADING && state is GetTrackListState && isFirst) {
                             return _buildLoadingSpinner();
                           }
@@ -696,7 +695,7 @@ class _EventTrackListState extends State<EventTrackList> with TickerProviderStat
                               context: context,
                               itemWidth: itemWidth,
                               itemHeight: itemHeight,
-                              body: getMainBody(eventTrackBloc, itemWidth, itemHeight),
+                              body: getMainBody(eventTrackBloc, state, itemWidth, itemHeight),
                             );
                           }
                         },
@@ -711,7 +710,7 @@ class _EventTrackListState extends State<EventTrackList> with TickerProviderStat
     );
   }
 
-  Widget getMainBody(EventTrackBloc eventTrackBloc, double itemWidth, double itemHeight) {
+  Widget getMainBody(EventTrackBloc eventTrackBloc, EventTrackState state, double itemWidth, double itemHeight, ) {
     if(eventTrackBloc.resEventTrackTabs.isNotEmpty) {
       return Padding(
         padding: const EdgeInsets.only(top: 0.0),
@@ -719,8 +718,11 @@ class _EventTrackListState extends State<EventTrackList> with TickerProviderStat
       );
     }
     else {
-      if(eventTrackBloc.trackBlockList.isNotEmpty) {
+      if(state.status == Status.LOADING && state is GetTrackListState) {
+        return _buildLoadingSpinner();
+      }
 
+      if(eventTrackBloc.trackBlockList.isNotEmpty) {
         return SingleChildScrollView(
           child: Column(
             children: <Widget>[
@@ -749,31 +751,14 @@ class _EventTrackListState extends State<EventTrackList> with TickerProviderStat
                       controller: _sc,
                     ),
                     tab: GridView.builder(
-                        gridDelegate:
-                        SliverGridDelegateWithFixedCrossAxisCount(
+                        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                           crossAxisCount: 2,
-                          childAspectRatio: MediaQuery
-                              .of(
-                              context)
-                              .size
-                              .width /
-                              (MediaQuery.of(
-                                  context)
-                                  .size
-                                  .height /
-                                  1.4),
+                          childAspectRatio: MediaQuery.of(context).size.width / (MediaQuery.of(context).size.height / 1.4),
                         ),
-                        itemCount:
-                        eventTrackBloc
-                            .trackListData
-                            .length,
-                        itemBuilder:
-                            (context, i) {
+                        itemCount: eventTrackBloc.trackListData.length,
+                        itemBuilder: (context, i) {
                           return Container(
-                            child: widgetSessionsListItems(
-                                eventTrackBloc
-                                    .trackListData[i],
-                                i),
+                            child: widgetSessionsListItems(eventTrackBloc.trackListData[i], i),
                           );
                         },
                     ),
@@ -781,30 +766,16 @@ class _EventTrackListState extends State<EventTrackList> with TickerProviderStat
                           gridDelegate:
                           SliverGridDelegateWithFixedCrossAxisCount(
                             crossAxisCount: 5,
-                            childAspectRatio: MediaQuery
-                                .of(
-                                context)
-                                .size
-                                .width /
-                                (MediaQuery.of(
-                                    context)
-                                    .size
-                                    .height /
-                                    1.4),
+                            childAspectRatio: MediaQuery.of(context).size.width / (MediaQuery.of(context).size.height / 1.4),
                           ),
                           itemCount:
-                          eventTrackBloc
-                              .trackListData
-                              .length,
-                          itemBuilder:
-                              (context, i) {
+                          eventTrackBloc.trackListData.length,
+                          itemBuilder: (context, i) {
                             return Container(
-                              child: widgetSessionsListItems(
-                                  eventTrackBloc
-                                      .trackListData[i],
-                                  i),
+                              child: widgetSessionsListItems(eventTrackBloc.trackListData[i],i),
                             );
-                          }),
+                          },
+		    ),
                   ),
                 ),
               ],
@@ -812,7 +783,7 @@ class _EventTrackListState extends State<EventTrackList> with TickerProviderStat
           );
         }
         else {
-          return const SizedBox();
+          return SizedBox();
         }
       }
     }
@@ -863,7 +834,7 @@ class _EventTrackListState extends State<EventTrackList> with TickerProviderStat
         }
       },
       builder: (context, state) {
-        if (state.status == Status.LOADING && state is! TrackSetCompleteState && state is! ParentTrackGetContentStatusState) {
+        if (state.status == Status.LOADING && !(state is TrackSetCompleteState) && !(state is ParentTrackGetContentStatusState)) {
           return _buildLoadingSpinner();
         }
         else {
@@ -906,7 +877,7 @@ class _EventTrackListState extends State<EventTrackList> with TickerProviderStat
                             ]),
                       )
                     : Container(),
-                (state.status == Status.LOADING && state is! ParentTrackGetContentStatusState)
+                (state.status == Status.LOADING && !(state is ParentTrackGetContentStatusState))
                     ? _buildLoadingSpinner()
                     : Container()
               ],
@@ -923,13 +894,7 @@ class _EventTrackListState extends State<EventTrackList> with TickerProviderStat
           "0xFF${appBloc.uiSettingModel.appHeaderColor.substring(1, 7).toUpperCase()}")),
       child: Center(
         child: AbsorbPointer(
-          child: SpinKitCircle(
-            color: Color(
-              int.parse(
-                  "0xFF${appBloc.uiSettingModel.appTextColor.substring(1, 7).toUpperCase()}"),
-            ),
-            size: 70.h,
-          ),
+          child: AppConstants().getLoaderWidget(iconSize: 70),
         ),
       ),
     );
@@ -940,17 +905,23 @@ class _EventTrackListState extends State<EventTrackList> with TickerProviderStat
     var strSiteID = await sharePrefGetString(sharedPref_siteid);
     var webApiUrl = await sharePrefGetString(sharedPref_webApiUrl);
 
-    String paramsString = "strContentID=${learningModel.contentid}&UserID=$strUserID&SiteID=$strSiteID&SCOID=${learningModel.scoid}&CanTrack=true";
+    String paramsString = "strContentID=" +
+        learningModel.contentid +
+        "&UserID=" +
+        strUserID +
+        "&SiteID=" +
+        strSiteID +
+        "&SCOID=" +
+        learningModel.scoid.toString() +
+        "&CanTrack=true";
 
-    String url = "${webApiUrl}CourseTracking/TrackLRSStatement?$paramsString";
+    String url = webApiUrl + "CourseTracking/TrackLRSStatement?" + paramsString;
 
     await generalRepository.executeXAPICourse(url);
   }
 
   //region course bottom sheet
-  _settingMyCourseBottomSheet(
-      context, DummyMyCatelogResponseTable2 table2, int i, String trackId,
-      [String s = ""]) {
+  _settingMyCourseBottomSheet(context, DummyMyCatelogResponseTable2 table2, int i, String trackId, [String s = ""]) {
     print('bottomsheetobjit ${table2.objecttypeid}');
 
     MyLearningDownloadModel myLearningDownloadModel = MyLearningDownloadModel(
@@ -963,6 +934,7 @@ class _EventTrackListState extends State<EventTrackList> with TickerProviderStat
 
     MyLearningDownloadProvider myLearningDownloadProvider = Provider.of<MyLearningDownloadProvider>(context, listen: false);
     List<MyLearningDownloadModel> downloads = myLearningDownloadProvider.downloads.where((element) => element.table2.contentid == table2.contentid).toList();
+    MyPrint.printOnConsole("downloads:${downloads.length}");
     if(downloads.isNotEmpty) {
       myLearningDownloadModel = downloads.first;
     }
@@ -1067,33 +1039,22 @@ class _EventTrackListState extends State<EventTrackList> with TickerProviderStat
                   children: <Widget>[
                     const BottomSheetDragger(),
                     menu1
-                        ? ListTile(
-                            title: Text(
-                              menu1Title,
-                              style: TextStyle(
-                                  color: InsColor(appBloc).appTextColor),
-                            ),
-                            leading: Icon(
-                              IconDataSolid(int.parse('0xf333')),
-                              color: InsColor(appBloc).appIconColor,
-                            ),
+                        ? BottomsheetOptionTile(
+                              text:menu1Title,
+                              iconData:IconDataSolid(int.parse('0xf333')),
                           )
                         : Container(),
                     menu2
-                        ? ListTile(
-                            title: Text(
-                                appBloc.localstr.eventsActionsheetBuynowoption,
-                                style: TextStyle(
-                                    color: InsColor(appBloc).appTextColor)),
-                            leading: Icon(
-                              IconDataSolid(int.parse('0xf53d')),
-                              color: InsColor(appBloc).appIconColor,
-                            ),
+                        ? BottomsheetOptionTile(
+                                text:appBloc.localstr.eventsActionsheetBuynowoption,
+                              iconData:IconDataSolid(int.parse('0xf53d')),
                           )
                         : Container(),
                     menu4
-                        ? ListTile(
-                            onTap: () {
+                        ? BottomsheetOptionTile(
+                              text:appBloc.localstr.eventsActionsheetCancelenrollmentoption,
+                           iconData: IconDataSolid(int.parse('0xf410')),
+                          onTap: () {
                               Navigator.of(context).pop();
                               if (table2.isbadcancellationenabled) {
                                 badCancelEnrollmentMethod(table2);
@@ -1104,41 +1065,19 @@ class _EventTrackListState extends State<EventTrackList> with TickerProviderStat
                                     table2.isbadcancellationenabled.toString());
                               }
                             },
-                            title: Text(
-                                appBloc.localstr
-                                    .eventsActionsheetCancelenrollmentoption,
-                                style: TextStyle(
-                                    color: InsColor(appBloc).appTextColor)),
-                            leading: Icon(
-                              IconDataSolid(int.parse('0xf410')),
-                              color: InsColor(appBloc).appIconColor,
-                            ),
+
                           )
                         : Container(),
                     menu5
-                        ? ListTile(
-                            title: Text(
-                                appBloc
-                                    .localstr.catalogActionsheetWishlistoption,
-                                style: TextStyle(
-                                    color: InsColor(appBloc).appTextColor)),
-                            leading: Icon(
-                              IconDataSolid(int.parse('0xf004')),
-                              color: InsColor(appBloc).appIconColor,
-                            ),
+                        ? BottomsheetOptionTile(
+                                text:appBloc.localstr.catalogActionsheetWishlistoption,
+                              iconData:IconDataSolid(int.parse('0xf004')),
                           )
                         : Container(),
                     menu6
-                        ? ListTile(
-                            title: Text(
-                                appBloc.localstr
-                                    .catalogActionsheetRemovefromwishlistoption,
-                                style: TextStyle(
-                                    color: InsColor(appBloc).appTextColor)),
-                            leading: Icon(
-                              IconDataRegular(int.parse('0xf004')),
-                              color: InsColor(appBloc).appIconColor,
-                            ),
+                        ? BottomsheetOptionTile(
+                                text:appBloc.localstr.catalogActionsheetRemovefromwishlistoption,
+                             iconData: IconDataRegular(int.parse('0xf004')),
                           )
                         : Container(),
 
@@ -1154,18 +1093,19 @@ class _EventTrackListState extends State<EventTrackList> with TickerProviderStat
     }
     else {
       showModalBottomSheet(
-          backgroundColor: InsColor(appBloc).appBGColor,
+          // backgroundColor: InsColor(appBloc).appBGColor,
+          shape: AppConstants().bottomSheetShapeBorder(),
           context: context,
           builder: (BuildContext bc) {
-            return Container(
+            return AppConstants().bottomSheetContainer(
               child: SingleChildScrollView(
                 child: Column(
                   children: <Widget>[
-                    const BottomSheetDragger(),
+                    BottomSheetDragger(),
                     displayPauseDownload(table2, myLearningDownloadModel),
-                    /*displayResumeDownload(table2, myLearningDownloadModel),
+                    displayResumeDownload(table2, myLearningDownloadModel),
                     displayCancelDownload(table2, myLearningDownloadModel),
-                    displayRemoveFromDownload(table2, myLearningDownloadModel),*/
+                    displayRemoveFromDownload(table2, myLearningDownloadModel),
 
                     displayPlay(table2),
                     !AppDirectory.isValidString(s)
@@ -1178,7 +1118,7 @@ class _EventTrackListState extends State<EventTrackList> with TickerProviderStat
                     displayAddToCalendar(table2),
                     displaySetComplete(table2),
                     displayCancelEnrollemnt(table2),
-                    displayDelete(myLearningDownloadModel, table2),
+                    // displayDelete(myLearningDownloadModel, table2),
                     displayCertificate(table2),
                     displayQRCode(table2),
                     displayEventRecording(table2),
@@ -1194,40 +1134,41 @@ class _EventTrackListState extends State<EventTrackList> with TickerProviderStat
     if ([11, 14, 36, 28, 20, 21, 52].contains(table2.objecttypeid)) {
       if (table2.objecttypeid == 11 &&
           (table2.mediatypeid == 3 || table2.mediatypeid == 4)) {
-        return ListTile(
-            leading: Icon(
-              IconDataSolid(int.parse('0xf144')),
-              color: InsColor(appBloc).appIconColor,
-            ),
-            title: Text(appBloc.localstr.mylearningActionsheetPlayoption,
-                style: TextStyle(color: InsColor(appBloc).appTextColor)),
+        return new BottomsheetOptionTile(
+              iconData:IconDataSolid(int.parse('0xf144')),
+            text:appBloc.localstr.mylearningActionsheetPlayoption,
             onTap: () {
               Navigator.of(context).pop();
 
               if (AppDirectory.isValidString(
                   table2.viewprerequisitecontentstatus ?? "")) {
-                String alertMessage = appBloc.localstr.prerequistesalerttitle6Alerttitle6;
-                alertMessage = "$alertMessage  \"${appBloc.localstr.prerequisLabelContenttypelabel}\" ${appBloc.localstr.prerequistesalerttitle5Alerttitle7}";
+                String alertMessage =
+                    appBloc.localstr.prerequistesalerttitle6Alerttitle6;
+                alertMessage = alertMessage +
+                    "  \"" +
+                    appBloc.localstr.prerequisLabelContenttypelabel +
+                    "\" " +
+                    appBloc.localstr.prerequistesalerttitle5Alerttitle7;
 
                 showDialog(
                     context: context,
-                    builder: (BuildContext context) => AlertDialog(
+                    builder: (BuildContext context) => new AlertDialog(
                           title: Text(
                             appBloc.localstr.detailsAlerttitleStringalert,
-                            style: const TextStyle(fontWeight: FontWeight.bold),
+                            style: TextStyle(fontWeight: FontWeight.bold),
                           ),
                           content: Text(alertMessage),
                           backgroundColor: Colors.white,
                           shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(5)),
+                              borderRadius: new BorderRadius.circular(5)),
                           actions: <Widget>[
                             TextButton(
+                              child: Text(
+                                  appBloc.localstr.eventsAlertbuttonOkbutton),
                               style: textButtonStyle,
                               onPressed: () async {
                                 Navigator.of(context).pop();
                               },
-                              child: Text(
-                                  appBloc.localstr.eventsAlertbuttonOkbutton),
                             ),
                           ],
                         ));
@@ -1247,13 +1188,9 @@ class _EventTrackListState extends State<EventTrackList> with TickerProviderStat
           (table2.mediatypeid == 3 || table2.mediatypeid == 4)) {
         return Container();
       } else {
-        return ListTile(
-          leading: Icon(
-            IconDataSolid(int.parse('0xf06e')),
-            color: InsColor(appBloc).appIconColor,
-          ),
-          title: Text(appBloc.localstr.mylearningActionsheetViewoption,
-              style: TextStyle(color: InsColor(appBloc).appTextColor)),
+        return new BottomsheetOptionTile(
+            iconData:IconDataSolid(int.parse('0xf06e')),
+          text:appBloc.localstr.mylearningActionsheetViewoption,
           onTap: () {
             Navigator.of(context).pop();
 
@@ -1261,27 +1198,31 @@ class _EventTrackListState extends State<EventTrackList> with TickerProviderStat
                 table2.viewprerequisitecontentstatus ?? "")) {
               String alertMessage =
                   appBloc.localstr.prerequistesalerttitle6Alerttitle6;
-              alertMessage = "$alertMessage  \"${appBloc.localstr.prerequisLabelContenttypelabel}\" ${appBloc.localstr.prerequistesalerttitle5Alerttitle7}";
+              alertMessage = alertMessage +
+                  "  \"" +
+                  appBloc.localstr.prerequisLabelContenttypelabel +
+                  "\" " +
+                  appBloc.localstr.prerequistesalerttitle5Alerttitle7;
 
               showDialog(
                   context: context,
-                  builder: (BuildContext context) => AlertDialog(
+                  builder: (BuildContext context) => new AlertDialog(
                         title: Text(
                           appBloc.localstr.detailsAlerttitleStringalert,
-                          style: const TextStyle(fontWeight: FontWeight.bold),
+                          style: TextStyle(fontWeight: FontWeight.bold),
                         ),
                         content: Text(alertMessage),
                         backgroundColor: Colors.white,
                         shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(5)),
+                            borderRadius: new BorderRadius.circular(5)),
                         actions: <Widget>[
                           TextButton(
+                            child: Text(
+                                appBloc.localstr.eventsAlertbuttonOkbutton),
                             style: textButtonStyle,
                             onPressed: () async {
                               Navigator.of(context).pop();
                             },
-                            child: Text(
-                                appBloc.localstr.eventsAlertbuttonOkbutton),
                           ),
                         ],
                       ));
@@ -1294,12 +1235,12 @@ class _EventTrackListState extends State<EventTrackList> with TickerProviderStat
     } else if ([688, 70].contains(table2.objecttypeid)) {
       return Container();
     } else {
-      return ListTile(
+      return new ListTile(
         leading: Icon(
           IconDataSolid(int.parse('0xf06e')),
           color: InsColor(appBloc).appIconColor,
         ),
-        title: Text(appBloc.localstr.mylearningActionsheetViewoption,
+        title: new Text(appBloc.localstr.mylearningActionsheetViewoption,
             style: TextStyle(color: InsColor(appBloc).appTextColor)),
         onTap: () {
           Navigator.of(context).pop();
@@ -1308,27 +1249,31 @@ class _EventTrackListState extends State<EventTrackList> with TickerProviderStat
               table2.viewprerequisitecontentstatus ?? "")) {
             String alertMessage =
                 appBloc.localstr.prerequistesalerttitle6Alerttitle6;
-            alertMessage = "$alertMessage  \"${appBloc.localstr.prerequisLabelContenttypelabel}\" ${appBloc.localstr.prerequistesalerttitle5Alerttitle7}";
+            alertMessage = alertMessage +
+                "  \"" +
+                appBloc.localstr.prerequisLabelContenttypelabel +
+                "\" " +
+                appBloc.localstr.prerequistesalerttitle5Alerttitle7;
 
             showDialog(
                 context: context,
-                builder: (BuildContext context) => AlertDialog(
+                builder: (BuildContext context) => new AlertDialog(
                       title: Text(
                         appBloc.localstr.detailsAlerttitleStringalert,
-                        style: const TextStyle(fontWeight: FontWeight.bold),
+                        style: TextStyle(fontWeight: FontWeight.bold),
                       ),
                       content: Text(alertMessage),
                       backgroundColor: Colors.white,
                       shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(5)),
+                          borderRadius: new BorderRadius.circular(5)),
                       actions: <Widget>[
                         TextButton(
+                          child:
+                              Text(appBloc.localstr.eventsAlertbuttonOkbutton),
                           style: textButtonStyle,
                           onPressed: () async {
                             Navigator.of(context).pop();
                           },
-                          child:
-                              Text(appBloc.localstr.eventsAlertbuttonOkbutton),
                         ),
                       ],
                     ));
@@ -1349,13 +1294,9 @@ class _EventTrackListState extends State<EventTrackList> with TickerProviderStat
         isStringValid &&
         isEventCompleted &&
         table2.typeofevent == 2) {
-      return ListTile(
-        leading: Icon(
-          IconDataSolid(int.parse('0xf234')),
-          color: InsColor(appBloc).appIconColor,
-        ),
-        title: Text(appBloc.localstr.mylearningActionsheetJoinoption,
-            style: TextStyle(color: InsColor(appBloc).appTextColor)),
+      return new BottomsheetOptionTile(
+          iconData:IconDataSolid(int.parse('0xf234')),
+        text:appBloc.localstr.mylearningActionsheetJoinoption,
         onTap: () {
           Navigator.pop(context);
           String joinUrl = table2.joinurl;
@@ -1366,7 +1307,7 @@ class _EventTrackListState extends State<EventTrackList> with TickerProviderStat
             flutterToast.showToast(
               child: CommonToast(displaymsg: 'No url found'),
               gravity: ToastGravity.BOTTOM,
-              toastDuration: const Duration(seconds: 2),
+              toastDuration: Duration(seconds: 2),
             );
 //              Toast.makeText(v.getContext(), "No Url Found", Toast.LENGTH_SHORT).show();
           }
@@ -1376,8 +1317,7 @@ class _EventTrackListState extends State<EventTrackList> with TickerProviderStat
     return Container();
   }
 
-  Widget displayReport(
-      DummyMyCatelogResponseTable2 table2, String trackId, String postion) {
+  Widget displayReport(DummyMyCatelogResponseTable2 table2, String trackId, String postion) {
     if ([11, 14, 36, 28, 20, 21, 52, 70, 688, 27]
         .contains(table2.objecttypeid)) {
       return Container();
@@ -1386,21 +1326,16 @@ class _EventTrackListState extends State<EventTrackList> with TickerProviderStat
         return Container();
       }
 
-      return ListTile(
-          leading: SvgPicture.asset(
-            'assets/Report.svg',
-            width: 25.h,
-            height: 25.h,
-            color: Colors.grey,
-          ),
-          title: Text(appBloc.localstr.mylearningActionsheetReportoption,
-              style: TextStyle(color: InsColor(appBloc).appTextColor)),
+      return new BottomsheetOptionTile(
+          svgImageUrl: 'assets/Report.svg',
+          text:appBloc.localstr.mylearningActionsheetReportoption,
           onTap: () {
             Navigator.pop(context);
             Navigator.of(context).push(MaterialPageRoute(
                 builder: (context) =>
                     ProgressReport(table2, detailsBloc, trackId, postion)));
-          });
+          },
+      );
     }
   }
 
@@ -1410,14 +1345,9 @@ class _EventTrackListState extends State<EventTrackList> with TickerProviderStat
     bool isEventCompleted =
         !returnEventCompleted(table2.eventenddatetime ?? "");
     if (table2.objecttypeid == 70 && isStringValid && isEventCompleted) {
-      return ListTile(
-        leading: Icon(
-          IconDataSolid(int.parse('0xf271')),
-          color: InsColor(appBloc).appIconColor,
-        ),
-        title: Text(
-            appBloc.localstr.mylearningActionsheetAddtocalendaroption,
-            style: TextStyle(color: InsColor(appBloc).appTextColor)),
+      return new BottomsheetOptionTile(
+          iconData:IconDataSolid(int.parse('0xf271')),
+            text:appBloc.localstr.mylearningActionsheetAddtocalendaroption,
         onTap: () {
           addToCal(table2);
         },
@@ -1440,16 +1370,9 @@ class _EventTrackListState extends State<EventTrackList> with TickerProviderStat
         [11, 14, 36, 28, 20, 21, 52].contains(table2.objecttypeid) &&
         isStatusValid &&
         notCompleted) {
-      return ListTile(
-          leading: SvgPicture.asset(
-            'assets/SetComplete.svg',
-            width: 25.h,
-            height: 25.h,
-            color: Colors.grey,
-          ),
-          title: Text(
-              appBloc.localstr.mylearningActionsheetSetcompleteoption,
-              style: TextStyle(color: InsColor(appBloc).appTextColor)),
+      return new BottomsheetOptionTile(
+          svgImageUrl: 'assets/SetComplete.svg',
+          text:appBloc.localstr.mylearningActionsheetSetcompleteoption,
           onTap: () {
             Navigator.pop(context);
             eventTrackBloc.add(TrackSetComplete(
@@ -1467,15 +1390,10 @@ class _EventTrackListState extends State<EventTrackList> with TickerProviderStat
       if (AppDirectory.isValidString(table2.eventstartdatetime ?? "")) {
         if (!returnEventCompleted(table2.eventstartdatetime ?? "")) {
           if (table2.bit2 != null && table2.bit2) {
-            return ListTile(
-                leading: Icon(
-                  IconDataSolid(int.parse('0xf410')),
-                  color: InsColor(appBloc).appIconColor,
-                ),
-                title: Text(
-                    appBloc
+            return BottomsheetOptionTile(
+                  iconData:IconDataSolid(int.parse('0xf410')),
+                    text:appBloc
                         .localstr.mylearningActionsheetCancelenrollmentoption,
-                    style: TextStyle(color: InsColor(appBloc).appTextColor)),
                 onTap: () {
                   checkCancellation(table2, context);
                 });
@@ -1486,7 +1404,7 @@ class _EventTrackListState extends State<EventTrackList> with TickerProviderStat
                   'true') {
             return ListTile(
 //                  leading: new Icon(Icons.people),
-                title: Text(appBloc
+                title: new Text(appBloc
                     .localstr.mylearningActionsheetCancelenrollmentoption),
                 onTap: () {
                   checkCancellation(table2, context);
@@ -1503,13 +1421,9 @@ class _EventTrackListState extends State<EventTrackList> with TickerProviderStat
     //downloadPath(table2.contentid, table2);
 
     if (table2.isdownloaded && table2.objecttypeid != 70) {
-      return ListTile(
-          leading: Icon(
-            IconDataSolid(int.parse('0xf1f8')),
-            color: InsColor(appBloc).appIconColor,
-          ),
-          title: Text(appBloc.localstr.mylearningActionsheetDeleteoption,
-              style: TextStyle(color: InsColor(appBloc).appTextColor)),
+      return BottomsheetOptionTile(
+            iconData:IconDataSolid(int.parse('0xf1f8')),
+          text:appBloc.localstr.mylearningActionsheetDeleteoption,
 
           /// TODO : Sagar sir - delete offline file
           onTap: () async {
@@ -1537,16 +1451,9 @@ class _EventTrackListState extends State<EventTrackList> with TickerProviderStat
 
   Widget displayCertificate(DummyMyCatelogResponseTable2 table2) {
     if (AppDirectory.isValidString(table2.certificateaction)) {
-      return ListTile(
-          leading: SvgPicture.asset(
-            'assets/Certificate.svg',
-            width: 25.h,
-            height: 25.h,
-            color: Colors.grey,
-          ),
-          title: Text(
-              appBloc.localstr.mylearningActionsheetViewcertificateoption,
-              style: TextStyle(color: InsColor(appBloc).appTextColor)),
+      return BottomsheetOptionTile(
+            svgImageUrl: 'assets/Certificate.svg',
+              text:appBloc.localstr.mylearningActionsheetViewcertificateoption,
           onTap: () {
             if (detailsBloc.myLearningDetailsModel.certificateAction ==
                 'notearned') {
@@ -1554,7 +1461,7 @@ class _EventTrackListState extends State<EventTrackList> with TickerProviderStat
 
               showDialog(
                   context: context,
-                  builder: (BuildContext context) => AlertDialog(
+                  builder: (BuildContext context) => new AlertDialog(
                         title: Text(
                           appBloc.localstr
                               .mylearningActionsheetViewcertificateoption,
@@ -1568,15 +1475,15 @@ class _EventTrackListState extends State<EventTrackList> with TickerProviderStat
                         backgroundColor: Color(int.parse(
                             "0xFF${appBloc.uiSettingModel.appBGColor.substring(1, 7).toUpperCase()}")),
                         shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(5)),
+                            borderRadius: new BorderRadius.circular(5)),
                         actions: <Widget>[
                           TextButton(
+                            child: Text(appBloc.localstr
+                                .mylearningClosebuttonactionClosebuttonalerttitle),
                             style: textButtonStyle,
                             onPressed: () async {
                               Navigator.of(context).pop();
                             },
-                            child: Text(appBloc.localstr
-                                .mylearningClosebuttonactionClosebuttonalerttitle),
                           ),
                         ],
                       ));
@@ -1602,13 +1509,9 @@ class _EventTrackListState extends State<EventTrackList> with TickerProviderStat
       if (AppDirectory.isValidString(table2.qrimagename ?? "") &&
           AppDirectory.isValidString(table2.qrcodeimagepath ?? "") &&
           !table2.bit4) {
-        return ListTile(
-          leading: Icon(
-            IconDataSolid(int.parse('0xf029')),
-            color: InsColor(appBloc).appIconColor,
-          ),
-          title: Text(appBloc.localstr.mylearningActionsheetViewqrcode,
-              style: TextStyle(color: InsColor(appBloc).appTextColor)),
+        return new BottomsheetOptionTile(
+            iconData:IconDataSolid(int.parse('0xf029')),
+          text:appBloc.localstr.mylearningActionsheetViewqrcode,
           onTap: () => {
             Navigator.of(context).push(MaterialPageRoute(
                 builder: (context) => QrCodeScreen(table2.qrimagename)))
@@ -1626,13 +1529,9 @@ class _EventTrackListState extends State<EventTrackList> with TickerProviderStat
       if (detailsBloc.myLearningDetailsModel.addedToMyLearning == 1 ||
           typeFrom == "event" ||
           typeFrom == "track") {
-        return ListTile(
-          leading: Icon(
-            IconDataSolid(int.parse('0xf8d9')),
-            color: InsColor(appBloc).appIconColor,
-          ),
-          title: Text(appBloc.localstr.learningtrackLabelEventviewrecording,
-              style: TextStyle(color: InsColor(appBloc).appTextColor)),
+        return new BottomsheetOptionTile(
+            iconData:IconDataSolid(int.parse('0xf8d9')),
+          text:appBloc.localstr.learningtrackLabelEventviewrecording,
           onTap: () => {
             //todo : sprint -3
 //            Navigator.of(context).push(MaterialPageRoute(
@@ -1652,22 +1551,11 @@ class _EventTrackListState extends State<EventTrackList> with TickerProviderStat
   //region My Downloads Bottomsheet
   Widget displayPauseDownload(DummyMyCatelogResponseTable2 table2, MyLearningDownloadModel downloadModel) {
     if(downloadModel.taskId.isEmpty || downloadModel.isFileDownloaded || !downloadModel.isFileDownloading || !downloadModel.table2.isDownloading) {
-      return const SizedBox();
+      return SizedBox();
     }
-
-    return ListTile(
-      leading: Icon(
-        Icons.pause,
-        color: InsColor(appBloc).appIconColor,
-      ),
-      title: Text(
-        "Pause Download",
-        style: TextStyle(
-            color: Color(
-              int.parse(
-                  '0xFF${appBloc.uiSettingModel.appTextColor.substring(1, 7).toUpperCase()}'),
-            )),
-      ),
+    return BottomsheetOptionTile(
+          iconData:Icons.pause,
+        text:"Pause Download",
       onTap: () async {
         Navigator.of(context).pop();
 
@@ -1678,22 +1566,12 @@ class _EventTrackListState extends State<EventTrackList> with TickerProviderStat
 
   Widget displayResumeDownload(DummyMyCatelogResponseTable2 table2, MyLearningDownloadModel downloadModel) {
     if(downloadModel.taskId.isEmpty || downloadModel.isFileDownloaded || !downloadModel.isFileDownloading || downloadModel.table2.isDownloading) {
-      return const SizedBox();
+      return SizedBox();
     }
 
-    return ListTile(
-      leading: Icon(
-        Icons.play_arrow,
-        color: InsColor(appBloc).appIconColor,
-      ),
-      title: Text(
-        "Resume Download",
-        style: TextStyle(
-            color: Color(
-              int.parse(
-                  '0xFF${appBloc.uiSettingModel.appTextColor.substring(1, 7).toUpperCase()}'),
-            )),
-      ),
+    return BottomsheetOptionTile(
+        iconData:Icons.play_arrow,
+        text:"Resume Download",
       onTap: () async {
         Navigator.of(context).pop();
 
@@ -1704,57 +1582,42 @@ class _EventTrackListState extends State<EventTrackList> with TickerProviderStat
 
   Widget displayCancelDownload(DummyMyCatelogResponseTable2 table2, MyLearningDownloadModel downloadModel) {
     if(downloadModel.taskId.isEmpty || downloadModel.isFileDownloaded || !downloadModel.isFileDownloading) {
-      return const SizedBox();
+      return SizedBox();
     }
 
-    return ListTile(
-      leading: Icon(
-        Icons.delete,
-        color: InsColor(appBloc).appIconColor,
-      ),
-      title: Text(
-        "Cancel Download",
-        style: TextStyle(
-            color: Color(
-              int.parse(
-                  '0xFF${appBloc.uiSettingModel.appTextColor.substring(1, 7).toUpperCase()}'),
-            )),
-      ),
-      onTap: () async {
+    return BottomsheetOptionTile(
+       iconData: Icons.delete,
+        text:"Cancel Download",
+        onTap: () async {
         MyPrint.printOnConsole('Cancel Download Called:${downloadModel.taskId}');
 
         Navigator.of(context).pop();
 
         await MyLearningDownloadController().cancelDownload(downloadModel);
+        table2.isdownloaded = false;
+        table2.isDownloading = false;
         setState(() {});
       },
     );
   }
 
   Widget displayRemoveFromDownload(DummyMyCatelogResponseTable2 table2, MyLearningDownloadModel downloadModel) {
+    MyPrint.printOnConsole("isFileDownloaded for contentId:${downloadModel.contentId}, ${downloadModel.table2.name}:${downloadModel.isFileDownloaded}");
     if(!downloadModel.isFileDownloaded) {
-      return const SizedBox();
+      return SizedBox();
     }
 
-    return ListTile(
-      leading: Icon(
-        Icons.delete,
-        color: InsColor(appBloc).appIconColor,
-      ),
-      title: Text(
-        "Remove from Downloads",
-        style: TextStyle(
-            color: Color(
-              int.parse(
-                  '0xFF${appBloc.uiSettingModel.appTextColor.substring(1, 7).toUpperCase()}'),
-            )),
-      ),
+    return BottomsheetOptionTile(
+        iconData:Icons.delete,
+        text:"Remove from Downloads",
       onTap: () async {
         MyPrint.printOnConsole('Cancel Download Called:${downloadModel.taskId}');
 
         Navigator.of(context).pop();
 
         await MyLearningDownloadController().removeFromDownload(downloadModel);
+        table2.isdownloaded = false;
+        table2.isDownloading = false;
         setState(() {});
       },
     );
@@ -1936,14 +1799,16 @@ class _EventTrackListState extends State<EventTrackList> with TickerProviderStat
                     borderRadius: BorderRadius.circular(5)),
                 actions: <Widget>[
                   TextButton(
+                    child: Text(
+                        appBloc.localstr.mylearningAlertbuttonCancelbutton),
                     style: textButtonStyle,
                     onPressed: () async {
                       Navigator.of(context).pop();
                     },
-                    child: Text(
-                        appBloc.localstr.mylearningAlertbuttonCancelbutton),
                   ),
                   TextButton(
+                    child:
+                        Text(appBloc.localstr.mylearningAlertbuttonYesbutton),
                     style: textButtonStyle,
                     onPressed: () async {
                       Navigator.of(context).pop();
@@ -1952,8 +1817,6 @@ class _EventTrackListState extends State<EventTrackList> with TickerProviderStat
                           strContentID: table2.contentid));
 //                  mylearningInterface.cancelEnrollment(true);
                     },
-                    child:
-                        Text(appBloc.localstr.mylearningAlertbuttonYesbutton),
                   ),
                 ],
               ));
@@ -2265,7 +2128,7 @@ class _EventTrackListState extends State<EventTrackList> with TickerProviderStat
     return widgetGlosaryListItems(position, glossaryExpandable);
   }
 
-  Widget widgetSessionsListItems(DummyMyCatelogResponseTable2 data, int i) {
+  Widget widgetSessionsListItems(DummyMyCatelogResponseTable2 data, int i, {DummyMyCatelogResponseTable2? nextItem}) {
     //https://stackoverflow.com/questions/49838021/how-do-i-stack-widgets-overlapping-each-other-in-flutter
     var smallestDimension = MediaQuery.of(context).size.shortestSide;
     final useMobileLayout = smallestDimension < 600;
@@ -2329,6 +2192,7 @@ class _EventTrackListState extends State<EventTrackList> with TickerProviderStat
     return MyLearningComponentCard(
       table2: data,
       isArchive: false,
+      trackModel: widget.myLearningModel,
       trackContentId: widget.myLearningModel.contentid,
       trackContentName: widget.myLearningModel.name,
       isShowLock: true,
@@ -3580,7 +3444,11 @@ class _EventTrackListState extends State<EventTrackList> with TickerProviderStat
               table2.viewprerequisitecontentstatus ?? "")) {
             String alertMessage =
                 appBloc.localstr.prerequistesalerttitle6Alerttitle6;
-            alertMessage = "$alertMessage  \"${appBloc.localstr.prerequisLabelContenttypelabel}\" ${appBloc.localstr.prerequistesalerttitle5Alerttitle7}";
+            alertMessage = alertMessage +
+                "  \"" +
+                appBloc.localstr.prerequisLabelContenttypelabel +
+                "\" " +
+                appBloc.localstr.prerequistesalerttitle5Alerttitle7;
 
             showDialog(
                 context: context,
@@ -3595,12 +3463,12 @@ class _EventTrackListState extends State<EventTrackList> with TickerProviderStat
                           borderRadius: BorderRadius.circular(5)),
                       actions: <Widget>[
                         TextButton(
+                          child:
+                              Text(appBloc.localstr.eventsAlertbuttonOkbutton),
                           style: textButtonStyle,
                           onPressed: () async {
                             Navigator.of(context).pop();
                           },
-                          child:
-                              Text(appBloc.localstr.eventsAlertbuttonOkbutton),
                         ),
                       ],
                     ));
@@ -3753,23 +3621,23 @@ class _EventTrackListState extends State<EventTrackList> with TickerProviderStat
                     );
                   },
               ),
-              eventTrackBloc.singleTempLATE.isNotEmpty
-                  ? Column(
-                      children: <Widget>[
-                        SizedBox(
-                          height: 5.h,
-                        ),
-                        Container(
-                          height: 15.h,
-                          color: Colors.grey[200],
-                        ),
-                        SizedBox(
-                          height: 5.h,
-                        ),
-                        buildBlockSingleList(eventTrackBloc.singleTempLATE),
-                      ],
-                    )
-                  : Container()
+              // eventTrackBloc.singleTempLATE.isNotEmpty
+              //     ? Column(
+              //         children: <Widget>[
+              //           SizedBox(
+              //             height: 5.h,
+              //           ),
+              //           Container(
+              //             height: 15.h,
+              //             color: Colors.grey[200],
+              //           ),
+              //           SizedBox(
+              //             height: 5.h,
+              //           ),
+              //           buildBlockSingleList(eventTrackBloc.singleTempLATE),
+              //         ],
+              //       )
+              //     : Container()
             ],
           ),
         ),
@@ -3907,30 +3775,44 @@ class _EventTrackListState extends State<EventTrackList> with TickerProviderStat
     required DummyMyCatelogResponseTable2 table2,
     bool isContentisolation = false
   }) async {
-    // bool networkAvailable = await AppDirectory.checkInternetConnectivity();
-    // bool isCourseDownloaded = await EventTrackController().checkIfContentIsAvailableOffline(
-    //   context: context,
-    //   parentMyLearningModel: widget.myLearningModel,
-    //   table2: table2,
-    // );
     bool networkAvailable =true;
     bool isCourseDownloaded = false;
 
+    if(!kIsWeb) {
+      networkAvailable = await AppDirectory.checkInternetConnectivity();
+      isCourseDownloaded = await EventTrackController().checkIfContentIsAvailableOffline(
+        context: context,
+        parentMyLearningModel: widget.myLearningModel,
+        table2: table2,
+      );
+    }
+
     if (networkAvailable && isCourseDownloaded) {
       // launch offline
-      bool isLaunched = true;
+      bool isLaunched = await EventTrackController().launchCourseOffline(
+        context: context,
+        parentMyLearningModel: widget.myLearningModel,
+        table2: table2,
+      );
       if(isLaunched) {
         await SyncData().syncData();
       }
       return isLaunched;
-    } else if (!networkAvailable && isCourseDownloaded) {
+    }
+    else if (!networkAvailable && isCourseDownloaded) {
       // launch offline
-      return true;
-    } else if (networkAvailable && !isCourseDownloaded) {
+      return await EventTrackController().launchCourseOffline(
+        context: context,
+        parentMyLearningModel: widget.myLearningModel,
+        table2: table2,
+      );
+    }
+    else if (networkAvailable && !isCourseDownloaded) {
       // launch online
       launchCourse(table2, context, isContentisolation);
       return true;
-    } else {
+    }
+    else {
       // error dialog
       AppBloc appBloc = BlocProvider.of<AppBloc>(context, listen: false);
       EventTrackController().courseNotDownloadedDialog(context, appBloc);
@@ -3939,7 +3821,7 @@ class _EventTrackListState extends State<EventTrackList> with TickerProviderStat
   }
 
   Future<void> launchCourse(DummyMyCatelogResponseTable2 table2, BuildContext context, bool isContentisolation) async {
-    print('helllllllllloooooo launchCourse ${table2.objecttypeid}');
+    print('helllllllllloooooo launchCourse ${table2.objecttypeid}, isContentisolation:$isContentisolation');
 
     //table2.corelessonstatus = "In Progress";
 
@@ -3951,9 +3833,7 @@ class _EventTrackListState extends State<EventTrackList> with TickerProviderStat
         });
 
         /// remove after normal course launch
-        GotoCourseLaunchContentisolation courseLaunch =
-            GotoCourseLaunchContentisolation(
-                context, table2, appBloc.uiSettingModel, myLearningBloc.list);
+        GotoCourseLaunchContentisolation courseLaunch = GotoCourseLaunchContentisolation(context, table2, appBloc.uiSettingModel, myLearningBloc.list);
 
         String courseUrl = await courseLaunch.getCourseUrl();
         print("Course Url:$courseUrl");
@@ -3988,8 +3868,9 @@ class _EventTrackListState extends State<EventTrackList> with TickerProviderStat
     if (url.isNotEmpty) {
       if (table2.objecttypeid == 26) {
         await Navigator.of(context).push(MaterialPageRoute(
-            builder: (context) => InAppWebCourseLaunch(url, table2)));
-      } else {
+            builder: (context) => AdvancedWebCourseLaunch(url, table2.name)));
+      }
+      else {
         await Navigator.of(context).push(MaterialPageRoute(
             builder: (context) => InAppWebCourseLaunch(url, table2)));
       }
@@ -4018,12 +3899,11 @@ class _EventTrackListState extends State<EventTrackList> with TickerProviderStat
     if ([8, 9, 11, 14, 28, 102, 26].contains(table2.objecttypeid)) {
       String paramsString = "";
 
-      paramsString = "userID=${table2.userid}&scoid=${table2.scoid}";
+      paramsString = "userID=" + table2.userid.toString() + "&scoid=" + table2.scoid.toString();
 
       String webApiUrl = await sharePrefGetString(sharedPref_webApiUrl);
 
-      String url =
-          "$webApiUrl/MobileLMS/MobileGetContentStatus?$paramsString";
+      String url = webApiUrl + "/MobileLMS/MobileGetContentStatus?" + paramsString;
 
       print('launchCourseUrl $url');
 
@@ -4033,8 +3913,7 @@ class _EventTrackListState extends State<EventTrackList> with TickerProviderStat
   }
 
   Future<void> launchCourseContentisolation(DummyMyCatelogResponseTable2 table2, BuildContext context, String token) async {
-    print(
-        'launchCourseContentisolation called with object type id:${table2.objecttypeid}');
+    print('launchCourseContentisolation called with object type id:${table2.objecttypeid}');
 
     /// refresh the content
     var objectTypeIds = [
@@ -4055,7 +3934,14 @@ class _EventTrackListState extends State<EventTrackList> with TickerProviderStat
     if (objectTypeIds.contains(table2.objecttypeid)) {
       String paramsString = '';
       if (table2.objecttypeid == 10 && table2.bit5) {
-        paramsString = 'userID=${table2.userid.toString()}&scoid=${table2.scoid.toString()}&TrackObjectTypeID=${table2.objecttypeid.toString()}&TrackContentID=${table2.contentid}&TrackScoID=${table2.scoid.toString()}&SiteID=${table2.siteid.toString()}&OrgUnitID=${table2.siteid.toString()}&isonexist=onexit';
+        paramsString = 'userID=${table2.userid.toString()}' +
+            '&scoid=${table2.scoid.toString()}' +
+            '&TrackObjectTypeID=${table2.objecttypeid.toString()}' +
+            '&TrackContentID=${table2.contentid}' +
+            '&TrackScoID=${table2.scoid.toString()}' +
+            '&SiteID=${table2.siteid.toString()}' +
+            '&OrgUnitID=${table2.siteid.toString()}' +
+            '&isonexist=onexit';
       } else {
         paramsString = 'userID=${table2.userid.toString()}' +
             '&scoid=${table2.scoid.toString()}';
@@ -4068,7 +3954,8 @@ class _EventTrackListState extends State<EventTrackList> with TickerProviderStat
               '${appBloc.uiSettingModel.azureRootPath}content/index.html?coursetoken=$token&TokenAPIURL=${ApiEndpoints.appAuthURL}';
 
           // assignmenturl = await '${ApiEndpoints.strSiteUrl}assignmentdialog/ContentID/${table2.contentid}/SiteID/${table2.usersiteid}/ScoID/${table2.scoid}/UserID/${table2.userid}';
-        } else {
+        }
+        else {
           courseUrl =
               '${ApiEndpoints.strSiteUrl}content/index.html?coursetoken=$token&TokenAPIURL=${ApiEndpoints.appAuthURL}';
 
@@ -4077,31 +3964,9 @@ class _EventTrackListState extends State<EventTrackList> with TickerProviderStat
 
         if (table2.objecttypeid == 26) {
           // assignmenturl = await '$assignmenturl/ismobilecontentview/true';
-          // await Navigator.of(context).push(
-          //   MaterialPageRoute(
-          //     builder: (context) =>
-          //         AdvancedWebCourseLaunch(courseUrl, table2.name),
-          //   ),
-          // );
-          await Navigator.of(context)
-              .push(
-            MaterialPageRoute(
-              builder: (context) => InAppWebCourseLaunch(courseUrl, table2),
-            ),
-          )
-              .then(
-                (value) => {
-              if (value ?? true)
-                {
-                  /*eventTrackBloc.add(GetTrackListData(
-                isInternet: true,
-                appBloc: appBloc,
-                isTraxkList: widget.isTraxkList,
-                myLearningModel: widget.myLearningModel)),*/
-                }
-            },
-          );
-        } else {
+          await Navigator.of(context).push(MaterialPageRoute(builder: (_) => AdvancedWebCourseLaunch(courseUrl, table2.name),));
+        }
+        else {
           // assignmenturl = await '$assignmenturl/ismobilecontentview/true';
           print('Course Url:$courseUrl');
           await Navigator.of(context)
@@ -4126,7 +3991,7 @@ class _EventTrackListState extends State<EventTrackList> with TickerProviderStat
         logger.d('.....Refresh Me....$courseUrl');
 
         /// Refresh Content Of My Learning
-
+        refreshContent(table2);
       }
 
       String webApiUrl = await sharePrefGetString(sharedPref_webApiUrl);
@@ -4359,10 +4224,10 @@ class _EventTrackListState extends State<EventTrackList> with TickerProviderStat
                     onPressed: () {
                       addToCal(widget.myLearningModel);
                     },
-                    border: Border.all(color: Color(int.parse("0xFF${appBloc.uiSettingModel.appButtonBgColor.substring(1, 7).toUpperCase()}"))),
-                    borderRadius:  BorderRadius.circular(5.h),
                     child: Text(appBloc
                         .localstr.mylearningActionsheetAddtocalendaroption),
+                    border: Border.all(color: Color(int.parse("0xFF${appBloc.uiSettingModel.appButtonBgColor.substring(1, 7).toUpperCase()}"))),
+                    borderRadius:  BorderRadius.circular(5.h),
                   )
                 : Container(),
             SizedBox(
@@ -4427,8 +4292,6 @@ class _EventTrackListState extends State<EventTrackList> with TickerProviderStat
                         placeholder: (context, url) => ClipOval(
                           child: CircleAvatar(
                             radius: 25.h,
-                            backgroundColor: Color(int.parse(
-                                "0xFF${appBloc.uiSettingModel.appButtonBgColor.substring(1, 7).toUpperCase()}")),
                             child: Text(
                               eventTrackBloc.overviewResponse[0].displayName
                                       .isNotEmpty
@@ -4438,13 +4301,13 @@ class _EventTrackListState extends State<EventTrackList> with TickerProviderStat
                               style: TextStyle(
                                   fontSize: 20.h, fontWeight: FontWeight.w600),
                             ),
+                            backgroundColor: Color(int.parse(
+                                "0xFF${appBloc.uiSettingModel.appButtonBgColor.substring(1, 7).toUpperCase()}")),
                           ),
                         ),
                         errorWidget: (context, url, error) => ClipOval(
                           child: CircleAvatar(
                             radius: 25.h,
-                            backgroundColor: Color(int.parse(
-                                "0xFF${appBloc.uiSettingModel.appButtonBgColor.substring(1, 7).toUpperCase()}")),
                             child: Text(
                               eventTrackBloc.overviewResponse[0].displayName
                                       .isNotEmpty
@@ -4457,6 +4320,8 @@ class _EventTrackListState extends State<EventTrackList> with TickerProviderStat
                                   fontSize: 30.h,
                                   fontWeight: FontWeight.w600),
                             ),
+                            backgroundColor: Color(int.parse(
+                                "0xFF${appBloc.uiSettingModel.appButtonBgColor.substring(1, 7).toUpperCase()}")),
                           ),
                         ),
                       ),
@@ -4968,27 +4833,15 @@ class _EventTrackListState extends State<EventTrackList> with TickerProviderStat
                         ],
                       ),
                     ),
-                    const SizedBox(width: 10,),
-                    GestureDetector(
-                      onTap: () {
-
-                      },
-                      child: Container(
-                        padding: const EdgeInsets.all(10),
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          color: AppColors.getAppBGColor(),
-                        ),
-                        child: const Icon(Icons.download_rounded),
-                      ),
-                    ),
+                    SizedBox(width: 10,),
+                    getTrackDownloadButton(),
                   ],
                 ),
                 const SizedBox(height: 10,),
                 Container(
                   height: 10.h,
                   child: LinearProgressIndicator(
-                    backgroundColor: Colors.grey.shade400,
+                    backgroundColor: AppColors.getNoteCompletedProgressIndicatorColor(),
                     valueColor: AlwaysStoppedAnimation<Color>(AppColors.getProgressIndicatorColor()),
                     value: completedPercentage,
                   ),
@@ -5016,6 +4869,109 @@ class _EventTrackListState extends State<EventTrackList> with TickerProviderStat
     ));
 
     return widgets;
+  }
+
+  Widget getTrackDownloadButton() {
+    return Consumer<MyLearningDownloadProvider>(
+      builder: (BuildContext context, MyLearningDownloadProvider myLearningDownloadProvider, Widget? child) {
+        List<DummyMyCatelogResponseTable2> list = [];
+
+        if(eventTrackBloc.trackBlockList.isNotEmpty) {
+          eventTrackBloc.trackBlockList.forEach((element) {
+            list.addAll(element.data.where((element) => AppConstants.downloadableContentIds.contains(element.objecttypeid)));
+          });
+        }
+        else {
+          list.addAll(eventTrackBloc.trackListData.where((element) => AppConstants.downloadableContentIds.contains(element.objecttypeid)));
+        }
+
+        if(list.isEmpty) {
+          return SizedBox();
+        }
+
+        //region Defining of icon from list download status
+        IconData icon = Icons.download_rounded;
+        bool isDownloading = false, isDownloadPasued = false, isAllDownloaded = false;
+        int downloadedCount = 0;
+
+        list.forEach((DummyMyCatelogResponseTable2 table2) {
+          List<MyLearningDownloadModel> downloads = myLearningDownloadProvider.downloads.where((element) {
+            return element.isTrackContent == true && element.contentId == "${widget.myLearningModel.contentid}_${table2.contentid}";
+          }).toList();
+
+          if(downloads.isNotEmpty) {
+            MyLearningDownloadModel myLearningDownloadModel = downloads.first;
+            if(myLearningDownloadModel.isFileDownloaded) {
+              downloadedCount++;
+            }
+            else {
+              if(myLearningDownloadModel.table2.isDownloading) {
+                isDownloading = true;
+              }
+              else {
+                if(!myLearningDownloadModel.isFileExtracted) {
+                  isDownloading = true;
+                }
+              }
+              if(myLearningDownloadModel.isFileDownloadingPaused) {
+                isDownloadPasued = true;
+              }
+            }
+          }
+        });
+
+        isAllDownloaded = list.length == downloadedCount;
+
+        if(isDownloading) {
+          icon = Icons.pause;
+        }
+        else if(isDownloadPasued) {
+          icon = Icons.play_arrow;
+        }
+        else if(isAllDownloaded) {
+          icon = Icons.check;
+        }
+        //endregion Defining of icon from list download status
+
+        return GestureDetector(
+          onTap: () {
+            if(icon == Icons.download_rounded) {
+              List<DummyMyCatelogResponseTable2> list = [];
+
+              if(eventTrackBloc.trackBlockList.isNotEmpty) {
+                eventTrackBloc.trackBlockList.forEach((element) {
+                  element.data.forEach((element) {
+                    if(/*element.wstatus != "disabled" && */AppConstants.downloadableContentIds.contains(element.objecttypeid)) {
+                      list.add(element);
+                    }
+                  });
+                });
+              }
+              else {
+                eventTrackBloc.trackListData.forEach((element) {
+                  if(/*element.wstatus != "disabled" && */AppConstants.downloadableContentIds.contains(element.objecttypeid)) {
+                    list.add(element);
+                  }
+                });
+              }
+
+              list.forEach((DummyMyCatelogResponseTable2 childTable) {
+                _onDownloadTap(childTable);
+              });
+            }
+          },
+          child: Container(
+            padding: EdgeInsets.all(10),
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              color: AppColors.getAppBGColor(),
+              border: Border.all(color: Colors.black45, width: 3),
+            ),
+            child: Icon(icon),
+          ),
+        );
+      },
+    );
   }
 
   void downloadRes(ReferenceItem refItem, int position) async {
@@ -5144,23 +5100,6 @@ class _EventTrackListState extends State<EventTrackList> with TickerProviderStat
     Navigator.of(context).push(MaterialPageRoute(
         builder: (context) =>
             AdvancedWebCourseLaunch(urlpath.trim(), refItem.title)));
-    // Navigator.of(context).push(
-    //   MaterialPageRoute(
-    //     builder: (context) => InAppWebCourseLaunch(urlpath.trim(), refItem),
-    //   ),
-    // )
-    //     .then(
-    //       (value) => {
-    //     if (value ?? true)
-    //       {
-    //         /*eventTrackBloc.add(GetTrackListData(
-    //             isInternet: true,
-    //             appBloc: appBloc,
-    //             isTraxkList: widget.isTraxkList,
-    //             myLearningModel: widget.myLearningModel)),*/
-    //       }
-    //   },
-    // );
   }
 
   /*
@@ -5210,7 +5149,21 @@ class _EventTrackListState extends State<EventTrackList> with TickerProviderStat
 
   void createParentUrl(DummyMyCatelogResponseTable2 table2) async {
     print("createParentUrl called");
-    String paramsString = "userID=${table2.userid}&scoid=${table2.scoid}&TrackObjectTypeID=${table2.objecttypeid}&TrackContentID=${table2.contentid}&TrackScoID=${table2.scoid}&SiteID=${table2.siteid}&OrgUnitID=${table2.siteid}&isonexist=onexit";
+    String paramsString = "userID=" +
+        table2.userid.toString() +
+        "&scoid=" +
+        table2.scoid.toString() +
+        "&TrackObjectTypeID=" +
+        table2.objecttypeid.toString() +
+        "&TrackContentID=" +
+        table2.contentid +
+        "&TrackScoID=" +
+        table2.scoid.toString() +
+        "&SiteID=" +
+        table2.siteid.toString() +
+        "&OrgUnitID=" +
+        table2.siteid.toString() +
+        "&isonexist=onexit";
 
     /*String paramsString = "parentcontentID=${table2.contentid}&siteID=${table2.siteid}&userID=${table2.userid}"
         "&objecttypeid=${table2.objecttypeid}&iscontentenrolled=true&scoid=${table2.scoid}&localeID=${locale}";*/
@@ -5223,8 +5176,7 @@ class _EventTrackListState extends State<EventTrackList> with TickerProviderStat
 
     print('Parent Content Status url:$url');
 
-    eventTrackBloc.add(
-        ParentTrackGetContentStatus(url: url, table2: widget.myLearningModel));
+    eventTrackBloc.add(ParentTrackGetContentStatus(url: url, table2: widget.myLearningModel));
   }
 
   void addToCal(DummyMyCatelogResponseTable2 table2) {
@@ -5278,19 +5230,19 @@ class _EventTrackListState extends State<EventTrackList> with TickerProviderStat
             RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)),
         actions: <Widget>[
           TextButton(
+            child: Text(appBloc.localstr.catalogAlertbuttonCancelbutton),
             style: textButtonStyle,
             onPressed: () async {
               Navigator.of(context).pop();
             },
-            child: Text(appBloc.localstr.catalogAlertbuttonCancelbutton),
           ),
           TextButton(
+            child: Text(appBloc.localstr.eventsAlertbuttonOkbutton),
             style: textButtonStyle,
             onPressed: () async {
               Navigator.of(context).pop();
               cancelEnrollment(table2, isSuccess);
             },
-            child: Text(appBloc.localstr.eventsAlertbuttonOkbutton),
           ),
         ],
       ),
@@ -5299,8 +5251,7 @@ class _EventTrackListState extends State<EventTrackList> with TickerProviderStat
 
   Future<void> refreshContent(DummyMyCatelogResponseTable2? table2) async {
     if(table2 != null) {
-      if (['11', '14', '20', '21', '36', '52'].contains(
-          table2.objecttypeid.toString()) && table2.isdownloaded) {
+      if (['11', '14', '20', '21', '36', '52'].contains(table2.objecttypeid.toString()) && table2.isdownloaded) {
         await updateTrackStatus();
         detailsBloc.add(SetCompleteEvent(
           table2: table2,
@@ -5346,8 +5297,7 @@ class _EventTrackListState extends State<EventTrackList> with TickerProviderStat
     }
 
     /// Update progress for Learning Track
-    var myLearningData = await HiveDbHandler()
-        .readData("$myLearningCollection-${appBloc.userid}");
+    var myLearningData = await HiveDbHandler().readData("$myLearningCollection-${appBloc.userid}");
     if (myLearningData.isEmpty) return;
 
     List<DummyMyCatelogResponseTable2> myLearningDataList = [];
@@ -5362,8 +5312,7 @@ class _EventTrackListState extends State<EventTrackList> with TickerProviderStat
           element.userid == widget.myLearningModel.userid;
     });
     if (idx != -1) {
-      myLearningDataList[idx].corelessonstatus =
-          trackIsCompleted ? 'Completed' : 'In Progress';
+      myLearningDataList[idx].corelessonstatus = trackIsCompleted ? 'Completed' : 'In Progress';
       myLearningDataList[idx].progress = trackIsCompleted ? '100' : '50';
       await HiveDbHandler().createData(
         "$myLearningCollection-${appBloc.userid}",
@@ -5375,8 +5324,7 @@ class _EventTrackListState extends State<EventTrackList> with TickerProviderStat
 
   //region card functions
   void _onMoreTap(DummyMyCatelogResponseTable2 table2, int idx) {
-    _settingMyCourseBottomSheet(
-        context, table2, idx, widget.myLearningModel.contentid);
+    _settingMyCourseBottomSheet(context, table2, idx, widget.myLearningModel.contentid);
   }
 
   void _onArchivedTap(DummyMyCatelogResponseTable2 table2) {
@@ -5388,6 +5336,8 @@ class _EventTrackListState extends State<EventTrackList> with TickerProviderStat
   }
 
   void _onViewTap(DummyMyCatelogResponseTable2 table2) async {
+    Logger().i("_onViewTap called for ObjectTypeId:${table2.objecttypeid} and contentId:${table2.contentid}");
+
     bool result = await decideCourseLaunchMethod(
       context: context,
       table2: table2,

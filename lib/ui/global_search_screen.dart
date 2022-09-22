@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -37,13 +36,13 @@ import 'package:flutter_admin_web/ui/myConnections/connection_index_screen.dart'
 import 'package:flutter_admin_web/ui/profile/profile_page.dart';
 import 'package:flutter_admin_web/utils/my_print.dart';
 import 'package:intl/intl.dart';
-import 'package:provider/provider.dart';
 import 'package:share/share.dart';
 
+import '../configs/constants.dart';
+import '../framework/helpers/parsing_helper.dart';
 import 'Catalog/catalog_refresh.dart';
 import 'Catalog/wish_list.dart';
 import 'Discussions/discussion_forum_topic.dart';
-import 'Events/event_main_page.dart';
 import 'Events/event_wishlist.dart';
 import 'MyLearning/common_detail_screen.dart';
 import 'MyLearning/share_mainscreen.dart';
@@ -51,6 +50,7 @@ import 'MyLearning/wait_list.dart';
 import 'askTheExpert/user_questions_list.dart';
 import 'classroom_events/event_main_page2.dart';
 import 'common/bottomsheet_drager.dart';
+import 'common/bottomsheet_option_tile.dart';
 import 'common/common_toast.dart';
 import 'common/outline_button.dart';
 
@@ -156,11 +156,10 @@ class _GlobalSearchScreenState extends State<GlobalSearchScreen> {
     }
 
     ///Check Consolidated from menu
-    if (filterMenus != null && filterMenus.containsKey("Type")) {
+    if (filterMenus.containsKey("Type")) {
       String consolidatedType = filterMenus["Type"] ?? "";
       print("consolidatedType $consolidatedType");
-      if (consolidatedType != null &&
-          consolidatedType != '' &&
+      if (consolidatedType != '' &&
           consolidatedType.toLowerCase() == "consolidate") {
         isConsolidated = true;
       } else {
@@ -176,7 +175,7 @@ class _GlobalSearchScreenState extends State<GlobalSearchScreen> {
 
   Map<String, String> generateHashMap(List<String> conditionsArray) {
     Map<String, String> map = new Map();
-    if (conditionsArray.length != 0) {
+    if (conditionsArray.isNotEmpty) {
       for (int i = 0; i < conditionsArray.length; i++) {
         var filterArray = conditionsArray[i].split("=");
         print(" forvalue   $filterArray");
@@ -270,7 +269,7 @@ class _GlobalSearchScreenState extends State<GlobalSearchScreen> {
                               ),
                             )),
                         onSubmitted: (value) {
-                          if (value.toString().length > 0) {
+                          if (value.toString().isNotEmpty) {
                             //connectionsBloc.isArchiveFirstLoading = true;
                             this.searchAction(value.toString());
                           }
@@ -450,15 +449,12 @@ class _GlobalSearchScreenState extends State<GlobalSearchScreen> {
                         return Expanded(
                           child: Center(
                             child: AbsorbPointer(
-                              child: SpinKitCircle(
-                                color: Colors.grey,
-                                size: 70,
-                              ),
+                              child: AppConstants().getLoaderWidget(iconSize: 70),
                             ),
                           ),
                         );
                       }
-                      else if (globalSearchBloc.searchResultList.length == 0) {
+                      else if (globalSearchBloc.searchResultList.isEmpty) {
                         return Expanded(
                           child: Center(
                             child: Column(
@@ -489,7 +485,7 @@ class _GlobalSearchScreenState extends State<GlobalSearchScreen> {
 
                               return Container(
                                   padding: EdgeInsets.all(8),
-                                  height: (searchResult.courseList.length * 106.0) + 120,
+                                  // height: (searchResult.courseList.length * 106.0) + 120,
                                   child: Column(
                                     crossAxisAlignment: CrossAxisAlignment.start,
                                     children: [
@@ -504,148 +500,144 @@ class _GlobalSearchScreenState extends State<GlobalSearchScreen> {
                                               ?.apply(color: Colors.orange),
                                         ),
                                       ),
-                                      Expanded(
-                                        child: ListView.builder(
-                                          physics: NeverScrollableScrollPhysics(),
-                                          itemCount: searchResult.courseList.length,
-                                          itemBuilder: (context, i) {
-                                            CourseList value = searchResult.courseList[i];
-                                            //print("Description:${value.title}, View Type: ${value.viewType}");
+                                      ListView.builder(
+                                        shrinkWrap: true,
+                                        physics: NeverScrollableScrollPhysics(),
+                                        itemCount: searchResult.courseList.length,
+                                        itemBuilder: (context, i) {
+                                          CourseList value = searchResult.courseList[i];
+                                          //print("Description:${value.title}, View Type: ${value.viewType}");
 
-                                            return Container(
-                                              height: 100,
-                                              padding: EdgeInsets.all(4),
-                                              margin: EdgeInsets.symmetric(
-                                                  vertical: 4, horizontal: 8),
-                                              decoration: BoxDecoration(
-                                                color: InsColor(appBloc)
-                                                    .appBGColor,
-                                                borderRadius: BorderRadius.only(
-                                                    topLeft:
-                                                        Radius.circular(8.0),
-                                                    bottomLeft:
-                                                        Radius.circular(8.0),
-                                                    bottomRight:
-                                                        Radius.circular(8.0),
-                                                    topRight:
-                                                        Radius.circular(8.0)),
-                                                boxShadow: <BoxShadow>[
-                                                  BoxShadow(
-                                                      color: Colors.grey
-                                                          .withOpacity(0.2),
-                                                      offset: Offset(1.1, 1.1),
-                                                      blurRadius: 2.0),
-                                                ],
-                                              ),
-                                              child: Row(
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment.start,
-                                                crossAxisAlignment:
-                                                    CrossAxisAlignment.start,
-                                                children: <Widget>[
-                                                  Expanded(
-                                                      flex: 3,
-                                                      child: Center(
+                                          return Container(
+                                            // height: 100,
+                                            padding: EdgeInsets.all(4),
+                                            margin: EdgeInsets.symmetric(
+                                                vertical: 4, horizontal: 8),
+                                            decoration: BoxDecoration(
+                                              color: InsColor(appBloc)
+                                                  .appBGColor,
+                                              borderRadius: BorderRadius.only(
+                                                  topLeft:
+                                                      Radius.circular(8.0),
+                                                  bottomLeft:
+                                                      Radius.circular(8.0),
+                                                  bottomRight:
+                                                      Radius.circular(8.0),
+                                                  topRight:
+                                                      Radius.circular(8.0)),
+                                              boxShadow: <BoxShadow>[
+                                                BoxShadow(
+                                                    color: Colors.grey.withOpacity(0.38),
+                                                    offset: Offset(1.1, 1.1),
+                                                    blurRadius: 2.0,
+                                                ),
+                                                BoxShadow(
+                                                    color: Colors.grey.withOpacity(0.38),
+                                                    offset: Offset(-1.1, -1.1),
+                                                    blurRadius: 2.0,
+                                                ),
+                                              ],
+                                            ),
+                                            child: Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.start,
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              children: <Widget>[
+                                                Expanded(
+                                                    flex: 3,
+                                                    child: Center(
+                                                      child: CircleAvatar(
+                                                        radius: 30,
+                                                        backgroundColor:
+                                                            Color(0xffFDCF09),
                                                         child: CircleAvatar(
                                                           radius: 30,
+                                                          backgroundImage: NetworkImage(value
+                                                                  .thumbnailImagePath
+                                                                  .contains(
+                                                                      'http')
+                                                              ? '${value.thumbnailImagePath}'
+                                                              : '${ApiEndpoints.strSiteUrl}${value.thumbnailImagePath}'),
                                                           backgroundColor:
-                                                              Color(0xffFDCF09),
-                                                          child: CircleAvatar(
-                                                            radius: 30,
-                                                            backgroundImage: NetworkImage(value
-                                                                    .thumbnailImagePath
-                                                                    .contains(
-                                                                        'http')
-                                                                ? '${value.thumbnailImagePath}'
-                                                                : '${ApiEndpoints.strSiteUrl}${value.thumbnailImagePath}'),
-                                                            backgroundColor:
-                                                                Color(int.parse(
-                                                                        "0xFF${appBloc.uiSettingModel.appBGColor.substring(1, 7).toUpperCase()}"))
-                                                                    .withAlpha(
-                                                                        1000),
-                                                          ),
+                                                              Color(int.parse(
+                                                                      "0xFF${appBloc.uiSettingModel.appBGColor.substring(1, 7).toUpperCase()}"))
+                                                                  .withAlpha(
+                                                                      1000),
                                                         ),
-                                                      )),
-                                                  SizedBox(
-                                                    width: 8,
-                                                  ),
-                                                  Expanded(
-                                                    flex: 8,
-                                                    child: Container(
-                                                      child: Column(
-                                                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                                        crossAxisAlignment: CrossAxisAlignment.start,
-                                                        children: <Widget>[
-                                                          Expanded(
-                                                            child: Text(
-                                                                _contentValue(
-                                                                    searchResult
-                                                                        .searchComponent,
-                                                                    value)[0],
-                                                                style: Theme.of(
-                                                                        context)
-                                                                    .textTheme
-                                                                    .headline2
-                                                                    ?.apply(
-                                                                        color:
-                                                                            InsColor(appBloc).appTextColor)),
-                                                          ),
-                                                          SizedBox(height: 8),
-                                                          Text(
-                                                              _contentValue(
-                                                                  searchResult
-                                                                      .searchComponent,
-                                                                  value)[1],
-                                                              style: Theme.of(
-                                                                      context)
-                                                                  .textTheme
-                                                                  .subtitle1
-                                                                  ?.apply(
-                                                                      color: InsColor(appBloc)
-                                                                          .appTextColor
-                                                                          .withAlpha(900))),
-                                                          Text(
-                                                              _contentValue(
-                                                                  searchResult
-                                                                      .searchComponent,
-                                                                  value)[2],
-                                                              style: Theme.of(
-                                                                      context)
-                                                                  .textTheme
-                                                                  .subtitle1
-                                                                  ?.apply(
-                                                                      color:
-                                                                          InsColor(appBloc).appTextColor)),
-                                                        ],
                                                       ),
-                                                      //color: Colors.red,
+                                                    )),
+                                                SizedBox(
+                                                  width: 8,
+                                                ),
+                                                Expanded(
+                                                  flex: 8,
+                                                  child: Container(
+                                                    child: Column(
+                                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                                      children: <Widget>[
+                                                        Text(
+                                                            _contentValue(searchResult.searchComponent, value)[0],
+                                                            style: Theme.of(context).textTheme.headline2?.apply(color: InsColor(appBloc).appTextColor),
+                                                          // maxLines: 2,
+                                                          // overflow: TextOverflow.ellipsis,
+                                                        ),
+                                                        SizedBox(height: 8),
+                                                        Text(
+                                                            _contentValue(
+                                                                searchResult
+                                                                    .searchComponent,
+                                                                value)[1],
+                                                            style: Theme.of(
+                                                                    context)
+                                                                .textTheme
+                                                                .subtitle1
+                                                                ?.apply(
+                                                                    color: InsColor(appBloc)
+                                                                        .appTextColor
+                                                                        .withAlpha(900))),
+                                                        Text(
+                                                            _contentValue(
+                                                                searchResult
+                                                                    .searchComponent,
+                                                                value)[2],
+                                                            style: Theme.of(
+                                                                    context)
+                                                                .textTheme
+                                                                .subtitle1
+                                                                ?.apply(
+                                                                    color:
+                                                                        InsColor(appBloc).appTextColor)),
+                                                      ],
                                                     ),
+                                                    //color: Colors.red,
                                                   ),
-                                                  Expanded(
-                                                    flex: 1,
-                                                    child: IconButton(
-                                                      icon: Icon(
-                                                          Icons
-                                                              .more_vert_rounded,
-                                                          color: InsColor(
-                                                                  appBloc)
-                                                              .appIconColor),
-                                                      onPressed: () {
-                                                        _showOptions(
-                                                            value,
-                                                            searchResult
-                                                                .searchComponent);
-                                                      },
-                                                    ),
+                                                ),
+                                                Expanded(
+                                                  flex: 1,
+                                                  child: IconButton(
+                                                    icon: Icon(
+                                                        Icons
+                                                            .more_vert_rounded,
+                                                        color: InsColor(
+                                                                appBloc)
+                                                            .appIconColor),
+                                                    onPressed: () {
+                                                      _showOptions(
+                                                          value,
+                                                          searchResult
+                                                              .searchComponent);
+                                                    },
                                                   ),
-                                                  SizedBox(
-                                                    width: 4,
-                                                  ),
-                                                ],
-                                              ),
-                                            );
-                                          },
-                                        ),
+                                                ),
+                                                SizedBox(
+                                                  width: 4,
+                                                ),
+                                              ],
+                                            ),
+                                          );
+                                        },
                                       ),
                                       Padding(
                                         padding: const EdgeInsets.symmetric(
@@ -695,7 +687,6 @@ class _GlobalSearchScreenState extends State<GlobalSearchScreen> {
       case 3219:
         // selectedWidget = EventMainPage(enableSearching: false, searchString: globalSearchBloc.searchString,);
         selectedWidget = EventMainPage2(enableSearching: false, searchString: globalSearchBloc.searchString,);
-
         break;
       case 50014:
         appBloc.listNativeModel.forEach((element) async {
@@ -957,6 +948,7 @@ class _GlobalSearchScreenState extends State<GlobalSearchScreen> {
       case "1": //My Learning
         if (!isConsolidated && result.siteId == 374) {
           listArray.add(ResultMoreOptionModel(
+              iconData: Icons.add_circle,
               title: appBloc.localstr.catalogActionsheetAddtomylearningoption,
               icon: Icon(Icons.add_circle, color: InsColor(appBloc).appIconColor),
               screen: null));
@@ -964,9 +956,10 @@ class _GlobalSearchScreenState extends State<GlobalSearchScreen> {
 
         break;
       case "2": //Documents, Catalog & Wiki
-        if (result.addLink.length > 0) {
+        if (result.addLink.isNotEmpty) {
           if (!isConsolidated && result.siteId == 374) {
             listArray.add(ResultMoreOptionModel(
+                iconData:Icons.add_circle,
                 title: appBloc.localstr.catalogActionsheetAddtomylearningoption,
                 icon: Icon(Icons.add_circle, color: InsColor(appBloc).appIconColor),
                 screen: null)); // Add to My Learning
@@ -991,14 +984,14 @@ class _GlobalSearchScreenState extends State<GlobalSearchScreen> {
         }
         break;
       case "8": //Training Events & Training Events
-        if (result.addLink.length > 0) {
+        if (result.addLink.isNotEmpty) {
           var menu = initEventEnrollOption(result);
           menu.nativeCompId = component.nativeCompId;
           listArray.add(menu);
         } else {
           listArray.add(initEventCancelOption(result));
         }
-        if (result.detailsLink.length > 0) {
+        if (result.detailsLink.isNotEmpty) {
           listArray.add(initEventDetailOption(result));
         }
         break;
@@ -1038,14 +1031,14 @@ class _GlobalSearchScreenState extends State<GlobalSearchScreen> {
     //     break;
     // }
 
-    if (result.addLink.length > 0) {
+    if (result.addLink.isNotEmpty) {
       //myLearningDetailsBloc.add(
       //  SetCompleteEvent(contentId: result.contentId, scoId: result.scoid));
       // listArray.add(
       //     ResultMoreOptionModel(title: 'Add to My Learning', screen: null));
     }
 
-    if (result.sharelink.length > 0) {
+    if (result.sharelink.isNotEmpty) {
       List<String> subStr = result.sharelink.split('/');
       var params = subStr.getRange(subStr.length - 4, subStr.length);
       print('subStr \n ' + subStr.toString());
@@ -1055,12 +1048,11 @@ class _GlobalSearchScreenState extends State<GlobalSearchScreen> {
     }
     return (showModalBottomSheet<void>(
       context: context,
+      shape: AppConstants().bottomSheetShapeBorder(),
       builder: (BuildContext context) {
-        return Container(
-          color: Color(int.parse(
-              "0xFF${appBloc.uiSettingModel.appBGColor.substring(1, 7).toUpperCase()}")),
-          height: (listArray.length * 90.0) + 35,
+        return AppConstants().bottomSheetContainer(
           child: Column(
+            mainAxisSize: MainAxisSize.min,
             children: [
               BottomSheetDragger(),
               BlocConsumer(
@@ -1102,7 +1094,7 @@ class _GlobalSearchScreenState extends State<GlobalSearchScreen> {
                     }
                   },
                   builder: (context, state) => Container(
-                        height: (listArray.length * 90.0),
+                        // height: (listArray.length * 90.0),
                         child: Center(
                           child: Column(
                             mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -1110,9 +1102,11 @@ class _GlobalSearchScreenState extends State<GlobalSearchScreen> {
                             mainAxisSize: MainAxisSize.min,
                             children: <Widget>[
                               for (var i in listArray)
-                                InkWell(
+                                BottomsheetOptionTile(
+                                    text:i.title,
+                                  iconData: i.iconData,
                                   onTap: () {
-                                    if ((component.nativeCompId == "8" ||
+                                      if ((component.nativeCompId == "8" ||
                                             component.nativeCompId == "1" ||
                                             component.nativeCompId == "0" ||
                                             component.nativeCompId == "2") &&
@@ -1160,7 +1154,7 @@ class _GlobalSearchScreenState extends State<GlobalSearchScreen> {
                                           result.contentId;
                                       myCatelogResponseTable2.actionwaitlist =
                                           result.waitListLink;
-                                      if (result.addLink.length > 0) {
+                                      if (result.addLink.isNotEmpty) {
                                         print('passing');
                                         addToEnroll(myCatelogResponseTable2);
                                         //Navigator.pop(context);
@@ -1169,7 +1163,8 @@ class _GlobalSearchScreenState extends State<GlobalSearchScreen> {
                                         showCancelEnrollDialog(
                                             myCatelogResponseTable2, 'Success');
                                       }
-                                    } else if (component.nativeCompId == "10") {
+                                    }
+                                    else if (component.nativeCompId == "10") {
                                       if (i.screen is ShareMainScreen) {
                                         var screen =
                                             i.screen as ShareMainScreen;
@@ -1207,36 +1202,6 @@ class _GlobalSearchScreenState extends State<GlobalSearchScreen> {
                                               });
                                     }
                                   },
-                                  child: ListTile(
-                                    title: Text(
-                                      i.title,
-                                      style: TextStyle(
-                                          color:
-                                              InsColor(appBloc).appTextColor),
-                                    ),
-                                    leading: i.icon,
-                                  ),
-                                  // Column(
-                                  //   mainAxisAlignment:
-                                  //       MainAxisAlignment.spaceBetween,
-                                  //   crossAxisAlignment:
-                                  //       CrossAxisAlignment.start,
-                                  //   children: [
-                                  //     Padding(
-                                  //       padding:
-                                  //           const EdgeInsets.only(left: 16),
-                                  //       child: Text(i.title,
-                                  //           style: Theme.of(context)
-                                  //               .textTheme
-                                  //               .headline2
-                                  //               .apply(
-                                  //                   color: InsColor(appBloc)
-                                  //                       .appTextColor)),
-                                  //     ),
-                                  //     SizedBox(height: 8),
-                                  //     Divider()
-                                  //   ],
-                                  // ),
                                 ),
                             ],
                           ),
@@ -1288,6 +1253,7 @@ class _GlobalSearchScreenState extends State<GlobalSearchScreen> {
   ResultMoreOptionModel initShareToPeople(CourseList result) {
     return ResultMoreOptionModel(
         title: 'Share',
+        iconData: IconDataSolid(int.parse('0xf1e0')),
         icon: Icon(
           IconDataSolid(int.parse('0xf1e0')),
           color: InsColor(appBloc).appIconColor,
@@ -1304,16 +1270,16 @@ class _GlobalSearchScreenState extends State<GlobalSearchScreen> {
     myCatelogResponseTable2.siteurl = result.siteUrl.toString();
     myCatelogResponseTable2.availableseats = result.availableSeats == "" ? 0 : int.parse(result.availableSeats);
     myCatelogResponseTable2.waitlistenrolls = result.waitListEnrolls == "" ? 0 : int.parse(result.waitListEnrolls);
-    myCatelogResponseTable2.isaddedtomylearning = result.addLink.length > 0 ? 0 : 1;
+    myCatelogResponseTable2.isaddedtomylearning = result.addLink.isNotEmpty ? 0 : 1;
     myCatelogResponseTable2.eventstartdatetime = result.eventStartDateTime;
     myCatelogResponseTable2.eventenddatetime = result.eventEndDateTime;
     myCatelogResponseTable2.viewtype = result.viewType;
     myCatelogResponseTable2.eventscheduletype = result.eventScheduleType;
     myCatelogResponseTable2.eventrecording = result.eventRecording;
     myCatelogResponseTable2.tagname = result.tags;
-    myCatelogResponseTable2.name = result.siteName;
-    myCatelogResponseTable2.shortdescription = result.shortDescription;
-    myCatelogResponseTable2.locationname = result.locationName;
+    myCatelogResponseTable2.name = ParsingHelper.parseStringMethod(result.siteName);
+    myCatelogResponseTable2.shortdescription = ParsingHelper.parseStringMethod(result.shortDescription);
+    myCatelogResponseTable2.locationname = ParsingHelper.parseStringMethod(result.locationName);
     myCatelogResponseTable2.ratingid = double.parse(result.ratingId);
     myCatelogResponseTable2.startpage = result.startPage;
     myCatelogResponseTable2.contentid = result.contentId;
@@ -1325,6 +1291,7 @@ class _GlobalSearchScreenState extends State<GlobalSearchScreen> {
 
     return ResultMoreOptionModel(
         title: 'Details',
+        iconData:IconDataSolid(int.parse('0xf570')),
         icon: Icon(
           IconDataSolid(int.parse('0xf570')),
           color: InsColor(appBloc).appIconColor,
@@ -1365,6 +1332,7 @@ class _GlobalSearchScreenState extends State<GlobalSearchScreen> {
 
     return ResultMoreOptionModel(
         title: 'Enroll',
+        iconData:Icons.add_circle,
         icon: Icon(
           Icons.add_circle,
           color: InsColor(appBloc).appIconColor,
@@ -1397,6 +1365,7 @@ class _GlobalSearchScreenState extends State<GlobalSearchScreen> {
     return ResultMoreOptionModel(
         title: 'Cancel',
         screen: null,
+        iconData:Icons.delete,
         icon: Icon(
           Icons.delete,
           color: InsColor(appBloc).appIconColor,
@@ -1429,6 +1398,7 @@ class _GlobalSearchScreenState extends State<GlobalSearchScreen> {
     proUserId = proUserId.split('/').first;
     return ResultMoreOptionModel(
         title: 'View Profile',
+        iconData:Icons.account_circle_rounded,
         icon: Icon(
           Icons.account_circle_rounded,
           color: InsColor(appBloc).appIconColor,
@@ -1444,16 +1414,16 @@ class _GlobalSearchScreenState extends State<GlobalSearchScreen> {
 
     myCatelogResponseTable2.userid = result.siteUserId;
     myCatelogResponseTable2.siteid = result.siteId;
-    myCatelogResponseTable2.siteurl = result.siteUrl.toString();
+    myCatelogResponseTable2.siteurl = ParsingHelper.parseStringMethod(result.siteUrl);
     // myCatelogResponseTable2.availableseats = int.parse(result.availableSeats);
-    myCatelogResponseTable2.sitename = result.siteName;
-    myCatelogResponseTable2.contenttype = result.contentType;
+    myCatelogResponseTable2.sitename = ParsingHelper.parseStringMethod(result.siteName);
+    myCatelogResponseTable2.contenttype = ParsingHelper.parseStringMethod(result.contentType);
     //myCatelogResponseTable2.objecttypeid = result.contentTypeId;
     //myCatelogResponseTable2.medianame = 'PDF';
     //myCatelogResponseTable2.iconpath = 'pdf.gif';
     //myCatelogResponseTable2.contenttypethumbnail = 'contenttypethumbnail';
     //myCatelogResponseTable2.contentid = '80aa5688-569c-4d5d-9fee-15482055f092';
-    myCatelogResponseTable2.isaddedtomylearning = result.addLink.length > 0 ? 0 : 1;
+    myCatelogResponseTable2.isaddedtomylearning = result.addLink.isNotEmpty ? 0 : 1;
     myCatelogResponseTable2.contentid = result.contentId;
     myCatelogResponseTable2.iscontent = true; //result.isContentEnrolled == 'true';
     myCatelogResponseTable2.eventstartdatetime = result.eventStartDateTime;
@@ -1462,10 +1432,10 @@ class _GlobalSearchScreenState extends State<GlobalSearchScreen> {
     myCatelogResponseTable2.eventscheduletype = result.eventScheduleType;
     myCatelogResponseTable2.eventrecording = result.eventRecording;
     myCatelogResponseTable2.tagname = result.tags;
-    myCatelogResponseTable2.name = result.siteName;
-    myCatelogResponseTable2.shortdescription = result.shortDescription;
-    myCatelogResponseTable2.locationname = result.locationName ?? "";
-    myCatelogResponseTable2.ratingid = double.parse(result.ratingId);
+    myCatelogResponseTable2.name = ParsingHelper.parseStringMethod(result.siteName);
+    myCatelogResponseTable2.shortdescription = ParsingHelper.parseStringMethod(result.shortDescription);
+    myCatelogResponseTable2.locationname = ParsingHelper.parseStringMethod(result.locationName);
+    myCatelogResponseTable2.ratingid = ParsingHelper.parseDoubleMethod(result.ratingId);
     myCatelogResponseTable2.startpage = result.startPage;
     myCatelogResponseTable2.objecttypeid = result.contentTypeId;
     myCatelogResponseTable2.relatedconentcount = result.isRelatedcontent == 'true' ? 1 : 0;
@@ -1473,6 +1443,7 @@ class _GlobalSearchScreenState extends State<GlobalSearchScreen> {
 
     return ResultMoreOptionModel(
         title: 'Details',
+        iconData:IconDataSolid(int.parse('0xf570')),
         icon: Icon(
           IconDataSolid(int.parse('0xf570')),
           color: InsColor(appBloc).appIconColor,
@@ -1502,6 +1473,7 @@ class _GlobalSearchScreenState extends State<GlobalSearchScreen> {
 
     return ResultMoreOptionModel(
         title: 'Go to this topic',
+        iconData:Icons.message_outlined,
         icon: Icon(
           Icons.message_outlined,
           color: InsColor(appBloc).appIconColor,
@@ -1526,6 +1498,7 @@ class _GlobalSearchScreenState extends State<GlobalSearchScreen> {
 
     return ResultMoreOptionModel(
         title: 'Go to this forum',
+        iconData:Icons.message_outlined,
         icon: Icon(
           Icons.message_outlined,
           color: InsColor(appBloc).appIconColor,
@@ -1550,6 +1523,7 @@ class _GlobalSearchScreenState extends State<GlobalSearchScreen> {
 
     return ResultMoreOptionModel(
         title: 'Go to this questions',
+        iconData:Icons.question_answer_outlined,
         icon: Icon(
           Icons.question_answer_outlined,
           color: InsColor(appBloc).appIconColor,
@@ -1574,6 +1548,7 @@ class _GlobalSearchScreenState extends State<GlobalSearchScreen> {
 
     return ResultMoreOptionModel(
         title: 'Go to this response',
+        iconData:Icons.restore_page_outlined,
         icon: Icon(
           Icons.restore_page_outlined,
           color: InsColor(appBloc).appIconColor,
@@ -1808,7 +1783,7 @@ class _GlobalSearchScreenState extends State<GlobalSearchScreen> {
 
   bool isValidString(String val) {
 //    print('validstrinh $val' ;
-    if (val == null || val.isEmpty || val == 'null') {
+    if (val.isEmpty || val == 'null') {
       return false;
     } else {
       return true;
@@ -1890,6 +1865,7 @@ class _GlobalSearchScreenState extends State<GlobalSearchScreen> {
 class ResultMoreOptionModel {
   String title;
   Icon icon;
+  IconData? iconData;
   dynamic screen;
   String nativeCompId;
 
@@ -1897,5 +1873,6 @@ class ResultMoreOptionModel {
       {this.title = "",
       required this.icon,
       this.screen,
+      this.iconData,
       this.nativeCompId = ""});
 }

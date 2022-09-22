@@ -5,7 +5,6 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:flutter_admin_web/framework/bloc/app/bloc/app_bloc.dart';
@@ -22,6 +21,8 @@ import 'package:flutter_admin_web/framework/theme/ins_theme.dart';
 import 'package:flutter_admin_web/ui/common/common_toast.dart';
 import 'package:flutter_admin_web/ui/profile/profile_edit.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
+
+import '../../configs/constants.dart';
 
 class ProfileInfo extends StatefulWidget {
   final ProfileBloc bloc;
@@ -709,10 +710,7 @@ class _ProfileInfoState extends State<ProfileInfo> {
             state.status == Status.LOADING
                 ? Center(
                     child: AbsorbPointer(
-                      child: SpinKitCircle(
-                        color: Colors.grey,
-                        size: 70.h,
-                      ),
+                      child: AppConstants().getLoaderWidget(iconSize: 70),
                     ),
                   )
                 : SizedBox(

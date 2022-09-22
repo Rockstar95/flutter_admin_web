@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:flutter_admin_web/framework/bloc/app/bloc/app_bloc.dart';
 import 'package:flutter_admin_web/framework/bloc/app/native_menu_model.dart';
@@ -20,6 +19,8 @@ import 'package:flutter_admin_web/ui/MyLearning/view_certificate.dart';
 import 'package:flutter_admin_web/ui/common/app_colors.dart';
 import 'package:flutter_admin_web/ui/progressReport/course_summary.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
+
+import '../../configs/constants.dart';
 
 class ProgressReportGraph extends StatefulWidget {
   final NativeMenuModel nativeMenuModel;
@@ -169,12 +170,9 @@ class _ProgressReportState extends State<ProgressReportGraph> with SingleTickerP
       },
       builder: (context, state) {
         if (state.status == Status.LOADING && progressReportBloc.isFirstLoading == true) {
-          return const Center(
+          return Center(
             child: AbsorbPointer(
-              child: SpinKitCircle(
-                color: Colors.grey,
-                size: 70.0,
-              ),
+              child: AppConstants().getLoaderWidget(iconSize: 70),
             ),
           );
         }
@@ -278,7 +276,7 @@ class _ProgressReportState extends State<ProgressReportGraph> with SingleTickerP
                                     text,
                                     style: TextStyle(
                                       fontSize: 8.h,
-                                      color: Colors.black,
+                                      color: Colors.white,
                                     )
                                   );
                                 },
@@ -352,7 +350,7 @@ class _ProgressReportState extends State<ProgressReportGraph> with SingleTickerP
                                 text,
                                 style: TextStyle(
                                   fontSize: 8.h,
-                                  color: Colors.black,
+                                  color: Colors.white,
                                 )
                             );
                           },
@@ -403,15 +401,17 @@ class _ProgressReportState extends State<ProgressReportGraph> with SingleTickerP
                               SfCircularChart(
                                   annotations: <CircularChartAnnotation>[
                                     CircularChartAnnotation(
-                                        widget: PhysicalModel(
-                                            shape: BoxShape.circle,
-                                            elevation: 10,
-                                            shadowColor: Colors.transparent,
-                                            // color: Colors.transparent
-                                            color: AppColors.getAppBGColor(),
-                                            child: Container()
-                                            // const Color.fromRGBO(
-                                            //     230, 230, 230, 1,),
+                                        widget: Container(
+                                            child: PhysicalModel(
+                                                child: Container(),
+                                                shape: BoxShape.circle,
+                                                elevation: 10,
+                                                shadowColor: Colors.transparent,
+                                                // color: Colors.transparent
+                                                color: AppColors.getAppBGColor()
+                                                // const Color.fromRGBO(
+                                                //     230, 230, 230, 1,),
+                                            ),
                                         ),
                                     ),
                                   ],
@@ -512,12 +512,9 @@ class _ProgressReportState extends State<ProgressReportGraph> with SingleTickerP
       },
       builder: (context, state) {
         if (state.status == Status.LOADING && progressReportBloc.isFirstLoading == true) {
-          return const Center(
+          return Center(
             child: AbsorbPointer(
-              child: SpinKitCircle(
-                color: Colors.grey,
-                size: 70.0,
-              ),
+              child: AppConstants().getLoaderWidget(iconSize: 70),
             ),
           );
         }
@@ -848,6 +845,7 @@ class _ProgressReportState extends State<ProgressReportGraph> with SingleTickerP
                                                   borderRadius: const BorderRadius.all(
                                                     Radius.circular(20.0),
                                                   ),
+                                                  // color: Color(int.parse("0xFFECF1F5")),
                                                   color:progressReportBloc.progressReportGraphResponse[0].parentData[index].childData.isNotEmpty
                                                       ? AppColors.getAppBGColor()
                                                       : Color(int.parse("0xFFECF1F5")) ,
@@ -943,7 +941,10 @@ class _ProgressReportState extends State<ProgressReportGraph> with SingleTickerP
                                                                     BorderRadius
                                                                         .circular(5)),
                                                             actions: <Widget>[
-                                                              FlatButton(
+                                                              new FlatButton(
+                                                                child: Text(appBloc
+                                                                    .localstr
+                                                                    .mylearningClosebuttonactionClosebuttonalerttitle),
                                                                 textColor:
                                                                     Colors.blue,
                                                                 onPressed:
@@ -952,9 +953,6 @@ class _ProgressReportState extends State<ProgressReportGraph> with SingleTickerP
                                                                           context)
                                                                       .pop();
                                                                 },
-                                                                child: Text(appBloc
-                                                                    .localstr
-                                                                    .mylearningClosebuttonactionClosebuttonalerttitle),
                                                               ),
                                                             ],
                                                           ))
@@ -1001,13 +999,11 @@ class _ProgressReportState extends State<ProgressReportGraph> with SingleTickerP
                                                 .withOpacity(0.5),
                                             color: Color(int.parse(
                                                 "0xFF${appBloc.uiSettingModel.appButtonBgColor.substring(1, 7).toUpperCase()}")),
-                                            textColor: Color(int.parse(
-                                                "0xFF${appBloc.uiSettingModel.appButtonTextColor.substring(1, 7).toUpperCase()}")),
                                             child: Row(
                                               mainAxisAlignment:
                                                   MainAxisAlignment.center,
                                               children: [
-                                                const Padding(
+                                                Padding(
                                                     padding:
                                                         EdgeInsets.all(5.0),
                                                     child: Icon(Icons.workspace_premium)),
@@ -1020,6 +1016,8 @@ class _ProgressReportState extends State<ProgressReportGraph> with SingleTickerP
                                                 )
                                               ],
                                             ),
+                                            textColor: Color(int.parse(
+                                                "0xFF${appBloc.uiSettingModel.appButtonTextColor.substring(1, 7).toUpperCase()}")),
                                           ),
                                         ),
                                       ),
@@ -1385,7 +1383,10 @@ class _ProgressReportState extends State<ProgressReportGraph> with SingleTickerP
                                                                             BorderRadius.circular(5)),
                                                                     actions: <
                                                                         Widget>[
-                                                                      FlatButton(
+                                                                      new FlatButton(
+                                                                        child: Text(appBloc
+                                                                            .localstr
+                                                                            .mylearningClosebuttonactionClosebuttonalerttitle),
                                                                         textColor:
                                                                             Colors.blue,
                                                                         onPressed:
@@ -1393,9 +1394,6 @@ class _ProgressReportState extends State<ProgressReportGraph> with SingleTickerP
                                                                           Navigator.of(context)
                                                                               .pop();
                                                                         },
-                                                                        child: Text(appBloc
-                                                                            .localstr
-                                                                            .mylearningClosebuttonactionClosebuttonalerttitle),
                                                                       ),
                                                                     ],
                                                                   ))
@@ -1452,14 +1450,12 @@ class _ProgressReportState extends State<ProgressReportGraph> with SingleTickerP
                                                         .withOpacity(0.5),
                                                     color: Color(int.parse(
                                                         "0xFF${appBloc.uiSettingModel.appButtonBgColor.substring(1, 7).toUpperCase()}")),
-                                                    textColor: Color(int.parse(
-                                                        "0xFF${appBloc.uiSettingModel.appButtonTextColor.substring(1, 7).toUpperCase()}")),
                                                     child: Row(
                                                       mainAxisAlignment:
                                                           MainAxisAlignment
                                                               .center,
                                                       children: [
-                                                        const Padding(
+                                                        Padding(
                                                             padding: EdgeInsets.all(
                                                                     5.0),
                                                             child: Icon(Icons.workspace_premium)),
@@ -1473,6 +1469,8 @@ class _ProgressReportState extends State<ProgressReportGraph> with SingleTickerP
                                                         )
                                                       ],
                                                     ),
+                                                    textColor: Color(int.parse(
+                                                        "0xFF${appBloc.uiSettingModel.appButtonTextColor.substring(1, 7).toUpperCase()}")),
                                                   ),
                                                 ),
                                               ),
@@ -1895,12 +1893,12 @@ class _ProgressReportState extends State<ProgressReportGraph> with SingleTickerP
                                                                                 backgroundColor: Color(int.parse("0xFF${appBloc.uiSettingModel.appBGColor.substring(1, 7).toUpperCase()}")),
                                                                                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)),
                                                                                 actions: <Widget>[
-                                                                                  FlatButton(
+                                                                                  new FlatButton(
+                                                                                    child: Text(appBloc.localstr.mylearningClosebuttonactionClosebuttonalerttitle),
                                                                                     textColor: Colors.blue,
                                                                                     onPressed: () async {
                                                                                       Navigator.of(context).pop();
                                                                                     },
-                                                                                    child: Text(appBloc.localstr.mylearningClosebuttonactionClosebuttonalerttitle),
                                                                                   ),
                                                                                 ],
                                                                               ))
@@ -1941,15 +1939,12 @@ class _ProgressReportState extends State<ProgressReportGraph> with SingleTickerP
                                                                 color: Color(
                                                                     int.parse(
                                                                         "0xFF${appBloc.uiSettingModel.appButtonBgColor.substring(1, 7).toUpperCase()}")),
-                                                                textColor: Color(
-                                                                    int.parse(
-                                                                        "0xFF${appBloc.uiSettingModel.appButtonTextColor.substring(1, 7).toUpperCase()}")),
                                                                 child: Row(
                                                                   mainAxisAlignment:
                                                                       MainAxisAlignment
                                                                           .center,
                                                                   children: [
-                                                                    const Padding(
+                                                                    Padding(
                                                                         padding:
                                                                             EdgeInsets.all(
                                                                                 5.0),
@@ -1965,6 +1960,9 @@ class _ProgressReportState extends State<ProgressReportGraph> with SingleTickerP
                                                                     )
                                                                   ],
                                                                 ),
+                                                                textColor: Color(
+                                                                    int.parse(
+                                                                        "0xFF${appBloc.uiSettingModel.appButtonTextColor.substring(1, 7).toUpperCase()}")),
                                                               ),
                                                             ),
                                                           ),
@@ -2242,12 +2240,12 @@ class _ProgressReportState extends State<ProgressReportGraph> with SingleTickerP
                                                                                         backgroundColor: Color(int.parse("0xFF${appBloc.uiSettingModel.appBGColor.substring(1, 7).toUpperCase()}")),
                                                                                         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)),
                                                                                         actions: <Widget>[
-                                                                                          FlatButton(
+                                                                                          new FlatButton(
+                                                                                            child: Text(appBloc.localstr.mylearningClosebuttonactionClosebuttonalerttitle),
                                                                                             textColor: Colors.blue,
                                                                                             onPressed: () async {
                                                                                               Navigator.of(context).pop();
                                                                                             },
-                                                                                            child: Text(appBloc.localstr.mylearningClosebuttonactionClosebuttonalerttitle),
                                                                                           ),
                                                                                         ],
                                                                                       ))
@@ -2267,14 +2265,12 @@ class _ProgressReportState extends State<ProgressReportGraph> with SingleTickerP
                                                                             Color(int.parse("0xFF${appBloc.uiSettingModel.appButtonBgColor.substring(1, 7).toUpperCase()}")).withOpacity(0.5),
                                                                         color: Color(
                                                                             int.parse("0xFF${appBloc.uiSettingModel.appButtonBgColor.substring(1, 7).toUpperCase()}")),
-                                                                        textColor:
-                                                                            Color(int.parse("0xFF${appBloc.uiSettingModel.appButtonTextColor.substring(1, 7).toUpperCase()}")),
                                                                         child:
                                                                             Row(
                                                                           mainAxisAlignment:
                                                                               MainAxisAlignment.center,
                                                                           children: [
-                                                                            const Padding(
+                                                                            Padding(
                                                                                 padding: EdgeInsets.all(5.0),
                                                                                 child: Icon(Icons.workspace_premium)),
                                                                             Text(
@@ -2283,6 +2279,8 @@ class _ProgressReportState extends State<ProgressReportGraph> with SingleTickerP
                                                                             )
                                                                           ],
                                                                         ),
+                                                                        textColor:
+                                                                            Color(int.parse("0xFF${appBloc.uiSettingModel.appButtonTextColor.substring(1, 7).toUpperCase()}")),
                                                                       ),
                                                                     ),
                                                                   ),
@@ -2521,8 +2519,6 @@ class _ProgressReportState extends State<ProgressReportGraph> with SingleTickerP
             .withOpacity(0.5),
         color: Color(int.parse(
             "0xFF${appBloc.uiSettingModel.appButtonBgColor.substring(1, 7).toUpperCase()}")),
-        textColor: Color(int.parse(
-            "0xFF${appBloc.uiSettingModel.appButtonTextColor.substring(1, 7).toUpperCase()}")),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
@@ -2535,6 +2531,8 @@ class _ProgressReportState extends State<ProgressReportGraph> with SingleTickerP
             )
           ],
         ),
+        textColor: Color(int.parse(
+            "0xFF${appBloc.uiSettingModel.appButtonTextColor.substring(1, 7).toUpperCase()}")),
       ),
     );
     // Create AlertDialog
