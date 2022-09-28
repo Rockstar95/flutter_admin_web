@@ -21,8 +21,10 @@ import 'package:flutter_admin_web/ui/common/ins_search_textfield.dart';
 import 'package:flutter_admin_web/ui/splash/splash_screen.dart';
 import 'package:flutter_admin_web/utils/my_print.dart';
 
+import '../../configs/constants.dart';
 import '../common/app_colors.dart';
 import '../common/bottomsheet_drager.dart';
+import '../common/bottomsheet_option_tile.dart';
 
 class LearningCommunitiesScreen extends StatefulWidget {
   final NativeMenuModel nativeMenuModel;
@@ -55,15 +57,9 @@ class _LearningCommunitiesScreenState extends State<LearningCommunitiesScreen> w
     Widget? joinCommunityButton, gotoCommunityButton;
 
     if(portallisting.actionGOTO.isEmpty) {
-      joinCommunityButton = ListTile(
-        leading: Icon(
-          Icons.group_add,
-          color: AppColors.getAppTextColor(),
-        ),
-        title: Text(
-          'Join Community',
-          style: TextStyle(color: AppColors.getAppTextColor()),
-        ),
+      joinCommunityButton = BottomsheetOptionTile(
+          iconData:Icons.group_add,
+          text:'Join Community',
         onTap: () async => {
           communitiesBloc.add(LoginorGotoSubsiteEvent(
             portallisting: portallisting,
@@ -77,15 +73,9 @@ class _LearningCommunitiesScreenState extends State<LearningCommunitiesScreen> w
     }
 
     if(portallisting.labelAlreadyaMember == 'true') {
-      gotoCommunityButton = ListTile(
-        leading: Icon(
-          FontAwesomeIcons.share,
-          color: AppColors.getAppTextColor(),
-        ),
-        title: Text(
-          'Go to Community',
-          style: TextStyle(color: AppColors.getAppTextColor()),
-        ),
+      gotoCommunityButton = BottomsheetOptionTile(
+          iconData:FontAwesomeIcons.share,
+          text:'Go to Community',
         onTap: () => {
           communitiesBloc.add(LoginorGotoSubsiteEvent(
             portallisting: portallisting,
@@ -107,10 +97,10 @@ class _LearningCommunitiesScreenState extends State<LearningCommunitiesScreen> w
     }
 
     showModalBottomSheet(
+        shape: AppConstants().bottomSheetShapeBorder(),
         context: context,
         builder: (BuildContext bc) {
-          return Container(
-            color: AppColors.getAppBGColor(),
+          return AppConstants().bottomSheetContainer(
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: <Widget>[
@@ -268,10 +258,7 @@ class _LearningCommunitiesScreenState extends State<LearningCommunitiesScreen> w
                   if (state.status == Status.LOADING) {
                     return Center(
                       child: AbsorbPointer(
-                        child: SpinKitCircle(
-                          color: Colors.grey,
-                          size: 70,
-                        ),
+                        child: AppConstants().getLoaderWidget(iconSize: 70),
                       ),
                     );
                   }

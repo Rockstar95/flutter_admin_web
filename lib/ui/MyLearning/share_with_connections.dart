@@ -207,10 +207,7 @@ class _ShareWithConnectionsState extends State<ShareWithConnections> {
           return Container(
             child: Center(
               child: AbsorbPointer(
-                child: SpinKitCircle(
-                  color: Colors.grey,
-                  size: 70.h,
-                ),
+                child: AppConstants().getLoaderWidget(iconSize: 70)
               ),
             ),
           );

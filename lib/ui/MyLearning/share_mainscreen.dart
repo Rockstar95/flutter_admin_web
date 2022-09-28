@@ -286,10 +286,7 @@ class _ShareMainScreenState extends State<ShareMainScreen> {
                         ? Align(
                             alignment: Alignment.center,
                             child: AbsorbPointer(
-                              child: SpinKitCircle(
-                                color: Colors.grey,
-                                size: 70,
-                              ),
+                              child: AppConstants().getLoaderWidget(iconSize: 70)
                             ),
                           )
                         : Container(),

@@ -19,6 +19,7 @@ import 'package:flutter_admin_web/ui/common/app_colors.dart';
 import 'package:flutter_admin_web/ui/messages/send_icon.dart';
 import 'package:flutter_admin_web/ui/myConnections/connections_screen.dart';
 
+import '../../utils/my_print.dart';
 import 'message_input.dart';
 import 'message_item.dart';
 
@@ -189,15 +190,15 @@ class _MessagesListState extends State<MessagesList> {
                     else if (snapshot.connectionState == ConnectionState.waiting) {
                       return Container(
                           color: InsColor(appBloc).appBGColor,
-                          child: Center(child: CircularProgressIndicator()));
+                          child: const Center(child: const CircularProgressIndicator()));
                     }
                     else {
                       return Container(
                         color: InsColor(appBloc).appBGColor,
                         child: Column(
-                          children: <Widget>[
+                          children: const <Widget>[
                             Padding(
-                              padding: const EdgeInsets.all(8.0),
+                              padding: EdgeInsets.all(8.0),
                               child: Icon(Icons.warning),
                             ),
                             Text('Error in loading data')
@@ -214,50 +215,91 @@ class _MessagesListState extends State<MessagesList> {
     );
   }
 
+  Widget getUserProfile(){
+    return ClipOval(
+      child: CachedNetworkImage(
+        imageUrl: widget.toUser.profPic.contains('http')
+            ? '${widget.toUser.profPic}'
+            : '${ApiEndpoints.mainSiteURL}${widget.toUser.profPic}',
+        width: 32.h,
+        height: 32.h,
+        fit: BoxFit.cover,
+        placeholder: (context, url) => ClipOval(
+          child: CircleAvatar(
+            radius: 25.h,
+            backgroundColor: Color(int.parse(
+                "0xFF${appBloc.uiSettingModel.appButtonBgColor.substring(1, 7).toUpperCase()}")),
+            child: Text(
+              widget.toUser.fullName[0],
+              style: TextStyle(
+                  fontSize: 20.h, fontWeight: FontWeight.w600),
+            ),
+          ),
+        ),
+        errorWidget: (context, url, error) => ClipOval(
+          child: CircleAvatar(
+            radius: 25.h,
+            backgroundColor: Color(int.parse(
+                "0xFF${appBloc.uiSettingModel.appButtonBgColor.substring(1, 7).toUpperCase()}")),
+            child: Text(
+              widget.toUser.fullName[0],
+              style: TextStyle(
+                  color: Color(int.parse(
+                      "0xFF${appBloc.uiSettingModel.appTextColor.substring(1, 7).toUpperCase()}")),
+                  fontSize: 30.h,
+                  fontWeight: FontWeight.w600),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
   AppBar getAppBar() {
     return AppBar(
       backgroundColor: AppColors.getAppHeaderColor(),
       elevation: 2,
       title: Row(
         children: [
-          ClipOval(
-            child: CachedNetworkImage(
-              imageUrl: widget.toUser.profPic.contains('http')
-                  ? '${widget.toUser.profPic}'
-                  : '${ApiEndpoints.mainSiteURL}${widget.toUser.profPic}',
-              width: 32.h,
-              height: 32.h,
-              fit: BoxFit.cover,
-              placeholder: (context, url) => ClipOval(
-                child: CircleAvatar(
-                  radius: 25.h,
-                  child: Text(
-                    widget.toUser.fullName[0],
-                    style: TextStyle(
-                        fontSize: 20.h, fontWeight: FontWeight.w600),
-                  ),
-                  backgroundColor: Color(int.parse(
-                      "0xFF${appBloc.uiSettingModel.appButtonBgColor.substring(1, 7).toUpperCase()}")),
-                ),
-              ),
-              errorWidget: (context, url, error) => ClipOval(
-                child: CircleAvatar(
-                  radius: 25.h,
-                  child: Text(
-                    widget.toUser.fullName[0],
-                    style: TextStyle(
-                        color: Color(int.parse(
-                            "0xFF${appBloc.uiSettingModel.appTextColor.substring(1, 7).toUpperCase()}")),
-                        fontSize: 30.h,
-                        fontWeight: FontWeight.w600),
-                  ),
-                  backgroundColor: Color(int.parse(
-                      "0xFF${appBloc.uiSettingModel.appButtonBgColor.substring(1, 7).toUpperCase()}")),
-                ),
-              ),
-            ),
-          ),
-          SizedBox(width: 16),
+          // ClipOval(
+          //   child: CachedNetworkImage(
+          //     imageUrl: widget.toUser.profPic.contains('http')
+          //         ? '${widget.toUser.profPic}'
+          //         : '${ApiEndpoints.mainSiteURL}${widget.toUser.profPic}',
+          //     width: 32.h,
+          //     height: 32.h,
+          //     fit: BoxFit.cover,
+          //     placeholder: (context, url) => ClipOval(
+          //       child: CircleAvatar(
+          //         radius: 25.h,
+          //         child: Text(
+          //           widget.toUser.fullName[0],
+          //           style: TextStyle(
+          //               fontSize: 20.h, fontWeight: FontWeight.w600),
+          //         ),
+          //         backgroundColor: Color(int.parse(
+          //             "0xFF${appBloc.uiSettingModel.appButtonBgColor.substring(1, 7).toUpperCase()}")),
+          //       ),
+          //     ),
+          //     errorWidget: (context, url, error) => ClipOval(
+          //       child: CircleAvatar(
+          //         radius: 25.h,
+          //         child: Text(
+          //           widget.toUser.fullName[0],
+          //           style: TextStyle(
+          //               color: Color(int.parse(
+          //                   "0xFF${appBloc.uiSettingModel.appTextColor.substring(1, 7).toUpperCase()}")),
+          //               fontSize: 30.h,
+          //               fontWeight: FontWeight.w600),
+          //         ),
+          //         backgroundColor: Color(int.parse(
+          //             "0xFF${appBloc.uiSettingModel.appButtonBgColor.substring(1, 7).toUpperCase()}")),
+          //       ),
+          //     ),
+          //   ),
+          // ),
+          getUserProfile(),
+          const SizedBox(width: 16),
           Text(
             widget.toUser.fullName,
             style: TextStyle(
@@ -265,7 +307,7 @@ class _MessagesListState extends State<MessagesList> {
           ),
         ],
       ),
-      iconTheme: new IconThemeData(
+      iconTheme: IconThemeData(
         color: Color(int.parse(
             "0xFF${appBloc.uiSettingModel.appHeaderTextColor.substring(1, 7).toUpperCase()}")),
       ),
@@ -299,9 +341,10 @@ class _MessagesListState extends State<MessagesList> {
       itemCount: messages.length,
       itemBuilder: (BuildContext context, int index) {
         final message = messages[index];
+        MyPrint.printOnConsole("Messagessssss : ${message.profPic}");
         return MessageItem(
           appBloc: appBloc,
-          showFriendImage: false,
+          showFriendImage: true,
           toUser: widget.toUser,
           text: message.message,
           fileUrl: message.fileUrl,
@@ -316,12 +359,12 @@ class _MessagesListState extends State<MessagesList> {
 
   Widget getMessageTextField(DeviceData deviceData) {
     return Container(
-      padding: EdgeInsets.symmetric(vertical: 3),
+      padding: const EdgeInsets.symmetric(vertical: 3),
       decoration: BoxDecoration(
         color: Colors.white,
         boxShadow: [
           BoxShadow(
-            offset: Offset(0, -1),
+            offset: const Offset(0, -1),
             color: Colors.grey.shade300,
             blurRadius: 4,
             spreadRadius: 0.5,
@@ -341,7 +384,7 @@ class _MessagesListState extends State<MessagesList> {
             controller: _textController,
             appBloc: appBloc,
           ),
-          SizedBox(width: 8),
+          const SizedBox(width: 8),
           SendIcon(
             controller: _textController,
             toUserId: widget.toUser.userId.toString(),

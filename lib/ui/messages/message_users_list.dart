@@ -213,7 +213,7 @@ class _MessageUsersListState extends State<MessageUsersList> {
       },
       color: AppColors.getAppButtonBGColor(),
       child: ListView.builder(
-        physics: AlwaysScrollableScrollPhysics(),
+        physics: const AlwaysScrollableScrollPhysics(),
         itemCount: users.length,
         itemBuilder: (context, index) {
           ChatUser chatUser = users[index];
@@ -249,11 +249,11 @@ class ChatUserCell extends StatelessWidget {
       onTap: onTap,
       child: Container(
         height: 74,
-        padding: EdgeInsets.all(4),
-        margin: EdgeInsets.symmetric(vertical: 4, horizontal: 8),
+        padding: const EdgeInsets.all(4),
+        margin: const EdgeInsets.symmetric(vertical: 4, horizontal: 8),
         decoration: BoxDecoration(
           color: InsColor(appBloc).appBGColor,
-          borderRadius: BorderRadius.only(
+          borderRadius: const BorderRadius.only(
               topLeft: Radius.circular(8.0),
               bottomLeft: Radius.circular(8.0),
               bottomRight: Radius.circular(8.0),
@@ -261,7 +261,7 @@ class ChatUserCell extends StatelessWidget {
           boxShadow: <BoxShadow>[
             BoxShadow(
                 color: Colors.grey.withOpacity(0.2),
-                offset: Offset(1.1, 1.1),
+                offset: const Offset(1.1, 1.1),
                 blurRadius: 2.0),
           ],
         ),
@@ -269,79 +269,50 @@ class ChatUserCell extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
+            const SizedBox(width: 4,),
+            CircleAvatar(
+              radius: 30,
+              backgroundColor: const Color(0xffFDCF09),
+              child: CircleAvatar(
+                radius: 30,
+                backgroundImage: NetworkImage(
+                  value.profPic.contains('http')
+                      ? value.profPic
+                      : '${ApiEndpoints.mainSiteURL}${value.profPic}',
+                ),
+                backgroundColor: Colors.grey.shade100,
+              ),
+            ),
+            const SizedBox(width: 8,),
             Expanded(
-                flex: 3,
-                child: Center(
-                  child: CircleAvatar(
-                    radius: 30,
-                    backgroundColor: Color(0xffFDCF09),
-                    child: CircleAvatar(
-                      radius: 30,
-                      backgroundImage: NetworkImage(
-                        value.profPic.contains('http')
-                            ? '${value.profPic}'
-                            : '${ApiEndpoints.mainSiteURL}${value.profPic}',
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  Text(value.fullName,
+                      style: TextStyle(
+                          fontWeight: FontWeight.w500,
+                          color: InsColor(appBloc).appTextColor)),
+                  Expanded(
+                    child: Text(
+                      value.latestMessage,
+                      style: TextStyle(
+                          fontWeight: FontWeight.normal,
+                          color: AppColors.getAppTextColor().withAlpha(900),
                       ),
-                      backgroundColor: Colors.grey.shade100,
+                      overflow: TextOverflow.ellipsis,
                     ),
                   ),
-                )),
-            SizedBox(
-              width: 8,
-            ),
-            Expanded(
-              flex: 8,
-              child: Container(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: <Widget>[
-                    Container(
-                      child: Text(value.fullName,
-                          style: TextStyle(
-                              fontWeight: FontWeight.w500,
-                              color: InsColor(appBloc).appTextColor)),
-                    ),
-                    Container(
-                      child: Text(value.latestMessage,
-                          style: TextStyle(
-                              fontWeight: FontWeight.normal,
-                              color: InsColor(appBloc)
-                                  .appTextColor
-                                  .withAlpha(900))),
-                    ),
-                  ],
-                ),
-                //color: Colors.red,
+                ],
               ),
             ),
-            Expanded(
-              flex: 2,
-              child: Center(
-                child: Text(value.role,
-                    softWrap: false,
-                    overflow: TextOverflow.ellipsis,
-                    style: TextStyle(
-                        fontWeight: FontWeight.w200,
-                        color: InsColor(appBloc).appTextColor.withAlpha(500))),
-              ),
-              // child: Center(
-              //   child: Visibility(
-              //     visible: value?.unReadCount > 0,
-              //     child: CircleAvatar(
-              //       backgroundColor:
-              //           InsColor(appBloc).appTextColor.withAlpha(100),
-              //       child: Text(
-              //         value?.unReadCount?.toString() ?? '',
-              //         style: TextStyle(color: InsColor(appBloc).appTextColor),
-              //       ),
-              //     ),
-              //   ),
-              // ),
-            ),
-            SizedBox(
-              width: 4,
-            ),
+            Text(value.role,
+                softWrap: false,
+                overflow: TextOverflow.ellipsis,
+                style: TextStyle(
+                    fontWeight: FontWeight.w200,
+                    color: InsColor(appBloc).appTextColor.withAlpha(500))),
+            const SizedBox(width: 4,),
           ],
         ),
       ),

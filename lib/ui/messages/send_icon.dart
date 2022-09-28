@@ -12,7 +12,9 @@ import 'package:flutter_admin_web/framework/common/device_config.dart';
 import 'package:flutter_admin_web/framework/common/enums.dart';
 import 'package:flutter_admin_web/ui/common/app_colors.dart';
 
+import '../../configs/constants.dart';
 import '../common/bottomsheet_drager.dart';
+import '../common/bottomsheet_option_tile.dart';
 
 //import 'package:signalr_client/hub_connection_builder.dart';
 //import 'package:signalr_client/itransport.dart';
@@ -184,75 +186,38 @@ class AttachmentIcon extends StatelessWidget {
           ),
           onTap: () async {
             showModalBottomSheet(
+                shape: AppConstants().bottomSheetShapeBorder(),
                 context: context,
                 builder: (BuildContext bc) {
-                  return Container(
-                    color: Color(int.parse(
-                        "0xFF${appBloc.uiSettingModel.appBGColor.substring(1, 7).toUpperCase()}")),
+                  return AppConstants().bottomSheetContainer(
                     child: SingleChildScrollView(
                       child: Column(
                         children: <Widget>[
-                          const BottomSheetDragger(),
-                          ListTile(
-                              leading: Icon(
-                                Icons.image,
-                                color: Color(int.parse(
-                                    "0xFF${appBloc.uiSettingModel.appTextColor.substring(1, 7).toUpperCase()}")),
-                              ),
-                              title: Text(
-                                'Image',
-                                style: TextStyle(
-                                    color: Color(int.parse(
-                                        "0xFF${appBloc.uiSettingModel.appTextColor.substring(1, 7).toUpperCase()}"))),
-                              ),
+                          BottomSheetDragger(),
+                          BottomsheetOptionTile(
+                                iconData:Icons.image,
+                                text:'Image',
                               onTap: () {
                                 Navigator.of(context).pop();
                                 openFile(MessageType.Image);
                               }),
-                          ListTile(
-                              leading: Icon(
-                                Icons.videocam_rounded,
-                                color: Color(int.parse(
-                                    "0xFF${appBloc.uiSettingModel.appTextColor.substring(1, 7).toUpperCase()}")),
-                              ),
-                              title: Text(
-                                'Video',
-                                style: TextStyle(
-                                    color: Color(int.parse(
-                                        "0xFF${appBloc.uiSettingModel.appTextColor.substring(1, 7).toUpperCase()}"))),
-                              ),
+                          BottomsheetOptionTile(
+                                iconData:Icons.videocam_rounded,
+                                text:'Video',
                               onTap: () {
                                 Navigator.of(context).pop();
                                 openFile(MessageType.Video);
                               }),
-                          ListTile(
-                              leading: Icon(
-                                Icons.audiotrack_outlined,
-                                color: Color(int.parse(
-                                    "0xFF${appBloc.uiSettingModel.appTextColor.substring(1, 7).toUpperCase()}")),
-                              ),
-                              title: Text(
-                                'Audio',
-                                style: TextStyle(
-                                    color: Color(int.parse(
-                                        "0xFF${appBloc.uiSettingModel.appTextColor.substring(1, 7).toUpperCase()}"))),
-                              ),
+                          BottomsheetOptionTile(
+                                iconData:Icons.audiotrack_outlined,
+                                text:'Audio',
                               onTap: () {
                                 Navigator.of(context).pop();
                                 openFile(MessageType.Audio);
                               }),
-                          ListTile(
-                              leading: Icon(
-                                Icons.file_copy_rounded,
-                                color: Color(int.parse(
-                                    "0xFF${appBloc.uiSettingModel.appTextColor.substring(1, 7).toUpperCase()}")),
-                              ),
-                              title: Text(
-                                'Documents',
-                                style: TextStyle(
-                                    color: Color(int.parse(
-                                        "0xFF${appBloc.uiSettingModel.appTextColor.substring(1, 7).toUpperCase()}"))),
-                              ),
+                          BottomsheetOptionTile(
+                                iconData:Icons.file_copy_rounded,
+                                text:'Documents',
                               onTap: () {
                                 Navigator.of(context).pop();
                                 openFile(MessageType.Doc);

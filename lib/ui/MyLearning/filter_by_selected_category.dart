@@ -95,10 +95,7 @@ class _FilterBySelectedCategoryState extends State<FilterBySelectedCategory> {
                             return Container(
                               child: Center(
                                 child: AbsorbPointer(
-                                  child: SpinKitCircle(
-                                    color: Colors.grey,
-                                    size: 70.h,
-                                  ),
+                                  child: AppConstants().getLoaderWidget(iconSize: 70)
                                 ),
                               ),
                             );

@@ -82,7 +82,9 @@ class _DrawerHeaderWidgetState extends State<DrawerHeaderWidget> {
       shortName += username.isNotEmpty ? username[0] : "";
     }
     else {}
-
+    appBloc.profilePic = userimageUrl;
+    appBloc.userName = shortName;
+    MyPrint.printOnConsole("appBloc.profilePic ${userimageUrl}");
     return BlocConsumer<MyDashBoardBloc, MyDashboardState>(
       bloc: myDashBoardBloc,
       listener: (context, state) {
@@ -90,11 +92,15 @@ class _DrawerHeaderWidgetState extends State<DrawerHeaderWidget> {
           //print('imageurll_bloc ${appBloc.imageUrl}');
           setState(() {
             userimageUrl = appBloc.imageUrl;
+            appBloc.profilePic = userimageUrl;
+            appBloc.userName = shortName;
+            MyPrint.printOnConsole("appBloc.profilePic in listener ${userimageUrl}");
           });
         }
         if (state.status == Status.COMPLETED) {
           if (state is GetUserAchievementDataState) {
-            if (state.userAchievementResponse != null ||
+            if (state.userAchievementResponse != null &&
+                    state.userAchievementResponse.userLevel != null ||
                 state.userAchievementResponse.userBadges != null ||
                 state.userAchievementResponse.userPoints != null) {}
           }

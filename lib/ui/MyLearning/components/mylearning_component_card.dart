@@ -736,7 +736,7 @@ class _MyLearningComponentCardState extends State<MyLearningComponentCard> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
               Text(
-                widget.table2.medianame.capitalize(),
+                widget.table2.medianame,
                 style: TextStyle(
                     fontSize: ScreenUtil().setSp(13),
                     color: AppColors.getAppTextColor().withOpacity(0.5) ),
