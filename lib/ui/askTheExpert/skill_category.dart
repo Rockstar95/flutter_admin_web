@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:flutter_admin_web/framework/bloc/app/bloc/app_bloc.dart';
 import 'package:flutter_admin_web/framework/bloc/askTheExpert/bloc/ask_the_expert_bloc.dart';
@@ -12,12 +11,13 @@ import 'package:flutter_admin_web/framework/common/enums.dart';
 import 'package:flutter_admin_web/framework/helpers/utils.dart';
 import 'package:flutter_admin_web/framework/repository/askTheExpert/ask_the_expert_repositry_builder.dart';
 
+import '../../configs/constants.dart';
 import '../common/outline_button.dart';
 
 class SkillCategory extends StatefulWidget {
   final List<SkillCateModel> skillCateModel;
 
-  SkillCategory({
+  const SkillCategory({
     Key? key,
     required this.skillCateModel,
   }) : super(key: key);
@@ -27,7 +27,7 @@ class SkillCategory extends StatefulWidget {
 }
 
 class _SkillCategoryState extends State<SkillCategory> with SingleTickerProviderStateMixin {
-  GlobalKey<ScaffoldState> _scaffoldkey = new GlobalKey<ScaffoldState>();
+  GlobalKey<ScaffoldState> _scaffoldkey = GlobalKey<ScaffoldState>();
   final _formKey = GlobalKey<FormState>();
   final scaffoldKey = GlobalKey<ScaffoldState>();
   int selectedPosition = -1;
@@ -91,7 +91,7 @@ class _SkillCategoryState extends State<SkillCategory> with SingleTickerProvider
             "0xFF${appBloc.uiSettingModel.appBGColor.substring(1, 7).toUpperCase()}")),
         child: Stack(
           children: <Widget>[
-            Divider(
+            const Divider(
               height: 2,
               color: Colors.black87,
             ),
@@ -116,10 +116,7 @@ class _SkillCategoryState extends State<SkillCategory> with SingleTickerProvider
         if (state.status == Status.LOADING && askTheExpertBloc.isFirstLoading == true) {
           return Center(
             child: AbsorbPointer(
-              child: SpinKitCircle(
-                color: Colors.grey,
-                size: 70.0,
-              ),
+              child: AppConstants().getLoaderWidget(iconSize: 70)
             ),
           );
         }
@@ -141,10 +138,10 @@ class _SkillCategoryState extends State<SkillCategory> with SingleTickerProvider
           });
           return Scaffold(
             key: scaffoldKey,
-            body: new Container(
+            body: Container(
               color: Color(int.parse(
                   "0xFF${appBloc.uiSettingModel.appBGColor.substring(1, 7).toUpperCase()}")),
-              child: new ListView.builder(
+              child: ListView.builder(
                   shrinkWrap: true,
                   itemCount: askTheExpertBloc.skillCategoryResponse.table.length,
                   itemBuilder: (context, index) {
@@ -165,7 +162,7 @@ class _SkillCategoryState extends State<SkillCategory> with SingleTickerProvider
                                     color: Colors.grey.shade300,
                                     spreadRadius: 0,
                                     blurRadius: 5,
-                                    offset: Offset(0, 5),
+                                    offset: const Offset(0, 5),
                                   ),
                                 ],
                                 border: Border.all(color: Color(int.parse("0xFF${appBloc.uiSettingModel.appTextColor.substring(1, 7).toUpperCase()}")).withOpacity(0.15)),
@@ -193,7 +190,7 @@ class _SkillCategoryState extends State<SkillCategory> with SingleTickerProvider
                                     flex: 5,
                                     child: Text(
                                       askTheExpertBloc.skillCategoryResponse.table[index].preferrenceTitle,
-                                      style: new TextStyle(
+                                      style: TextStyle(
                                           fontSize: 15.h,
                                           color: Color(int.parse("0xFF${appBloc.uiSettingModel.appTextColor.substring(1, 7).toUpperCase()}"))),
                                     ),
@@ -228,7 +225,7 @@ class _SkillCategoryState extends State<SkillCategory> with SingleTickerProvider
                   }),
             ),
             bottomNavigationBar: Padding(
-              padding: EdgeInsets.only(bottom: 20.0),
+              padding: const EdgeInsets.only(bottom: 20.0),
               child: Container(
                 color: Color(int.parse(
                     "0xFF${appBloc.uiSettingModel.appBGColor.substring(1, 7).toUpperCase()}")),
@@ -294,18 +291,16 @@ class _SkillCategoryState extends State<SkillCategory> with SingleTickerProvider
             children: <Widget>[
               Padding(
                 padding: const EdgeInsets.all(8.0),
-                child: Container(
-                  child: Center(
-                    child: Text(
-                      appBloc.localstr.commoncomponentLabelNodatalabel,
-                      style: Theme.of(context).textTheme.headline4,
-                    ),
+                child: Center(
+                  child: Text(
+                    appBloc.localstr.commoncomponentLabelNodatalabel,
+                    style: Theme.of(context).textTheme.headline4,
                   ),
                 ),
               )
             ],
           )
-        : new Container();
+        : Container();
   }
 
   void itemChange(bool val, int index) {

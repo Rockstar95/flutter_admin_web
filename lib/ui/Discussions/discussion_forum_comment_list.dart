@@ -23,6 +23,7 @@ import 'package:flutter_admin_web/ui/Discussions/discussion_comment_reply_list.d
 import 'package:flutter_admin_web/ui/common/Viewimagenew.dart';
 import 'package:flutter_admin_web/ui/common/common_toast.dart';
 
+import '../../configs/constants.dart';
 import 'add_reply.dart';
 
 class DiscussionForumCommentList extends StatefulWidget {
@@ -43,7 +44,7 @@ class DiscussionForumCommentList extends StatefulWidget {
 }
 
 class _DiscussionForumCommentListState extends State<DiscussionForumCommentList> with SingleTickerProviderStateMixin {
-  GlobalKey<ScaffoldState> _scaffoldkey = new GlobalKey<ScaffoldState>();
+  GlobalKey<ScaffoldState> _scaffoldkey = GlobalKey<ScaffoldState>();
   Color _iconColor = Colors.black;
   TabController? _tabController;
   List<Tab> tabList = [];
@@ -66,7 +67,7 @@ class _DiscussionForumCommentListState extends State<DiscussionForumCommentList>
     discussionMainHomeBloc = DiscussionMainHomeBloc(
         discussionMainHomeRepositry:
             DiscussionMainHomeRepositoryBuilder.repository());
-    discussionTopicBloc = new DiscussionTopicBloc(
+    discussionTopicBloc = DiscussionTopicBloc(
         discussionTopicRepositry:
             DiscussionTopicRepositoryBuilder.repository());
     refresh();
@@ -129,13 +130,13 @@ class _DiscussionForumCommentListState extends State<DiscussionForumCommentList>
             "0xFF${appBloc.uiSettingModel.appBGColor.substring(1, 7).toUpperCase()}")),
         child: Stack(
           children: <Widget>[
-            Divider(
+            const Divider(
               height: 2,
               color: Colors.black87,
             ),
-            new Column(
+            Column(
               children: [
-                new Expanded(
+                Expanded(
                   child: mainWidget(),
                 ),
               ],
@@ -156,7 +157,7 @@ class _DiscussionForumCommentListState extends State<DiscussionForumCommentList>
                 child:
                     CommonToast(displaymsg: 'Comment Deleted Successfully'),
                 gravity: ToastGravity.BOTTOM,
-                toastDuration: Duration(seconds: 4));
+                toastDuration: const Duration(seconds: 4));
           }
         }
 
@@ -171,14 +172,11 @@ class _DiscussionForumCommentListState extends State<DiscussionForumCommentList>
         if (state.status == Status.LOADING && discussionMainHomeBloc.isFirstLoading == true) {
           return Center(
             child: AbsorbPointer(
-              child: SpinKitCircle(
-                color: Colors.grey,
-                size: 70.0,
-              ),
+              child: AppConstants().getLoaderWidget(iconSize: 70)
             ),
           );
         }
-        else if (discussionMainHomeBloc.discussionCommentList.length == 0) {
+        else if (discussionMainHomeBloc.discussionCommentList.isEmpty) {
           return noDataFound(true);
         }
         else {
@@ -197,31 +195,31 @@ class _DiscussionForumCommentListState extends State<DiscussionForumCommentList>
               }
             },
             builder: (context, state) {
-              return new Container(
+              return Container(
                 color: Color(int.parse(
                     "0xFF${appBloc.uiSettingModel.appBGColor.substring(1, 7).toUpperCase()}")),
-                padding: EdgeInsets.all(10.0),
-                child: new ListView.separated(
+                padding: const EdgeInsets.all(10.0),
+                child: ListView.separated(
                     itemCount: discussionMainHomeBloc.discussionCommentList.length,
-                    separatorBuilder: (context, index) => Divider(
+                    separatorBuilder: (context, index) => const Divider(
                           color: Colors.grey,
                         ),
                     itemBuilder: (context, index) {
                       print("appBloc.userid:'${appBloc.userid}', discussionMainHomeBloc.discussionCommentList[index].postedby:'${discussionMainHomeBloc.discussionCommentList[index].postedby.toString()}'");
                       print("comparison:'${appBloc.userid == discussionMainHomeBloc.discussionCommentList[index].postedby.toString()}'");
 
-                      return new Container(
-                        child: new Column(
+                      return Container(
+                        child: Column(
                           children: [
-                            new Row(
+                            Row(
                               children: [
-                                new Container(
+                                Container(
                                   width: 50.0,
                                   height: 50.0,
-                                  padding: EdgeInsets.all(20.0),
-                                  decoration: new BoxDecoration(
+                                  padding: const EdgeInsets.all(20.0),
+                                  decoration: BoxDecoration(
                                     color: const Color(0xff7c94b6),
-                                    image: new DecorationImage(
+                                    image: DecorationImage(
                                       image: discussionMainHomeBloc
                                                   .discussionCommentList[
                                                       index]
@@ -237,36 +235,36 @@ class _DiscussionForumCommentListState extends State<DiscussionForumCommentList>
                                                       index]
                                                   .commentUserProfile
                                               : '${ApiEndpoints.strSiteUrl + discussionMainHomeBloc.discussionCommentList[index].commentUserProfile}')
-                                          : AssetImage(
+                                          : const AssetImage(
                                               'assets/user.png',
                                             ) as ImageProvider,
                                       fit: BoxFit.fill,
                                     ),
-                                    borderRadius: new BorderRadius.all(
-                                        new Radius.circular(50.0)),
+                                    borderRadius: const BorderRadius.all(
+                                        const Radius.circular(50.0)),
                                   ),
                                 ),
-                                new Flexible(
-                                  child: new Column(
+                                Flexible(
+                                  child: Column(
                                     crossAxisAlignment:
                                         CrossAxisAlignment.start,
                                     children: [
                                       Padding(
-                                          padding: EdgeInsets.only(
+                                          padding: const EdgeInsets.only(
                                             left: 20,
                                           ),
-                                          child: new Text(
+                                          child: Text(
                                             discussionMainHomeBloc
                                                 .discussionCommentList[index]
                                                 .commentedBy,
-                                            style: new TextStyle(
+                                            style: TextStyle(
                                                 color: Color(int.parse(
                                                     "0xFF${appBloc.uiSettingModel.appTextColor.substring(1, 7).toUpperCase()}")),
                                                 fontSize: 14.0,
                                                 fontWeight: FontWeight.bold),
                                           )),
                                       Padding(
-                                          padding: EdgeInsets.only(
+                                          padding: const EdgeInsets.only(
                                               left: 20, top: 10.0),
                                           child: Html(
                                               shrinkWrap: true,
@@ -301,19 +299,19 @@ class _DiscussionForumCommentListState extends State<DiscussionForumCommentList>
                                               ""
                                           ? InkWell(
                                               child: Padding(
-                                                padding: EdgeInsets.only(
+                                                padding: const EdgeInsets.only(
                                                     top: 10.0, left: 18.0),
-                                                child: new Container(
+                                                child: Container(
                                                   width: 20.0,
                                                   height: 20.0,
                                                   padding:
-                                                      EdgeInsets.all(20.0),
+                                                      const EdgeInsets.all(20.0),
                                                   decoration:
-                                                      new BoxDecoration(
+                                                      BoxDecoration(
                                                     color: const Color(
                                                         0xff7c94b6),
                                                     image:
-                                                        new DecorationImage(
+                                                        DecorationImage(
                                                       image: NetworkImage(discussionMainHomeBloc
                                                               .discussionCommentList[
                                                                   index]
@@ -328,8 +326,8 @@ class _DiscussionForumCommentListState extends State<DiscussionForumCommentList>
                                                       fit: BoxFit.fill,
                                                     ),
                                                     borderRadius:
-                                                        new BorderRadius.all(
-                                                            new Radius
+                                                        const BorderRadius.all(
+                                                            const Radius
                                                                     .circular(
                                                                 30.0)),
                                                   ),
@@ -356,7 +354,7 @@ class _DiscussionForumCommentListState extends State<DiscussionForumCommentList>
                                             )
                                           : Container(),
                                       Padding(
-                                          padding: EdgeInsets.only(
+                                          padding: const EdgeInsets.only(
                                               top: 10, left: 10),
                                           child: Row(
                                             crossAxisAlignment:
@@ -369,7 +367,7 @@ class _DiscussionForumCommentListState extends State<DiscussionForumCommentList>
                                                           .forumList.likePosts
                                                       ? true
                                                       : false,
-                                                  child: new Container(
+                                                  child: Container(
                                                     width: 70.0,
                                                     height: 25.0,
                                                     decoration: BoxDecoration(
@@ -382,11 +380,11 @@ class _DiscussionForumCommentListState extends State<DiscussionForumCommentList>
                                                               .withAlpha(0),
                                                         ),
                                                         borderRadius:
-                                                            BorderRadius.all(
-                                                                Radius
+                                                            const BorderRadius.all(
+                                                                const Radius
                                                                     .circular(
                                                                         20))),
-                                                    child: new Row(
+                                                    child: Row(
                                                       children: [
                                                         IconButton(
                                                           onPressed: () {
@@ -422,7 +420,7 @@ class _DiscussionForumCommentListState extends State<DiscussionForumCommentList>
                                                                   ));
                                                           },
                                                           padding:
-                                                              new EdgeInsets
+                                                              const EdgeInsets
                                                                       .only(
                                                                   bottom:
                                                                       1.0),
@@ -456,10 +454,10 @@ class _DiscussionForumCommentListState extends State<DiscussionForumCommentList>
                                                       ],
                                                     ),
                                                   )),
-                                              new Padding(
-                                                padding: EdgeInsets.only(
+                                              Padding(
+                                                padding: const EdgeInsets.only(
                                                     left: 5.0),
-                                                child: new Container(
+                                                child: Container(
                                                     width: 70.0,
                                                     height: 25.0,
                                                     decoration: BoxDecoration(
@@ -472,11 +470,11 @@ class _DiscussionForumCommentListState extends State<DiscussionForumCommentList>
                                                               .withAlpha(0),
                                                         ),
                                                         borderRadius:
-                                                            BorderRadius.all(
-                                                                Radius
+                                                            const BorderRadius.all(
+                                                                const Radius
                                                                     .circular(
                                                                         20))),
-                                                    child: new Row(children: [
+                                                    child: Row(children: [
                                                       IconButton(
                                                         onPressed: () {
                                                           Navigator.push(
@@ -495,7 +493,7 @@ class _DiscussionForumCommentListState extends State<DiscussionForumCommentList>
                                                           });
                                                         },
                                                         padding:
-                                                            new EdgeInsets
+                                                            const EdgeInsets
                                                                     .only(
                                                                 bottom: 1.0),
                                                         icon: Icon(
@@ -520,9 +518,9 @@ class _DiscussionForumCommentListState extends State<DiscussionForumCommentList>
                                                     ])),
                                               ),
                                               Padding(
-                                                  padding: EdgeInsets.only(
+                                                  padding: const EdgeInsets.only(
                                                       left: 10.0),
-                                                  child: new GestureDetector(
+                                                  child: GestureDetector(
                                                     onTap: () {
                                                       Navigator.of(context)
                                                           .push(MaterialPageRoute(
@@ -543,7 +541,7 @@ class _DiscussionForumCommentListState extends State<DiscussionForumCommentList>
                                                         }
                                                       });
                                                     },
-                                                    child: Text(
+                                                    child: const Text(
                                                       'Add reply',
                                                       style: TextStyle(
                                                           fontSize: 12,
@@ -564,7 +562,7 @@ class _DiscussionForumCommentListState extends State<DiscussionForumCommentList>
                                                 .toString()
                                         ? true
                                         : false,
-                                    child: new IconButton(
+                                    child: IconButton(
                                         icon: Icon(
                                           Icons.delete,
                                           color: Color(int.parse(
@@ -606,7 +604,7 @@ class _DiscussionForumCommentListState extends State<DiscussionForumCommentList>
               )
             ],
           )
-        : new Container();
+        : Container();
   }
 
   void refresh() {
@@ -618,14 +616,14 @@ class _DiscussionForumCommentListState extends State<DiscussionForumCommentList>
   showAlertDialog(BuildContext context, int index) {
     // Create button
     Widget deleteButton = FlatButton(
-      child: Text("No"),
+      child: const Text("No"),
       onPressed: () {
         Navigator.of(context).pop(true);
       },
     );
 
     Widget cancelButton = FlatButton(
-      child: Text(
+      child: const Text(
         "Yes, delete",
         style: TextStyle(color: Colors.red),
       ),

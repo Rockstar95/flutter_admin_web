@@ -32,8 +32,12 @@ import 'package:flutter_admin_web/ui/common/common_toast.dart';
 import 'package:flutter_admin_web/ui/common/modal_progress_hud.dart';
 import 'package:flutter_admin_web/utils/mytoast.dart';
 import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
 
+import '../../configs/constants.dart';
+import '../../framework/helpers/providermodel.dart';
 import '../common/bottomsheet_drager.dart';
+import '../common/bottomsheet_option_tile.dart';
 
 class WishList extends StatefulWidget {
   final int categaoryID;
@@ -222,10 +226,7 @@ class _WishListState extends State<WishList> {
         inAsyncCall: isLoading,
         progressIndicator: Center(
           child: AbsorbPointer(
-            child: SpinKitCircle(
-              color: InsColor(appBloc).appIconColor,
-              size: 70.h,
-            ),
+            child: AppConstants().getLoaderWidget(iconSize: 70)
           ),
         ),
         child: Scaffold(
@@ -285,7 +286,7 @@ class _WishListState extends State<WishList> {
                             displaymsg: appBloc.localstr
                                 .catalogAlertsubtitleItemaddedtowishlistsuccesfully),
                         gravity: ToastGravity.BOTTOM,
-                        toastDuration: Duration(seconds: 2),
+                        toastDuration: const Duration(seconds: 2),
                       );
                     }
                     if (state is RemoveFromWishListState) {
@@ -294,7 +295,7 @@ class _WishListState extends State<WishList> {
                             displaymsg: appBloc.localstr
                                 .catalogAlertsubtitleItemremovedtowishlistsuccesfully),
                         gravity: ToastGravity.BOTTOM,
-                        toastDuration: Duration(seconds: 2),
+                        toastDuration: const Duration(seconds: 2),
                       );
                     }
                     if (state is AddToMyLearningState) {
@@ -303,7 +304,7 @@ class _WishListState extends State<WishList> {
                             displaymsg: appBloc.localstr
                                 .catalogAlertsubtitleThiscontentitemhasbeenaddedto),
                         gravity: ToastGravity.BOTTOM,
-                        toastDuration: Duration(seconds: 2),
+                        toastDuration: const Duration(seconds: 2),
                       );
                       appBloc.add(WishlistCountEvent());
                     }
@@ -337,10 +338,7 @@ class _WishListState extends State<WishList> {
                 if (state.status == Status.LOADING) {
                   return Center(
                     child: AbsorbPointer(
-                      child: SpinKitCircle(
-                        color: Colors.grey,
-                        size: 70.h,
-                      ),
+                      child: AppConstants().getLoaderWidget(iconSize: 70)
                     ),
                   );
                 } else if (state.status == Status.COMPLETED) {
@@ -406,7 +404,7 @@ class _WishListState extends State<WishList> {
                             controller: _sc,
                           ),
                           web: GridView.builder(
-                            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                               crossAxisCount: 5,
                               childAspectRatio: 1,
                             ),
@@ -536,7 +534,7 @@ class _WishListState extends State<WishList> {
                   child: Visibility(
                       visible: kShowContentTypeIcon,
                       child: Container(
-                        padding: EdgeInsets.all(2.0),
+                        padding: const EdgeInsets.all(2.0),
                         color: Colors.white,
                         child: CachedNetworkImage(
                           height: 30,
@@ -727,10 +725,10 @@ class _WishListState extends State<WishList> {
   }
 
   Widget _buildProgressIndicator() {
-    return Padding(
-      padding: const EdgeInsets.all(8.0),
-      child: Center(
-        child: Opacity(
+    return const Padding(
+      padding: EdgeInsets.all(8.0),
+      child: const Center(
+        child: const Opacity(
           opacity: 1.0,
           child: CircularProgressIndicator(),
         ),
@@ -837,23 +835,17 @@ class _WishListState extends State<WishList> {
     }
     showModalBottomSheet(
         context: context,
+        shape: AppConstants().bottomSheetShapeBorder(),
         builder: (BuildContext bc) {
-          return Container(
-            color: InsColor(appBloc).appBGColor,
+          return AppConstants().bottomSheetContainer(
             child: SingleChildScrollView(
               child: Column(
                 children: <Widget>[
-                  BottomSheetDragger(),
+                  const BottomSheetDragger(),
                   menu0
-                      ? ListTile(
-                          title: Text(
-                              appBloc.localstr.catalogActionsheetViewoption,
-                              style: TextStyle(
-                                  color: InsColor(appBloc).appTextColor)),
-                          leading: Icon(
-                            IconDataSolid(int.parse('0xf06e')),
-                            color: InsColor(appBloc).appIconColor,
-                          ),
+                      ? BottomsheetOptionTile(
+                          text: appBloc.localstr.catalogActionsheetViewoption,
+                          iconData: IconDataSolid(int.parse('0xf06e')),
                           onTap: () {
                             launchCourse(table2, context);
                           },
@@ -862,16 +854,9 @@ class _WishListState extends State<WishList> {
                   menu1
                       ? isConsolidated && table2.siteid != 374
                           ? Container()
-                          : ListTile(
-                              title: Text(
-                                  appBloc.localstr
-                                      .catalogActionsheetAddtomylearningoption,
-                                  style: TextStyle(
-                                      color: InsColor(appBloc).appTextColor)),
-                              leading: Icon(
-                                Icons.add_circle,
-                                color: InsColor(appBloc).appIconColor,
-                              ),
+                          : BottomsheetOptionTile(
+                              text: appBloc.localstr.catalogActionsheetAddtomylearningoption,
+                              iconData: Icons.add_circle,
                               onTap: () {
                                 catalogBloc.add(AddToMyLearningEvent(
                                     contentId: table2.contentid,
@@ -883,80 +868,53 @@ class _WishListState extends State<WishList> {
                   menu2
                       ? isConsolidated && table2.siteid != 374
                           ? Container()
-                          : ListTile(
-                              title: Text(
-                                  appBloc.localstr.catalogActionsheetBuyoption,
-                                  style: TextStyle(
-                                      color: InsColor(appBloc).appTextColor)),
-                              leading: Icon(
-                                IconDataSolid(int.parse('0xf144')),
-                                color: InsColor(appBloc).appIconColor,
-                              ),
+                          : BottomsheetOptionTile(
+                              text: appBloc.localstr.catalogActionsheetBuyoption,
+                              iconData: IconDataSolid(int.parse('0xf144')),
                               onTap: () {
                                 Navigator.of(context).pop();
                                 _buyProduct(table2);
                               })
                       : Container(),
                   menu3
-                      ? ListTile(
-                          title: Text(
-                              appBloc.localstr.catalogActionsheetDetailsoption,
-                              style: TextStyle(
-                                  color: InsColor(appBloc).appTextColor)),
-                          leading: Icon(
-                            IconDataSolid(int.parse('0xf570')),
-                            color: InsColor(appBloc).appIconColor,
-                          ),
+                      ? BottomsheetOptionTile(
+                          text: appBloc.localstr.catalogActionsheetDetailsoption,
+                          iconData: IconDataSolid(int.parse('0xf570')),
                           onTap: () {
                             Navigator.of(context).pop();
                             Navigator.of(context).push(MaterialPageRoute(
-                                builder: (context) => CommonDetailScreen(
-                                  screenType: ScreenType.Catalog,
-                                  contentid: table2.contentid,
-                                  objtypeId: table2.objecttypeid,
-                                  detailsBloc: widget.detailsBloc,
-                                  table2: table2,
-                                  isFromReschedule: false,
-                                  filterMenus: widget.filterMenus,
-                                )));
+                                builder: (context) => ChangeNotifierProvider(
+                                      create: (context) => ProviderModel(),
+                                      child: CommonDetailScreen(
+                                        screenType: ScreenType.Catalog,
+                                        contentid: table2.contentid,
+                                        objtypeId: table2.objecttypeid,
+                                        detailsBloc: widget.detailsBloc,
+                                        table2: table2,
+                                        isFromReschedule: false,
+                                        filterMenus: widget.filterMenus,
+                                      ),
+                                    )));
                           },
                         )
                       : Container(),
                   menu4
-                      ? ListTile(
-                          title: Text(
-                              appBloc.localstr.catalogActionsheetDeleteoption,
-                              style: TextStyle(
-                                  color: InsColor(appBloc).appTextColor)),
-                          leading: Icon(
-                            IconDataSolid(int.parse('0xf144')),
-                            color: InsColor(appBloc).appIconColor,
-                          ),
+                      ? BottomsheetOptionTile(
+                          text: appBloc.localstr.catalogActionsheetDeleteoption,
+                          iconData: IconDataSolid(int.parse('0xf144')),
                         )
                       : Container(),
                   menu5
-                      ? ListTile(
-                          title: Text(
-                              appBloc
+                      ? BottomsheetOptionTile(
+                          text: appBloc
                                   .localstr.mylearningActionsheetDownloadoption,
-                              style: TextStyle(
-                                  color: InsColor(appBloc).appTextColor)),
-                          leading: Icon(
-                            IconDataSolid(int.parse('0xf144')),
-                            color: InsColor(appBloc).appIconColor,
-                          ),
+                          iconData: IconDataSolid(int.parse('0xf144')),
                         )
                       : Container(),
                   menu6
-                      ? ListTile(
-                          title: Text(
-                              appBloc.localstr.catalogActionsheetWishlistoption,
-                              style: TextStyle(
-                                  color: InsColor(appBloc).appTextColor)),
-                          leading: Icon(
-                            Icons.favorite_border,
-                            color: InsColor(appBloc).appIconColor,
-                          ),
+                      ? BottomsheetOptionTile(
+                          text: appBloc.localstr.catalogActionsheetWishlistoption,
+                          iconData: Icons.favorite_border,
                           onTap: () {
                             catalogBloc.add(AddToWishListEvent(
                                 contentId: table2.contentid));
@@ -965,16 +923,10 @@ class _WishListState extends State<WishList> {
                         )
                       : Container(),
                   menu7
-                      ? ListTile(
-                          title: Text(
-                              appBloc.localstr
+                      ? BottomsheetOptionTile(
+                          text: appBloc.localstr
                                   .catalogActionsheetRemovefromwishlistoption,
-                              style: TextStyle(
-                                  color: InsColor(appBloc).appTextColor)),
-                          leading: Icon(
-                            Icons.favorite,
-                            color: InsColor(appBloc).appIconColor,
-                          ),
+                          iconData:  Icons.favorite,
                           onTap: () {
                             catalogBloc.add(RemoveFromWishListEvent(
                                 contentId: table2.contentid));
@@ -983,16 +935,10 @@ class _WishListState extends State<WishList> {
                         )
                       : Container(),
                   menu8
-                      ? ListTile(
-                          title: Text(
-                              appBloc.localstr
+                      ? BottomsheetOptionTile(
+                          text: appBloc.localstr
                                   .learningtrackLabelEventviewrecording,
-                              style: TextStyle(
-                                  color: InsColor(appBloc).appTextColor)),
-                          leading: Icon(
-                            IconDataSolid(int.parse('0xf144')),
-                            color: InsColor(appBloc).appIconColor,
-                          ),
+                          iconData: IconDataSolid(int.parse('0xf144')),
                         )
                       : Container(),
                 ],

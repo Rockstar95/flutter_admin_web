@@ -185,7 +185,8 @@ class EventTrackBloc extends Bloc<EventTrackEvent, EventTrackState> {
           }
 */
 
-      } else if (event is TrackAddtoArchiveCall) {
+      }
+      else if (event is TrackAddtoArchiveCall) {
         try {
           Response? response =
               await eventTrackListRepository.updateMyLearningArchive(
@@ -203,7 +204,8 @@ class EventTrackBloc extends Bloc<EventTrackEvent, EventTrackState> {
           print("Error:$e");
           yield TrackAddtoArchiveCallState.error("Error  $e");
         }
-      } else if (event is DownloadCompleteEvent) {
+      }
+      else if (event is DownloadCompleteEvent) {
         try {
           Response? response =
               await eventTrackListRepository.downloadCompleteInfo(
@@ -221,7 +223,8 @@ class EventTrackBloc extends Bloc<EventTrackEvent, EventTrackState> {
           print("Error:$e");
           yield DownloadCompleteState.error("Error  $e");
         }
-      } else if (event is TrackRemovetoArchiveCall) {
+      }
+      else if (event is TrackRemovetoArchiveCall) {
         try {
           Response? response =
               await eventTrackListRepository.updateMyLearningArchive(
@@ -240,7 +243,8 @@ class EventTrackBloc extends Bloc<EventTrackEvent, EventTrackState> {
           print("Error:$e");
           yield TrackRemovetoArchiveCallState.error("Error  $e");
         }
-      } else if (event is TrackRemoveFromMyLearning) {
+      }
+      else if (event is TrackRemoveFromMyLearning) {
         try {
           yield TrackRemoveFromMyLearningState.loading('Please wait...');
 
@@ -267,7 +271,8 @@ class EventTrackBloc extends Bloc<EventTrackEvent, EventTrackState> {
           print("Error:$e");
           yield TrackRemoveFromMyLearningState.error("Error  $e");
         }
-      } else if (event is TrackListResources) {
+      }
+      else if (event is TrackListResources) {
         try {
           refItem.clear();
           Response? response =
@@ -288,7 +293,8 @@ class EventTrackBloc extends Bloc<EventTrackEvent, EventTrackState> {
           print("Error:$e");
           yield TrackListResourceState.error("Error  $e");
         }
-      } else if (event is TrackListGlossary) {
+      }
+      else if (event is TrackListGlossary) {
         try {
           glossaryExpandable.clear();
 
@@ -312,7 +318,8 @@ class EventTrackBloc extends Bloc<EventTrackEvent, EventTrackState> {
           print("Error:$e");
           yield TrackListGlossaryState.error("Error  $e");
         }
-      } else if (event is TrackSetComplete) {
+      }
+      else if (event is TrackSetComplete) {
         yield TrackSetCompleteState.loading('Loading...please wait');
 
         try {
@@ -330,7 +337,8 @@ class EventTrackBloc extends Bloc<EventTrackEvent, EventTrackState> {
           print("Error:$e");
           yield TrackSetCompleteState.error("Something went wrong");
         }
-      } else if (event is TrackListOverView) {
+      }
+      else if (event is TrackListOverView) {
         yield TrackListOverViewState.loading('Loading...please wait');
         bool response =
             await getOverviewData(event.contentId, event.objecttypeid);
@@ -342,7 +350,8 @@ class EventTrackBloc extends Bloc<EventTrackEvent, EventTrackState> {
         } else {
           yield TrackListOverViewState.error("Something went wrong");
         }
-      } else if (event is TrackGetContentStatus) {
+      }
+      else if (event is TrackGetContentStatus) {
         yield TrackGetContentStatusState.loading('Please wait...');
         Response? response;
 
@@ -366,7 +375,8 @@ class EventTrackBloc extends Bloc<EventTrackEvent, EventTrackState> {
         } else {
           yield TrackGetContentStatusState.error("Something went wrong");
         }
-      } else if (event is ParentTrackGetContentStatus) {
+      }
+      else if (event is ParentTrackGetContentStatus) {
         yield ParentTrackGetContentStatusState.loading('Please wait...');
         Response? response;
 
@@ -406,7 +416,8 @@ class EventTrackBloc extends Bloc<EventTrackEvent, EventTrackState> {
         } else {
           yield ParentTrackGetContentStatusState.error("Something went wrong");
         }
-      } else if (event is BadCancelEnrollment) {
+      }
+      else if (event is BadCancelEnrollment) {
         yield BadCancelEnrollmentState.loading('Please wait...');
         Response? response;
 
@@ -425,7 +436,8 @@ class EventTrackBloc extends Bloc<EventTrackEvent, EventTrackState> {
         } else {
           yield BadCancelEnrollmentState.error("Something went wrong");
         }
-      } else if (event is TrackCancelEnrollment) {
+      }
+      else if (event is TrackCancelEnrollment) {
         yield CancelEnrollmentState.loading('Please wait...');
         Response? response;
 
@@ -646,6 +658,9 @@ class EventTrackBloc extends Bloc<EventTrackEvent, EventTrackState> {
             item.qrimagename = element.qrimagename;
             item.parentid = element.parentid;
 
+            item.allowednavigation = element.allowednavigation;
+            item.wstatus = element.wstatus;
+
             trackListData.add(item);
           });
         }
@@ -785,13 +800,18 @@ class EventTrackBloc extends Bloc<EventTrackEvent, EventTrackState> {
       }
 
       /// add track course data to offline
-      for(DummyMyCatelogResponseTable2 tempTable2 in trackListData) {
-        await HiveDbHandler().createData(
-          tracklistCollectionName,
-          tempTable2.contentid,
-          tempTable2.toJson(),
-        );
+      {
+        List<Future> futures = [];
+        for(DummyMyCatelogResponseTable2 tempTable2 in trackListData) {
+          futures.add(HiveDbHandler().createData(
+            tracklistCollectionName,
+            tempTable2.contentid,
+            tempTable2.toJson(),
+          ));
+        }
+        await Future.wait(futures);
       }
+
       List<String> contentOrder = trackListData.map((e) => e.contentid).toList();
       Map<String, dynamic> contentOrderMap = {'data': jsonEncode(contentOrder)};
       await HiveDbHandler().createData(tracklistCollectionName, 'contentOrder', contentOrderMap);
@@ -1297,13 +1317,13 @@ class EventTrackBloc extends Bloc<EventTrackEvent, EventTrackState> {
 
   }*/
 
-  Future<void> setImageData(List<DummyMyCatelogResponseTable2> list,
-      bool isTraxkList, AppBloc appBloc) async {
+  Future<void> setImageData(List<DummyMyCatelogResponseTable2> list, bool isTraxkList, AppBloc appBloc) async {
     if (isTraxkList) {
       for (DummyMyCatelogResponseTable2 table2 in list) {
         table2.imageData = ApiEndpoints.strSiteUrl + table2.thumbnailimagepath;
       }
-    } else {
+    }
+    else {
       String imagePathSet = '';
       if (appBloc.uiSettingModel.isCloudStorageEnabled == 'true') {
         imagePathSet =
@@ -1327,9 +1347,10 @@ class EventTrackBloc extends Bloc<EventTrackEvent, EventTrackState> {
       String contentId = "${parentContentId}_${table2.contentid}";
       //MyPrint.printOnConsole("checkifFileExist called for contentid:${contentId}");
       if(removedFromDownloadsMap[contentId] != true) {
-        String downloadDestFolderPath = await generateDownloadPath(parentContentId, table2, appBloc);
+        // String downloadDestFolderPath = await generateDownloadPath(parentContentId, table2, appBloc);
         //MyPrint.printOnConsole("checking exist for downloadDestFolderPath:${downloadDestFolderPath}");
-        table2.isdownloaded = await checkFile(downloadDestFolderPath);
+        // table2.isdownloaded = await checkFile(downloadDestFolderPath);
+        table2.isdownloaded = false;
         //MyPrint.printOnConsole("isdownloaded for ${contentId} with name:${table2.name}:${table2.isdownloaded}");
       }
       else {

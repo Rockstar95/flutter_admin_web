@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:flutter_admin_web/framework/bloc/app/bloc/app_bloc.dart';
 import 'package:flutter_admin_web/framework/bloc/preference/bloc/preference_bloc.dart';
 import 'package:flutter_admin_web/framework/bloc/preference/event/preference_event.dart';
@@ -10,6 +9,8 @@ import 'package:flutter_admin_web/framework/common/enums.dart';
 import 'package:flutter_admin_web/framework/helpers/utils.dart';
 import 'package:flutter_admin_web/framework/repository/preference/preference_repositry_builder.dart';
 import 'package:flutter_admin_web/framework/theme/ins_theme.dart';
+
+import '../../configs/constants.dart';
 
 class PaymentHistoryScreen extends StatefulWidget {
   PaymentHistoryScreen();
@@ -88,10 +89,7 @@ class _PaymentHistoryScreenState extends State<PaymentHistoryScreen> {
                 return Container(
                   child: Center(
                     child: AbsorbPointer(
-                      child: SpinKitCircle(
-                        color: Colors.grey,
-                        size: 70,
-                      ),
+                      child: AppConstants().getLoaderWidget(iconSize: 70)
                     ),
                   ),
                 );

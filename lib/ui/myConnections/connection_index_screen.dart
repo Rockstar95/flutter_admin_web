@@ -6,6 +6,7 @@ import 'package:flutter_admin_web/framework/bloc/myConnections/my_connection_blo
 import 'package:flutter_admin_web/framework/repository/myConnections/myConnection_repository_builder.dart';
 import 'package:flutter_admin_web/framework/theme/ins_theme.dart';
 
+import '../../configs/constants.dart';
 import 'connections_screen.dart';
 
 class ConnectionIndexScreen extends StatefulWidget {
@@ -40,16 +41,13 @@ class _ConnectionIndexScreenState extends State<ConnectionIndexScreen> {
           return Container(
             child: Center(
               child: AbsorbPointer(
-                child: SpinKitCircle(
-                  color: Colors.grey,
-                  size: 70,
-                ),
+                child: AppConstants().getLoaderWidget(iconSize: 70),
               ),
             ),
           );
         }
-        if (connectionsBloc.dynamicTabList.length == 0) {
-          return ConnectionScreen(isFromConnectionPage: false);
+        if (connectionsBloc.dynamicTabList.isEmpty) {
+          return const ConnectionScreen(isFromConnectionPage: false);
         }
         return DefaultTabController(
           length: connectionsBloc.dynamicTabList.length,
@@ -62,8 +60,8 @@ class _ConnectionIndexScreenState extends State<ConnectionIndexScreen> {
                   labelStyle: Theme.of(context).textTheme.subtitle2,
                   labelColor: InsColor(appBloc).appTextColor,
                   indicatorColor: InsColor(appBloc).appTextColor,
-                  indicator: UnderlineTabIndicator(
-                      borderSide: BorderSide(width: 2.0),
+                  indicator: const UnderlineTabIndicator(
+                      borderSide: const BorderSide(width: 2.0),
                       insets: EdgeInsets.symmetric(horizontal: 16.0)),
                   tabs: connectionsBloc.dynamicTabList.map((e) {
                     return  Tab(

@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:flutter_admin_web/framework/bloc/app/bloc/app_bloc.dart';
 import 'package:flutter_admin_web/framework/bloc/app/native_menu_model.dart';
@@ -21,6 +20,8 @@ import 'package:flutter_admin_web/ui/common/app_colors.dart';
 import 'package:flutter_admin_web/ui/progressReport/course_summary.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 
+import '../../configs/constants.dart';
+
 class ProgressReportGraph extends StatefulWidget {
   final NativeMenuModel nativeMenuModel;
 
@@ -31,7 +32,7 @@ class ProgressReportGraph extends StatefulWidget {
 }
 
 class _ProgressReportState extends State<ProgressReportGraph> with SingleTickerProviderStateMixin {
-  GlobalKey<ScaffoldState> _scaffoldkey = new GlobalKey<ScaffoldState>();
+  GlobalKey<ScaffoldState> _scaffoldkey = GlobalKey<ScaffoldState>();
   List<Tab> tabList = [];
 
   late TabController _tabController;
@@ -57,7 +58,7 @@ class _ProgressReportState extends State<ProgressReportGraph> with SingleTickerP
   void initState() {
     // TODO: implement initState
     super.initState();
-    filterMenus = new Map();
+    filterMenus = Map();
     filterMenus = getConditionsValue(widget.nativeMenuModel.conditions);
 
     isAllowGroupBy();
@@ -66,13 +67,13 @@ class _ProgressReportState extends State<ProgressReportGraph> with SingleTickerP
         myLearningRepository: MyLearningRepositoryBuilder.repository());
 
     tooltip = TooltipBehavior(enable: true);
-    tabList.add(new Tab(
+    tabList.add(const Tab(
       text: 'Summary',
     ));
-    tabList.add(new Tab(
+    tabList.add(const Tab(
       text: "Content",
     ));
-    _tabController = new TabController(length: tabList.length, vsync: this);
+    _tabController = TabController(length: tabList.length, vsync: this);
 
     progressReportBloc = ProgressReportBloc(
         progressReportRepository: ProgressReportRepositoryBuilder.repository());
@@ -85,8 +86,8 @@ class _ProgressReportState extends State<ProgressReportGraph> with SingleTickerP
   @override
   void didUpdateWidget(covariant ProgressReportGraph oldWidget) {
     super.didUpdateWidget(oldWidget);
-    Future.delayed(Duration(seconds: 0)).then((value) {
-      filterMenus = new Map();
+    Future.delayed(const Duration(seconds: 0)).then((value) {
+      filterMenus = Map();
       filterMenus = getConditionsValue(widget.nativeMenuModel.conditions);
       updateGroupValue();
       isAllowGroupBy();
@@ -117,9 +118,9 @@ class _ProgressReportState extends State<ProgressReportGraph> with SingleTickerP
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
-          new Container(
-            margin: EdgeInsets.only(bottom: 3),
-            decoration: new BoxDecoration(
+          Container(
+            margin: const EdgeInsets.only(bottom: 3),
+            decoration: const BoxDecoration(
               color: Colors.white,
               boxShadow: [
                 BoxShadow(color: Colors.black45,blurRadius: 1)
@@ -128,7 +129,7 @@ class _ProgressReportState extends State<ProgressReportGraph> with SingleTickerP
               // Color(int.parse(
               //     "0xFF${appBloc.uiSettingModel.appButtonBgColor.substring(1, 7).toUpperCase()}")),
             ),
-            child: new TabBar(
+            child: TabBar(
 
                 controller: _tabController,
                 indicatorColor: Color(int.parse("0xFF1D293F")),
@@ -171,14 +172,11 @@ class _ProgressReportState extends State<ProgressReportGraph> with SingleTickerP
         if (state.status == Status.LOADING && progressReportBloc.isFirstLoading == true) {
           return Center(
             child: AbsorbPointer(
-              child: SpinKitCircle(
-                color: Colors.grey,
-                size: 70.0,
-              ),
+              child: AppConstants().getLoaderWidget(iconSize: 70),
             ),
           );
         }
-        else if (progressReportBloc.progressReportGraphResponse.length == 0) {
+        else if (progressReportBloc.progressReportGraphResponse.isEmpty) {
           return noDataFound(true);
         }
         else {
@@ -193,7 +191,7 @@ class _ProgressReportState extends State<ProgressReportGraph> with SingleTickerP
           });
           //MyPrint.printOnConsole("totalCount:${totalContentCount}");
 
-          return new Column(
+          return Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisSize: MainAxisSize.max,
             children: [
@@ -220,7 +218,7 @@ class _ProgressReportState extends State<ProgressReportGraph> with SingleTickerP
                   ),
               ),
               Padding(
-                padding: EdgeInsets.only(top: 10),
+                padding: const EdgeInsets.only(top: 10),
                 child: Visibility(
                     visible: isAllowTitle ? false : true,
                     child: Text(
@@ -237,7 +235,7 @@ class _ProgressReportState extends State<ProgressReportGraph> with SingleTickerP
                   visible: isAllowTitle ? false : true,
                   child: Wrap(
                     children: [
-                      new Container(
+                      Container(
                         // height: 400,
                         color: Color(int.parse(
                             "0xFF${appBloc.uiSettingModel.appBGColor.substring(1, 7).toUpperCase()}")),
@@ -275,10 +273,10 @@ class _ProgressReportState extends State<ProgressReportGraph> with SingleTickerP
                                   }
 
                                   return Text(
-                                    "$text",
+                                    text,
                                     style: TextStyle(
                                       fontSize: 8.h,
-                                      color: Colors.black,
+                                      color: Colors.white,
                                     )
                                   );
                                 },
@@ -296,12 +294,12 @@ class _ProgressReportState extends State<ProgressReportGraph> with SingleTickerP
                     ],
                   ),
               ),
-              Divider(
+              const Divider(
                 height: 2,
                 color: Colors.black87,
               ),
               Padding(
-                padding: EdgeInsets.only(top: 10.0),
+                padding: const EdgeInsets.only(top: 10.0),
                 child: Visibility(
                     visible: isAllowStatus ? false : true,
                     child: Text(
@@ -314,7 +312,7 @@ class _ProgressReportState extends State<ProgressReportGraph> with SingleTickerP
               ),
               Visibility(
                 visible: isAllowStatus ? false : true,
-                child: new Container(
+                child: SizedBox(
                   width: double.infinity,
                   child: SfCircularChart(
                     tooltipBehavior: TooltipBehavior(
@@ -349,10 +347,10 @@ class _ProgressReportState extends State<ProgressReportGraph> with SingleTickerP
                             }
 
                             return Text(
-                                "$text",
+                                text,
                                 style: TextStyle(
                                   fontSize: 8.h,
-                                  color: Colors.black,
+                                  color: Colors.white,
                                 )
                             );
                           },
@@ -370,13 +368,13 @@ class _ProgressReportState extends State<ProgressReportGraph> with SingleTickerP
               ),
               Visibility(
                 visible: isAverageScore ? false : true,
-                child: Divider(
+                child: const Divider(
                   height: 2,
                   color: Colors.black87,
                 ),
               ),
               Padding(
-                padding: EdgeInsets.only(top: 10.0),
+                padding: const EdgeInsets.only(top: 10.0),
                 child: Visibility(
                   visible: isAverageScore ? false : true,
                   child: Text(
@@ -390,36 +388,34 @@ class _ProgressReportState extends State<ProgressReportGraph> with SingleTickerP
               ),
               Visibility(
                   visible: isAverageScore ? false : true,
-                  child: progressReportBloc.scoreCount.length == 0
+                  child: progressReportBloc.scoreCount.isEmpty
                       ? Center(
-                          child: new Container(
+                          child: Container(
                               height: 200,
                               alignment: Alignment.center,
                               child: noDataFound(true)))
-                      : new Container(
+                      : SizedBox(
                           height: 200,
                           child: Stack(
                             children: <Widget>[
                               SfCircularChart(
                                   annotations: <CircularChartAnnotation>[
                                     CircularChartAnnotation(
-                                        widget: Container(
-                                            child: PhysicalModel(
-                                                child: Container(),
-                                                shape: BoxShape.circle,
-                                                elevation: 10,
-                                                shadowColor: Colors.transparent,
-                                                // color: Colors.transparent
-                                                color: AppColors.getAppBGColor()
-                                                // const Color.fromRGBO(
-                                                //     230, 230, 230, 1,),
-                                            ),
+                                        widget: PhysicalModel(
+                                            shape: BoxShape.circle,
+                                            elevation: 10,
+                                            shadowColor: Colors.transparent,
+                                            // color: Colors.transparent
+                                            color: AppColors.getAppBGColor(),
+                                            child: Container()
+                                            // const Color.fromRGBO(
+                                            //     230, 230, 230, 1,),
                                         ),
                                     ),
                                   ],
                                   //legend: Legend(isVisible: true),
                                   palette: <Color>[
-                                    Color.fromARGB(255, 66, 165, 245),
+                                    const Color.fromARGB(255, 66, 165, 245),
                                     Colors.grey.shade300
                                   ],
                                   //  palette: <Color>[Color.fromARGB(255,122, 209, 207), Color.fromARGB(255, 232, 234, 179), Colors.orange, Colors.redAccent, Colors.blueAccent, Colors.teal],
@@ -441,7 +437,7 @@ class _ProgressReportState extends State<ProgressReportGraph> with SingleTickerP
                                     )
                                   ]),
                               Center(
-                                child: new Container(
+                                child: SizedBox(
                                   height: 150,
                                   child: SfCircularChart(
                                       tooltipBehavior: TooltipBehavior(
@@ -450,7 +446,7 @@ class _ProgressReportState extends State<ProgressReportGraph> with SingleTickerP
                                               TooltipPosition.pointer),
                                       // legend: Legend(isVisible: true),
                                       palette: <Color>[
-                                        Color.fromARGB(255, 122, 209, 207),
+                                        const Color.fromARGB(255, 122, 209, 207),
                                         Colors.grey.shade300
                                       ],
                                       series: <CircularSeries>[
@@ -483,12 +479,9 @@ class _ProgressReportState extends State<ProgressReportGraph> with SingleTickerP
                               ),
                               Center(
                                 child: Text(
-                                  progressReportBloc.scoreCount.length == 0
+                                  progressReportBloc.scoreCount.isEmpty
                                       ? ''
-                                      : progressReportBloc
-                                              .scoreCount[0].overallscore
-                                              .toString() +
-                                          ' %',
+                                      : '${progressReportBloc.scoreCount[0].overallscore} %',
                                   style: TextStyle(
                                       fontSize: 30.0,
                                       color: Color(int.parse(
@@ -519,25 +512,22 @@ class _ProgressReportState extends State<ProgressReportGraph> with SingleTickerP
         if (state.status == Status.LOADING && progressReportBloc.isFirstLoading == true) {
           return Center(
             child: AbsorbPointer(
-              child: SpinKitCircle(
-                color: Colors.grey,
-                size: 70.0,
-              ),
+              child: AppConstants().getLoaderWidget(iconSize: 70),
             ),
           );
         }
-        else if (progressReportBloc.progressReportGraphResponse.length == 0) {
+        else if (progressReportBloc.progressReportGraphResponse.isEmpty) {
           return noDataFound(true);
         }
         else {
           return progressReportBloc.progressReportGraphResponse.isNotEmpty && progressReportBloc.progressReportGraphResponse[0].groupText == ''
-              ? new Container(
+              ? Container(
                   color: Color(int.parse(
                       "0xFF${appBloc.uiSettingModel.appBGColor.substring(1, 7).toUpperCase()}")),
                   child: ListView.separated(
                       primary: false,
                       shrinkWrap: true,
-                      separatorBuilder: (context, index) => Divider(color: Colors.grey,),
+                      separatorBuilder: (context, index) => const Divider(color: Colors.grey,),
                       itemCount: progressReportBloc.progressReportGraphResponse[0].parentData.length,
                       itemBuilder: (context, index) {
                         return InkWell(
@@ -620,7 +610,7 @@ class _ProgressReportState extends State<ProgressReportGraph> with SingleTickerP
                                       children: [
                                         Expanded(
                                             child: Padding(
-                                                padding: EdgeInsets.all(5.0),
+                                                padding: const EdgeInsets.all(5.0),
                                                 child: Visibility(
                                                   visible: isContentTile
                                                       ? true
@@ -661,7 +651,7 @@ class _ProgressReportState extends State<ProgressReportGraph> with SingleTickerP
                                       ],
                                     ),
                                     Padding(
-                                        padding: EdgeInsets.all(5.0),
+                                        padding: const EdgeInsets.all(5.0),
                                         child: Row(
                                           children: [
                                             Visibility(
@@ -702,7 +692,7 @@ class _ProgressReportState extends State<ProgressReportGraph> with SingleTickerP
                                           ],
                                         )),
                                     Padding(
-                                        padding: EdgeInsets.all(5.0),
+                                        padding: const EdgeInsets.all(5.0),
                                         child: Row(
                                           children: [
                                             Visibility(
@@ -768,7 +758,7 @@ class _ProgressReportState extends State<ProgressReportGraph> with SingleTickerP
                                         ),
                                     ),
                                     Padding(
-                                      padding: EdgeInsets.all(5.0),
+                                      padding: const EdgeInsets.all(5.0),
                                       child: Row(
                                         children: [
                                           Visibility(
@@ -790,7 +780,7 @@ class _ProgressReportState extends State<ProgressReportGraph> with SingleTickerP
                                                         ? Color(0xfffe2c53)
                                                         : Color(0xff5750da),*/
                                                     color: AppColors.getContentStatusTagColor(),
-                                                    borderRadius: BorderRadius.all(
+                                                    borderRadius: const BorderRadius.all(
                                                       Radius.circular(20.0),
                                                     )),
                                                 child: Text(
@@ -807,7 +797,7 @@ class _ProgressReportState extends State<ProgressReportGraph> with SingleTickerP
                                               ),
                                             ),
                                           ),
-                                          SizedBox(width: 20,),
+                                          const SizedBox(width: 20,),
                                           Visibility(
                                             visible: isModule ? true : false,
                                             child: Expanded(
@@ -815,7 +805,7 @@ class _ProgressReportState extends State<ProgressReportGraph> with SingleTickerP
                                                 padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 5),
                                                 alignment: Alignment.center,
                                                 decoration: BoxDecoration(
-                                                  borderRadius: BorderRadius.all(
+                                                  borderRadius: const BorderRadius.all(
                                                     Radius.circular(20.0),
                                                   ),
                                                   color: progressReportBloc.progressReportGraphResponse[0].parentData[index].childData.isNotEmpty
@@ -837,7 +827,7 @@ class _ProgressReportState extends State<ProgressReportGraph> with SingleTickerP
                                               ),
                                             ),
                                           ),
-                                          SizedBox(width: 20,),
+                                          const SizedBox(width: 20,),
                                           Visibility(
                                             visible:
                                                 isCmeCredits ? true : false,
@@ -850,13 +840,16 @@ class _ProgressReportState extends State<ProgressReportGraph> with SingleTickerP
                                                     left: 4.0,
                                                     right: 4.0),
                                                 decoration: BoxDecoration(
-                                                  borderRadius: BorderRadius.all(
+                                                  borderRadius: const BorderRadius.all(
                                                     Radius.circular(20.0),
                                                   ),
-                                                  color: Color(int.parse("0xFFECF1F5")),
+                                                  // color: Color(int.parse("0xFFECF1F5")),
+                                                  color:progressReportBloc.progressReportGraphResponse[0].parentData[index].childData.isNotEmpty
+                                                      ? AppColors.getAppBGColor()
+                                                      : Color(int.parse("0xFFECF1F5")) ,
                                                 ),
                                                 child: Padding(
-                                                  padding: EdgeInsets.only(
+                                                  padding: const EdgeInsets.only(
                                                       left: 10.0, right: 10.0),
                                                   child: Text(
                                                     progressReportBloc
@@ -893,7 +886,7 @@ class _ProgressReportState extends State<ProgressReportGraph> with SingleTickerP
                                           ? false
                                           : true,
                                       child: Padding(
-                                        padding: EdgeInsets.all(5.0),
+                                        padding: const EdgeInsets.all(5.0),
                                         child: Container(
                                           color: Color(int.parse(
                                               "0xFF${appBloc.uiSettingModel.appBGColor.substring(1, 7).toUpperCase()}")),
@@ -917,7 +910,7 @@ class _ProgressReportState extends State<ProgressReportGraph> with SingleTickerP
                                                       context: context,
                                                       builder: (BuildContext
                                                               context) =>
-                                                          new AlertDialog(
+                                                          AlertDialog(
                                                             title: Text(
                                                               appBloc.localstr
                                                                   .mylearningActionsheetViewcertificateoption,
@@ -943,13 +936,10 @@ class _ProgressReportState extends State<ProgressReportGraph> with SingleTickerP
                                                                     "0xFF${appBloc.uiSettingModel.appBGColor.substring(1, 7).toUpperCase()}")),
                                                             shape: RoundedRectangleBorder(
                                                                 borderRadius:
-                                                                    new BorderRadius
+                                                                    BorderRadius
                                                                         .circular(5)),
                                                             actions: <Widget>[
-                                                              new FlatButton(
-                                                                child: Text(appBloc
-                                                                    .localstr
-                                                                    .mylearningClosebuttonactionClosebuttonalerttitle),
+                                                              FlatButton(
                                                                 textColor:
                                                                     Colors.blue,
                                                                 onPressed:
@@ -958,6 +948,9 @@ class _ProgressReportState extends State<ProgressReportGraph> with SingleTickerP
                                                                           context)
                                                                       .pop();
                                                                 },
+                                                                child: Text(appBloc
+                                                                    .localstr
+                                                                    .mylearningClosebuttonactionClosebuttonalerttitle),
                                                               ),
                                                             ],
                                                           ))
@@ -1004,11 +997,13 @@ class _ProgressReportState extends State<ProgressReportGraph> with SingleTickerP
                                                 .withOpacity(0.5),
                                             color: Color(int.parse(
                                                 "0xFF${appBloc.uiSettingModel.appButtonBgColor.substring(1, 7).toUpperCase()}")),
+                                            textColor: Color(int.parse(
+                                                "0xFF${appBloc.uiSettingModel.appButtonTextColor.substring(1, 7).toUpperCase()}")),
                                             child: Row(
                                               mainAxisAlignment:
                                                   MainAxisAlignment.center,
                                               children: [
-                                                Padding(
+                                                const Padding(
                                                     padding:
                                                         EdgeInsets.all(5.0),
                                                     child: Icon(Icons.workspace_premium)),
@@ -1021,8 +1016,6 @@ class _ProgressReportState extends State<ProgressReportGraph> with SingleTickerP
                                                 )
                                               ],
                                             ),
-                                            textColor: Color(int.parse(
-                                                "0xFF${appBloc.uiSettingModel.appButtonTextColor.substring(1, 7).toUpperCase()}")),
                                           ),
                                         ),
                                       ),
@@ -1036,7 +1029,7 @@ class _ProgressReportState extends State<ProgressReportGraph> with SingleTickerP
                                     .parentData[index]
                                     .childData
                                     .isNotEmpty,
-                                child: Divider(
+                                child: const Divider(
                                   height: 5.0,
                                   color: Colors.grey,
                                 ),
@@ -1044,7 +1037,7 @@ class _ProgressReportState extends State<ProgressReportGraph> with SingleTickerP
                               Visibility(
                                 visible: progressReportBloc.progressReportGraphResponse[0].parentData[index].isVisible,
                                 child: ListView.separated(
-                                  separatorBuilder: (context, index) => Divider(
+                                  separatorBuilder: (context, index) => const Divider(
                                     color: Colors.grey,
                                   ),
                                   shrinkWrap: true,
@@ -1110,7 +1103,7 @@ class _ProgressReportState extends State<ProgressReportGraph> with SingleTickerP
                                           crossAxisAlignment: CrossAxisAlignment.start,
                                           children: [
                                             Padding(
-                                              padding: EdgeInsets.all(5.0),
+                                              padding: const EdgeInsets.all(5.0),
                                               child: Text(
                                                 progressReportBloc
                                                     .progressReportGraphResponse[
@@ -1124,7 +1117,7 @@ class _ProgressReportState extends State<ProgressReportGraph> with SingleTickerP
                                               ),
                                             ),
                                             Padding(
-                                                padding: EdgeInsets.all(5.0),
+                                                padding: const EdgeInsets.all(5.0),
                                                 child: Row(
                                                   children: [
                                                     Expanded(
@@ -1151,7 +1144,7 @@ class _ProgressReportState extends State<ProgressReportGraph> with SingleTickerP
                                                   ],
                                                 )),
                                             Padding(
-                                                padding: EdgeInsets.all(5.0),
+                                                padding: const EdgeInsets.all(5.0),
                                                 child: Row(
                                                   children: [
                                                     Expanded(
@@ -1220,7 +1213,7 @@ class _ProgressReportState extends State<ProgressReportGraph> with SingleTickerP
                                                   ],
                                                 )),
                                             Padding(
-                                              padding: EdgeInsets.all(5.0),
+                                              padding: const EdgeInsets.all(5.0),
                                               child: Row(
                                                 children: [
                                                   Expanded(
@@ -1236,7 +1229,7 @@ class _ProgressReportState extends State<ProgressReportGraph> with SingleTickerP
                                                             ? Color(0xfffe2c53)
                                                             : Color(0xff5750da),*/
                                                         color: AppColors.getContentStatusTagColor(),
-                                                        borderRadius: BorderRadius.all(
+                                                        borderRadius: const BorderRadius.all(
                                                           Radius.circular(20.0),
                                                         ),
                                                       ),
@@ -1256,14 +1249,14 @@ class _ProgressReportState extends State<ProgressReportGraph> with SingleTickerP
                                                       ),
                                                     ),
                                                   ),
-                                                  SizedBox(width: 20,),
+                                                  const SizedBox(width: 20,),
                                                   Expanded(
                                                     child: Container(
                                                       padding: const EdgeInsets.all(5.0),
                                                       alignment: Alignment.center,
                                                       decoration: BoxDecoration(
                                                         color: Color(int.parse("0xFFECF1F5")),
-                                                          borderRadius: BorderRadius.all(Radius.circular(20.0),),
+                                                          borderRadius: const BorderRadius.all(Radius.circular(20.0),),
                                                       ),
                                                       child: Text(
                                                         progressReportBloc
@@ -1279,7 +1272,7 @@ class _ProgressReportState extends State<ProgressReportGraph> with SingleTickerP
                                                       ),
                                                     ),
                                                   ),
-                                                  SizedBox(width: 20,),
+                                                  const SizedBox(width: 20,),
                                                   Expanded(
                                                     child: Container(
                                                       alignment:
@@ -1290,7 +1283,7 @@ class _ProgressReportState extends State<ProgressReportGraph> with SingleTickerP
                                                       decoration: BoxDecoration(
                                                         color: Color(int.parse("0xFFECF1F5")),
                                                         borderRadius:
-                                                            BorderRadius.all(
+                                                            const BorderRadius.all(
                                                           Radius.circular(20.0),
                                                         ),
                                                       ),
@@ -1334,7 +1327,7 @@ class _ProgressReportState extends State<ProgressReportGraph> with SingleTickerP
                                                   ? false
                                                   : true,
                                               child: Padding(
-                                                padding: EdgeInsets.all(5.0),
+                                                padding: const EdgeInsets.all(5.0),
                                                 child: Container(
                                                   color: Color(int.parse(
                                                       "0xFF${appBloc.uiSettingModel.appBGColor.substring(1, 7).toUpperCase()}")),
@@ -1361,7 +1354,7 @@ class _ProgressReportState extends State<ProgressReportGraph> with SingleTickerP
                                                               context: context,
                                                               builder: (BuildContext
                                                                       context) =>
-                                                                  new AlertDialog(
+                                                                  AlertDialog(
                                                                     title: Text(
                                                                       appBloc
                                                                           .localstr
@@ -1385,13 +1378,10 @@ class _ProgressReportState extends State<ProgressReportGraph> with SingleTickerP
                                                                             "0xFF${appBloc.uiSettingModel.appBGColor.substring(1, 7).toUpperCase()}")),
                                                                     shape: RoundedRectangleBorder(
                                                                         borderRadius:
-                                                                            new BorderRadius.circular(5)),
+                                                                            BorderRadius.circular(5)),
                                                                     actions: <
                                                                         Widget>[
-                                                                      new FlatButton(
-                                                                        child: Text(appBloc
-                                                                            .localstr
-                                                                            .mylearningClosebuttonactionClosebuttonalerttitle),
+                                                                      FlatButton(
                                                                         textColor:
                                                                             Colors.blue,
                                                                         onPressed:
@@ -1399,6 +1389,9 @@ class _ProgressReportState extends State<ProgressReportGraph> with SingleTickerP
                                                                           Navigator.of(context)
                                                                               .pop();
                                                                         },
+                                                                        child: Text(appBloc
+                                                                            .localstr
+                                                                            .mylearningClosebuttonactionClosebuttonalerttitle),
                                                                       ),
                                                                     ],
                                                                   ))
@@ -1455,12 +1448,14 @@ class _ProgressReportState extends State<ProgressReportGraph> with SingleTickerP
                                                         .withOpacity(0.5),
                                                     color: Color(int.parse(
                                                         "0xFF${appBloc.uiSettingModel.appButtonBgColor.substring(1, 7).toUpperCase()}")),
+                                                    textColor: Color(int.parse(
+                                                        "0xFF${appBloc.uiSettingModel.appButtonTextColor.substring(1, 7).toUpperCase()}")),
                                                     child: Row(
                                                       mainAxisAlignment:
                                                           MainAxisAlignment
                                                               .center,
                                                       children: [
-                                                        Padding(
+                                                        const Padding(
                                                             padding: EdgeInsets.all(
                                                                     5.0),
                                                             child: Icon(Icons.workspace_premium)),
@@ -1474,8 +1469,6 @@ class _ProgressReportState extends State<ProgressReportGraph> with SingleTickerP
                                                         )
                                                       ],
                                                     ),
-                                                    textColor: Color(int.parse(
-                                                        "0xFF${appBloc.uiSettingModel.appButtonTextColor.substring(1, 7).toUpperCase()}")),
                                                   ),
                                                 ),
                                               ),
@@ -1492,11 +1485,11 @@ class _ProgressReportState extends State<ProgressReportGraph> with SingleTickerP
                         );
                       }),
                 )
-              : new ListView(
+              : ListView(
                   //shrinkWrap: true,
                   children: [
                     Padding(
-                      padding: EdgeInsets.all(0.0),
+                      padding: const EdgeInsets.all(0.0),
                       child: Theme(
                           data: Theme.of(context).copyWith(
                             cursorColor: InsColor(appBloc).appBGColor,
@@ -1526,14 +1519,14 @@ class _ProgressReportState extends State<ProgressReportGraph> with SingleTickerP
                                                         !isExpanded;
                                                   })
                                                 },
-                                            child: new Padding(
-                                              padding: EdgeInsets.all(0.0),
-                                              child: new Row(
+                                            child: Padding(
+                                              padding: const EdgeInsets.all(0.0),
+                                              child: Row(
                                                 children: [
                                                   Expanded(
                                                       child: Padding(
                                                     padding:
-                                                        EdgeInsets.all(5.0),
+                                                        const EdgeInsets.all(5.0),
                                                     child: Text(
                                                         parentData.groupText,
                                                         style: TextStyle(
@@ -1547,11 +1540,11 @@ class _ProgressReportState extends State<ProgressReportGraph> with SingleTickerP
                                               ),
                                             )));
                                   },
-                                  body: new Container(
+                                  body: Container(
                                     color: InsColor(appBloc).appBGColor,
                                     child: ListView.separated(
                                         separatorBuilder: (context, index) =>
-                                            Divider(
+                                            const Divider(
                                               color: Colors.grey,
                                             ),
                                         primary: false,
@@ -1640,7 +1633,7 @@ class _ProgressReportState extends State<ProgressReportGraph> with SingleTickerP
                                                             Expanded(
                                                                 child: Padding(
                                                                     padding:
-                                                                        EdgeInsets.all(
+                                                                        const EdgeInsets.all(
                                                                             5.0),
                                                                     child:
                                                                         Visibility(
@@ -1660,7 +1653,7 @@ class _ProgressReportState extends State<ProgressReportGraph> with SingleTickerP
                                                                       ),
                                                                     ))),
                                                             Padding(
-                                                              padding: EdgeInsets
+                                                              padding: const EdgeInsets
                                                                   .only(
                                                                       right:
                                                                           24.0),
@@ -1689,7 +1682,7 @@ class _ProgressReportState extends State<ProgressReportGraph> with SingleTickerP
                                                         ),
                                                         Padding(
                                                             padding:
-                                                                EdgeInsets.all(
+                                                                const EdgeInsets.all(
                                                                     5.0),
                                                             child: Row(
                                                               children: [
@@ -1730,7 +1723,7 @@ class _ProgressReportState extends State<ProgressReportGraph> with SingleTickerP
                                                             )),
                                                         Padding(
                                                             padding:
-                                                                EdgeInsets.all(
+                                                                const EdgeInsets.all(
                                                                     5.0),
                                                             child: Row(
                                                               children: [
@@ -1764,7 +1757,7 @@ class _ProgressReportState extends State<ProgressReportGraph> with SingleTickerP
                                                             )),
                                                         Padding(
                                                             padding:
-                                                                EdgeInsets.all(
+                                                                const EdgeInsets.all(
                                                                     5.0),
                                                             child: Row(
                                                               children: [
@@ -1779,12 +1772,12 @@ class _ProgressReportState extends State<ProgressReportGraph> with SingleTickerP
                                                                             alignment: Alignment.center,
                                                                             decoration: BoxDecoration(
                                                                               color: parentData.parentData[index].status.toString().contains('Completed')
-                                                                                  ? Color(0xff4ad963)
+                                                                                  ? const Color(0xff4ad963)
                                                                                   : parentData.parentData[index].status.toString().contains('In Progress')
-                                                                                  ? Color(0xffff9503)
+                                                                                  ? const Color(0xffff9503)
                                                                                   : parentData.parentData[index].status.toString().contains('Not Started')
-                                                                                  ? Color(0xfffe2c53)
-                                                                                  : Color(0xff5750da),
+                                                                                  ? const Color(0xfffe2c53)
+                                                                                  : const Color(0xff5750da),
                                                                                 /*border: Border.all(
                                                                                     color: parentData.parentData[index].status.toString().contains('Completed')
                                                                                         ? Color(0xff4ad963)
@@ -1793,7 +1786,7 @@ class _ProgressReportState extends State<ProgressReportGraph> with SingleTickerP
                                                                                             : parentData.parentData[index].status.toString().contains('Not Started')
                                                                                                 ? Color(0xfffe2c53)
                                                                                                 : Color(0xff5750da)),*/
-                                                                                borderRadius: BorderRadius.all(
+                                                                                borderRadius: const BorderRadius.all(
                                                                                   Radius.circular(20.0),
                                                                                 ),
                                                                             ),
@@ -1812,7 +1805,7 @@ class _ProgressReportState extends State<ProgressReportGraph> with SingleTickerP
                                                                             alignment: Alignment.center,
                                                                             decoration: BoxDecoration(
                                                                                 border: Border.all(color: Colors.grey),
-                                                                                borderRadius: BorderRadius.all(
+                                                                                borderRadius: const BorderRadius.all(
                                                                                   Radius.circular(20.0),
                                                                                 )),
                                                                             child: Text(
@@ -1830,12 +1823,12 @@ class _ProgressReportState extends State<ProgressReportGraph> with SingleTickerP
                                                                           padding: const EdgeInsets.all(5.0),
                                                                           decoration: BoxDecoration(
                                                                               border: Border.all(color: Colors.grey),
-                                                                              borderRadius: BorderRadius.all(
+                                                                              borderRadius: const BorderRadius.all(
                                                                                 Radius.circular(20.0),
                                                                               )),
                                                                           child: Padding(
                                                                             padding:
-                                                                                EdgeInsets.only(left: 10.0, right: 10.0),
+                                                                                const EdgeInsets.only(left: 10.0, right: 10.0),
                                                                             child:
                                                                                 Text(parentData.parentData[index].credit != null ? parentData.parentData[index].credit.toString() : 'Credit 0.0', style: TextStyle(color: Color(int.parse("0xFF${appBloc.uiSettingModel.appTextColor.substring(1, 7).toUpperCase()}")), fontSize: 12.0)),
                                                                           )),
@@ -1852,7 +1845,7 @@ class _ProgressReportState extends State<ProgressReportGraph> with SingleTickerP
                                                               : false,
                                                           child: Padding(
                                                             padding:
-                                                                EdgeInsets.all(
+                                                                const EdgeInsets.all(
                                                                     5.0),
                                                             child: Container(
                                                               color: parentData
@@ -1884,7 +1877,7 @@ class _ProgressReportState extends State<ProgressReportGraph> with SingleTickerP
                                                                           context:
                                                                               context,
                                                                           builder: (BuildContext context) =>
-                                                                              new AlertDialog(
+                                                                              AlertDialog(
                                                                                 title: Text(
                                                                                   appBloc.localstr.mylearningActionsheetViewcertificateoption,
                                                                                   style: TextStyle(color: Color(int.parse("0xFF${appBloc.uiSettingModel.appTextColor.substring(1, 7).toUpperCase()}")), fontWeight: FontWeight.bold),
@@ -1896,14 +1889,14 @@ class _ProgressReportState extends State<ProgressReportGraph> with SingleTickerP
                                                                                   ),
                                                                                 ),
                                                                                 backgroundColor: Color(int.parse("0xFF${appBloc.uiSettingModel.appBGColor.substring(1, 7).toUpperCase()}")),
-                                                                                shape: RoundedRectangleBorder(borderRadius: new BorderRadius.circular(5)),
+                                                                                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)),
                                                                                 actions: <Widget>[
-                                                                                  new FlatButton(
-                                                                                    child: Text(appBloc.localstr.mylearningClosebuttonactionClosebuttonalerttitle),
+                                                                                  FlatButton(
                                                                                     textColor: Colors.blue,
                                                                                     onPressed: () async {
                                                                                       Navigator.of(context).pop();
                                                                                     },
+                                                                                    child: Text(appBloc.localstr.mylearningClosebuttonactionClosebuttonalerttitle),
                                                                                   ),
                                                                                 ],
                                                                               ))
@@ -1944,12 +1937,15 @@ class _ProgressReportState extends State<ProgressReportGraph> with SingleTickerP
                                                                 color: Color(
                                                                     int.parse(
                                                                         "0xFF${appBloc.uiSettingModel.appButtonBgColor.substring(1, 7).toUpperCase()}")),
+                                                                textColor: Color(
+                                                                    int.parse(
+                                                                        "0xFF${appBloc.uiSettingModel.appButtonTextColor.substring(1, 7).toUpperCase()}")),
                                                                 child: Row(
                                                                   mainAxisAlignment:
                                                                       MainAxisAlignment
                                                                           .center,
                                                                   children: [
-                                                                    Padding(
+                                                                    const Padding(
                                                                         padding:
                                                                             EdgeInsets.all(
                                                                                 5.0),
@@ -1965,9 +1961,6 @@ class _ProgressReportState extends State<ProgressReportGraph> with SingleTickerP
                                                                     )
                                                                   ],
                                                                 ),
-                                                                textColor: Color(
-                                                                    int.parse(
-                                                                        "0xFF${appBloc.uiSettingModel.appButtonTextColor.substring(1, 7).toUpperCase()}")),
                                                               ),
                                                             ),
                                                           ),
@@ -1979,7 +1972,7 @@ class _ProgressReportState extends State<ProgressReportGraph> with SingleTickerP
                                                       visible: parentData.parentData[index].childData != null
                                                           ? true
                                                           : false,
-                                                      child: Divider(
+                                                      child: const Divider(
                                                         height: 5.0,
                                                         color: Colors.grey,
                                                       )),
@@ -1990,7 +1983,7 @@ class _ProgressReportState extends State<ProgressReportGraph> with SingleTickerP
                                                       child: ListView.separated(
                                                         separatorBuilder:
                                                             (context, index) =>
-                                                                Divider(
+                                                                const Divider(
                                                           color: Colors.grey,
                                                         ),
                                                         shrinkWrap: true,
@@ -2032,7 +2025,7 @@ class _ProgressReportState extends State<ProgressReportGraph> with SingleTickerP
                                                                 }
                                                             },
                                                             child:
-                                                                new Container(
+                                                                Container(
                                                                     child:
                                                                         Column(
                                                               crossAxisAlignment:
@@ -2041,7 +2034,7 @@ class _ProgressReportState extends State<ProgressReportGraph> with SingleTickerP
                                                               children: [
                                                                 Padding(
                                                                     padding:
-                                                                        EdgeInsets.all(
+                                                                        const EdgeInsets.all(
                                                                             5.0),
                                                                     child:
                                                                         Visibility(
@@ -2061,7 +2054,7 @@ class _ProgressReportState extends State<ProgressReportGraph> with SingleTickerP
                                                                     )),
                                                                 Padding(
                                                                     padding:
-                                                                        EdgeInsets.all(
+                                                                        const EdgeInsets.all(
                                                                             5.0),
                                                                     child: Row(
                                                                       children: [
@@ -2090,7 +2083,7 @@ class _ProgressReportState extends State<ProgressReportGraph> with SingleTickerP
                                                                     )),
                                                                 Padding(
                                                                     padding:
-                                                                        EdgeInsets.all(
+                                                                        const EdgeInsets.all(
                                                                             5.0),
                                                                     child: Row(
                                                                       children: [
@@ -2127,7 +2120,7 @@ class _ProgressReportState extends State<ProgressReportGraph> with SingleTickerP
                                                                     )),
                                                                 Padding(
                                                                     padding:
-                                                                        EdgeInsets.all(
+                                                                        const EdgeInsets.all(
                                                                             5.0),
                                                                     child: Row(
                                                                       children: [
@@ -2142,12 +2135,12 @@ class _ProgressReportState extends State<ProgressReportGraph> with SingleTickerP
                                                                                     alignment: Alignment.center,
                                                                                     decoration: BoxDecoration(
                                                                                         color: parentData.parentData[index].childData[i].status.toString().contains('Completed')
-                                                                                            ? Color(0xff4ad963)
+                                                                                            ? const Color(0xff4ad963)
                                                                                             : parentData.parentData[index].childData[i].status.toString().contains('In Progress')
-                                                                                            ? Color(0xffff9503)
+                                                                                            ? const Color(0xffff9503)
                                                                                             : parentData.parentData[index].childData[i].status.toString().contains('Not Started')
-                                                                                            ? Color(0xfffe2c53)
-                                                                                            : Color(0xff5750da),
+                                                                                            ? const Color(0xfffe2c53)
+                                                                                            : const Color(0xff5750da),
                                                                                         /*border: Border.all(
                                                                                             color: parentData.parentData[index].childData[i].status.toString().contains('Completed')
                                                                                                 ? Color(0xff4ad963)
@@ -2156,7 +2149,7 @@ class _ProgressReportState extends State<ProgressReportGraph> with SingleTickerP
                                                                                                     : parentData.parentData[index].childData[i].status.toString().contains('Not Started')
                                                                                                         ? Color(0xfffe2c53)
                                                                                                         : Color(0xff5750da)),*/
-                                                                                        borderRadius: BorderRadius.all(
+                                                                                        borderRadius: const BorderRadius.all(
                                                                                           Radius.circular(20.0),
                                                                                         )),
                                                                                     child: Text(parentData.parentData[index].childData[i].status,
@@ -2174,7 +2167,7 @@ class _ProgressReportState extends State<ProgressReportGraph> with SingleTickerP
                                                                                     alignment: Alignment.center,
                                                                                     decoration: BoxDecoration(
                                                                                         border: Border.all(color: Colors.grey),
-                                                                                        borderRadius: BorderRadius.all(
+                                                                                        borderRadius: const BorderRadius.all(
                                                                                           Radius.circular(20.0),
                                                                                         )),
                                                                                     child: Text(
@@ -2192,7 +2185,7 @@ class _ProgressReportState extends State<ProgressReportGraph> with SingleTickerP
                                                                                   padding: const EdgeInsets.all(5.0),
                                                                                   decoration: BoxDecoration(
                                                                                       border: Border.all(color: Colors.grey),
-                                                                                      borderRadius: BorderRadius.all(
+                                                                                      borderRadius: const BorderRadius.all(
                                                                                         Radius.circular(20.0),
                                                                                       )),
                                                                                   child: Text(parentData.parentData[index].childData[i].credit != null ? parentData.parentData[index].childData[i].credit.toString() : 'Credit 0.0', style: TextStyle(color: Color(int.parse("0xFF${appBloc.uiSettingModel.appTextColor.substring(1, 7).toUpperCase()}")), fontSize: 12.0))),
@@ -2212,7 +2205,7 @@ class _ProgressReportState extends State<ProgressReportGraph> with SingleTickerP
                                                                   child:
                                                                       Padding(
                                                                     padding:
-                                                                        EdgeInsets.all(
+                                                                        const EdgeInsets.all(
                                                                             5.0),
                                                                     child:
                                                                         Container(
@@ -2231,7 +2224,7 @@ class _ProgressReportState extends State<ProgressReportGraph> with SingleTickerP
                                                                             {
                                                                               showDialog(
                                                                                   context: context,
-                                                                                  builder: (BuildContext context) => new AlertDialog(
+                                                                                  builder: (BuildContext context) => AlertDialog(
                                                                                         title: Text(
                                                                                           appBloc.localstr.mylearningActionsheetViewcertificateoption,
                                                                                           style: TextStyle(color: Color(int.parse("0xFF${appBloc.uiSettingModel.appTextColor.substring(1, 7).toUpperCase()}")), fontWeight: FontWeight.bold),
@@ -2243,14 +2236,14 @@ class _ProgressReportState extends State<ProgressReportGraph> with SingleTickerP
                                                                                           ),
                                                                                         ),
                                                                                         backgroundColor: Color(int.parse("0xFF${appBloc.uiSettingModel.appBGColor.substring(1, 7).toUpperCase()}")),
-                                                                                        shape: RoundedRectangleBorder(borderRadius: new BorderRadius.circular(5)),
+                                                                                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)),
                                                                                         actions: <Widget>[
-                                                                                          new FlatButton(
-                                                                                            child: Text(appBloc.localstr.mylearningClosebuttonactionClosebuttonalerttitle),
+                                                                                          FlatButton(
                                                                                             textColor: Colors.blue,
                                                                                             onPressed: () async {
                                                                                               Navigator.of(context).pop();
                                                                                             },
+                                                                                            child: Text(appBloc.localstr.mylearningClosebuttonactionClosebuttonalerttitle),
                                                                                           ),
                                                                                         ],
                                                                                       ))
@@ -2270,12 +2263,14 @@ class _ProgressReportState extends State<ProgressReportGraph> with SingleTickerP
                                                                             Color(int.parse("0xFF${appBloc.uiSettingModel.appButtonBgColor.substring(1, 7).toUpperCase()}")).withOpacity(0.5),
                                                                         color: Color(
                                                                             int.parse("0xFF${appBloc.uiSettingModel.appButtonBgColor.substring(1, 7).toUpperCase()}")),
+                                                                        textColor:
+                                                                            Color(int.parse("0xFF${appBloc.uiSettingModel.appButtonTextColor.substring(1, 7).toUpperCase()}")),
                                                                         child:
                                                                             Row(
                                                                           mainAxisAlignment:
                                                                               MainAxisAlignment.center,
                                                                           children: [
-                                                                            Padding(
+                                                                            const Padding(
                                                                                 padding: EdgeInsets.all(5.0),
                                                                                 child: Icon(Icons.workspace_premium)),
                                                                             Text(
@@ -2284,8 +2279,6 @@ class _ProgressReportState extends State<ProgressReportGraph> with SingleTickerP
                                                                             )
                                                                           ],
                                                                         ),
-                                                                        textColor:
-                                                                            Color(int.parse("0xFF${appBloc.uiSettingModel.appButtonTextColor.substring(1, 7).toUpperCase()}")),
                                                                       ),
                                                                     ),
                                                                   ),
@@ -2343,7 +2336,7 @@ class _ProgressReportState extends State<ProgressReportGraph> with SingleTickerP
               )
             ],
           )
-        : new Container();
+        : Container();
   }
 
   void updateGroupValue() {
@@ -2359,7 +2352,7 @@ class _ProgressReportState extends State<ProgressReportGraph> with SingleTickerP
   }
 
   void isAllowGroupBy() {
-    if (filterMenus != null && filterMenus.containsKey("GroupBy")) {
+    if (filterMenus.containsKey("GroupBy")) {
       String allowGroupBy = filterMenus["GroupBy"] ?? "";
       print("allowGroupBy $allowGroupBy");
       if (allowGroupBy != null || allowGroupBy == "true") {
@@ -2372,7 +2365,7 @@ class _ProgressReportState extends State<ProgressReportGraph> with SingleTickerP
       appBloc.isAllowGroupBy = false;
     }
 
-    if (filterMenus != null && filterMenus.containsKey("ContentTypes")) {
+    if (filterMenus.containsKey("ContentTypes")) {
       String allowContentType = filterMenus["ContentTypes"] ?? "";
       print("AllowAddContentType $allowContentType");
       if (allowContentType != null || allowContentType == "true") {
@@ -2385,7 +2378,7 @@ class _ProgressReportState extends State<ProgressReportGraph> with SingleTickerP
       isAllowTitle = false;
     }
 
-    if (filterMenus != null && filterMenus.containsKey("Status")) {
+    if (filterMenus.containsKey("Status")) {
       String allowStatus = filterMenus["Status"] ?? "";
       print("AllowAddContentType $allowStatus");
       if (allowStatus != null || allowStatus == "true") {
@@ -2398,7 +2391,7 @@ class _ProgressReportState extends State<ProgressReportGraph> with SingleTickerP
       isAllowStatus = false;
     }
 
-    if (filterMenus != null && filterMenus.containsKey("Contents")) {
+    if (filterMenus.containsKey("Contents")) {
       String allowContentTtile = filterMenus["Contents"] ?? "";
       print("AllowAddContentType $allowContentTtile");
       if (allowContentTtile != null || allowContentTtile == "true") {
@@ -2411,7 +2404,7 @@ class _ProgressReportState extends State<ProgressReportGraph> with SingleTickerP
       isAllowContent = false;
     }
 
-    if (filterMenus != null && filterMenus.containsKey("AverageScore")) {
+    if (filterMenus.containsKey("AverageScore")) {
       String allowAverageScore = filterMenus["AverageScore"] ?? "";
       print("AllowAddContentType $allowAverageScore");
       if (allowAverageScore != null || allowAverageScore == "true") {
@@ -2441,10 +2434,10 @@ class _ProgressReportState extends State<ProgressReportGraph> with SingleTickerP
     }
     */
 
-    if (filterMenus != null && filterMenus.containsKey("DisplayColumns")) {
+    if (filterMenus.containsKey("DisplayColumns")) {
       String isStatus = filterMenus["DisplayColumns"] ?? "";
       print("isStatus $isStatus");
-      if (isStatus != null && isStatus.contains("status")) {
+      if (isStatus.contains("status")) {
         this.isStatus = true;
       } else {
         this.isStatus = false;
@@ -2452,70 +2445,69 @@ class _ProgressReportState extends State<ProgressReportGraph> with SingleTickerP
     } else {
       // No such key
       //TODO: Setting true because of filter Menu getting null
-      this.isStatus = true;
+      isStatus = true;
     }
 
-    if (filterMenus != null && filterMenus.containsKey("DisplayColumns")) {
+    if (filterMenus.containsKey("DisplayColumns")) {
       String allowType = filterMenus["DisplayColumns"] ?? "";
       print("allowType $allowType");
-      if (allowType != null && allowType.contains("contenttype")) {
-        this.isModule = true;
+      if (allowType.contains("contenttype")) {
+        isModule = true;
       } else {
-        this.isModule = false;
+        isModule = false;
       }
     } else {
       // No such key
       //TODO: Setting true because of filter Menu getting null
-      this.isModule = true;
+      isModule = true;
     }
 
-    if (filterMenus != null && filterMenus.containsKey("DisplayColumns")) {
+    if (filterMenus.containsKey("DisplayColumns")) {
       String allowDateStart = filterMenus["DisplayColumns"] ?? "";
       print("allowDateStart $allowDateStart");
-      if (allowDateStart != null && allowDateStart.contains("datestarted")) {
-        this.isDateStarted = true;
+      if (allowDateStart.contains("datestarted")) {
+        isDateStarted = true;
       } else {
-        this.isDateStarted = false;
+        isDateStarted = false;
       }
     } else {
       // No such key
       //TODO: Setting true because of filter Menu getting null
-      this.isDateStarted = true;
+      isDateStarted = true;
     }
 
-    if (filterMenus != null && filterMenus.containsKey("DisplayColumns")) {
+    if (filterMenus.containsKey("DisplayColumns")) {
       String allowDateComplete = filterMenus["DisplayColumns"] ?? "";
       print("allowDateComplete $allowDateComplete");
-      if (allowDateComplete != null &&
-          allowDateComplete.contains("datecompleted")) {
-        this.isDateCompleted = true;
+      if (allowDateComplete.contains("datecompleted")) {
+        isDateCompleted = true;
       } else {
-        this.isDateCompleted = false;
+        isDateCompleted = false;
       }
     } else {
       // No such key
       //TODO: Setting true because of filter Menu getting null
-      this.isDateCompleted = true;
+      isDateCompleted = true;
     }
 
-    if (filterMenus != null && filterMenus.containsKey("DisplayColumns")) {
+    if (filterMenus.containsKey("DisplayColumns")) {
       String allowCredit = filterMenus["DisplayColumns"] ?? "";
       print("allowCredit $allowCredit");
-      if (allowCredit != null && allowCredit.contains("CmeCredits")) {
-        this.isCmeCredits = true;
+      if (allowCredit.contains("CmeCredits")) {
+        isCmeCredits = true;
       } else {
-        this.isCmeCredits = false;
+        isCmeCredits = false;
       }
     } else {
       // No such key
       //TODO: Setting true because of filter Menu getting null
-      this.isCmeCredits = true;
+      isCmeCredits = true;
     }
   }
 
   showAlertDialog(BuildContext context) {
     // Create button
-    Widget cancelButton = Container(
+    Widget cancelButton = SizedBox(
       width: 80,
       child: MaterialButton(
         onPressed: () => {Navigator.of(context).pop()},
@@ -2525,6 +2517,8 @@ class _ProgressReportState extends State<ProgressReportGraph> with SingleTickerP
             .withOpacity(0.5),
         color: Color(int.parse(
             "0xFF${appBloc.uiSettingModel.appButtonBgColor.substring(1, 7).toUpperCase()}")),
+        textColor: Color(int.parse(
+            "0xFF${appBloc.uiSettingModel.appButtonTextColor.substring(1, 7).toUpperCase()}")),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
@@ -2537,8 +2531,6 @@ class _ProgressReportState extends State<ProgressReportGraph> with SingleTickerP
             )
           ],
         ),
-        textColor: Color(int.parse(
-            "0xFF${appBloc.uiSettingModel.appButtonTextColor.substring(1, 7).toUpperCase()}")),
       ),
     );
     // Create AlertDialog
@@ -2588,8 +2580,8 @@ class _ProgressReportState extends State<ProgressReportGraph> with SingleTickerP
   }
 
   Map<String, String> generateHashMap(List<String> conditionsArray) {
-    Map<String, String> map = new Map();
-    if (conditionsArray.length != 0) {
+    Map<String, String> map = Map();
+    if (conditionsArray.isNotEmpty) {
       for (int i = 0; i < conditionsArray.length; i++) {
         var filterArray = conditionsArray[i].split("=");
         print(" forvalue   $filterArray");

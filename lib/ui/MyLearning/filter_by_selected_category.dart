@@ -11,6 +11,7 @@ import 'package:flutter_admin_web/framework/helpers/utils.dart';
 import 'package:flutter_admin_web/framework/theme/ins_theme.dart';
 import 'package:flutter_admin_web/ui/MyLearning/filterby_subcategory.dart';
 
+import '../../configs/constants.dart';
 import '../common/outline_button.dart';
 
 class FilterBySelectedCategory extends StatefulWidget {
@@ -95,10 +96,7 @@ class _FilterBySelectedCategoryState extends State<FilterBySelectedCategory> {
                             return Container(
                               child: Center(
                                 child: AbsorbPointer(
-                                  child: SpinKitCircle(
-                                    color: Colors.grey,
-                                    size: 70.h,
-                                  ),
+                                  child: AppConstants().getLoaderWidget(iconSize: 70)
                                 ),
                               ),
                             );

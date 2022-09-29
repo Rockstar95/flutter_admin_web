@@ -3,6 +3,8 @@ import 'package:flutter_admin_web/framework/bloc/app/bloc/app_bloc.dart';
 import 'package:flutter_admin_web/framework/common/device_config.dart';
 import 'package:flutter_admin_web/framework/theme/ins_theme.dart';
 
+import '../common/app_colors.dart';
+
 class MessageInput extends StatelessWidget {
   const MessageInput({
     Key? key,
@@ -27,9 +29,10 @@ class MessageInput extends StatelessWidget {
         textCapitalization: TextCapitalization.sentences,
         controller: controller,
         keyboardType: TextInputType.multiline,
-        maxLines: null,
+        maxLines: 5,
+        minLines: 1,
         textInputAction: TextInputAction.newline,
-        cursorColor: InsColor(appBloc).appBGColor,
+        cursorColor: AppColors.getAppTextColor(),
         style: TextStyle(
           color: InsColor(appBloc).appTextColor,
           fontSize: deviceData.screenHeight * 0.018,

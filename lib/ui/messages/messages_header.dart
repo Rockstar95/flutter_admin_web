@@ -95,6 +95,7 @@ class Functions {
   }
 
   static Future<bool> getNetworkStatus({required Duration duration}) async {
+    return true;
     await Future.delayed(duration);
     try {
       final result = await InternetAddress.lookup('google.com');

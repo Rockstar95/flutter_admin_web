@@ -116,6 +116,7 @@ class WikiUploadRepositoryPublic extends WikiUploadRepository {
       int intComponentID = 0,
       String locale = "",
       String strType = ""}) async {
+    // TODO: implement getWikiCategories
     Response? response;
     try {
       print("......catalog....${ApiEndpoints.GetWikiCategories()}");

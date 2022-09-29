@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_admin_web/framework/bloc/app/bloc/app_bloc.dart';
@@ -86,6 +87,97 @@ class EventTrackController {
 
       return fileCheck;
     }
+  }
+
+  Future<bool> launchCourseOffline({
+    required BuildContext context,
+    required DummyMyCatelogResponseTable2 parentMyLearningModel,
+    required DummyMyCatelogResponseTable2 table2,
+  }) async {
+    AppBloc appBloc = BlocProvider.of<AppBloc>(context, listen: false);
+
+    Map<String, bool> removedFromDownload = await MyLearningDownloadController().getRemovedFromDownloadMap();
+
+    if(removedFromDownload["${parentMyLearningModel.contentid}_${table2.contentid}"] == true) {
+      courseNotDownloadedDialog(context, appBloc);
+      return false;
+    }
+
+    if (table2.objecttypeid == 10 && table2.bit5) {
+      // Need to open EventTrackListTabsActivity
+      print('Navigation to EventTrackList called');
+      MyLearningBloc myLearningBloc = BlocProvider.of<MyLearningBloc>(context, listen: false);
+
+      await Navigator.of(context).push(
+        MaterialPageRoute(
+          builder: (context) => EventTrackList(
+            table2,
+            true,
+            myLearningBloc.list,
+          ),
+        ),
+      );
+      return true;
+    }
+    else if(table2.objecttypeid == 70){
+      /// No download for this file type
+    }
+    else if (table2.objecttypeid == 694) {
+      // TODO: Phase 2
+    }
+    else if ([8, 9, 21, 26, 28, 102].contains(table2.objecttypeid) || (table2.objecttypeid == 10 && !table2.bit5)) {
+      bool fileCheck =
+          await fileExistCheck(parentMyLearningModel, table2, appBloc.userid);
+      print("launchCourseOffline called with isDownloaded:$fileCheck");
+
+      if(!fileCheck) {
+        courseNotDownloadedDialog(context, appBloc);
+        return false;
+      }
+
+      // await Navigator.push(
+      //   context,
+      //   MaterialPageRoute(
+      //     builder: (BuildContext context) => OfflineContentLauncherInAppWebview(
+      //       table2: table2,
+      //       isTrackListItem: true,
+      //       eventTrackModel: parentMyLearningModel,
+      //     ),
+      //   ),
+      // );
+      return true;
+    }
+    else {
+      bool fileCheck = await fileExistCheck(parentMyLearningModel, table2, appBloc.userid);
+      print("launchCourseOffline called with isDownloaded:$fileCheck");
+
+      if(!fileCheck) {
+        courseNotDownloadedDialog(context, appBloc);
+        return false;
+      }
+      try {
+        String downloadDestFolderPath = await AppDirectory.getDocumentsDirectory() +
+            "$pathSeparator.Mydownloads${pathSeparator}Contentdownloads" +
+            "$pathSeparator" +
+            parentMyLearningModel.contentid.toString() +
+            "$pathSeparator" +
+            table2.contentid +
+            '-' +
+            "${appBloc.userid}$pathSeparator${table2.startpage}";
+        File file = File(downloadDestFolderPath);
+        // downloadDestFolderPath = downloadDestFolderPath.replaceFirst('/', '');
+        OpenResult result = await OpenFile.open(file.path);
+        if(result.type != ResultType.done) {
+          SnackBar snackBar = SnackBar(content: Text(result.message));
+          ScaffoldMessenger.of(context).showSnackBar(snackBar);
+          return false;
+        }
+        return true;
+      } catch (err) {
+        return false;
+      }
+    }
+    return false;
   }
 
   void courseNotDownloadedDialog(BuildContext context, AppBloc appBloc) {

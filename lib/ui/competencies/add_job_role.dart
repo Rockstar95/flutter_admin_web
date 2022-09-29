@@ -14,7 +14,9 @@ import 'package:flutter_admin_web/framework/helpers/utils.dart';
 import 'package:flutter_admin_web/framework/repository/competencies/my_competencies_repositry_builder.dart';
 import 'package:flutter_admin_web/framework/theme/ins_theme.dart';
 
+import '../../configs/constants.dart';
 import '../common/bottomsheet_drager.dart';
+import '../common/bottomsheet_option_tile.dart';
 
 class AddJobRole extends StatefulWidget {
   final NativeMenuModel nativeMenuModel;
@@ -31,7 +33,7 @@ class AddJobRole extends StatefulWidget {
 
 class _AddJobRoleState extends State<AddJobRole>
     with SingleTickerProviderStateMixin {
-  GlobalKey<ScaffoldState> _scaffoldkey = new GlobalKey<ScaffoldState>();
+  GlobalKey<ScaffoldState> _scaffoldkey = GlobalKey<ScaffoldState>();
 
   AppBloc get appBloc => BlocProvider.of<AppBloc>(context);
   late MyCompetenciesBloc myCompetenciesBloc;
@@ -75,7 +77,7 @@ class _AddJobRoleState extends State<AddJobRole>
               "0xFF${appBloc.uiSettingModel.appBGColor.substring(1, 7).toUpperCase()}")),
           child: Column(
             children: [
-              Divider(
+              const Divider(
                 height: 2,
                 color: Colors.black87,
               ),
@@ -100,7 +102,7 @@ class _AddJobRoleState extends State<AddJobRole>
       height: 70.0,
       width: MediaQuery.of(context).size.width,
       child: Padding(
-          padding: EdgeInsets.only(left: 15.0, right: 15.0),
+          padding: const EdgeInsets.only(left: 15.0, right: 15.0),
           child: DropdownButtonHideUnderline(
             child: DropdownButton<String>(
               dropdownColor: Color(int.parse("0xFF${appBloc.uiSettingModel.appBGColor.substring(1, 7).toUpperCase()}")),
@@ -151,14 +153,10 @@ class _AddJobRoleState extends State<AddJobRole>
             myCompetenciesBloc.isFirstLoading == true) {
           return Center(
             child: AbsorbPointer(
-              child: SpinKitCircle(
-                color: Color(int.parse(
-                    "0xFF${appBloc.uiSettingModel.appTextColor.substring(1, 7).toUpperCase()}")),
-                size: 70.0,
-              ),
+              child: AppConstants().getLoaderWidget(iconSize: 70),
             ),
           );
-        } else if (parentJobRole.length == 0) {
+        } else if (parentJobRole.isEmpty) {
           return noDataFound(true);
         } else {
           return ListView.builder(
@@ -180,7 +178,7 @@ class _AddJobRoleState extends State<AddJobRole>
                               color: Colors.grey.shade300,
                               spreadRadius: 0,
                               blurRadius: 5,
-                              offset: Offset(0, 5),
+                              offset: const Offset(0, 5),
                             ),
                           ],
                           border: Border.all(color: Color(int.parse("0xFF${appBloc.uiSettingModel.appTextColor.substring(1, 7).toUpperCase()}")).withOpacity(0.15)),
@@ -191,7 +189,7 @@ class _AddJobRoleState extends State<AddJobRole>
                             Expanded(
                               child: Text(
                                 parentJobRolesList.jobRoleName,
-                                style: new TextStyle(
+                                style: TextStyle(
                                   fontSize: 15.h,
                                   fontWeight: FontWeight.w600,
                                   color: Color(int.parse("0xFF${appBloc.uiSettingModel.appTextColor.substring(1, 7).toUpperCase()}")),
@@ -238,11 +236,12 @@ class _AddJobRoleState extends State<AddJobRole>
               )
             ],
           )
-        : new Container();
+        : Container();
   }
 
   void _settingModalBottomSheet(context, ParentJobRolesList parentJobRole) {
     showModalBottomSheet(
+        shape: AppConstants().bottomSheetShapeBorder(),
         context: context,
         builder: (BuildContext bc) {
           return BlocConsumer<MyCompetenciesBloc, MyCompetenciesState>(
@@ -254,24 +253,13 @@ class _AddJobRoleState extends State<AddJobRole>
                 }
               },
               builder: (context, state) {
-                return Container(
-                  color: Color(int.parse("0xFF${appBloc.uiSettingModel.appBGColor.substring(1, 7).toUpperCase()}")),
+                return AppConstants().bottomSheetContainer(
                   child: Wrap(
                     children: <Widget>[
-                      BottomSheetDragger(),
-                      new ListTile(
-                        leading: Icon(
-                          Icons.add_circle,
-                          color: Color(int.parse("0xFF${appBloc.uiSettingModel.appTextColor.substring(1, 7).toUpperCase()}")),
-                        ),
-                        title: Text(
-                          'Add to my Job Role - Skill',
-                          style: TextStyle(
-                            color: Color(int.parse(
-                                "0xFF${appBloc.uiSettingModel.appTextColor.substring(1, 7).toUpperCase()}")),
-                          ),
-                        ),
-                        horizontalTitleGap: 0,
+                      const BottomSheetDragger(),
+                      BottomsheetOptionTile(
+                          iconData:Icons.add_circle,
+                          text:'Add to my Job Role - Skill',
                         onTap: () => {
                           myCompetenciesBloc.add(AddJobRoleEvent(
                               jobRoleId: parentJobRole.jobRoleId,

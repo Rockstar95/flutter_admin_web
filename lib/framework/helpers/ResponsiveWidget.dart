@@ -3,9 +3,9 @@ import 'package:flutter/material.dart';
 class ResponsiveWidget extends StatelessWidget {
   final Widget mobile;
   final Widget tab;
-  Widget web = Container();
+  Widget? web = Container();
 
-  ResponsiveWidget({Key? key, required this.mobile, required this.tab, required this.web})
+  ResponsiveWidget({Key? key, required this.mobile, required this.tab, this.web})
       : super(key: key);
 
   @override
@@ -18,7 +18,7 @@ class ResponsiveWidget extends StatelessWidget {
         return tab;
       }
       else {
-        return web;
+        return web ?? Container();
       }
     });
   }

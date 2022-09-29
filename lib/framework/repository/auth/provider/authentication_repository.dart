@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_admin_web/utils/my_print.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:http/http.dart';
 import 'package:flutter_admin_web/framework/common/constants.dart';
@@ -33,39 +34,27 @@ class AuthenticationRepository implements AuthRepository {
       print('login req $data');
 
       Response? response = await RestClient.postData(ApiEndpoints.apiLogin(), data);
-      print(
-          'doLogin Response , status code:${response?.statusCode}, Data:${response?.body}');
+      print('doLogin Response , status code:${response?.statusCode}, Data:${response?.body}');
       if (response?.statusCode == 200) {
         if ((response?.body ?? "{}").contains('successfulluserlogin')) {
-          LoginResponse loginResponse =
-              loginResponseFromJson(response?.body ?? "{}");
+          LoginResponse loginResponse = loginResponseFromJson(response?.body ?? "{}");
 
-          await sharePrefSaveString(
-              sharedPref_image, loginResponse.successFullUserLogin[0].image);
-          await sharePrefSaveString(sharedPref_userid,
-              loginResponse.successFullUserLogin[0].userid.toString());
-          await sharePrefSaveString(sharedPref_bearer,
-              loginResponse.successFullUserLogin[0].jwttoken.toString());
-          await sharePrefSaveString(sharedPref_LoginUserName,
-              loginResponse.successFullUserLogin[0].username);
+          await sharePrefSaveString(sharedPref_image, loginResponse.successFullUserLogin[0].image);
+          await sharePrefSaveString(sharedPref_userid, loginResponse.successFullUserLogin[0].userid.toString());
+          await sharePrefSaveString(sharedPref_bearer, loginResponse.successFullUserLogin[0].jwttoken.toString());
+          await sharePrefSaveString(sharedPref_LoginUserName, loginResponse.successFullUserLogin[0].username);
           await sharePrefSaveString(sharedPref_LoginEmailId, username);
           await sharePrefSaveString(sharedPref_LoginPassword, password);
           await sharePrefSaveString(sharedPref_LoginUserID, username);
-          await sharePrefSaveString(sharedPref_tempProfileImage,
-              '${ApiEndpoints.strSiteUrl}/Content/SiteFiles/374/ProfileImages/${loginResponse.successFullUserLogin[0].image}');
+          await sharePrefSaveString(sharedPref_tempProfileImage, '${ApiEndpoints.strSiteUrl}/Content/SiteFiles/374/ProfileImages/${loginResponse.successFullUserLogin[0].image}');
 
-          await sharePrefSaveString(
-              sharedPref_main_siteurl, ApiEndpoints.mainSiteURL);
+          await sharePrefSaveString(sharedPref_main_siteurl, ApiEndpoints.mainSiteURL);
 
-          await sharePrefSaveString(sharedPref_main_userid,
-              loginResponse.successFullUserLogin[0].userid.toString());
-          await sharePrefSaveString(sharedPref_main_bearer,
-              loginResponse.successFullUserLogin[0].jwttoken.toString());
-          await sharePrefSaveString(sharedPref_main_tempProfileImage,
-              '${ApiEndpoints.strSiteUrl}/Content/SiteFiles/374/ProfileImages/${loginResponse.successFullUserLogin[0].image}');
+          await sharePrefSaveString(sharedPref_main_userid, loginResponse.successFullUserLogin[0].userid.toString());
+          await sharePrefSaveString(sharedPref_main_bearer, loginResponse.successFullUserLogin[0].jwttoken.toString());
+          await sharePrefSaveString(sharedPref_main_tempProfileImage, '${ApiEndpoints.strSiteUrl}/Content/SiteFiles/374/ProfileImages/${loginResponse.successFullUserLogin[0].image}');
 
-          await sharePrefSaveString(sharedPref_sessionid,
-              loginResponse.successFullUserLogin[0].sessionid.toString());
+          await sharePrefSaveString(sharedPref_sessionid, loginResponse.successFullUserLogin[0].sessionid.toString());
 
           print('bindedresposne $loginResponse');
           isLoggedin = true;
@@ -91,6 +80,7 @@ class AuthenticationRepository implements AuthRepository {
       "intFromSIteID" : -1,
       "strAuthKey":"$siteToken"
     };
+
     try {
       Response? response = await RestClient.postMethodWithoutToken(ApiEndpoints.apiGetGenericSiteMetaData(), data);
       print("000000000 ${response?.body}");
@@ -101,19 +91,26 @@ class AuthenticationRepository implements AuthRepository {
         print("2");
         print("bodyyyyyyyy : ${body}");
         print("3");
-        if (body.isNotEmpty) {
-          print("4");
-          isSuccess = await setUserIdPassFromMetaData(body["Table"][0]["UserID"],body["Table"][0]["FromSiteID"],body["Table"][0]["ToSiteID"]);
-          print("5");
+        if (body.isNotEmpty && (body["Table"] is List && body["Table"].isNotEmpty)) {
+          int? userid = body["Table"][0]["UserID"] is int ? body["Table"][0]["UserID"] : null;
+          int? fromSiteId = body["Table"][0]["FromSiteID"] is int ? body["Table"][0]["FromSiteID"] : null;
+          int? toSiteId = body["Table"][0]["ToSiteID"] is int ? body["Table"][0]["ToSiteID"] : null;
+
+          if(userid != null && fromSiteId != null && toSiteId != null) {
+            isSuccess = await setUserIdPassFromMetaData(userid,fromSiteId,toSiteId);
+          }
+
           print("IsSuccess : $isSuccess");
           return isSuccess;
         }
-      } else {
+      }
+      else {
         isSuccess = {};
       }
     }
-    catch (e){
+    catch (e, s){
       print("Error in AuthenticationRepository.gettingSiteMetadata():$e");
+      MyPrint.printOnConsole(s);
     }
 
     return isSuccess;

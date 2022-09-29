@@ -2,13 +2,9 @@ import 'dart:io';
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_admin_web/ui/common/common_toast.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_downloader/flutter_downloader.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:flutter_spinkit/flutter_spinkit.dart';
-import 'package:http/http.dart';
-import 'package:flutter_admin_web/controllers/my_learning_download_controller.dart';
 import 'package:flutter_admin_web/framework/bloc/Splash/bloc/splash_bloc.dart';
 import 'package:flutter_admin_web/framework/bloc/Splash/event/splash_event.dart';
 import 'package:flutter_admin_web/framework/bloc/Splash/states/splash_state.dart';
@@ -20,16 +16,14 @@ import 'package:flutter_admin_web/framework/common/constants.dart';
 import 'package:flutter_admin_web/framework/common/pref_manger.dart';
 import 'package:flutter_admin_web/framework/helpers/ApiEndpoints.dart';
 import 'package:flutter_admin_web/framework/helpers/downloader/local_downloading_service.dart';
-import 'package:flutter_admin_web/framework/helpers/utils.dart';
 import 'package:flutter_admin_web/framework/repository/SplashRepository/splash_repositry_builder.dart';
-import 'package:flutter_admin_web/framework/repository/SplashRepository/splash_repositry_public.dart';
 import 'package:flutter_admin_web/framework/repository/auth/provider/authentication_repository.dart';
 import 'package:flutter_admin_web/ui/OnBoarding/on_boarding_screen.dart';
 import 'package:flutter_admin_web/ui/auth/login_common_page.dart';
 import 'package:flutter_admin_web/ui/home/ActBase.dart';
 import 'package:flutter_admin_web/utils/my_print.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
+import '../../configs/constants.dart';
 import '../appModule/app.dart';
 
 const kLocalContentUrl =
@@ -38,7 +32,7 @@ const kLocalContentUrl =
 class SplashScreen extends StatefulWidget {
   final bool downloadServiceInitialized;
 
-  const SplashScreen(this.downloadServiceInitialized);
+  const SplashScreen(this.downloadServiceInitialized, {Key? key}) : super(key: key);
 
   @override
   _SplashScreenState createState() => _SplashScreenState();
@@ -94,10 +88,10 @@ class _SplashScreenState extends State<SplashScreen> {
     }
 
     if (siteURL.isEmpty) {
-      appLogoUrl = ApiEndpoints.mainSiteURL + "Content/SiteConfiguration/374/LoginSettingLogo/logo.png";
+      appLogoUrl = "${ApiEndpoints.mainSiteURL}Content/SiteConfiguration/374/LoginSettingLogo/logo.png";
     }
     else {
-      appLogoUrl = siteURL + "Content/SiteConfiguration/374/LoginSettingLogo/logo.png";
+      appLogoUrl = "${siteURL}Content/SiteConfiguration/374/LoginSettingLogo/logo.png";
     }
   }
 
@@ -225,9 +219,18 @@ class _SplashScreenState extends State<SplashScreen> {
     // print("isLoggedIn : $isLoggedIn" );
     // if (isLoggedIn == 'true') {
 
-    appBloc.userid = await sharePrefGetString(sharedPref_userid);
-    Map<String,dynamic> userIdPass = await AuthenticationRepository().gettingSiteMetadata(ApiEndpoints.authToken);
-    bool loggedIn = await AuthenticationRepository().doLogin(userIdPass["email"], userIdPass["pass"], ApiEndpoints.strSiteUrl, '', '374', false,isEncrypted: true);
+    // appBloc.userid = await sharePrefGetString(sharedPref_userid);
+
+    bool loggedIn = false;
+    if(ApiEndpoints.authToken.isNotEmpty) {
+      Map<String,dynamic> userIdPass = await AuthenticationRepository().gettingSiteMetadata(ApiEndpoints.authToken);
+      String email = userIdPass['email'] is String ? userIdPass['email'] : "";
+      String pass = userIdPass['pass'] is String ? userIdPass['pass'] : "";
+
+      if(email.isNotEmpty && pass.isNotEmpty) {
+        loggedIn = await AuthenticationRepository().doLogin(email, pass, ApiEndpoints.strSiteUrl, '', '374', false,isEncrypted: true);
+      }
+    }
 
     MyPrint.printOnConsole("loggedIn:$loggedIn");
     if(loggedIn) {
@@ -346,42 +349,36 @@ class _SplashScreenState extends State<SplashScreen> {
               color: themeState.themeData.primaryColorDark,
               child: Stack(
                 children: <Widget>[
-                  appLogoUrl.length > 0
+                  appLogoUrl.isNotEmpty
                       ? Center(
-                    child: SizedBox(
-                      // height: 130.h,
-                      // width: MediaQuery.of(context).size.width,
-                      height: 86.h,
-                      width: 276.h,
-                      child: CachedNetworkImage(
-                        fit: BoxFit.fill,
-                        placeholder: (context, url) => Image.asset(
-                          kSplashLogo,
-                        ),
-                        errorWidget: (context, url, _) => Image.asset(
-                          kSplashLogo,
-                        ),
-                        imageUrl: appLogoUrl,
-                      ),
-                    ),
-                  )
+                          child: SizedBox(
+                            // height: 130.h,
+                            // width: MediaQuery.of(context).size.width,
+                            height: 86.h,
+                            width: 276.h,
+                            child: CachedNetworkImage(
+                              fit: BoxFit.fill,
+                              placeholder: (context, url) => Image.asset(
+                                kSplashLogo,
+                              ),
+                              errorWidget: (context, url, _) => Image.asset(
+                                kSplashLogo,
+                              ),
+                              imageUrl: appLogoUrl,
+                            ),
+                          ),
+                        )
                       : Center(
-                    child: SpinKitCircle(
-                      color: Colors.grey,
-                      size: 25.h,
-                    ),
-                  ),
-                  Align(
+                          child: AppConstants().getLoaderWidget(iconSize: 50),
+                        ),
+                  if(appLogoUrl.isNotEmpty) Align(
                     alignment: Alignment.bottomCenter,
                     child: Padding(
                       padding: const EdgeInsets.fromLTRB(0, 0, 0, 60),
                       child: SizedBox(
                         height: 50,
                         width: 50,
-                        child: SpinKitCircle(
-                          color: Colors.grey,
-                          size: 50.h,
-                        ),
+                        child: AppConstants().getLoaderWidget(),
                       ),
                     ),
                   ),

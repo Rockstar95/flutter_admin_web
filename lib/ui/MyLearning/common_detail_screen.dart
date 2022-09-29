@@ -70,6 +70,7 @@ import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher_string.dart';
 
+import '../../configs/constants.dart';
 import '../../controllers/connection_controller.dart';
 import '../../controllers/my_learning_download_controller.dart';
 import '../../controllers/mylearning_controller.dart';
@@ -80,6 +81,7 @@ import '../../providers/my_learning_download_provider.dart';
 import '../../utils/my_print.dart';
 import '../../utils/my_utils.dart';
 import '../common/bottomsheet_drager.dart';
+import '../common/bottomsheet_option_tile.dart';
 import 'SendviaEmailMylearning.dart';
 import 'helper/advanced_webcourse_launch.dart';
 import 'helper/gotoCourseLaunchContenisolation.dart';
@@ -1072,10 +1074,7 @@ class _CommonDetailScreenState extends State<CommonDetailScreen> with SingleTick
   Widget getProgressIndicator() {
     return Center(
       child: AbsorbPointer(
-        child: SpinKitCircle(
-          color: Colors.grey,
-          size: 70.h,
-        ),
+        child: AppConstants().getLoaderWidget(iconSize: 70)
       ),
     );
   }
@@ -1086,13 +1085,7 @@ class _CommonDetailScreenState extends State<CommonDetailScreen> with SingleTick
           "0xFF${appBloc.uiSettingModel.appBGColor.substring(1, 7).toUpperCase()}")),
       child: Center(
         child: AbsorbPointer(
-          child: SpinKitCircle(
-            color: Color(
-              int.parse(
-                  "0xFF${appBloc.uiSettingModel.appTextColor.substring(1, 7).toUpperCase()}"),
-            ),
-            size: 70.h,
-          ),
+          child: AppConstants().getLoaderWidget(iconSize: 70)
         ),
       ),
     );
@@ -2365,9 +2358,9 @@ class _CommonDetailScreenState extends State<CommonDetailScreen> with SingleTick
         onTap: () {
           Navigator.of(context).push(MaterialPageRoute(
               builder: (context) => CommonDetailScreen(
-                table2: widget.table2,
-                detailsBloc: detailsBloc,
-              )));
+                    table2: widget.table2,
+                    detailsBloc: detailsBloc,
+                  )));
         },
         child: Card(
           elevation: 4,
@@ -2931,15 +2924,14 @@ class _CommonDetailScreenState extends State<CommonDetailScreen> with SingleTick
     }
 
     showModalBottomSheet(
-        backgroundColor: Color(int.parse(
-            "0xFF${appBloc.uiSettingModel.appBGColor.substring(1, 7).toUpperCase()}")),
+        shape: AppConstants().bottomSheetShapeBorder(),
         context: context,
         builder: (BuildContext bc) {
-          return Container(
+          return AppConstants().bottomSheetContainer(
             child: SingleChildScrollView(
-              child: Column(
+              child: new Column(
                 children: <Widget>[
-                  const BottomSheetDragger(),
+                  BottomSheetDragger(),
                   displayPauseDownload(widget.table2, myLearningDownloadModel),
                   displayResumeDownload(widget.table2, myLearningDownloadModel),
                   displayCancelDownload(widget.table2, myLearningDownloadModel),
@@ -3546,22 +3538,12 @@ class _CommonDetailScreenState extends State<CommonDetailScreen> with SingleTick
   //region Bottomsheet Options
   Widget displayPauseDownload(DummyMyCatelogResponseTable2 table2, MyLearningDownloadModel downloadModel) {
     if(downloadModel.taskId.isEmpty || downloadModel.isFileDownloaded || !downloadModel.isFileDownloading || !downloadModel.table2.isDownloading) {
-      return const SizedBox();
+      return SizedBox();
     }
 
-    return ListTile(
-      leading: Icon(
-        Icons.pause,
-        color: InsColor(appBloc).appIconColor,
-      ),
-      title: Text(
-        "Pause Download",
-        style: TextStyle(
-            color: Color(
-              int.parse(
-                  '0xFF${appBloc.uiSettingModel.appTextColor.substring(1, 7).toUpperCase()}'),
-            )),
-      ),
+    return BottomsheetOptionTile(
+      iconData: Icons.pause,
+      text: "Pause Download",
       onTap: () async {
         Navigator.of(context).pop();
 
@@ -3572,22 +3554,12 @@ class _CommonDetailScreenState extends State<CommonDetailScreen> with SingleTick
 
   Widget displayResumeDownload(DummyMyCatelogResponseTable2 table2, MyLearningDownloadModel downloadModel) {
     if(downloadModel.taskId.isEmpty || downloadModel.isFileDownloaded || !downloadModel.isFileDownloading || downloadModel.table2.isDownloading) {
-      return const SizedBox();
+      return SizedBox();
     }
 
-    return ListTile(
-      leading: Icon(
-        Icons.play_arrow,
-        color: InsColor(appBloc).appIconColor,
-      ),
-      title: Text(
-        "Resume Download",
-        style: TextStyle(
-            color: Color(
-              int.parse(
-                  '0xFF${appBloc.uiSettingModel.appTextColor.substring(1, 7).toUpperCase()}'),
-            )),
-      ),
+    return BottomsheetOptionTile(
+      iconData: Icons.play_arrow,
+      text: "Resume Download",
       onTap: () async {
         Navigator.of(context).pop();
 
@@ -3598,22 +3570,12 @@ class _CommonDetailScreenState extends State<CommonDetailScreen> with SingleTick
 
   Widget displayCancelDownload(DummyMyCatelogResponseTable2 table2, MyLearningDownloadModel downloadModel) {
     if(downloadModel.taskId.isEmpty || downloadModel.isFileDownloaded || !downloadModel.isFileDownloading) {
-      return const SizedBox();
+      return SizedBox();
     }
 
-    return ListTile(
-      leading: Icon(
-        Icons.delete,
-        color: InsColor(appBloc).appIconColor,
-      ),
-      title: Text(
-        "Cancel Download",
-        style: TextStyle(
-            color: Color(
-              int.parse(
-                  '0xFF${appBloc.uiSettingModel.appTextColor.substring(1, 7).toUpperCase()}'),
-            )),
-      ),
+    return BottomsheetOptionTile(
+      iconData: Icons.delete,
+      text: "Cancel Download",
       onTap: () async {
         MyPrint.printOnConsole('Cancel Download Called:${downloadModel.taskId}');
 
@@ -3627,22 +3589,12 @@ class _CommonDetailScreenState extends State<CommonDetailScreen> with SingleTick
 
   Widget displayRemoveFromDownload(DummyMyCatelogResponseTable2 table2, MyLearningDownloadModel downloadModel) {
     if(!downloadModel.isFileDownloaded) {
-      return const SizedBox();
+      return SizedBox();
     }
 
-    return ListTile(
-      leading: Icon(
-        Icons.delete,
-        color: InsColor(appBloc).appIconColor,
-      ),
-      title: Text(
-        "Remove from Downloads",
-        style: TextStyle(
-            color: Color(
-              int.parse(
-                  '0xFF${appBloc.uiSettingModel.appTextColor.substring(1, 7).toUpperCase()}'),
-            )),
-      ),
+    return BottomsheetOptionTile(
+      iconData:  Icons.delete,
+      text: "Remove from Downloads",
       onTap: () async {
         MyPrint.printOnConsole('Cancel Download Called:${downloadModel.taskId}');
 
@@ -3664,17 +3616,9 @@ class _CommonDetailScreenState extends State<CommonDetailScreen> with SingleTick
         table2.objecttypeid == 52) {
       if (table2.objecttypeid == 11 &&
           (table2.mediatypeid == 3 || table2.mediatypeid == 4)) {
-        return ListTile(
-            leading: Icon(
-              IconDataSolid(int.parse('0xf144')),
-              color: InsColor(appBloc).appIconColor,
-            ),
-            title: Text(
-              appBloc.localstr.mylearningActionsheetPlayoption,
-              style: TextStyle(
-                  color: Color(int.parse(
-                      "0xFF${appBloc.uiSettingModel.appTextColor.substring(1, 7).toUpperCase()}"))),
-            ),
+        return new BottomsheetOptionTile(
+            iconData: IconDataSolid(int.parse('0xf144')),
+            text: appBloc.localstr.mylearningActionsheetPlayoption,
             onTap: () async {
               Navigator.of(context).pop();
 
@@ -3711,15 +3655,9 @@ class _CommonDetailScreenState extends State<CommonDetailScreen> with SingleTick
       } else {
         print("View Displayed2");
 
-        return ListTile(
-          leading: Icon(
-            IconDataSolid(int.parse('0xf06e')),
-            color: InsColor(appBloc).appIconColor,
-          ),
-          title: Text(appBloc.localstr.mylearningActionsheetViewoption,
-              style: TextStyle(
-                  color: Color(int.parse(
-                      "0xFF${appBloc.uiSettingModel.appTextColor.substring(1, 7).toUpperCase()}")))),
+        return new BottomsheetOptionTile(
+          iconData: IconDataSolid(int.parse('0xf06e')),
+          text: appBloc.localstr.mylearningActionsheetViewoption,
           onTap: () async {
             Navigator.of(context).pop();
 
@@ -3829,17 +3767,9 @@ class _CommonDetailScreenState extends State<CommonDetailScreen> with SingleTick
           return Container();
         }
 
-        return ListTile(
-            leading: SvgPicture.asset(
-              'assets/Report.svg',
-              width: 25.h,
-              height: 25.h,
-              color: InsColor(appBloc).appIconColor,
-            ),
-            title: Text(appBloc.localstr.mylearningActionsheetReportoption,
-                style: TextStyle(
-                    color: Color(int.parse(
-                        "0xFF${appBloc.uiSettingModel.appTextColor.substring(1, 7).toUpperCase()}")))),
+        return new BottomsheetOptionTile(
+            svgImageUrl: 'assets/Report.svg',
+            text: appBloc.localstr.mylearningActionsheetReportoption,
             onTap: () {
               Navigator.pop(context);
               Navigator.of(context).push(MaterialPageRoute(
@@ -3854,16 +3784,9 @@ class _CommonDetailScreenState extends State<CommonDetailScreen> with SingleTick
     if (!isFromCatalog) {
       if (isValidString(widget.table2.eventenddatetime ?? "") &&
           !returnEventCompleted(widget.table2.eventenddatetime ?? "")) {
-        return ListTile(
-          leading: Icon(
-            IconDataSolid(int.parse('0xf271')),
-            color: InsColor(appBloc).appIconColor,
-          ),
-          title: Text(
-              appBloc.localstr.mylearningActionsheetAddtocalendaroption,
-              style: TextStyle(
-                  color: Color(int.parse(
-                      "0xFF${appBloc.uiSettingModel.appTextColor.substring(1, 7).toUpperCase()}")))),
+        return new BottomsheetOptionTile(
+          iconData: IconDataSolid(int.parse('0xf271')),
+          text: appBloc.localstr.mylearningActionsheetAddtocalendaroption,
           onTap: () {
             DateTime startDate = DateFormat("yyyy-MM-ddTHH:mm:ss")
                 .parse(widget.table2.eventstartdatetime);
@@ -3915,18 +3838,9 @@ class _CommonDetailScreenState extends State<CommonDetailScreen> with SingleTick
             widget.table2.objecttypeid == 52)) {
       if (isValidString(widget.table2.actualstatus) &&
           ((widget.table2.actualstatus != 'completed'))) {
-        return ListTile(
-            leading: SvgPicture.asset(
-              'assets/SetComplete.svg',
-              width: 25.h,
-              height: 25.h,
-              color: InsColor(appBloc).appIconColor,
-            ),
-            title: Text(
-                appBloc.localstr.mylearningActionsheetSetcompleteoption,
-                style: TextStyle(
-                    color: Color(int.parse(
-                        "0xFF${appBloc.uiSettingModel.appTextColor.substring(1, 7).toUpperCase()}")))),
+        return BottomsheetOptionTile(
+            svgImageUrl: 'assets/SetComplete.svg',
+            text: appBloc.localstr.mylearningActionsheetSetcompleteoption,
             onTap: () {
               Navigator.pop(context);
               detailsBloc.add(SetCompleteEvent(table2: widget.table2));
@@ -3964,18 +3878,9 @@ class _CommonDetailScreenState extends State<CommonDetailScreen> with SingleTick
           widget.table2.eventstartdatetime ?? "")) {
 //
         if (widget.table2.bit2 != null && widget.table2.bit2) {
-          return ListTile(
-              leading: Icon(
-                IconDataSolid(int.parse('0xf410')),
-                color: InsColor(appBloc).appIconColor,
-              ),
-              title: Text(
-                  appBloc.localstr.mylearningActionsheetCancelenrollmentoption,
-                  style: TextStyle(
-                      color: Color(
-                        int.parse(
-                            "0xFF${appBloc.uiSettingModel.appTextColor.substring(1, 7).toUpperCase()}"),
-                      ))),
+          return BottomsheetOptionTile(
+              iconData: IconDataSolid(int.parse('0xf410')),
+              text: appBloc.localstr.mylearningActionsheetCancelenrollmentoption,
               onTap: () {
                 checkCancellation(widget.table2, context);
               });
@@ -3983,15 +3888,9 @@ class _CommonDetailScreenState extends State<CommonDetailScreen> with SingleTick
 // for schedule events
         if (widget.table2.eventscheduletype == 1 &&
             appBloc.uiSettingModel.enableMultipleInstancesForEvent == 'true') {
-          return ListTile(
-              leading: const Icon(Icons.cancel),
-              title: Text(
-                  appBloc.localstr.mylearningActionsheetCancelenrollmentoption,
-                  style: TextStyle(
-                      color: Color(
-                        int.parse(
-                            "0xFF${appBloc.uiSettingModel.appTextColor.substring(1, 7).toUpperCase()}"),
-                      ))),
+          return BottomsheetOptionTile(
+              iconData: Icons.cancel,
+              text: appBloc.localstr.mylearningActionsheetCancelenrollmentoption,
               onTap: () {
                 checkCancellation(widget.table2, context);
               });
@@ -4006,17 +3905,9 @@ class _CommonDetailScreenState extends State<CommonDetailScreen> with SingleTick
     downloadPath(table2.contentid, table2);
 
     if (table2.isdownloaded && table2.objecttypeid != 70) {
-      return ListTile(
-          leading: Icon(
-            IconDataSolid(int.parse('0xf1f8')),
-            color: InsColor(appBloc).appIconColor,
-          ),
-          title: Text(appBloc.localstr.mylearningActionsheetDeleteoption,
-              style: TextStyle(
-                  color: Color(
-                    int.parse(
-                        "0xFF${appBloc.uiSettingModel.appTextColor.substring(1, 7).toUpperCase()}"),
-                  ))),
+      return BottomsheetOptionTile(
+          iconData: IconDataSolid(int.parse('0xf1f8')),
+          text: appBloc.localstr.mylearningActionsheetDeleteoption,
 
           /// TODO : Sagar sir - delete offline file
           onTap: () async {
@@ -4043,17 +3934,9 @@ class _CommonDetailScreenState extends State<CommonDetailScreen> with SingleTick
   Widget displayArchive(DummyMyCatelogResponseTable2 table2) {
     if (detailsBloc.myLearningDetailsModel.isArchived != null &&
         !detailsBloc.myLearningDetailsModel.isArchived) {
-      return ListTile(
-          leading: Icon(
-            IconDataSolid(int.parse('0xf187')),
-            color: InsColor(appBloc).appIconColor,
-          ),
-          title: Text(appBloc.localstr.mylearningActionsheetArchiveoption,
-              style: TextStyle(
-                  color: Color(
-                    int.parse(
-                        "0xFF${appBloc.uiSettingModel.appTextColor.substring(1, 7).toUpperCase()}"),
-                  ))),
+      return BottomsheetOptionTile(
+          iconData: IconDataSolid(int.parse('0xf187')),
+          text: appBloc.localstr.mylearningActionsheetArchiveoption,
           onTap: () {
             myLearningBloc.add(AddToArchiveCall(isArchive: true, strContentID: table2.contentid, table2: table2));
             Navigator.pop(context);
@@ -4066,17 +3949,9 @@ class _CommonDetailScreenState extends State<CommonDetailScreen> with SingleTick
   Widget displayUnArachive(DummyMyCatelogResponseTable2 table2) {
     if (detailsBloc.myLearningDetailsModel.isArchived != null &&
         detailsBloc.myLearningDetailsModel.isArchived) {
-      return ListTile(
-          leading: Icon(
-            IconDataSolid(int.parse('0xf187')),
-            color: InsColor(appBloc).appIconColor,
-          ),
-          title: Text(appBloc.localstr.mylearningActionsheetUnarchiveoption,
-              style: TextStyle(
-                  color: Color(
-                    int.parse(
-                        "0xFF${appBloc.uiSettingModel.appTextColor.substring(1, 7).toUpperCase()}"),
-                  ))),
+      return BottomsheetOptionTile(
+          iconData: IconDataSolid(int.parse('0xf187')),
+          text: appBloc.localstr.mylearningActionsheetUnarchiveoption,
           onTap: () {
             myLearningBloc.add(RemoveToArchiveCall(isArchive: false, strContentID: table2.contentid, table2: table2));
             Navigator.pop(context);
@@ -4088,16 +3963,9 @@ class _CommonDetailScreenState extends State<CommonDetailScreen> with SingleTick
 
   Widget displayReschedule() {
     if (isValidString(widget.table2.reschduleparentid ?? "")) {
-      return ListTile(
-        leading: Icon(
-          IconDataSolid(int.parse('0xf783')),
-          color: InsColor(appBloc).appIconColor,
-        ),
-        title: Text(
-            appBloc.localstr.mylearningActionbuttonRescheduleactionbutton,
-            style: TextStyle(
-                color: Color(int.parse(
-                    "0xFF${appBloc.uiSettingModel.appTextColor.substring(1, 7).toUpperCase()}")))),
+      return new BottomsheetOptionTile(
+        iconData: IconDataSolid(int.parse('0xf783')),
+        text: appBloc.localstr.mylearningActionbuttonRescheduleactionbutton,
         onTap: () => {},
       );
     } else {
@@ -4107,18 +3975,9 @@ class _CommonDetailScreenState extends State<CommonDetailScreen> with SingleTick
 
   Widget displayCertificate() {
     if (isValidString(widget.table2.certificateaction)) {
-      return ListTile(
-          leading: SvgPicture.asset(
-            'assets/Certificate.svg',
-            width: 25.h,
-            height: 25.h,
-            color: InsColor(appBloc).appIconColor,
-          ),
-          title: Text(
-              appBloc.localstr.mylearningActionsheetViewcertificateoption,
-              style: TextStyle(
-                  color: Color(int.parse(
-                      "0xFF${appBloc.uiSettingModel.appTextColor.substring(1, 7).toUpperCase()}")))),
+      return new BottomsheetOptionTile(
+          svgImageUrl: 'assets/Certificate.svg',
+          text: appBloc.localstr.mylearningActionsheetViewcertificateoption,
           onTap: () {
             if (widget.table2.certificateaction == 'notearned') {
               Navigator.of(context).pop();
@@ -4172,15 +4031,9 @@ class _CommonDetailScreenState extends State<CommonDetailScreen> with SingleTick
       if (isValidString(widget.table2.qrimagename ?? "") &&
           isValidString(widget.table2.qrcodeimagepath ?? "") &&
           !widget.table2.bit4) {
-        return ListTile(
-          leading: Icon(
-            IconDataSolid(int.parse('0xf029')),
-            color: InsColor(appBloc).appIconColor,
-          ),
-          title: Text(appBloc.localstr.mylearningActionsheetViewqrcode,
-              style: TextStyle(
-                  color: Color(int.parse(
-                      "0xFF${appBloc.uiSettingModel.appTextColor.substring(1, 7).toUpperCase()}")))),
+        return new BottomsheetOptionTile(
+          iconData: IconDataSolid(int.parse('0xf029')),
+          text: appBloc.localstr.mylearningActionsheetViewqrcode,
           onTap: () => {
             Navigator.of(context).push(MaterialPageRoute(
                 builder: (context) => QrCodeScreen(
@@ -4197,13 +4050,9 @@ class _CommonDetailScreenState extends State<CommonDetailScreen> with SingleTick
     if (widget.table2.eventrecording != null && widget.table2.eventrecording) {
       if (widget.table2.isaddedtomylearning == 1 ||
           (typeFrom == 'event' || typeFrom == 'track')) {
-        return ListTile(
-          leading: Icon(
-            IconDataSolid(int.parse('0xf8d9')),
-            color: InsColor(appBloc).appIconColor,
-          ),
-          title:
-          Text(appBloc.localstr.learningtrackLabelEventviewrecording),
+        return BottomsheetOptionTile(
+          iconData: IconDataSolid(int.parse('0xf8d9')),
+          text: appBloc.localstr.learningtrackLabelEventviewrecording,
           onTap: () => {},
         );
       } else {
@@ -4217,17 +4066,9 @@ class _CommonDetailScreenState extends State<CommonDetailScreen> with SingleTick
   Widget displayShare(DummyMyCatelogResponseTable2 table2) {
     if (table2.suggesttoconnlink != null ||
         table2.suggesttoconnlink.isNotEmpty) {
-      return ListTile(
-        leading: Icon(
-          IconDataSolid(int.parse('0xf1e0')),
-          color: InsColor(appBloc).appIconColor,
-        ),
-        title: Text('Share with Connection',
-            style: TextStyle(
-                color: Color(
-                  int.parse(
-                      "0xFF${appBloc.uiSettingModel.appTextColor.substring(1, 7).toUpperCase()}"),
-                ))),
+      return new BottomsheetOptionTile(
+        iconData: IconDataSolid(int.parse('0xf1e0')),
+        text: 'Share with Connection',
         onTap: () {
           Navigator.pop(context);
 
@@ -4244,19 +4085,11 @@ class _CommonDetailScreenState extends State<CommonDetailScreen> with SingleTick
   Widget displayShareConnection(DummyMyCatelogResponseTable2 table2) {
     if (table2.suggestwithfriendlink != null ||
         table2.suggestwithfriendlink.isNotEmpty) {
-      return ListTile(
-        leading: Icon(
-          IconDataSolid(
+      return new BottomsheetOptionTile(
+        iconData: IconDataSolid(
             int.parse('0xf079'),
           ),
-          color: InsColor(appBloc).appIconColor,
-        ),
-        title: Text("Share with People",
-            style: TextStyle(
-                color: Color(
-                  int.parse(
-                      "0xFF${appBloc.uiSettingModel.appTextColor.substring(1, 7).toUpperCase()}"),
-                ))),
+        text: "Share with People",
         onTap: () {
           Navigator.pop(context);
 
@@ -4594,31 +4427,18 @@ class _CommonDetailScreenState extends State<CommonDetailScreen> with SingleTick
       }
     }
     showModalBottomSheet(
-        backgroundColor: Color(
-          int.parse(
-              "0xFF${appBloc.uiSettingModel.appBGColor.substring(1, 7).toUpperCase()}"),
-        ),
+        shape: AppConstants().bottomSheetShapeBorder(),
         context: context,
         builder: (BuildContext bc) {
-          return Container(
+          return AppConstants().bottomSheetContainer(
             child: SingleChildScrollView(
-              child: Column(
+              child: new Column(
                 children: <Widget>[
-                  const BottomSheetDragger(),
+                  BottomSheetDragger(),
                   menu0
-                      ? ListTile(
-                          title: Text(
-                            appBloc.localstr.catalogActionsheetViewoption,
-                            style: TextStyle(
-                                color: Color(
-                              int.parse(
-                                  "0xFF${appBloc.uiSettingModel.appTextColor.substring(1, 7).toUpperCase()}"),
-                            )),
-                          ),
-                          leading: Icon(
-                            IconDataSolid(int.parse('0xf06e')),
-                            color: InsColor(appBloc).appIconColor,
-                          ),
+                      ? BottomsheetOptionTile(
+                          text: appBloc.localstr.catalogActionsheetViewoption,
+                          iconData: IconDataSolid(int.parse('0xf06e')),
                           onTap: () async {
                             //print("imageurl---${table2.imageData}");
                             Navigator.pop(context);
@@ -4637,19 +4457,10 @@ class _CommonDetailScreenState extends State<CommonDetailScreen> with SingleTick
                   menu1
                       ? isConsolidated && widget.table2.siteid != 374
                           ? Container()
-                          : ListTile(
-                              title: Text(
-                                  appBloc.localstr
+                          : BottomsheetOptionTile(
+                              text: appBloc.localstr
                                       .catalogActionsheetAddtomylearningoption,
-                                  style: TextStyle(
-                                      color: Color(
-                                    int.parse(
-                                        "0xFF${appBloc.uiSettingModel.appTextColor.substring(1, 7).toUpperCase()}"),
-                                  ))),
-                              leading: Icon(
-                                Icons.add_circle,
-                                color: InsColor(appBloc).appIconColor,
-                              ),
+                              iconData: Icons.add_circle,
                               onTap: () {
                                 Navigator.pop(context);
                                 print(widget.table2.userid);
@@ -4701,7 +4512,7 @@ class _CommonDetailScreenState extends State<CommonDetailScreen> with SingleTick
                                         displaymsg:
                                             'Not a member of ${widget.table2.sitename}'),
                                     gravity: ToastGravity.BOTTOM,
-                                    toastDuration: const Duration(seconds: 2),
+                                    toastDuration: Duration(seconds: 2),
                                   );
                                   checkUserLogin(widget.table2);
                                 }
@@ -4733,19 +4544,10 @@ class _CommonDetailScreenState extends State<CommonDetailScreen> with SingleTick
                             }
                             return isConsolidated && widget.table2.siteid != 374
                                 ? Container()
-                                : ListTile(
-                                    title: Text(
-                                        appBloc.localstr
+                                : BottomsheetOptionTile(
+                                    text: appBloc.localstr
                                             .catalogActionsheetBuyoption,
-                                        style: TextStyle(
-                                            color: Color(
-                                          int.parse(
-                                              "0xFF${appBloc.uiSettingModel.appTextColor.substring(1, 7).toUpperCase()}"),
-                                        ))),
-                                    leading: Icon(
-                                      IconDataSolid(int.parse('0xf144')),
-                                      color: InsColor(appBloc).appIconColor,
-                                    ),
+                                    iconData: IconDataSolid(int.parse('0xf144')),
                                     onTap: () {
                                       Navigator.of(context).pop();
                                       buyCourse();
@@ -4867,49 +4669,22 @@ class _CommonDetailScreenState extends State<CommonDetailScreen> with SingleTick
                   //       )
                   //     : Container(),
                   menu4
-                      ? ListTile(
-                          title: Text(
-                              appBloc.localstr.catalogActionsheetDeleteoption,
-                              style: TextStyle(
-                                  color: Color(
-                                int.parse(
-                                    "0xFF${appBloc.uiSettingModel.appTextColor.substring(1, 7).toUpperCase()}"),
-                              ))),
-                          leading: Icon(
-                            IconDataSolid(int.parse('0xf144')),
-                            color: InsColor(appBloc).appIconColor,
-                          ),
+                      ? BottomsheetOptionTile(
+                          text: appBloc.localstr.catalogActionsheetDeleteoption,
+                          iconData: IconDataSolid(int.parse('0xf144')),
                         )
                       : Container(),
                   menu5
-                      ? ListTile(
-                          title: Text(
-                              appBloc
+                      ? BottomsheetOptionTile(
+                          text: appBloc
                                   .localstr.mylearningActionsheetDownloadoption,
-                              style: TextStyle(
-                                  color: Color(
-                                int.parse(
-                                    "0xFF${appBloc.uiSettingModel.appTextColor.substring(1, 7).toUpperCase()}"),
-                              ))),
-                          leading: Icon(
-                            IconDataSolid(int.parse('0xf144')),
-                            color: InsColor(appBloc).appIconColor,
-                          ),
+                         iconData: IconDataSolid(int.parse('0xf144')),
                         )
                       : Container(),
                   menu6
-                      ? ListTile(
-                          title: Text(
-                              appBloc.localstr.catalogActionsheetWishlistoption,
-                              style: TextStyle(
-                                  color: Color(
-                                int.parse(
-                                    "0xFF${appBloc.uiSettingModel.appTextColor.substring(1, 7).toUpperCase()}"),
-                              ))),
-                          leading: Icon(
-                            Icons.favorite_border,
-                            color: InsColor(appBloc).appIconColor,
-                          ),
+                      ? BottomsheetOptionTile(
+                          text: appBloc.localstr.catalogActionsheetWishlistoption,
+                          iconData: Icons.favorite_border,
                           onTap: () {
                             catalogBloc.add(AddToWishListEvent(
                                 contentId: widget.table2.contentid));
@@ -4919,19 +4694,10 @@ class _CommonDetailScreenState extends State<CommonDetailScreen> with SingleTick
                         )
                       : Container(),
                   menu7
-                      ? ListTile(
-                          title: Text(
-                              appBloc.localstr
+                      ? BottomsheetOptionTile(
+                          text: appBloc.localstr
                                   .catalogActionsheetRemovefromwishlistoption,
-                              style: TextStyle(
-                                  color: Color(
-                                int.parse(
-                                    "0xFF${appBloc.uiSettingModel.appTextColor.substring(1, 7).toUpperCase()}"),
-                              ))),
-                          leading: Icon(
-                            Icons.favorite,
-                            color: InsColor(appBloc).appIconColor,
-                          ),
+                          iconData: Icons.favorite,
                           onTap: () {
                             catalogBloc.add(RemoveFromWishListEvent(
                                 contentId: widget.table2.contentid));
@@ -4941,34 +4707,17 @@ class _CommonDetailScreenState extends State<CommonDetailScreen> with SingleTick
                         )
                       : Container(),
                   menu8
-                      ? ListTile(
-                          title: Text(
-                              appBloc.localstr
+                      ? BottomsheetOptionTile(
+                          text: appBloc.localstr
                                   .learningtrackLabelEventviewrecording,
-                              style: TextStyle(
-                                  color: Color(
-                                int.parse(
-                                    "0xFF${appBloc.uiSettingModel.appTextColor.substring(1, 7).toUpperCase()}"),
-                              ))),
-                          leading: Icon(
-                            IconDataSolid(int.parse('0xf144')),
-                            color: InsColor(appBloc).appIconColor,
-                          ),
+                          iconData: IconDataSolid(int.parse('0xf144')),
                         )
                       : Container(),
                   /*(table2.suggesttoconnlink != null)
                       ?(table2.suggesttoconnlink.isNotEmpty)?*/
-                  ListTile(
-                    leading: Icon(
-                      IconDataSolid(int.parse('0xf1e0')),
-                      color: InsColor(appBloc).appIconColor,
-                    ),
-                    title: Text('Share with Connection',
-                        style: TextStyle(
-                            color: Color(
-                          int.parse(
-                              "0xFF${appBloc.uiSettingModel.appTextColor.substring(1, 7).toUpperCase()}"),
-                        ))),
+                  BottomsheetOptionTile(
+                    iconData: IconDataSolid(int.parse('0xf1e0')),
+                    text: 'Share with Connection',
                     onTap: () {
                       Navigator.pop(context);
 
@@ -4985,17 +4734,9 @@ class _CommonDetailScreenState extends State<CommonDetailScreen> with SingleTick
                   /*table2.suggestwithfriendlink != null
                       ?(table2.suggestwithfriendlink.isNotEmpty)
                       ?*/
-                  ListTile(
-                    leading: Icon(
-                      IconDataSolid(int.parse('0xf079')),
-                      color: InsColor(appBloc).appIconColor,
-                    ),
-                    title: Text("Share with People",
-                        style: TextStyle(
-                            color: Color(
-                          int.parse(
-                              "0xFF${appBloc.uiSettingModel.appTextColor.substring(1, 7).toUpperCase()}"),
-                        ))),
+                  BottomsheetOptionTile(
+                    iconData: IconDataSolid(int.parse('0xf079')),
+                    text: "Share with People",
                     onTap: () {
                       Navigator.pop(context);
 
@@ -5712,6 +5453,7 @@ class _CommonDetailScreenState extends State<CommonDetailScreen> with SingleTick
 
     showModalBottomSheet(
         context: context,
+        shape: AppConstants().bottomSheetShapeBorder(),
         builder: (BuildContext bc) {
           return BlocConsumer(
             bloc: eventModuleBloc,
@@ -5851,64 +5593,36 @@ class _CommonDetailScreenState extends State<CommonDetailScreen> with SingleTick
             //   }
             // },
             builder: (context, state) {
-              return Container(
-                color: Color(int.parse(
-                    "0xFF${appBloc.uiSettingModel.appBGColor.substring(1, 7).toUpperCase()}")),
+              return AppConstants().bottomSheetContainer(
                 child: SingleChildScrollView(
-                  child: Column(
+                  child: new Column(
                     children: <Widget>[
-                      const BottomSheetDragger(),
+                      BottomSheetDragger(),
                       menu0
-                          ? ListTile(
+                          ? BottomsheetOptionTile(
                               onTap: () {
                                 Navigator.of(context).pop();
                                 checkRelatedContent(table2);
                               },
-                              title: Text(
-                                  appBloc.localstr
+                              text: appBloc.localstr
                                       .eventsActionsheetRelatedcontentoption,
-                                  style: TextStyle(
-                                      color: Color(
-                                    int.parse(
-                                        "0xFF${appBloc.uiSettingModel.appTextColor.substring(1, 7).toUpperCase()}"),
-                                  ))),
-                              leading: Icon(
-                                Icons.content_copy,
-                                color: InsColor(appBloc).appIconColor,
-                              ),
+                              iconData: Icons.content_copy,
                             )
                           : Container(),
                       menu1
-                          ? ListTile(
-                              title: Text(menu1Title,
-                                  style: TextStyle(
-                                      color: Color(
-                                    int.parse(
-                                        "0xFF${appBloc.uiSettingModel.appTextColor.substring(1, 7).toUpperCase()}"),
-                                  ))),
-                              leading: Icon(
-                                IconDataSolid(int.parse('0xf271')),
-                                color: InsColor(appBloc).appIconColor,
-                              ),
+                          ? BottomsheetOptionTile(
+                              text: menu1Title,
+                              iconData: IconDataSolid(int.parse('0xf271')),
                               onTap: () {
                                 Navigator.of(context).pop();
                                 addToEnroll(table2);
                               })
                           : Container(),
                       menu2
-                          ? ListTile(
-                              title: Text(
-                                  appBloc
+                          ? BottomsheetOptionTile(
+                              text: appBloc
                                       .localstr.eventsActionsheetBuynowoption,
-                                  style: TextStyle(
-                                      color: Color(
-                                    int.parse(
-                                        "0xFF${appBloc.uiSettingModel.appTextColor.substring(1, 7).toUpperCase()}"),
-                                  ))),
-                              leading: Icon(
-                                IconDataSolid(int.parse('0xf53d')),
-                                color: InsColor(appBloc).appIconColor,
-                              ),
+                              iconData: IconDataSolid(int.parse('0xf53d')),
                               onTap: () {
                                 buyCourse();
                               },
@@ -5940,7 +5654,7 @@ class _CommonDetailScreenState extends State<CommonDetailScreen> with SingleTick
                       //       )
                       //     : Container(),
                       menu4
-                          ? ListTile(
+                          ? BottomsheetOptionTile(
                               onTap: () {
                                 Navigator.of(context).pop();
                                 if (table2.isbadcancellationenabled) {
@@ -5954,34 +5668,16 @@ class _CommonDetailScreenState extends State<CommonDetailScreen> with SingleTick
                                           .toString());
                                 }
                               },
-                              title: Text(
-                                  appBloc.localstr
+                              text: appBloc.localstr
                                       .eventsActionsheetCancelenrollmentoption,
-                                  style: TextStyle(
-                                      color: Color(
-                                    int.parse(
-                                        "0xFF${appBloc.uiSettingModel.appTextColor.substring(1, 7).toUpperCase()}"),
-                                  ))),
-                              leading: Icon(
-                                IconDataSolid(int.parse('0xf410')),
-                                color: InsColor(appBloc).appIconColor,
-                              ),
+                              iconData: IconDataSolid(int.parse('0xf410')),
                             )
                           : Container(),
                       menu5
-                          ? ListTile(
-                              title: Text(
-                                  appBloc.localstr
+                          ? BottomsheetOptionTile(
+                              text: appBloc.localstr
                                       .catalogActionsheetWishlistoption,
-                                  style: TextStyle(
-                                      color: Color(
-                                    int.parse(
-                                        "0xFF${appBloc.uiSettingModel.appTextColor.substring(1, 7).toUpperCase()}"),
-                                  ))),
-                              leading: Icon(
-                                IconDataRegular(int.parse('0xf004')),
-                                color: InsColor(appBloc).appIconColor,
-                              ),
+                              iconData: IconDataRegular(int.parse('0xf004')),
                               onTap: () {
                                 catalogBloc.add(AddToWishListEvent(
                                     contentId: table2.contentid));
@@ -5990,19 +5686,10 @@ class _CommonDetailScreenState extends State<CommonDetailScreen> with SingleTick
                             )
                           : Container(),
                       menu6
-                          ? ListTile(
-                              title: Text(
-                                  appBloc.localstr
+                          ? BottomsheetOptionTile(
+                              text: appBloc.localstr
                                       .catalogActionsheetRemovefromwishlistoption,
-                                  style: TextStyle(
-                                      color: Color(
-                                    int.parse(
-                                        "0xFF${appBloc.uiSettingModel.appTextColor.substring(1, 7).toUpperCase()}"),
-                                  ))),
-                              leading: Icon(
-                                IconDataSolid(int.parse('0xf004')),
-                                color: InsColor(appBloc).appIconColor,
-                              ),
+                              iconData: IconDataSolid(int.parse('0xf004')),
                               onTap: () {
                                 catalogBloc.add(RemoveFromWishListEvent(
                                     contentId: table2.contentid));
@@ -6013,19 +5700,10 @@ class _CommonDetailScreenState extends State<CommonDetailScreen> with SingleTick
                       menu7
                           ? isConsolidated && widget.table2.siteid != 374
                               ? Container()
-                              : ListTile(
-                                  title: Text(
-                                      appBloc.localstr
+                              : BottomsheetOptionTile(
+                                  text: appBloc.localstr
                                           .catalogActionsheetAddtomylearningoption,
-                                      style: TextStyle(
-                                          color: Color(
-                                        int.parse(
-                                            "0xFF${appBloc.uiSettingModel.appTextColor.substring(1, 7).toUpperCase()}"),
-                                      ))),
-                                  leading: Icon(
-                                    Icons.add_circle,
-                                    color: InsColor(appBloc).appIconColor,
-                                  ),
+                                  iconData: Icons.add_circle,
                                   onTap: () {
                                     Navigator.of(context).pop();
                                     try {
@@ -6039,17 +5717,9 @@ class _CommonDetailScreenState extends State<CommonDetailScreen> with SingleTick
                       /*(table2.suggesttoconnlink != null)
                       ? (table2.suggesttoconnlink.isNotEmpty)
                           ? */
-                      ListTile(
-                        leading: Icon(
-                          IconDataSolid(int.parse('0xf1e0')),
-                          color: InsColor(appBloc).appIconColor,
-                        ),
-                        title: Text('Share with Connection',
-                            style: TextStyle(
-                                color: Color(
-                              int.parse(
-                                  "0xFF${appBloc.uiSettingModel.appTextColor.substring(1, 7).toUpperCase()}"),
-                            ))),
+                      BottomsheetOptionTile(
+                        iconData: IconDataSolid(int.parse('0xf1e0')),
+                        text: 'Share with Connection',
                         onTap: () {
                           Navigator.pop(context);
 
@@ -6063,17 +5733,9 @@ class _CommonDetailScreenState extends State<CommonDetailScreen> with SingleTick
                       /*table2.suggestwithfriendlink != null
                       ? (table2.suggestwithfriendlink.isNotEmpty)*/
                       /*?*/
-                      ListTile(
-                        leading: Icon(
-                          IconDataSolid(int.parse('0xf079')),
-                          color: InsColor(appBloc).appIconColor,
-                        ),
-                        title: Text("Share with People",
-                            style: TextStyle(
-                                color: Color(
-                              int.parse(
-                                  "0xFF${appBloc.uiSettingModel.appTextColor.substring(1, 7).toUpperCase()}"),
-                            ))),
+                      BottomsheetOptionTile(
+                        iconData:  IconDataSolid(int.parse('0xf079')),
+                        text: "Share with People",
                         onTap: () {
                           Navigator.pop(context);
 

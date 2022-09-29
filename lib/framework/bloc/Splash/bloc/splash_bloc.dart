@@ -1,6 +1,4 @@
 import 'dart:async';
-
-import 'package:flutter/foundation.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:http/http.dart';
@@ -18,6 +16,8 @@ import 'package:flutter_admin_web/framework/helpers/utils.dart';
 import 'package:flutter_admin_web/framework/repository/SplashRepository/contract/splash_repository.dart';
 import 'package:flutter_admin_web/framework/repository/SplashRepository/model/basicAuthResponse.dart';
 import 'package:flutter_admin_web/utils/my_print.dart';
+
+import '../../../../configs/client_urls.dart';
 
 ApiEndpoints apiEndpoints = new ApiEndpoints();
 
@@ -71,9 +71,16 @@ class SplashBloc extends Bloc<SplashEvent, SplashState> {
         print("Splash Bloc siteURL $siteURL");
         if (siteURL.isEmpty) {
           apiEndpoints.setstrSiteUrl(ApiEndpoints.mainSiteURL);
-        } else {
+        }
+        else {
           apiEndpoints.setstrSiteUrl(siteURL);
         }
+
+        String appAuthUrl = ClientUrls.getAuthUrl(ApiEndpoints.strSiteUrl);
+        if(appAuthUrl.isNotEmpty) {
+          ApiEndpoints.appAuthURL = appAuthUrl;
+        }
+
         print("Splash Bloc siteURL ${ApiEndpoints.strSiteUrl}");
 
         yield GetAppLogoState(url: appLogoUrl);
@@ -141,7 +148,8 @@ class SplashBloc extends Bloc<SplashEvent, SplashState> {
 
         yield GetFourApiCallState(isSuccess: true);
       }
-    } catch (e, s) {
+    }
+    catch (e, s) {
       print("Error in SplashBloc.mapEventToState():$e");
       MyPrint.printOnConsole(s);
     }
@@ -153,6 +161,7 @@ class SplashBloc extends Bloc<SplashEvent, SplashState> {
     sharePrefSaveString(sharedPref_webApiUrl, loginResponce.webApiUrl);
 
     apiEndpoints.setStrBaseUrl(loginResponce.webApiUrl);
+    MyPrint.printOnConsole("setBasicAuthPref loginResponce.webApiUrl ${loginResponce.webApiUrl} ");
     sharePrefSaveString(sharedPref_lmsUrl, loginResponce.lmsUrl);
     sharePrefSaveString(sharedPref_learnerUrl, loginResponce.learnerUrl);
   }

@@ -8,6 +8,7 @@ import 'package:flutter_admin_web/framework/bloc/mylearning/state/mylearning_sta
 import 'package:flutter_admin_web/framework/common/enums.dart';
 import 'package:flutter_admin_web/framework/helpers/utils.dart';
 
+import '../../configs/constants.dart';
 import '../common/outline_button.dart';
 
 class FilterByInstructerList extends StatefulWidget {
@@ -87,10 +88,7 @@ class _FilterByInstructerListState extends State<FilterByInstructerList> {
                             return Container(
                               child: Center(
                                 child: AbsorbPointer(
-                                  child: SpinKitCircle(
-                                    color: Colors.grey,
-                                    size: 70,
-                                  ),
+                                  child: AppConstants().getLoaderWidget(iconSize: 70)
                                 ),
                               ),
                             );

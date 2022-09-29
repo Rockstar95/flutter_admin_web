@@ -19,6 +19,7 @@ import 'package:flutter_admin_web/framework/theme/ins_theme.dart';
 import 'package:flutter_admin_web/ui/askTheExpert/skill_category.dart';
 import 'package:flutter_admin_web/ui/common/common_toast.dart';
 
+import '../../configs/constants.dart';
 import '../common/outline_button.dart';
 
 class EditQuestion extends StatefulWidget {
@@ -413,10 +414,7 @@ class _EditQuestionState extends State<EditQuestion>
           return askTheExpertBloc.isFirstLoading
               ? Align(
                   child: AbsorbPointer(
-                    child: SpinKitCircle(
-                      color: Colors.grey,
-                      size: 70.h,
-                    ),
+                    child: AppConstants().getLoaderWidget(iconSize: 70)
                   ),
                 )
               : Container();

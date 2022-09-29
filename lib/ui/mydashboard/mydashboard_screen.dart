@@ -19,6 +19,14 @@ import 'package:flutter_admin_web/framework/repository/mylearning/mylearning_rep
 import 'package:flutter_admin_web/framework/theme/ins_theme.dart';
 import 'package:flutter_admin_web/ui/MyLearning/view_certificate.dart';
 import 'package:flutter_admin_web/ui/profile/profile_page.dart';
+import 'package:intl/intl.dart';
+
+import '../../configs/constants.dart';
+import '../../packages/timeline_tile-master/timeline_tile.dart';
+import '../../utils/my_print.dart';
+import '../common/app_colors.dart';
+
+
 
 // https://karthikponnam.medium.com/flutter-loadmore-in-listview-23820612907d
 
@@ -55,6 +63,8 @@ class _MyDashBoardScreenState extends State<MyDashBoardScreen> with TickerProvid
   // bool fabButton = false;
 
   bool isGotAchievement = true, isGotLeaderBoard = true;
+
+  List<UserPointsMonthWise> userPointsMonthwise = [];
 
   @override
   void initState() {
@@ -232,23 +242,37 @@ class _MyDashBoardScreenState extends State<MyDashBoardScreen> with TickerProvid
                     isGotLeaderBoard = true;
                   }
                 }
-              },
-              builder: (context, state) {
-                if (state.status == Status.LOADING || !isGotAchievement || !isGotLeaderBoard) {
-                  return Center(
-                    child: AbsorbPointer(
-                      child: SpinKitCircle(
-                        color: Color(
-                          int.parse(
-                              "0xFF${appBloc.uiSettingModel.appTextColor.substring(1, 7).toUpperCase()}"),
-                        ),
-                        size: 70.0,
-                      ),
-                    ),
-                  );
-                }
 
                 if (isGotAchievement && isGotLeaderBoard) {
+                  //To Calculate Points To Show
+                  MyPrint.printOnConsole("User Points List:${myDashBoardBloc.userAchievementResponse.userPoints.length}");
+                  userPointsMonthwise.clear();
+                  List<UserPoints> points = List.from(myDashBoardBloc.userAchievementResponse.userPoints.map((e) => UserPoints.fromJson(e.toJson())));
+                  points.removeWhere((element) => element.userReceivedDate.isEmpty);
+
+                  points.forEach((element) {
+                    MyPrint.printOnConsole("Name:${element.actionName}, DateTime:${element.userReceivedDate}");
+                    try {
+                      DateTime dateTime = DateFormat(appBloc.uiSettingModel.dateFormat).parse(element.userReceivedDate);
+
+                      List<UserPointsMonthWise> monthList = userPointsMonthwise.where((element) => element.month == dateTime.month && element.year == dateTime.year).toList();
+                      UserPointsMonthWise userPointsMonthWise;
+                      if(monthList.isNotEmpty) {
+                        userPointsMonthWise = monthList.first;
+                      }
+                      else {
+                        userPointsMonthWise = UserPointsMonthWise(month: dateTime.month, year: dateTime.year, list: []);
+                        userPointsMonthwise.add(userPointsMonthWise);
+                      }
+                      userPointsMonthWise.list.add(element);
+                    }
+                    catch(e, s) {
+                      MyPrint.printOnConsole("Error in Converting Date:$e");
+                      MyPrint.printOnConsole(s);
+                    }
+                  });
+                  //To Calculate Points To Show End----------------------------------------------------------------
+
                   getTabs();
 
                   getWidgets();
@@ -256,29 +280,42 @@ class _MyDashBoardScreenState extends State<MyDashBoardScreen> with TickerProvid
                   _tabController = getTabController();
 
                   print("floatbutton icon${myDashBoardBloc.fabButtonVisible}");
+                  print("isGotAchievement:$isGotAchievement");
+                  print("isGotLeaderBoard:$isGotLeaderBoard");
+                }
+              },
+              builder: (context, state) {
+                // MyPrint.printOnConsole("User Points List:${myDashBoardBloc.userAchievementResponse.userPoints.length}");
+                // MyPrint.printOnConsole("userPointsMonthWise:${userPointsMonthwise.length}");
+
+                print("state.status:${state.status}");
+                print("isGotAchievement:$isGotAchievement");
+                print("isGotLeaderBoard:$isGotLeaderBoard");
+                if (state.status == Status.LOADING || !isGotAchievement || !isGotLeaderBoard) {
+                  return Center(
+                    child: AbsorbPointer(
+                      child: AppConstants().getLoaderWidget(iconSize:70.0)
+                    ),
+                  );
                 }
 
-                return Column(children: [
-                  dropDownMenu(),
-                  dropDowngameID != "-1" ? overAllCard() : Container(),
-                  dropDowngameID != "-1"
-                      ? Expanded(
-                          child: (tabList.length > 0)
-                              ? Container(
-                                  child: TabBarView(
-                                    controller: _tabController,
-                                    // children: <Widget>[
-                                    //   // returnLeaderBoard(),
-                                    //   // returnPoints(),
-                                    //   // returnBadges(),
-                                    //   // returnLevels(),
-                                    // ],
-                                    children: _tabBarWidgets,
-                                  ),
-                                )
-                              : Container())
-                      : returnreditsAndCards(),
-                ]);
+                return Column(
+                  children: [
+                    dropDownMenu(),
+                    dropDowngameID != "-1" ? overAllCard() : Container(),
+                    dropDowngameID != "-1"
+                        ? Expanded(
+                            child: (tabList.length > 0)
+                                ? Container(
+                                    child: TabBarView(
+                                      controller: _tabController,
+                                      children: _tabBarWidgets,
+                                    ),
+                                  )
+                                : Container())
+                        : returnreditsAndCards(),
+                  ],
+                );
               },
             ),
           ),
@@ -627,19 +664,13 @@ class _MyDashBoardScreenState extends State<MyDashBoardScreen> with TickerProvid
   }
 
   Widget creditsAndCertificatesCard() {
-    String certificatecount = "";
-    String creditcount = "";
+    String certificatecount = "0";
+    String creditcount = "Beginner";
 
-    if (myDashBoardBloc.myCreditCertificateresponse.table != null) {
-      certificatecount =
-          myDashBoardBloc.myCreditCertificateresponse.table1.isNotEmpty
-              ? myDashBoardBloc
-                  .myCreditCertificateresponse.table1[0].certificatecount
-              : "0";
+    if (myDashBoardBloc.myCreditCertificateresponse.table.isNotEmpty) {
+      certificatecount = myDashBoardBloc.myCreditCertificateresponse.table1[0].certificatecount;
 
-      creditcount = myDashBoardBloc.myCreditCertificateresponse.table1 != null
-          ? myDashBoardBloc.myCreditCertificateresponse.table1[0].creditcount
-          : "Beginner";
+      creditcount = myDashBoardBloc.myCreditCertificateresponse.table1[0].creditcount;
     }
     return Wrap(
       children: [
@@ -1044,50 +1075,232 @@ class _MyDashBoardScreenState extends State<MyDashBoardScreen> with TickerProvid
             ),
           );
   }
-
+  int _currentStep = 0;
   Widget returnPoints() {
-    return myDashBoardBloc.userAchievementResponse.userPoints != null
-        ? Container(
-            color: Color(int.parse(
-                "0xFF${appBloc.uiSettingModel.appBGColor.substring(1, 7).toUpperCase()}")),
-            // width: MediaQuery.of(context).size.width,
-            child: ListView.builder(
-              primary: false,
-              shrinkWrap: true,
-              controller: _scrollController,
-              scrollDirection: Axis.vertical,
-              physics: ScrollPhysics(),
-              itemCount: myDashBoardBloc.userAchievementResponse.userPoints !=
-                      null
-                  ? myDashBoardBloc.userAchievementResponse.userPoints.length
-                  : 0,
-              itemBuilder: (BuildContext context, int index) {
-                return new Container(
-                  child: achivmentsPointsCell(myDashBoardBloc
-                      .userAchievementResponse.userPoints[index]),
-                );
-              },
-            ),
-          )
-        : Container(
-            child: Center(
-              child: Text(
-                appBloc.localstr.commoncomponentLabelNodatalabel,
-                // style: TextStyle(
-                //     color: Color(int.parse(
-                //         "0xFF${appBloc.uiSettingModel.appTextColor.substring(1, 7).toUpperCase()}")),
-                //     fontSize: 24)),
-                style: Theme.of(context)
-                    .textTheme
-                    .headline1
-                    ?.apply(color: InsColor(appBloc).appTextColor),
+    MyPrint.printOnConsole("DateFormat:${appBloc.uiSettingModel.dateFormat}");
+
+    if(myDashBoardBloc.userAchievementResponse.userPoints.isNotEmpty){
+      return ListView.builder(
+        itemCount: userPointsMonthwise.length,
+        itemBuilder: (BuildContext context, int index) {
+          UserPointsMonthWise userPointsMonthWise = userPointsMonthwise[index];
+
+          return Column(
+            children: List.generate(userPointsMonthWise.list.length + 1, (index) {
+              if(index == 0) {
+                DateTime dateTime = DateTime(userPointsMonthWise.year, userPointsMonthWise.month, 1);
+
+                if(userPointsMonthWise.list.isNotEmpty) {
+                  return Container(
+                    margin: EdgeInsets.symmetric(vertical: 10, horizontal: 15),
+                    child: Row(
+                      children: [
+                        SizedBox(width: 20,),
+                        Expanded(
+                          child: Text(
+                            DateFormat("MMM yyyy").format(dateTime),
+                            style: TextStyle(
+                              fontSize: 12,
+                              color: AppColors.getAppTextColor().withOpacity(0.4),
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                        ),
+                        Text(
+                          "Points",
+                          style: TextStyle(
+                            fontSize: 12,
+                            color: AppColors.getAppTextColor().withOpacity(0.4),
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                        SizedBox(width: 10,),
+                      ],
+                    ),
+                  );
+                }
+                else {
+                  return SizedBox();
+                }
+              }
+              index--;
+
+              UserPoints points = userPointsMonthWise.list[index];
+
+              return _buildTimelineTile(
+                indicator: Container(
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: AppColors.getAppTextColor().withOpacity(0.2),
+                  ),
+                ),
+                userPoints: points,
+              );
+            }).toList(),
+          );
+        },
+      );
+    }
+    else {
+      return Container(
+        child: Center(
+          child: Text(
+            appBloc.localstr.commoncomponentLabelNodatalabel,
+            style: Theme.of(context).textTheme.headline1?.apply(color: InsColor(appBloc).appTextColor),
+          ),
+        ),
+      );
+      return myDashBoardBloc.userAchievementResponse.userPoints.isNotEmpty
+          ? Container(
+        color: Color(int.parse(
+            "0xFF${appBloc.uiSettingModel.appBGColor.substring(1, 7)
+                .toUpperCase()}")),
+        // width: MediaQuery.of(context).size.width,
+        child: ListView.builder(
+          primary: false,
+          shrinkWrap: true,
+          controller: _scrollController,
+          scrollDirection: Axis.vertical,
+          physics: ScrollPhysics(),
+          itemCount: myDashBoardBloc.userAchievementResponse.userPoints !=
+              null
+              ? myDashBoardBloc.userAchievementResponse.userPoints.length
+              : 0,
+          itemBuilder: (BuildContext context, int index) {
+            return new Container(
+              child: achivmentsPointsCell(
+                  myDashBoardBloc.userAchievementResponse.userPoints[index]),
+            );
+          },
+        ),
+      )
+          : Container(
+        child: Center(
+          child: Text(
+            appBloc.localstr.commoncomponentLabelNodatalabel,
+            // style: TextStyle(
+            //     color: Color(int.parse(
+            //         "0xFF${appBloc.uiSettingModel.appTextColor.substring(1, 7).toUpperCase()}")),
+            //     fontSize: 24)),
+            style: Theme
+                .of(context)
+                .textTheme
+                .headline1
+                ?.apply(color: InsColor(appBloc).appTextColor),
+          ),
+        ),
+      );
+    }
+  }
+
+  TimelineTile _buildTimelineTile({
+    required Widget indicator,
+    required UserPoints userPoints,
+    bool isLast = false,
+  }) {
+    return TimelineTile(
+      alignment: TimelineAlign.manual,
+      lineXY: 0.15,
+      beforeLineStyle: LineStyle(color: AppColors.getAppTextColor().withOpacity(0.2),),
+      indicatorStyle: IndicatorStyle(
+        indicatorXY: 0.5,
+        drawGap: true,
+        width: 15,
+        height: 15,
+        indicator: indicator,
+      ),
+      isLast: isLast,
+      startChild: Center(
+        child: Container(
+        ),
+      ),
+      endChild: Padding(
+        padding: const EdgeInsets.only(left: 26, right: 10, top: 10, bottom: 10),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Expanded(
+            //   child: ListTile(
+            //     contentPadding: EdgeInsets.zero,
+            //     tileColor: Colors.green,
+            //     title:Text(
+            //       userPoints.actionName,
+            //       style: TextStyle(
+            //         fontSize: 17,
+            //         color: AppColors.getAppTextColor(),
+            //       ),
+            //     ),
+            //     subtitle: Text(
+            //       userPoints.userReceivedDate,
+            //       style: TextStyle(
+            //         fontSize: 12,
+            //         color: AppColors.getAppTextColor().withOpacity(0.6),
+            //         fontWeight: FontWeight.w500,
+            //       ),
+            //     ) ,
+            //     trailing:Container(
+            //       color: Colors.grey,
+            //       padding: EdgeInsets.all(10),
+            //       child: Text(
+            //         userPoints.points.toString(),
+            //         textAlign: TextAlign.center,
+            //         style: Theme.of(context).textTheme.headline1?.apply(color: InsColor(appBloc).appTextColor),
+            //       ),
+            //     ) ,
+            //   ),
+            // ),
+            Expanded(
+              flex: 4,
+              child: Container(
+                child: Padding(
+                  padding: const EdgeInsets.only(right: 18.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      Text(
+                        userPoints.actionName,
+                        style: TextStyle(
+                          fontSize: 17,
+                          color: AppColors.getAppTextColor(),
+                        ),
+                      ),
+                      const SizedBox(height: 6),
+                      Text(
+                        userPoints.userReceivedDate,
+                        style: TextStyle(
+                          fontSize: 12,
+                          color: AppColors.getAppTextColor().withOpacity(0.6),
+                          fontWeight: FontWeight.w500,
+                        ),
+                      )
+                    ],
+                  ),
+                ),
               ),
             ),
-          );
+            Expanded(
+              child: Column(
+                children: [
+                  Center(
+                    child: Container(
+                      padding: EdgeInsets.all(10),
+                      child: Text(
+                        userPoints.points.toString(),
+                        style: Theme.of(context).textTheme.headline1?.apply(color: InsColor(appBloc).appTextColor),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
   }
 
   Widget returnBadges() {
-    return myDashBoardBloc.userAchievementResponse.userBadges != null
+    return myDashBoardBloc.userAchievementResponse.userBadges.isNotEmpty
         ? Container(
             color: Color(
               int.parse(
@@ -1130,7 +1343,7 @@ class _MyDashBoardScreenState extends State<MyDashBoardScreen> with TickerProvid
   }
 
   Widget returnLevels() {
-    return myDashBoardBloc.userAchievementResponse.userLevel != null
+    return myDashBoardBloc.userAchievementResponse.userLevel.isNotEmpty
         ? Container(
             color: Color(int.parse(
                 "0xFF${appBloc.uiSettingModel.appBGColor.substring(1, 7).toUpperCase()}")),
@@ -1357,10 +1570,7 @@ class _MyDashBoardScreenState extends State<MyDashBoardScreen> with TickerProvid
                     //       int.parse(
                     //           "0xFF${appBloc.uiSettingModel.appTextColor.substring(1, 7).toUpperCase()}"),
                     //     )),
-                    style: Theme.of(context)
-                        .textTheme
-                        .headline1
-                        ?.apply(color: InsColor(appBloc).appTextColor),
+                    style: Theme.of(context).textTheme.headline1?.apply(color: InsColor(appBloc).appTextColor),
                   ),
                   backgroundColor: Colors.grey,
                 ),
@@ -1583,4 +1793,15 @@ class _MyDashBoardScreenState extends State<MyDashBoardScreen> with TickerProvid
       ),
     );
   }
+}
+
+class UserPointsMonthWise {
+  int month, year;
+  List<UserPoints> list;
+
+  UserPointsMonthWise({
+    required this.month,
+    required this.year,
+    required this.list,
+  });
 }

@@ -8,11 +8,13 @@ class ApiEndpoints {
   //static String mainSiteURL = "https://qaseac.instancy.com/";
   //static String mainSiteURL = "https://enterprisedemo.instancy.com/";
   static String mainSiteURL = "https://upgradedenterprise.instancy.com/";
-  static String authToken = "eaaf0fa5-d6b4-4553-91f2-8cc1defb50f8";
+  static String authToken = "";
+  // static String authToken = "eaaf0fa5-d6b4-4553-91f2-8cc1defb50f8";
   // //static String mainSiteURL = "https://learning.instancy.com/";
   // //static String mainSiteURL = "https://enterprisedemo.instancy.net/";
 
-  // //static String mainSiteURL = "https://entmobileGetLearningPortalInfoResponseerprisedemo.instancy.net/";
+
+  // //static String mainSiteURL = "https://enterprisedemo.instancy.net/";
   // //static String appAuthURL = "https://newazureplatform.instancy.com/api/";
   static String appAuthURL = "https://masterapilive.instancy.com/api/";
 
@@ -68,6 +70,11 @@ class ApiEndpoints {
   // static String appWebApiUrl = "https://api.iamalwaysastudent.com/api/";
   // static String appAuthURL = "https://masterapilive.instancy.com/api/";
 
+  static String syncCollection = "admin_demo_staging";
+  static String syncDocument = "upgradedenterprise";
+
+
+
   static String _strBaseUrl = "";
 
   static String get strBaseUrl => _strBaseUrl;
@@ -92,7 +99,7 @@ class ApiEndpoints {
       "${strBaseUrl}MobileLMS/MobileGetLearningPortalInfo?SiteURL=$strSiteUrl";
 
   static String apiMobileGetNativeMenus(String locale) =>
-      "${strBaseUrl}MobileLMS/MobileGetNativeMenus?SiteURL=$strSiteUrl&Locale=$locale";
+      "${strBaseUrl}MobileLMS/MobileGetNativeMenus?SiteURL=$strSiteUrl&Locale=$locale&fromFlutterWeb=true";
 
   static String apiMobileTinCanConfigurations(String locale) =>
       "${strBaseUrl}MobileLMS/MobileTinCanConfigurations?SiteURL=$strSiteUrl&Locale=$locale";

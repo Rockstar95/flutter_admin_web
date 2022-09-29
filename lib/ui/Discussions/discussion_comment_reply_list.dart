@@ -14,6 +14,8 @@ import 'package:flutter_admin_web/framework/helpers/utils.dart';
 import 'package:flutter_admin_web/framework/repository/Discussion/discussionTopic/discussion_topic_repositry_builder.dart';
 import 'package:flutter_admin_web/framework/theme/ins_theme.dart';
 
+import '../../configs/constants.dart';
+
 class DiscussionCommentReplyList extends StatefulWidget {
   final int commentId;
 
@@ -27,7 +29,7 @@ class DiscussionCommentReplyList extends StatefulWidget {
 
 class _DiscussionCommentReplyListState extends State<DiscussionCommentReplyList>
     with SingleTickerProviderStateMixin {
-  GlobalKey<ScaffoldState> _scaffoldkey = new GlobalKey<ScaffoldState>();
+  GlobalKey<ScaffoldState> _scaffoldkey = GlobalKey<ScaffoldState>();
 
   late DiscussionTopicBloc discussionTopicBloc;
 
@@ -92,13 +94,13 @@ class _DiscussionCommentReplyListState extends State<DiscussionCommentReplyList>
             "0xFF${appBloc.uiSettingModel.appBGColor.substring(1, 7).toUpperCase()}")),
         child: Stack(
           children: <Widget>[
-            Divider(
+            const Divider(
               height: 2,
               color: Colors.black87,
             ),
-            new Column(
+            Column(
               children: [
-                new Expanded(
+                Expanded(
                   child: mainWidget(),
                 ),
               ],
@@ -125,35 +127,32 @@ class _DiscussionCommentReplyListState extends State<DiscussionCommentReplyList>
               discussionTopicBloc.isFirstLoading == true) {
             return Center(
               child: AbsorbPointer(
-                child: SpinKitCircle(
-                  color: Colors.grey,
-                  size: 70.0,
-                ),
+                child: AppConstants().getLoaderWidget(iconSize: 70)
               ),
             );
-          } else if (discussionTopicBloc.replyList.length == 0) {
+          } else if (discussionTopicBloc.replyList.isEmpty) {
             return noDataFound(true);
           } else {
-            return new Container(
-              padding: EdgeInsets.all(10.0),
-              child: new ListView.separated(
+            return Container(
+              padding: const EdgeInsets.all(10.0),
+              child: ListView.separated(
                   itemCount: discussionTopicBloc.replyList.length,
-                  separatorBuilder: (context, index) => Divider(
+                  separatorBuilder: (context, index) => const Divider(
                         color: Colors.grey,
                       ),
                   itemBuilder: (context, index) {
-                    return new Container(
-                      child: new Column(
+                    return Container(
+                      child: Column(
                         children: [
-                          new Row(
+                          Row(
                             children: [
-                              new Container(
+                              Container(
                                 width: 40.0,
                                 height: 40.0,
-                                padding: EdgeInsets.all(20.0),
-                                decoration: new BoxDecoration(
+                                padding: const EdgeInsets.all(20.0),
+                                decoration: BoxDecoration(
                                   color: const Color(0xff7c94b6),
-                                  image: new DecorationImage(
+                                  image: DecorationImage(
                                     image: discussionTopicBloc.replyList[index]
                                                 .replyProfile !=
                                             ""
@@ -163,43 +162,43 @@ class _DiscussionCommentReplyListState extends State<DiscussionCommentReplyList>
                                             ? discussionTopicBloc
                                                 .replyList[index].replyProfile
                                             : '${ApiEndpoints.strSiteUrl + discussionTopicBloc.replyList[index].replyProfile}')
-                                        : AssetImage(
+                                        : const AssetImage(
                                             'assets/user.gif',
                                           ) as ImageProvider,
                                     fit: BoxFit.fill,
                                   ),
-                                  borderRadius: new BorderRadius.all(
-                                      new Radius.circular(50.0)),
+                                  borderRadius: const BorderRadius.all(
+                                      const Radius.circular(50.0)),
                                 ),
                               ),
-                              new Flexible(
-                                child: new Column(
+                              Flexible(
+                                child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     Padding(
-                                        padding: EdgeInsets.only(
+                                        padding: const EdgeInsets.only(
                                           left: 20,
                                         ),
-                                        child: new Text(
+                                        child: Text(
                                           discussionTopicBloc
                                                   .replyList[index].replyBy +
                                               ' replied ' +
                                               discussionTopicBloc
                                                   .replyList[index]
                                                   .dtPostedDate,
-                                          style: new TextStyle(
+                                          style: TextStyle(
                                               color: Color(int.parse(
                                                   "0xFF${appBloc.uiSettingModel.appTextColor.substring(1, 7).toUpperCase()}")),
                                               fontSize: 14.0,
                                               fontWeight: FontWeight.normal),
                                         )),
                                     Padding(
-                                        padding: EdgeInsets.only(
+                                        padding: const EdgeInsets.only(
                                             left: 20, top: 10.0),
-                                        child: new Text(
+                                        child: Text(
                                           removeAllHtmlTags(discussionTopicBloc
                                               .replyList[index].message),
-                                          style: new TextStyle(
+                                          style: TextStyle(
                                               color: Color(int.parse(
                                                       "0xFF${appBloc.uiSettingModel.appTextColor.substring(1, 7).toUpperCase()}"))
                                                   .withOpacity(0.5),
@@ -208,8 +207,8 @@ class _DiscussionCommentReplyListState extends State<DiscussionCommentReplyList>
                                   ],
                                 ),
                               ),
-                              Spacer(),
-                              new IconButton(
+                              const Spacer(),
+                              IconButton(
                                   icon: Icon(
                                     Icons.delete,
                                     color: Color(int.parse(
@@ -249,13 +248,13 @@ class _DiscussionCommentReplyListState extends State<DiscussionCommentReplyList>
               )
             ],
           )
-        : new Container();
+        : Container();
   }
 
   showAlertDialog(BuildContext context, int index) {
     // Create button
     Widget deleteButton = FlatButton(
-      child: Text("Delete"),
+      child: const Text("Delete"),
       onPressed: () {
         Navigator.of(context).pop(true);
         discussionTopicBloc.add(DeleteReplyEvent(
@@ -265,7 +264,7 @@ class _DiscussionCommentReplyListState extends State<DiscussionCommentReplyList>
     );
 
     Widget cancelButton = FlatButton(
-      child: Text("Cancel"),
+      child: const Text("Cancel"),
       onPressed: () {
         Navigator.of(context).pop(true);
       },

@@ -16,6 +16,7 @@ import 'package:flutter_admin_web/framework/repository/competencies/my_competenc
 import 'package:flutter_admin_web/ui/common/app_colors.dart';
 import 'package:flutter_admin_web/ui/common/common_primary_secondary_button.dart';
 
+import '../../configs/constants.dart';
 import '../global_search_screen.dart';
 
 class UserSkill extends StatefulWidget {
@@ -35,7 +36,7 @@ class UserSkill extends StatefulWidget {
 
 class _UserSkillState extends State<UserSkill>
     with SingleTickerProviderStateMixin {
-  GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
+  GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
   AppBloc get appBloc => BlocProvider.of<AppBloc>(context);
   late MyCompetenciesBloc myCompetenciesBloc;
@@ -117,10 +118,7 @@ class _UserSkillState extends State<UserSkill>
             myCompetenciesBloc.isFirstLoading == true) {
           return Center(
             child: AbsorbPointer(
-              child: SpinKitCircle(
-                color: Colors.grey,
-                size: 70.0,
-              ),
+              child: AppConstants().getLoaderWidget(iconSize: 70),
             ),
           );
         }
@@ -133,11 +131,11 @@ class _UserSkillState extends State<UserSkill>
               refresh();
             },
             color: Color(int.parse("0xFF${appBloc.uiSettingModel.appButtonBgColor.substring(1, 7).toUpperCase()}")),
-            child: new ListView(
-              physics: AlwaysScrollableScrollPhysics(),
+            child: ListView(
+              physics: const AlwaysScrollableScrollPhysics(),
               children: [
                 Padding(
-                  padding: EdgeInsets.all(5.0),
+                  padding: const EdgeInsets.all(5.0),
                   child: Container(
                     color: Color(int.parse("0xFF${appBloc.uiSettingModel.appBGColor.substring(1, 7).toUpperCase()}")),
                     child: Theme(
@@ -167,14 +165,14 @@ class _UserSkillState extends State<UserSkill>
                                                     !isExpanded;
                                               })
                                             },
-                                        child: new Container(
-                                          padding: EdgeInsets.all(5.0),
+                                        child: Container(
+                                          padding: const EdgeInsets.all(5.0),
                                           child: Container(
-                                            child: new Row(
+                                            child: Row(
                                               children: [
                                                 Expanded(
                                                   child: Padding(
-                                                    padding: EdgeInsets.all(5.0),
+                                                    padding: const EdgeInsets.all(5.0),
                                                     child: Text(
                                                         skillsList.skillName,
                                                         style: TextStyle(
@@ -189,27 +187,27 @@ class _UserSkillState extends State<UserSkill>
                                           ),
                                         )));
                               },
-                              body: new Container(
+                              body: Container(
                                 color: AppColors.getAppBGColor(),
                                 child: Padding(
-                                  padding: EdgeInsets.only(
+                                  padding: const EdgeInsets.only(
                                       left: 15.0,
                                       right: 15.0,
                                       top: 10.0,
                                       bottom: 10.0),
-                                  child: new Column(
+                                  child: Column(
                                     crossAxisAlignment:
                                         CrossAxisAlignment.start,
                                     children: [
                                       Padding(
-                                        padding: EdgeInsets.only(bottom: 10.0),
+                                        padding: const EdgeInsets.only(bottom: 10.0),
                                         child: Text('Skill', style: TextStyle(color: AppColors.getAppTextColor())),
                                       ),
                                       Container(
                                         width: double.infinity,
                                         height: 8,
                                         child: ClipRRect(
-                                          borderRadius: BorderRadius.all(
+                                          borderRadius: const BorderRadius.all(
                                               Radius.circular(10)),
                                           child: LinearProgressIndicator(
                                             value: double.parse(skillsList.weightedAverage) / 10,
@@ -221,7 +219,7 @@ class _UserSkillState extends State<UserSkill>
                                         ),
                                       ),
                                       Padding(
-                                        padding: EdgeInsets.only(top: 8.0),
+                                        padding: const EdgeInsets.only(top: 8.0),
                                         child: Row(
                                           children: [
                                             Expanded(
@@ -261,14 +259,14 @@ class _UserSkillState extends State<UserSkill>
                                         ),
                                       ),
                                       Padding(
-                                        padding: EdgeInsets.only(
+                                        padding: const EdgeInsets.only(
                                             top: 20.0, bottom: 10.0),
                                         child: Text('Self',
                                             style: TextStyle(
                                                 color: AppColors.getAppTextColor())),
                                       ),
                                       Padding(
-                                          padding: EdgeInsets.only(top: 5.0, bottom: 10.0),
+                                          padding: const EdgeInsets.only(top: 5.0, bottom: 10.0),
                                           child: Container(
                                             height: 35.0,
                                             child: Row(
@@ -290,7 +288,7 @@ class _UserSkillState extends State<UserSkill>
                                                             decoration:
                                                                 BoxDecoration(
                                                               borderRadius:
-                                                                  BorderRadius
+                                                                  const BorderRadius
                                                                       .all(Radius
                                                                           .circular(
                                                                               5)),
@@ -314,7 +312,7 @@ class _UserSkillState extends State<UserSkill>
                                                               ),
                                                             ),
                                                             child: Container(
-                                                                padding: EdgeInsets.only(left: 5.0, right: 5.0, top: 5.0, bottom: 5.0),
+                                                                padding: const EdgeInsets.only(left: 5.0, right: 5.0, top: 5.0, bottom: 5.0),
                                                                 child: Text(
                                                                   (skillsList.requiredProfValues[
                                                                           index])
@@ -335,7 +333,7 @@ class _UserSkillState extends State<UserSkill>
                                             ),
                                           )),
                                       Padding(
-                                          padding: EdgeInsets.only(
+                                          padding: const EdgeInsets.only(
                                             top: 20.0,
                                           ),
                                           child: Container(
@@ -367,7 +365,7 @@ class _UserSkillState extends State<UserSkill>
                                             ),
                                           )),
                                       Padding(
-                                          padding: EdgeInsets.only(top: 20.0),
+                                          padding: const EdgeInsets.only(top: 20.0),
                                           child: Container(
                                             width: useMobileLayout
                                                 ? double.infinity
@@ -397,7 +395,7 @@ class _UserSkillState extends State<UserSkill>
                                             ),
                                           )),
                                       Padding(
-                                          padding: EdgeInsets.only(top: 20.0),
+                                          padding: const EdgeInsets.only(top: 20.0),
                                           child: Container(
                                             width: useMobileLayout
                                                 ? double.infinity
@@ -423,7 +421,7 @@ class _UserSkillState extends State<UserSkill>
                                             ),
                                           )),
                                       Padding(
-                                          padding: EdgeInsets.only(top: 20.0),
+                                          padding: const EdgeInsets.only(top: 20.0),
                                           child: Container(
                                             width: useMobileLayout
                                                 ? double.infinity
@@ -451,12 +449,12 @@ class _UserSkillState extends State<UserSkill>
                                                                         ))));
                                                     },
                                                     isPrimary: false,
-                                                    text: "VIEW",
+                                                    text: "View",
                                                     icon: Icons.remove_red_eye,
 
                                                   ),
                                                 ),
-                                                SizedBox(width: 13,),
+                                                const SizedBox(width: 13,),
                                                 Expanded(
                                                   child: CommonPrimarySecondaryButton(
                                                     onPressed: (){
@@ -467,7 +465,7 @@ class _UserSkillState extends State<UserSkill>
                                                               .prefCategoryID);
                                                     },
                                                     isPrimary: true,
-                                                    text: "SAVE",
+                                                    text: "Save",
                                                     icon: Icons.save,
 
                                                   ),
@@ -512,7 +510,7 @@ class _UserSkillState extends State<UserSkill>
               )
             ],
           )
-        : new Container();
+        : Container();
   }
 
   void saveUserEvaluation(int jobRoleId, int prefCatId) {

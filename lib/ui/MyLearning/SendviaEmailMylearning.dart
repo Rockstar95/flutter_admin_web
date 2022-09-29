@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:flutter_admin_web/framework/bloc/app/bloc/app_bloc.dart';
 import 'package:flutter_admin_web/framework/bloc/mylearning/bloc/share_bloc.dart';
@@ -12,6 +10,8 @@ import 'package:flutter_admin_web/framework/common/constants.dart';
 import 'package:flutter_admin_web/framework/common/enums.dart';
 import 'package:flutter_admin_web/framework/common/pref_manger.dart';
 import 'package:flutter_admin_web/ui/common/common_toast.dart';
+
+import '../../configs/constants.dart';
 
 class SendviaEmailMylearning extends StatefulWidget {
   final DummyMyCatelogResponseTable2 myLearningModel;
@@ -129,10 +129,8 @@ class Sendviaemail extends State<SendviaEmailMylearning> {
                           "0xFF${appBloc.uiSettingModel.appBGColor.substring(1, 7).toUpperCase()}")),
                       child: Center(
                           child: AbsorbPointer(
-                              child: SpinKitCircle(
-                        color: Colors.grey,
-                        size: 70.h,
-                      ))),
+                              child: AppConstants().getLoaderWidget(iconSize: 70),
+                          ),),
                     );
                   }
 

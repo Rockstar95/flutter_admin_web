@@ -43,7 +43,9 @@ import 'package:flutter_admin_web/ui/TrackList/event_track_list.dart';
 import 'package:flutter_admin_web/ui/common/common_toast.dart';
 import 'package:intl/intl.dart';
 
+import '../../configs/constants.dart';
 import '../common/bottomsheet_drager.dart';
+import '../common/bottomsheet_option_tile.dart';
 
 class PrerequisiteDetailScreen extends StatefulWidget {
   final String contentid;
@@ -114,7 +116,7 @@ class _PrerequisiteDetailScreenState extends State<PrerequisiteDetailScreen> {
     getDetailsApiCall(widget.contentid);
     getUserId();
     if (isValidString(widget.table2.eventStartDateTime ?? "")) {
-      DateTime tempDate = new DateFormat("yyyy-MM-ddThh:mm:ss")
+      DateTime tempDate = DateFormat("yyyy-MM-ddThh:mm:ss")
           .parse(widget.table2.eventStartDateTime);
 
       String date = DateFormat("yyyy-MM-dd HH:mm:ss").format(tempDate);
@@ -124,7 +126,7 @@ class _PrerequisiteDetailScreenState extends State<PrerequisiteDetailScreen> {
     }
 
     if (isValidString(widget.table2.eventStartDateTime ?? "")) {
-      DateTime tempDate = new DateFormat("yyyy-MM-ddThh:mm:ss")
+      DateTime tempDate = DateFormat("yyyy-MM-ddThh:mm:ss")
           .parse(widget.table2.eventStartDateTime);
 
       String date = DateFormat("yyyy-MM-dd HH:mm:ss").format(tempDate);
@@ -237,7 +239,7 @@ class _PrerequisiteDetailScreenState extends State<PrerequisiteDetailScreen> {
                     displaymsg: appBloc.localstr
                         .catalogAlertsubtitleThiscontentitemhasbeenaddedto),
                 gravity: ToastGravity.BOTTOM,
-                toastDuration: Duration(seconds: 2),
+                toastDuration: const Duration(seconds: 2),
               );
               setState(() {
                 isAddtomylearning = false;
@@ -273,7 +275,7 @@ class _PrerequisiteDetailScreenState extends State<PrerequisiteDetailScreen> {
                   if (state.status == Status.COMPLETED) {
                     print("bloc data-----${data.toString()}");
                     data = state.data;
-                    Future.delayed(Duration(seconds: 4)).then((value) {
+                    Future.delayed(const Duration(seconds: 4)).then((value) {
                       _scrollToEnd();
                     });
                   }
@@ -292,10 +294,7 @@ class _PrerequisiteDetailScreenState extends State<PrerequisiteDetailScreen> {
                     : data == null) {
                   return Center(
                     child: AbsorbPointer(
-                      child: SpinKitCircle(
-                        color: Colors.black54,
-                        size: 70.0,
-                      ),
+                      child: AppConstants().getLoaderWidget(iconSize: 70)
                     ),
                   );
                 }
@@ -440,7 +439,7 @@ class _PrerequisiteDetailScreenState extends State<PrerequisiteDetailScreen> {
                                                             .authorName ??
                                                         ''
                                                     : data?.authorName ?? '',
-                                                style: TextStyle(
+                                                style: const TextStyle(
                                                     fontWeight: FontWeight.w600,
                                                     color: Colors.grey))
                                           ],
@@ -675,7 +674,7 @@ class _PrerequisiteDetailScreenState extends State<PrerequisiteDetailScreen> {
                                         data?.contentTypeId == 70
                                             ? Row(
                                                 children: <Widget>[
-                                                  Icon(Icons.timelapse),
+                                                  const Icon(Icons.timelapse),
                                                   SizedBox(
                                                     width: 10.h,
                                                   ),
@@ -734,7 +733,7 @@ class _PrerequisiteDetailScreenState extends State<PrerequisiteDetailScreen> {
                                             ),
                                             Text('($ratingCount)',
                                                 textAlign: TextAlign.end,
-                                                style: TextStyle(
+                                                style: const TextStyle(
                                                     fontWeight: FontWeight.w600,
                                                     color: Colors.grey))
                                           ],
@@ -744,7 +743,7 @@ class _PrerequisiteDetailScreenState extends State<PrerequisiteDetailScreen> {
                                         ),
                                         ListView.builder(
                                             shrinkWrap: true,
-                                            physics: ScrollPhysics(),
+                                            physics: const ScrollPhysics(),
                                             itemCount: reviewList.length,
                                             itemBuilder: (context, pos) {
                                               return Padding(
@@ -848,7 +847,7 @@ class _PrerequisiteDetailScreenState extends State<PrerequisiteDetailScreen> {
                                                                           iconSize:
                                                                               20.h,
                                                                           icon:
-                                                                              Icon(
+                                                                              const Icon(
                                                                             Icons.edit,
                                                                             color:
                                                                                 Colors.black,
@@ -922,12 +921,12 @@ class _PrerequisiteDetailScreenState extends State<PrerequisiteDetailScreen> {
                                                           .enableMultipleInstancesForEvent ==
                                                       'true'
                                           ? Padding(
-                                              padding: EdgeInsets.only(
+                                              padding: const EdgeInsets.only(
                                                 left: 20,
                                               ),
-                                              child: new Text(
+                                              child: Text(
                                                 'Teaching Schedule',
-                                                style: new TextStyle(
+                                                style: TextStyle(
                                                     color: Color(int.parse(
                                                         "0xFF${appBloc.uiSettingModel.appHeaderTextColor.substring(1, 7).toUpperCase()}")),
                                                     fontSize: 16.0,
@@ -1045,7 +1044,7 @@ class _PrerequisiteDetailScreenState extends State<PrerequisiteDetailScreen> {
                                                       gravity:
                                                           ToastGravity.BOTTOM,
                                                       toastDuration:
-                                                          Duration(seconds: 2),
+                                                          const Duration(seconds: 2),
                                                     );
                                                     // checkUserLogin(
                                                     //     widget.table2);
@@ -1095,7 +1094,7 @@ class _PrerequisiteDetailScreenState extends State<PrerequisiteDetailScreen> {
                                                     gravity:
                                                         ToastGravity.BOTTOM,
                                                     toastDuration:
-                                                        Duration(seconds: 2),
+                                                        const Duration(seconds: 2),
                                                   );
                                                 },
                                               ),
@@ -1239,22 +1238,17 @@ class _PrerequisiteDetailScreenState extends State<PrerequisiteDetailScreen> {
 
     showModalBottomSheet(
         context: context,
+        shape: AppConstants().bottomSheetShapeBorder(),
         builder: (BuildContext bc) {
-          return Container(
+          return AppConstants().bottomSheetContainer(
             child: SingleChildScrollView(
-              child: new Column(
+              child: Column(
                 children: <Widget>[
-                  BottomSheetDragger(),
+                  const BottomSheetDragger(),
                   menu0
-                      ? ListTile(
-                          title: Text(
-                              appBloc.localstr.catalogActionsheetViewoption,
-                              style: TextStyle(
-                                  color: InsColor(appBloc).appTextColor)),
-                          leading: Icon(
-                            IconDataSolid(int.parse('0xf144')),
-                            color: Colors.grey,
-                          ),
+                      ? BottomsheetOptionTile(
+                          text: appBloc.localstr.catalogActionsheetViewoption,
+                          iconData: IconDataSolid(int.parse('0xf144')),
                           onTap: () {
                             if (table2.isaddtomylearninglogo == 1 ||
                                 isAddtomylearning) {
@@ -1268,13 +1262,10 @@ class _PrerequisiteDetailScreenState extends State<PrerequisiteDetailScreen> {
                         )
                       : Container(),
                   menu1
-                      ? ListTile(
-                          title: Text(appBloc.localstr
-                              .catalogActionsheetAddtomylearningoption),
-                          leading: Icon(
-                            Icons.add_circle,
-                            color: Colors.grey,
-                          ),
+                      ? BottomsheetOptionTile(
+                          text: appBloc.localstr
+                              .catalogActionsheetAddtomylearningoption,
+                          iconData: Icons.add_circle,
                           onTap: () {
                             setState(() {
                               loaderAddtomylearning = true;
@@ -1290,7 +1281,7 @@ class _PrerequisiteDetailScreenState extends State<PrerequisiteDetailScreen> {
                                     displaymsg:
                                         'Not a member of ${table2.siteName}'),
                                 gravity: ToastGravity.BOTTOM,
-                                toastDuration: Duration(seconds: 2),
+                                toastDuration: const Duration(seconds: 2),
                               );
                               // checkUserLogin(table2);
                             }
@@ -1298,19 +1289,15 @@ class _PrerequisiteDetailScreenState extends State<PrerequisiteDetailScreen> {
                         )
                       : Container(),
                   menu2
-                      ? ListTile(
-                          title: Text(
-                              appBloc.localstr.catalogActionsheetBuyoption),
-                          leading: Icon(
-                            IconDataSolid(int.parse('0xf144')),
-                            color: Colors.grey,
-                          ),
+                      ? BottomsheetOptionTile(
+                          text: appBloc.localstr.catalogActionsheetBuyoption,
+                          iconData: IconDataSolid(int.parse('0xf144')),
                           onTap: () {
                             flutterToast.showToast(
                               child:
                                   CommonToast(displaymsg: 'Work in Progress'),
                               gravity: ToastGravity.BOTTOM,
-                              toastDuration: Duration(seconds: 2),
+                              toastDuration: const Duration(seconds: 2),
                             );
                           },
                         )
@@ -1407,25 +1394,17 @@ class _PrerequisiteDetailScreenState extends State<PrerequisiteDetailScreen> {
 
     showModalBottomSheet(
         context: context,
+        shape: AppConstants().bottomSheetShapeBorder(),
         builder: (BuildContext bc) {
-          return Container(
+          return AppConstants().bottomSheetContainer(
             child: SingleChildScrollView(
-              child: new Column(
+              child: Column(
                 children: <Widget>[
-                  BottomSheetDragger(),
+                  const BottomSheetDragger(),
                   menu0
-                      ? ListTile(
-                          title: Text(
-                            appBloc.localstr.catalogActionsheetViewoption,
-                            style: Theme.of(context)
-                                .textTheme
-                                .headline2
-                                ?.apply(color: InsColor(appBloc).appTextColor),
-                          ),
-                          leading: Icon(
-                            IconDataSolid(int.parse('0xf144')),
-                            color: Colors.grey,
-                          ),
+                      ? BottomsheetOptionTile(
+                          text: appBloc.localstr.catalogActionsheetViewoption,
+                          iconData: IconDataSolid(int.parse('0xf144')),
                           onTap: () {
                             if (table2.isaddtomylearninglogo == 1 ||
                                 isAddtomylearning) {
@@ -1439,19 +1418,9 @@ class _PrerequisiteDetailScreenState extends State<PrerequisiteDetailScreen> {
                         )
                       : Container(),
                   menu1
-                      ? ListTile(
-                          title: Text(
-                            appBloc.localstr
-                                .catalogActionsheetAddtomylearningoption,
-                            style: Theme.of(context)
-                                .textTheme
-                                .headline2
-                                ?.apply(color: InsColor(appBloc).appTextColor),
-                          ),
-                          leading: Icon(
-                            Icons.add_circle,
-                            color: Colors.grey,
-                          ),
+                      ? BottomsheetOptionTile(
+                          text: appBloc.localstr.catalogActionsheetAddtomylearningoption,
+                          iconData: Icons.add_circle,
                           onTap: () {
                             setState(() {
                               loaderAddtomylearning = true;
@@ -1467,7 +1436,7 @@ class _PrerequisiteDetailScreenState extends State<PrerequisiteDetailScreen> {
                                     displaymsg:
                                         'Not a member of ${table2.siteName}'),
                                 gravity: ToastGravity.BOTTOM,
-                                toastDuration: Duration(seconds: 2),
+                                toastDuration: const Duration(seconds: 2),
                               );
                               // checkUserLogin(table2);
                             }
@@ -1475,24 +1444,15 @@ class _PrerequisiteDetailScreenState extends State<PrerequisiteDetailScreen> {
                         )
                       : Container(),
                   menu2
-                      ? ListTile(
-                          title: Text(
-                            appBloc.localstr.catalogActionsheetBuyoption,
-                            style: Theme.of(context)
-                                .textTheme
-                                .headline2
-                                ?.apply(color: InsColor(appBloc).appTextColor),
-                          ),
-                          leading: Icon(
-                            IconDataSolid(int.parse('0xf144')),
-                            color: Colors.grey,
-                          ),
+                      ? BottomsheetOptionTile(
+                          text: appBloc.localstr.catalogActionsheetBuyoption,
+                          iconData: IconDataSolid(int.parse('0xf144')),
                           onTap: () {
                             flutterToast.showToast(
                               child:
                                   CommonToast(displaymsg: 'Work in Progress'),
                               gravity: ToastGravity.BOTTOM,
-                              toastDuration: Duration(seconds: 2),
+                              toastDuration: const Duration(seconds: 2),
                             );
                           },
                         )
@@ -1587,7 +1547,7 @@ class _PrerequisiteDetailScreenState extends State<PrerequisiteDetailScreen> {
 
   checkSubsiteLogding(String response, DummyMyCatelogResponseTable2 table2) {
     SubsiteLoginResponse subsiteLoginResponse =
-        new SubsiteLoginResponse(failedUserLogin: [], successFullUserLogin: []);
+        SubsiteLoginResponse(failedUserLogin: [], successFullUserLogin: []);
     Map<String, dynamic> userloginAry = jsonDecode(response);
     try {
       String succesMessage =
@@ -1604,12 +1564,12 @@ class _PrerequisiteDetailScreenState extends State<PrerequisiteDetailScreen> {
                 child:
                     CommonToast(displaymsg: 'Login Failed ${table2.sitename}'),
                 gravity: ToastGravity.BOTTOM,
-                toastDuration: Duration(seconds: 4),
+                toastDuration: const Duration(seconds: 4),
               )
             : flutterToast.showToast(
                 child: CommonToast(displaymsg: 'Pending Registration'),
                 gravity: ToastGravity.BOTTOM,
-                toastDuration: Duration(seconds: 4),
+                toastDuration: const Duration(seconds: 4),
               );
       } else if (userloginAry.containsKey("successfulluserlogin")) {
         subsiteLoginResponse = subsiteLoginResponse =
@@ -1618,7 +1578,7 @@ class _PrerequisiteDetailScreenState extends State<PrerequisiteDetailScreen> {
         flutterToast.showToast(
           child: CommonToast(displaymsg: succesMessage),
           gravity: ToastGravity.BOTTOM,
-          toastDuration: Duration(seconds: 4),
+          toastDuration: const Duration(seconds: 4),
         );
         table2.userid =
             '${subsiteLoginResponse.successFullUserLogin[0].userid}';
@@ -1643,40 +1603,40 @@ class _PrerequisiteDetailScreenState extends State<PrerequisiteDetailScreen> {
         }
       },
       builder: (context, state) {
-        return new Container(
-            child: new ListView.builder(
+        return Container(
+            child: ListView.builder(
           primary: false,
           shrinkWrap: true,
           itemCount: catalogBloc.eventEnrollmentResponse.courseList.length,
           itemBuilder: (context, index) {
-            return new GestureDetector(
+            return GestureDetector(
               onTap: () => {},
               child: Padding(
                   padding: EdgeInsets.only(top: ScreenUtil().setHeight(10)),
                   child: Card(
                     elevation: 4,
-                    child: new Container(
+                    child: Container(
                         padding: EdgeInsets.all(ScreenUtil().setHeight(5)),
                         child: Expanded(
-                            child: new Column(
+                            child: Column(
                           children: [
-                            new Row(
+                            Row(
                               children: [
-                                new Expanded(
-                                    child: new Column(
+                                Expanded(
+                                    child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     Padding(
-                                        padding: EdgeInsets.only(
+                                        padding: const EdgeInsets.only(
                                             left: 10, bottom: 5.0),
-                                        child: new Text(
+                                        child: Text(
                                           DateFormat('EEEE, d MMM').format(
                                               DateFormat('dd/MM/yyyy HH:mm')
                                                   .parse(catalogBloc
                                                       .eventEnrollmentResponse
                                                       .courseList[index]
                                                       .eventStartDateTime)),
-                                          style: new TextStyle(
+                                          style: TextStyle(
                                               color: Color(int.parse(
                                                   "0xFF${appBloc.uiSettingModel.appHeaderTextColor.substring(1, 7).toUpperCase()}")),
                                               fontSize: 12.0,
@@ -1687,7 +1647,7 @@ class _PrerequisiteDetailScreenState extends State<PrerequisiteDetailScreen> {
                                           CrossAxisAlignment.start,
                                       children: [
                                         Padding(
-                                          padding: EdgeInsets.only(
+                                          padding: const EdgeInsets.only(
                                               left: 20, top: 5.0),
                                           child: Container(
                                             height: 10,
@@ -1703,21 +1663,21 @@ class _PrerequisiteDetailScreenState extends State<PrerequisiteDetailScreen> {
                                           ),
                                         ),
                                         Padding(
-                                            padding: EdgeInsets.only(
+                                            padding: const EdgeInsets.only(
                                                 left: 20, top: 5.0),
-                                            child: new Text(
+                                            child: Text(
                                               catalogBloc
                                                   .eventEnrollmentResponse
                                                   .courseList[index]
                                                   .contentType,
                                               style:
-                                                  new TextStyle(fontSize: 10.0),
+                                                  const TextStyle(fontSize: 10.0),
                                             )),
                                         Padding(
-                                            padding: EdgeInsets.only(
+                                            padding: const EdgeInsets.only(
                                               left: 20,
                                             ),
-                                            child: new Text(
+                                            child: Text(
                                               '(' +
                                                   DateFormat('h:mm a').format(DateFormat(
                                                           'dd/MM/yyyy HH:mm')
@@ -1735,37 +1695,37 @@ class _PrerequisiteDetailScreenState extends State<PrerequisiteDetailScreen> {
                                                               .eventEndDateTime)) +
                                                   ')',
                                               style:
-                                                  new TextStyle(fontSize: 10.0),
+                                                  const TextStyle(fontSize: 10.0),
                                             )),
                                         Padding(
-                                            padding: EdgeInsets.only(
+                                            padding: const EdgeInsets.only(
                                                 left: 20, top: 10.0),
-                                            child: new Text(
+                                            child: Text(
                                               catalogBloc
                                                   .eventEnrollmentResponse
                                                   .courseList[index]
                                                   .title,
-                                              style: new TextStyle(
+                                              style: TextStyle(
                                                   color: Color(int.parse(
                                                       "0xFF${appBloc.uiSettingModel.appHeaderTextColor.substring(1, 7).toUpperCase()}")),
                                                   fontSize: 12.0,
                                                   fontWeight: FontWeight.bold),
                                             )),
                                         Padding(
-                                            padding: EdgeInsets.only(
+                                            padding: const EdgeInsets.only(
                                                 left: 20, top: 5.0),
-                                            child: new Text(
+                                            child: Text(
                                               catalogBloc
                                                   .eventEnrollmentResponse
                                                   .courseList[index]
                                                   .shortDescription,
                                               style:
-                                                  new TextStyle(fontSize: 10.0),
+                                                  const TextStyle(fontSize: 10.0),
                                             )),
                                         Padding(
-                                            padding: EdgeInsets.only(
+                                            padding: const EdgeInsets.only(
                                                 left: 20, top: 5.0),
-                                            child: new Text(
+                                            child: Text(
                                               catalogBloc
                                                       .eventEnrollmentResponse
                                                       .courseList[index]
@@ -1776,18 +1736,18 @@ class _PrerequisiteDetailScreenState extends State<PrerequisiteDetailScreen> {
                                                       .courseList[index]
                                                       .presenterDisplayName,
                                               style:
-                                                  new TextStyle(fontSize: 10.0),
+                                                  const TextStyle(fontSize: 10.0),
                                             )),
                                         Padding(
-                                            padding: EdgeInsets.only(
+                                            padding: const EdgeInsets.only(
                                                 left: 20, top: 5.0),
-                                            child: new Text(
+                                            child: Text(
                                               catalogBloc
                                                   .eventEnrollmentResponse
                                                   .courseList[index]
                                                   .locationName,
                                               style:
-                                                  new TextStyle(fontSize: 10.0),
+                                                  const TextStyle(fontSize: 10.0),
                                             )),
                                         Visibility(
                                             visible: catalogBloc
@@ -1798,7 +1758,7 @@ class _PrerequisiteDetailScreenState extends State<PrerequisiteDetailScreen> {
                                                 ? false
                                                 : true,
                                             child: Container(
-                                              margin: EdgeInsets.only(
+                                              margin: const EdgeInsets.only(
                                                   left: 20.0, right: 20.0),
                                               width: MediaQuery.of(context)
                                                   .size
@@ -1846,17 +1806,17 @@ class _PrerequisiteDetailScreenState extends State<PrerequisiteDetailScreen> {
                                               ),
                                             )),
                                         Padding(
-                                            padding: EdgeInsets.only(
+                                            padding: const EdgeInsets.only(
                                                 left: 20,
                                                 top: 5.0,
                                                 bottom: 5.0),
-                                            child: new Text(
+                                            child: Text(
                                               catalogBloc
                                                       .eventEnrollmentResponse
                                                       .courseList[index]
                                                       .availableSeats +
                                                   ' Seats Remain',
-                                              style: new TextStyle(
+                                              style: TextStyle(
                                                   color: Color(int.parse(
                                                       "0xFF${appBloc.uiSettingModel.appHeaderTextColor.substring(1, 7).toUpperCase()}")),
                                                   fontSize: 10.0,
@@ -1906,7 +1866,7 @@ class _PrerequisiteDetailScreenState extends State<PrerequisiteDetailScreen> {
     if (scrollPosition.maxScrollExtent > scrollPosition.minScrollExtent) {
       scrollController.animateTo(
         scrollPosition.maxScrollExtent,
-        duration: new Duration(milliseconds: 200),
+        duration: const Duration(milliseconds: 200),
         curve: Curves.easeInOut,
       );
     }

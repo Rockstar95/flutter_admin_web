@@ -3,7 +3,6 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:flutter_admin_web/framework/bloc/app/bloc/app_bloc.dart';
 import 'package:flutter_admin_web/framework/bloc/myConnections/model/people_list_response.dart';
 import 'package:flutter_admin_web/framework/bloc/myConnections/my_connection_bloc.dart';
@@ -24,9 +23,13 @@ import 'package:flutter_admin_web/ui/common/common_primary_secondary_button.dart
 import 'package:flutter_admin_web/ui/profile/profile_edit.dart';
 import 'package:flutter_admin_web/ui/profile/profile_info.dart';
 
+import '../../configs/constants.dart';
 import '../common/outline_button.dart';
 import 'education_info.dart';
 import 'experience_info.dart';
+
+import '../../configs/constants.dart';
+
 
 class Profile extends StatefulWidget {
   final bool isFromProfile, isMyProfile;
@@ -208,10 +211,7 @@ class _ProfileState extends State<Profile> {
                   "0xFF${appBloc.uiSettingModel.appBGColor.substring(1, 7).toUpperCase()}")),
               child: Center(
                   child: AbsorbPointer(
-                      child: SpinKitCircle(
-                color: Colors.grey,
-                size: 70.h,
-              ))),
+                      child: AppConstants().getLoaderWidget(iconSize: 70),)),
             );
           } else if (profileBloc.profileResponse != null) {
             Userprofiledetail? userProfileDetail =
@@ -523,10 +523,7 @@ class _ProfileState extends State<Profile> {
                                           "0xFF${appBloc.uiSettingModel.appBGColor.substring(1, 7).toUpperCase()}")),
                                       child: Center(
                                           child: AbsorbPointer(
-                                              child: SpinKitCircle(
-                                        color: Colors.grey,
-                                        size: 50.h,
-                                      ))),
+                                              child: AppConstants().getLoaderWidget(iconSize: 50),)),
                                     );
                                   }
 

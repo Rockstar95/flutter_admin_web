@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:flutter_admin_web/framework/bloc/app/bloc/app_bloc.dart';
 import 'package:flutter_admin_web/framework/bloc/progressReport/bloc/progress_report_bloc.dart';
@@ -11,6 +10,8 @@ import 'package:flutter_admin_web/framework/common/enums.dart';
 import 'package:flutter_admin_web/framework/helpers/utils.dart';
 import 'package:flutter_admin_web/framework/repository/progressReport/progress_report_repositry_builder.dart';
 import 'package:flutter_admin_web/ui/common/common_toast.dart';
+
+import '../../configs/constants.dart';
 
 class CourseSummary extends StatefulWidget {
   final String title;
@@ -137,10 +138,7 @@ class _CourseSummaryState extends State<CourseSummary> with SingleTickerProvider
         if (state.status == Status.LOADING && progressReportBloc.isFirstLoading == true) {
           return Center(
             child: AbsorbPointer(
-              child: SpinKitCircle(
-                color: Colors.grey,
-                size: 70.0,
-              ),
+              child: AppConstants().getLoaderWidget(iconSize: 70),
             ),
           );
         }

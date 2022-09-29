@@ -436,7 +436,8 @@ class AskTheExpertBloc extends Bloc<AskTheExpertEvent, AskTheExpertState> {
         }
         print('apiResponse ${apiResponse?.body}');
       }
-    } catch (e, s) {
+    }
+    catch (e, s) {
       print("Error in AskTheExpertBloc.mapEventToState():$e");
       print(s);
 

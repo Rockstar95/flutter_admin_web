@@ -2,6 +2,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:flutter_admin_web/utils/my_print.dart';
 import 'package:url_launcher/url_launcher_string.dart';
 
 const AndroidNotificationChannel channel = AndroidNotificationChannel(
@@ -38,11 +39,14 @@ class NotificationController {
 
   Future<void> initializeNotification() async {
     await _requestNotificationPermission();
-    var initializationSettingsAndroid =
-        AndroidInitializationSettings('@mipmap/ic_launcher');
+    var initializationSettingsAndroid = AndroidInitializationSettings('@mipmap/ic_launcher');
     var initializationSettingsIOS = IOSInitializationSettings();
     var initializationSettings = InitializationSettings(
         android: initializationSettingsAndroid, iOS: initializationSettingsIOS);
+
+    FirebaseMessaging.instance.getToken(vapidKey: "BH7mCZr5oMSu4K8m3FSj37tmj4Ccq00s1Hd9C_1XbohIvnraXJmUQHedddY3Vs_lKpxxhKOiPPU35fuBO4k7JF4").then((String? token) {
+      MyPrint.printOnConsole("Notification token:${token}");
+    });
 
     // notificationsPlugin.initialize(initializationSettings);
     //

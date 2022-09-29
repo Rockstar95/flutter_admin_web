@@ -10,6 +10,8 @@ import 'package:flutter_admin_web/ui/MyLearning/share_with_connections.dart';
 import 'package:flutter_admin_web/ui/auth/login_common_page.dart';
 import 'package:flutter_admin_web/utils/shared_pref_manager.dart';
 
+import '../ui/TrackList/event_track_list.dart';
+
 class NavigationController {
   static NavigationController? _instance;
   factory NavigationController() => _instance ??= NavigationController._();
@@ -74,6 +76,16 @@ class NavigationController {
       isFromQuestion,
       contentId,
       contentName,
+    )));
+
+    return value;
+  }
+
+  Future<dynamic> navigateToEventTrackListScreen({required BuildContext context, required DummyMyCatelogResponseTable2 myLearningModel, required bool isTraxkList,}) async {
+    dynamic value = await Navigator.of(context).push(MaterialPageRoute(builder: (context) => EventTrackList(
+      myLearningModel,
+      isTraxkList,
+      [],
     )));
 
     return value;

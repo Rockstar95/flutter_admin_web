@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 // import 'package:html_editor/html_editor.dart';
 import 'package:flutter_admin_web/framework/bloc/app/bloc/app_bloc.dart';
@@ -11,6 +10,7 @@ import 'package:flutter_admin_web/framework/common/enums.dart';
 import 'package:flutter_admin_web/framework/helpers/ApiEndpoints.dart';
 import 'package:flutter_admin_web/ui/common/common_toast.dart';
 
+import '../../configs/constants.dart';
 import '../common/app_colors.dart';
 
 class ShareMainScreen extends StatefulWidget {
@@ -286,10 +286,7 @@ class _ShareMainScreenState extends State<ShareMainScreen> {
                         ? Align(
                             alignment: Alignment.center,
                             child: AbsorbPointer(
-                              child: SpinKitCircle(
-                                color: Colors.grey,
-                                size: 70,
-                              ),
+                              child: AppConstants().getLoaderWidget(iconSize: 70)
                             ),
                           )
                         : Container(),

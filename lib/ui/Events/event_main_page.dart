@@ -44,9 +44,12 @@ import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:syncfusion_flutter_calendar/calendar.dart';
 
+import '../../configs/constants.dart';
 import '../../framework/common/pref_manger.dart';
+import '../../framework/helpers/providermodel.dart';
 import '../common/app_colors.dart';
 import '../common/bottomsheet_drager.dart';
+import '../common/bottomsheet_option_tile.dart';
 import '../global_search_screen.dart';
 
 class EventMainPage extends StatefulWidget {
@@ -569,10 +572,7 @@ class _EventMainPageState extends State<EventMainPage> {
   Widget getLoadingWidget() {
     return Center(
                       child: AbsorbPointer(
-                        child: SpinKitCircle(
-                          color: Colors.grey,
-                          size: 70.h,
-                        ),
+                        child: AppConstants().getLoaderWidget(iconSize: 70)
                       ),
                     );
   }
@@ -895,14 +895,17 @@ class _EventMainPageState extends State<EventMainPage> {
                         checkRelatedContent(table2);
                       } else if (menu3) {
                         Navigator.of(context).push(MaterialPageRoute(
-                            builder: (context) => CommonDetailScreen(
-                              screenType: ScreenType.Events,
-                              contentid: table2.contentid,
-                              objtypeId: table2.objecttypeid,
-                              detailsBloc: detailsBloc,
-                              table2: table2,
-                              isFromReschedule: false,
-                            )));
+                            builder: (context) => ChangeNotifierProvider(
+                                  create: (context) => ProviderModel(),
+                                  child: CommonDetailScreen(
+                                    screenType: ScreenType.Events,
+                                    contentid: table2.contentid,
+                                    objtypeId: table2.objecttypeid,
+                                    detailsBloc: detailsBloc,
+                                    table2: table2,
+                                    isFromReschedule: false,
+                                  ),
+                                )));
                       }
                     },
                     child: CachedNetworkImage(
@@ -1776,64 +1779,36 @@ class _EventMainPageState extends State<EventMainPage> {
 
     showModalBottomSheet(
         context: context,
+        shape: AppConstants().bottomSheetShapeBorder(),
         builder: (BuildContext bc) {
-          return Container(
-            color: Color(int.parse(
-                "0xFF${appBloc.uiSettingModel.appBGColor.substring(1, 7).toUpperCase()}")),
+          return AppConstants().bottomSheetContainer(
             child: SingleChildScrollView(
               child: Column(
                 children: <Widget>[
                   BottomSheetDragger(),
                   menu0
-                      ? ListTile(
+                      ? BottomsheetOptionTile(
+                          text: appBloc.localstr.eventsActionsheetRelatedcontentoption,
+                          iconData: Icons.content_copy,
                           onTap: () {
                             Navigator.of(context).pop();
                             checkRelatedContent(table2);
                           },
-                          title: Text(
-                              appBloc.localstr
-                                  .eventsActionsheetRelatedcontentoption,
-                              style: TextStyle(
-                                  color: Color(
-                                int.parse(
-                                    "0xFF${appBloc.uiSettingModel.appTextColor.substring(1, 7).toUpperCase()}"),
-                              ))),
-                          leading: Icon(
-                            Icons.content_copy,
-                            color: InsColor(appBloc).appIconColor,
-                          ),
                         )
                       : Container(),
                   menu1
-                      ? ListTile(
-                          title: Text(menu1Title,
-                              style: TextStyle(
-                                  color: Color(
-                                int.parse(
-                                    "0xFF${appBloc.uiSettingModel.appTextColor.substring(1, 7).toUpperCase()}"),
-                              ))),
-                          leading: Icon(
-                            IconDataSolid(int.parse('0xf271')),
-                            color: InsColor(appBloc).appIconColor,
-                          ),
+                      ? BottomsheetOptionTile(
+                          text: menu1Title,
+                          iconData: IconDataSolid(int.parse('0xf271')),
                           onTap: () {
                             Navigator.of(context).pop();
                             addToEnroll(table2);
                           })
                       : Container(),
                   menu2
-                      ? ListTile(
-                          title: Text(
-                              appBloc.localstr.eventsActionsheetBuynowoption,
-                              style: TextStyle(
-                                  color: Color(
-                                int.parse(
-                                    "0xFF${appBloc.uiSettingModel.appTextColor.substring(1, 7).toUpperCase()}"),
-                              ))),
-                          leading: Icon(
-                            IconDataSolid(int.parse('0xf53d')),
-                            color: InsColor(appBloc).appIconColor,
-                          ),
+                      ? BottomsheetOptionTile(
+                          text: appBloc.localstr.eventsActionsheetBuynowoption,
+                          iconData: IconDataSolid(int.parse('0xf53d')),
                           onTap: () {
                             Navigator.of(context).pop();
                             _buyProduct(table2);
@@ -1841,34 +1816,30 @@ class _EventMainPageState extends State<EventMainPage> {
                         )
                       : Container(),
                   menu3
-                      ? ListTile(
-                          title: Text(
-                              appBloc.localstr.eventsActionsheetDetailsoption,
-                              style: TextStyle(
-                                  color: Color(
-                                int.parse(
-                                    "0xFF${appBloc.uiSettingModel.appTextColor.substring(1, 7).toUpperCase()}"),
-                              ))),
-                          leading: Icon(
-                            IconDataSolid(int.parse('0xf570')),
-                            color: InsColor(appBloc).appIconColor,
-                          ),
+                      ? BottomsheetOptionTile(
+                          text: appBloc.localstr.eventsActionsheetDetailsoption,
+                          iconData: IconDataSolid(int.parse('0xf570')),
                           onTap: () {
                             Navigator.of(context).pop();
                             Navigator.of(context).push(MaterialPageRoute(
-                                builder: (context) => CommonDetailScreen(
-                                  screenType: ScreenType.Events,
-                                  contentid: table2.contentid,
-                                  objtypeId: table2.objecttypeid,
-                                  detailsBloc: detailsBloc,
-                                  table2: table2,
-                                  isFromReschedule: false,
-                                )));
+                                builder: (context) => ChangeNotifierProvider(
+                                      create: (context) => ProviderModel(),
+                                      child: CommonDetailScreen(
+                                        screenType: ScreenType.Events,
+                                        contentid: table2.contentid,
+                                        objtypeId: table2.objecttypeid,
+                                        detailsBloc: detailsBloc,
+                                        table2: table2,
+                                        isFromReschedule: false,
+                                      ),
+                                    )));
                           },
                         )
                       : Container(),
                   menu4
-                      ? ListTile(
+                      ? BottomsheetOptionTile(
+                    text: appBloc.localstr.eventsActionsheetCancelenrollmentoption,
+                          iconData: IconDataSolid(int.parse('0xf410')),
                           onTap: () {
                             Navigator.of(context).pop();
                             if (table2.isbadcancellationenabled) {
@@ -1880,33 +1851,12 @@ class _EventMainPageState extends State<EventMainPage> {
                                   table2.isbadcancellationenabled.toString());
                             }
                           },
-                          title: Text(
-                              appBloc.localstr
-                                  .eventsActionsheetCancelenrollmentoption,
-                              style: TextStyle(
-                                  color: Color(
-                                int.parse(
-                                    "0xFF${appBloc.uiSettingModel.appTextColor.substring(1, 7).toUpperCase()}"),
-                              ))),
-                          leading: Icon(
-                            IconDataSolid(int.parse('0xf410')),
-                            color: InsColor(appBloc).appIconColor,
-                          ),
                         )
                       : Container(),
                   menu5
-                      ? ListTile(
-                          title: Text(
-                              appBloc.localstr.catalogActionsheetWishlistoption,
-                              style: TextStyle(
-                                  color: Color(
-                                int.parse(
-                                    "0xFF${appBloc.uiSettingModel.appTextColor.substring(1, 7).toUpperCase()}"),
-                              ))),
-                          leading: Icon(
-                            IconDataRegular(int.parse('0xf004')),
-                            color: InsColor(appBloc).appIconColor,
-                          ),
+                      ? BottomsheetOptionTile(
+                          text: appBloc.localstr.catalogActionsheetWishlistoption,
+                          iconData: IconDataRegular(int.parse('0xf004')),
                           onTap: () {
                             catalogBloc.add(AddToWishListEvent(
                                 contentId: table2.contentid));
@@ -1915,19 +1865,9 @@ class _EventMainPageState extends State<EventMainPage> {
                         )
                       : Container(),
                   menu6
-                      ? ListTile(
-                          title: Text(
-                              appBloc.localstr
-                                  .catalogActionsheetRemovefromwishlistoption,
-                              style: TextStyle(
-                                  color: Color(
-                                int.parse(
-                                    "0xFF${appBloc.uiSettingModel.appTextColor.substring(1, 7).toUpperCase()}"),
-                              ))),
-                          leading: Icon(
-                            IconDataSolid(int.parse('0xf004')),
-                            color: InsColor(appBloc).appIconColor,
-                          ),
+                      ? BottomsheetOptionTile(
+                          text: appBloc.localstr.catalogActionsheetRemovefromwishlistoption,
+                          iconData: IconDataSolid(int.parse('0xf004')),
                           onTap: () {
                             catalogBloc.add(RemoveFromWishListEvent(
                                 contentId: table2.contentid));
@@ -1936,19 +1876,10 @@ class _EventMainPageState extends State<EventMainPage> {
                         )
                       : Container(),
                   menu7
-                      ? ListTile(
-                          title: Text(
-                              appBloc.localstr
+                      ? BottomsheetOptionTile(
+                          text: appBloc.localstr
                                   .catalogActionsheetAddtomylearningoption,
-                              style: TextStyle(
-                                  color: Color(
-                                int.parse(
-                                    "0xFF${appBloc.uiSettingModel.appTextColor.substring(1, 7).toUpperCase()}"),
-                              ))),
-                          leading: Icon(
-                            Icons.add_circle,
-                            color: InsColor(appBloc).appIconColor,
-                          ),
+                          iconData: Icons.add_circle,
                           onTap: () {
                             Navigator.of(context).pop();
                             try {
@@ -1962,17 +1893,9 @@ class _EventMainPageState extends State<EventMainPage> {
                   /*(table2.suggesttoconnlink != null)
                       ? (table2.suggesttoconnlink.isNotEmpty)
                           ? */
-                  ListTile(
-                    leading: Icon(
-                      IconDataSolid(int.parse('0xf1e0')),
-                      color: InsColor(appBloc).appIconColor,
-                    ),
-                    title: Text('Share with Connection',
-                        style: TextStyle(
-                            color: Color(
-                          int.parse(
-                              "0xFF${appBloc.uiSettingModel.appTextColor.substring(1, 7).toUpperCase()}"),
-                        ))),
+                  BottomsheetOptionTile(
+                    iconData: IconDataSolid(int.parse('0xf1e0')),
+                    text: 'Share with Connection',
                     onTap: () {
                       Navigator.pop(context);
 
@@ -1985,17 +1908,9 @@ class _EventMainPageState extends State<EventMainPage> {
                       : Container()*/
                   /*table2.suggestwithfriendlink != null
                       ? (table2.suggestwithfriendlink.isNotEmpty)*/
-                  /*?*/ ListTile(
-                    leading: Icon(
-                      IconDataSolid(int.parse('0xf079')),
-                      color: InsColor(appBloc).appIconColor,
-                    ),
-                    title: Text("Share with People",
-                        style: TextStyle(
-                            color: Color(
-                          int.parse(
-                              "0xFF${appBloc.uiSettingModel.appTextColor.substring(1, 7).toUpperCase()}"),
-                        ))),
+                  /*?*/ BottomsheetOptionTile(
+                    iconData: IconDataSolid(int.parse('0xf079')),
+                    text: "Share with People",
                     onTap: () {
                       Navigator.pop(context);
 

@@ -5,12 +5,14 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_admin_web/configs/client_urls.dart';
 import 'package:flutter_admin_web/framework/helpers/ApiEndpoints.dart';
 import 'package:flutter_admin_web/utils/my_print.dart';
-import 'package:flutter_downloader/flutter_downloader.dart';
 import 'package:flutter_admin_web/controllers/notification_controller.dart';
 import 'package:flutter_admin_web/ui/appModule/app.dart';
 import 'package:flutter_admin_web/ui/common/log_util.dart';
+
+import 'framework/helpers/parsing_helper.dart';
 
 // ?site=https://upgradedenterprise.instancy.com/
 // ?site=https://learning.instancy.com/
@@ -33,7 +35,18 @@ void main() async {
     print("Site Url:${Uri.base.queryParameters['site']}");
 
     dynamic site = Uri.base.queryParameters['site'];
+    dynamic appAuthURL = Uri.base.queryParameters['appAuthURL'];
     dynamic authToken = Uri.base.queryParameters['authToken'];
+
+    print("Before collectionName:${ApiEndpoints.syncCollection}");
+    String collectionName = ParsingHelper.parseStringMethod(Uri.base.queryParameters['collection'],defaultValue: ApiEndpoints.syncCollection);
+    ApiEndpoints.syncCollection = collectionName;
+    print("After assign collectionName:${ApiEndpoints.syncCollection}");
+
+    print("Before assign documentName:${ApiEndpoints.syncDocument}");
+    String documentName = ParsingHelper.parseStringMethod(Uri.base.queryParameters['document'],defaultValue: ApiEndpoints.syncDocument);
+    ApiEndpoints.syncDocument = documentName;
+    print("After documentName:${ApiEndpoints.syncDocument}");
 
     if(authToken is String && authToken.isNotEmpty){
       ApiEndpoints.authToken = authToken;
@@ -42,6 +55,9 @@ void main() async {
     if(site is String && site.isNotEmpty && (site.startsWith("http://") || site.startsWith("https://"))) {
       ApiEndpoints.mainSiteURL = site;
     }
+   if(appAuthURL is String && appAuthURL.isNotEmpty && (appAuthURL.startsWith("http://") || appAuthURL.startsWith("https://"))) {
+     ApiEndpoints.appAuthURL = appAuthURL;
+   }
 
     // Set orientation
     await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
@@ -75,9 +91,9 @@ void main() async {
 
     //For Upgraded Enterprise Site
     runApp(App(
-      // mainSiteUrl: "https://upgradedenterprise.instancy.com/",
-      mainSiteUrl: site is String && site.isNotEmpty ? site : "https://upgradedenterprise.instancy.com/",
-      appAuthURL: "https://masterapilive.instancy.com/api/",
+      // mainSiteUrl: "https://upgradedenterprise.instancy.com/ appAuthURL",
+      mainSiteUrl: site is String && site.isNotEmpty ? site : ClientUrls.upgradedEnterpriseClientUrl,
+      appAuthURL: appAuthURL is String && appAuthURL.isNotEmpty ? appAuthURL : ClientUrls.getAuthUrl(ClientUrls.upgradedEnterpriseClientUrl),
       appWebApiUrl: site is String && site.isNotEmpty ? "" : "https://upgradedenterpriseapi.instancy.com/api/",
       splashScreenLogo: "assets/images/playgroundlogo.png",
     ));

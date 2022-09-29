@@ -15,6 +15,8 @@ import 'package:flutter_admin_web/framework/helpers/utils.dart';
 import 'package:flutter_admin_web/framework/repository/Discussion/discussion_main_home_repositry_builder.dart';
 import 'package:flutter_admin_web/framework/theme/ins_theme.dart';
 
+import '../../configs/constants.dart';
+
 class DiscussionForumLikes extends StatefulWidget {
   final ForumList forumList;
 
@@ -26,7 +28,7 @@ class DiscussionForumLikes extends StatefulWidget {
 
 class _DiscussionForumLikesState extends State<DiscussionForumLikes>
     with SingleTickerProviderStateMixin {
-  GlobalKey<ScaffoldState> _scaffoldkey = new GlobalKey<ScaffoldState>();
+  GlobalKey<ScaffoldState> _scaffoldkey = GlobalKey<ScaffoldState>();
   Color _iconColor = Colors.black;
   TabController? _tabController;
   List<Tab> tabList = [];
@@ -90,13 +92,13 @@ class _DiscussionForumLikesState extends State<DiscussionForumLikes>
             "0xFF${appBloc.uiSettingModel.appBGColor.substring(1, 7).toUpperCase()}")),
         child: Stack(
           children: <Widget>[
-            Divider(
+            const Divider(
               height: 2,
               color: Colors.black87,
             ),
-            new Column(
+            Column(
               children: [
-                new Expanded(
+                Expanded(
                   child: mainWidget(),
                 ),
               ],
@@ -123,31 +125,27 @@ class _DiscussionForumLikesState extends State<DiscussionForumLikes>
               discussionMainHomeBloc.isFirstLoading == true) {
             return Center(
               child: AbsorbPointer(
-                child: SpinKitCircle(
-                  color: Colors.grey,
-                  size: 70.0,
-                ),
+                child: AppConstants().getLoaderWidget(iconSize: 70)
               ),
             );
-          } else if (discussionMainHomeBloc.discussionForumLikeList.length ==
-              0) {
+          } else if (discussionMainHomeBloc.discussionForumLikeList.isEmpty) {
             return noDataFound(true);
           } else {
-            return new Container(
+            return Container(
               color: Color(int.parse(
                   "0xFF${appBloc.uiSettingModel.appBGColor.substring(1, 7).toUpperCase()}")),
-              padding: EdgeInsets.all(10.0),
-              child: new ListView.separated(
+              padding: const EdgeInsets.all(10.0),
+              child: ListView.separated(
                   itemCount:
                       discussionMainHomeBloc.discussionForumLikeList.length,
-                  separatorBuilder: (context, index) => Divider(
+                  separatorBuilder: (context, index) => const Divider(
                         color: Colors.grey,
                       ),
                   itemBuilder: (context, index) {
-                    return new Container(
-                      child: new Column(
+                    return Container(
+                      child: Column(
                         children: [
-                          new Row(
+                          Row(
                             children: [
                               ClipOval(
                                 child: CachedNetworkImage(
@@ -175,14 +173,14 @@ class _DiscussionForumLikesState extends State<DiscussionForumLikes>
                                   ),
                                 ),
                               ),
-                              new Column(
+                              Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Padding(
-                                      padding: EdgeInsets.only(
+                                      padding: const EdgeInsets.only(
                                         left: 20,
                                       ),
-                                      child: new Text(
+                                      child: Text(
                                         discussionMainHomeBloc
                                             .discussionForumLikeList[index]
                                             .userName,
@@ -195,24 +193,24 @@ class _DiscussionForumLikesState extends State<DiscussionForumLikes>
                                       )),
                                   Padding(
                                       padding:
-                                          EdgeInsets.only(left: 20, top: 5.0),
-                                      child: new Text(
+                                          const EdgeInsets.only(left: 20, top: 5.0),
+                                      child: Text(
                                         discussionMainHomeBloc
                                             .discussionForumLikeList[index]
                                             .userDesg,
-                                        style: new TextStyle(
+                                        style: TextStyle(
                                             color: Color(int.parse(
                                                 "0xFF${appBloc.uiSettingModel.appTextColor.substring(1, 7).toUpperCase()}")),
                                             fontSize: 10.0),
                                       )),
                                   Padding(
                                       padding:
-                                          EdgeInsets.only(left: 20, top: 5.0),
-                                      child: new Text(
+                                          const EdgeInsets.only(left: 20, top: 5.0),
+                                      child: Text(
                                         discussionMainHomeBloc
                                             .discussionForumLikeList[index]
                                             .userAddress,
-                                        style: new TextStyle(
+                                        style: TextStyle(
                                             color: Color(int.parse(
                                                 "0xFF${appBloc.uiSettingModel.appTextColor.substring(1, 7).toUpperCase()}")),
                                             fontSize: 10.0),
@@ -249,6 +247,6 @@ class _DiscussionForumLikesState extends State<DiscussionForumLikes>
               )
             ],
           )
-        : new Container();
+        : Container();
   }
 }

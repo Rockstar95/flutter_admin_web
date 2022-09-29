@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:http/http.dart';
@@ -27,6 +26,7 @@ import 'package:flutter_admin_web/ui/common/common_toast.dart';
 import 'package:flutter_admin_web/ui/splash/splash_screen.dart';
 import 'package:url_launcher/url_launcher_string.dart';
 
+import '../../configs/constants.dart';
 import '../common/outline_button.dart';
 import 'Privacyinfo.dart';
 
@@ -591,10 +591,7 @@ class _SiteSettingState extends State<SiteSetting> {
                             child: SizedBox(
                               height: 50,
                               width: 50,
-                              child: SpinKitCircle(
-                                color: Colors.grey,
-                                size: 50.h,
-                              ),
+                              child: AppConstants().getLoaderWidget(iconSize: 50)
                             ),
                           ),
                         )
@@ -789,10 +786,7 @@ class _SiteSettingState extends State<SiteSetting> {
                             child: SizedBox(
                               height: 50,
                               width: 50,
-                              child: SpinKitCircle(
-                                color: Colors.grey,
-                                size: 50.h,
-                              ),
+                              child: AppConstants().getLoaderWidget(iconSize: 50)
                             ),
                           ),
                         )
@@ -826,28 +820,34 @@ class _SiteSettingState extends State<SiteSetting> {
                         preferenceBloc.membership.currency));
                 _isLoadedPaymentGateway = true;
               }
-              return commonListTile(
-                  onPressed: (){_showMembershipDialog(context, preferenceBloc.membership);},
-                  isFontAwsomeIcon: true,
-                  icon: FontAwesomeIcons.addressCard,
-                  title: "Membership",
-                  subTitle: "Membership details" );
+              return Visibility(
+                visible: appBloc.uiSettingModel.enableMembership.toLowerCase() == "true",
+                child: commonListTile(
+                    onPressed: (){_showMembershipDialog(context, preferenceBloc.membership);},
+                    isFontAwsomeIcon: true,
+                    icon: FontAwesomeIcons.addressCard,
+                    title: "Membership",
+                    subTitle: "Membership details" ),
+              );
             }
         ),
         // commonListTile(onPressed: (){ }, icon: Icons.remove_red_eye_outlined, title: "Privacy", subTitle: "privacy" ),
-        commonListTile(
-            onPressed: (){
-              Navigator.of(context).push(MaterialPageRoute(
-              builder: (context) => PaymentHistoryScreen()));
-            },
-            icon: FontAwesomeIcons.creditCard,
-            isFontAwsomeIcon: true,
-            title: "Purchase History",
-            subTitle: "Checkout the purchase history" ),
+        Visibility(
+          visible: appBloc.uiSettingModel.enableEcommerce.toLowerCase() == "true",
+          child: commonListTile(
+              onPressed: (){
+                Navigator.of(context).push(MaterialPageRoute(
+                builder: (context) => PaymentHistoryScreen()));
+              },
+              icon: FontAwesomeIcons.creditCard,
+              isFontAwsomeIcon: true,
+              title: "Purchase History",
+              subTitle: "Checkout the purchase history" ),
+        ),
         commonListTile(onPressed: (){}, icon: Icons.color_lens_outlined, title: "Dark Theme", subTitle: "Will never turn on/off automatically",
             trailingWidget: Switch(
               value: isSwitched,
-              activeColor: Colors.blue,
+              activeColor: AppColors.getAppButtonBGColor(),
               onChanged: (toggle) {
                 isSwitched = toggle;
                 isSwitched
@@ -968,19 +968,15 @@ class _SiteSettingState extends State<SiteSetting> {
                 onPressed: () async {
                   print("_controler.text   ${_controler.text}");
                   try {
-                    Response? response =
-                        await RestClient.getData(_controler.text, true);
+                    Response? response = await RestClient.getData(_controler.text, true);
 
                     if (response?.statusCode == 200) {
-                      await sharePrefSaveString(
-                          sharedPref_siteURL, _controler.text);
+                      await sharePrefSaveString(sharedPref_siteURL, _controler.text);
                       Future.delayed(Duration(seconds: 1)).then((value) {
-                        Navigator.of(context).pushAndRemoveUntil(
-                            MaterialPageRoute(
-                                builder: (context) => SplashScreen(true)),
-                            (Route<dynamic> route) => false);
+                        Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context) => SplashScreen(true)), (Route<dynamic> route) => false);
                       });
-                    } else {
+                    }
+                    else {
                       FToast()
                         ..init(context).showToast(
                           child: CommonToast(displaymsg: "Enter Valid URL"),
@@ -988,7 +984,8 @@ class _SiteSettingState extends State<SiteSetting> {
                           toastDuration: Duration(seconds: 2),
                         );
                     }
-                  } catch (e) {
+                  }
+                  catch (e) {
                     FToast()
                       ..init(context).showToast(
                         child: CommonToast(displaymsg: "Enter Valid URL"),
@@ -1397,47 +1394,43 @@ class _SiteSettingState extends State<SiteSetting> {
             content: Container(
               color: InsColor(appBloc).appBGColor,
               width: 300,
-              height: 200,
-              child: Stack(
-                children: <Widget>[
-                  new ListView.builder(
-                      shrinkWrap: true,
-                      itemCount: appBloc.uiSettingModel.localeList.length,
-                      itemBuilder: (BuildContext ctxt, int index) {
-                        return Padding(
-                          padding: const EdgeInsets.all(1.0),
-                          child: RadioListTile<String>(
-                            title: Text(
-                              '${appBloc.uiSettingModel.localeList[index].languagename}',
-                              style: InsTheme().textTheme.headline2?.copyWith(
-                                  color: InsColor(appBloc).appTextColor),
-                            ),
-                            value: appBloc
-                                .uiSettingModel.localeList[index].locale
-                                .toString(),
-                            groupValue: _character,
-                            onChanged: (String? value) {
-                              print("language value $value");
-                              appBloc.add(ChangeLanEvent(lanCode: value ?? ""));
-                              Navigator.pop(context);
-                              setState(() {
-                                _character = value ?? "";
-                                isLoading = true;
-                              });
+              // height: 200,
+              child: new ListView.builder(
+                  shrinkWrap: true,
+                  itemCount: appBloc.uiSettingModel.localeList.length,
+                  itemBuilder: (BuildContext ctxt, int index) {
+                    return Padding(
+                      padding: const EdgeInsets.all(1.0),
+                      child: RadioListTile<String>(
+                        title: Text(
+                          '${appBloc.uiSettingModel.localeList[index].languagename}',
+                          style: InsTheme().textTheme.headline2?.copyWith(
+                              color: InsColor(appBloc).appTextColor),
+                        ),
+                        value: appBloc
+                            .uiSettingModel.localeList[index].locale
+                            .toString(),
+                        groupValue: _character,
+                        onChanged: (String? value) {
+                          print("language value $value");
+                          appBloc.add(ChangeLanEvent(lanCode: value ?? ""));
+                          Navigator.pop(context);
+                          setState(() {
+                            _character = value ?? "";
+                            isLoading = true;
+                          });
 
-                              Future.delayed(Duration(seconds: 7))
-                                  .then((value) {
-                                widget.refresh();
-                                setState(() {
-                                  isLoading = false;
-                                });
-                              });
-                            },
-                          ),
-                        );
-                      }),
-                ],
-              ),
+                          Future.delayed(Duration(seconds: 7))
+                              .then((value) {
+                            widget.refresh();
+                            setState(() {
+                              isLoading = false;
+                            });
+                          });
+                        },
+                      ),
+                    );
+                  }),
             ),
           );
         });

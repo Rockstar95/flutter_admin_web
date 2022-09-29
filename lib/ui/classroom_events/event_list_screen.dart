@@ -1,8 +1,6 @@
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:flutter_admin_web/backend/app_controller.dart';
 import 'package:flutter_admin_web/backend/classroom_events/classroom_events_controller.dart';
@@ -14,28 +12,35 @@ import 'package:flutter_admin_web/framework/common/constants.dart';
 import 'package:flutter_admin_web/framework/common/enums.dart';
 import 'package:flutter_admin_web/framework/common/pref_manger.dart';
 import 'package:flutter_admin_web/framework/helpers/utils.dart';
+import 'package:flutter_admin_web/framework/repository/event_module/model/waiting_list_response.dart';
 import 'package:flutter_admin_web/framework/repository/mylearning/mylearning_repositry_builder.dart';
-import 'package:flutter_admin_web/ui/Events/event_main_page.dart';
+import 'package:flutter_admin_web/ui/classroom_events/components/classroom_event_card.dart';
 import 'package:flutter_admin_web/ui/common/app_colors.dart';
 import 'package:flutter_admin_web/ui/common/bottomsheet_drager.dart';
 import 'package:flutter_admin_web/ui/common/common_widgets.dart';
 import 'package:flutter_admin_web/ui/common/modal_progress_hud.dart';
 import 'package:flutter_admin_web/utils/my_print.dart';
+import 'package:flutter_admin_web/utils/mytoast.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:syncfusion_flutter_calendar/calendar.dart';
 
+import '../../configs/constants.dart';
+import '../../framework/bloc/app/events/app_event.dart';
+import '../../framework/bloc/catalog/bloc/catalog_bloc.dart';
+import '../../framework/bloc/catalog/event/catalog_event.dart';
+import '../../framework/bloc/catalog/state/catalog_state.dart';
 import '../../framework/bloc/mylearning/bloc/mylearning_details_bloc.dart';
 import '../../framework/bloc/mylearning/events/mylearning_event.dart';
 import '../../framework/bloc/mylearning/model/dummy_my_catelog_response_entity.dart';
 import '../../framework/helpers/ResponsiveWidget.dart';
-import '../../packages/smooth_star_rating.dart';
 import '../MyLearning/mylearning_filter.dart';
+import '../common/bottomsheet_option_tile.dart';
 import '../common/ins_search_textfield.dart';
 import '../global_search_screen.dart';
 
 class EventListScreen extends StatefulWidget {
-  final String tabValue;
+  final String tabId, tabValue;
   final String searchString;
   final bool enableSearching;
   final MyLearningBloc? myLearningBloc;
@@ -43,6 +48,7 @@ class EventListScreen extends StatefulWidget {
 
   const EventListScreen({
     Key? key,
+    required this.tabId,
     required this.tabValue,
     this.searchString = "",
     this.enableSearching = true,
@@ -62,14 +68,30 @@ class _EventListScreenState extends State<EventListScreen> with AutomaticKeepAli
 
   bool pageMounted = false;
 
-  ScrollController _sc = new ScrollController();
+  ScrollController _sc = ScrollController();
 
   late TextEditingController _controller;
   bool enableSearching = true;
 
   AppBloc get appBloc => BlocProvider.of<AppBloc>(context, listen: false);
+  CatalogBloc get catalogBloc => BlocProvider.of<CatalogBloc>(context);
 
   String componentId = "";
+
+  void mySetState() {
+    if(!mounted) {
+      return;
+    }
+
+    if(pageMounted) {
+      setState(() {});
+    }
+    else {
+      WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+        setState(() {});
+      });
+    }
+  }
 
   Future<void> getComponentId() async{
     componentId = await sharePrefGetString(sharedPref_ComponentID);
@@ -78,7 +100,7 @@ class _EventListScreenState extends State<EventListScreen> with AutomaticKeepAli
   Future<void> _navigateToGlobalSearchScreen(BuildContext context) async {
     final result = await Navigator.push(
       context,
-      MaterialPageRoute(builder: (context) => GlobalSearchScreen(menuId: 3219)),
+      MaterialPageRoute(builder: (context) => const GlobalSearchScreen(menuId: 3219)),
     );
 
     print(result);
@@ -88,45 +110,13 @@ class _EventListScreenState extends State<EventListScreen> with AutomaticKeepAli
     }
   }
 
-  String checkAvailableSeats(DummyMyCatelogResponseTable2 table2) {
-    int avaliableSeats = 0;
-    String seatVal = "";
-
-    try {
-      avaliableSeats = table2.availableseats;
-    } catch (nf) {
-      avaliableSeats = 0;
-      //nf.printStackTrace();
-    }
-    if (avaliableSeats > 0) {
-      seatVal = 'Available seats ${table2.availableseats}';
-    } else if (avaliableSeats <= 0) {
-      if (table2.enrollmentlimit == table2.noofusersenrolled &&
-              table2.waitlistlimit == 0 ||
-          (table2.waitlistlimit != -1 &&
-              table2.waitlistlimit == table2.waitlistenrolls)) {
-        seatVal = 'Enrollment Closed';
-      } else if (table2.waitlistlimit != -1 &&
-          table2.waitlistlimit != table2.waitlistenrolls) {
-        int waitlistSeatsLeftout =
-            (table2.waitlistlimit ?? 0) - (table2.waitlistenrolls);
-
-        if (waitlistSeatsLeftout > 0) {
-          seatVal = 'Full | Waitlist seats $waitlistSeatsLeftout';
-        }
-      }
-    }
-
-    return seatVal;
-  }
-
   Future<void> _buyProduct(DummyMyCatelogResponseTable2 product) async {
     classroomEventsController.buyClassroomEventEventHandler(context: context, product: product);
   }
 
   void searchEvents({bool isRefresh = true, String? searchString, String? calenderDate,}) {
     MyPrint.printOnConsole("Searching On ${classroomEventsController.hashCode} Object with isRefresh:$isRefresh");
-    classroomEventsController.getTabContentEventHandler(
+    classroomEventsController.getTabContent(
       myLearningBloc: myLearningBloc,
       tabVal: tabValue,
       isRefresh: isRefresh,
@@ -141,7 +131,7 @@ class _EventListScreenState extends State<EventListScreen> with AutomaticKeepAli
 
     bool isCompleted = false;
 
-    DateFormat sdf = new DateFormat("yyyy-MM-dd HH:mm:ss");
+    DateFormat sdf = DateFormat("yyyy-MM-dd HH:mm:ss");
     DateTime? strDate;
     DateTime? currentdate;
 
@@ -150,7 +140,7 @@ class _EventListScreenState extends State<EventListScreen> with AutomaticKeepAli
     if (!AppDirectory.isValidString(eventDate)) return false;
 
     try {
-      var temp = new DateFormat("yyyy-MM-dd").parse(eventDate.split("T")[0]);
+      var temp = DateFormat("yyyy-MM-dd").parse(eventDate.split("T")[0]);
       strDate = sdf.parse(temp.toString());
     }
     catch (e) {
@@ -173,10 +163,29 @@ class _EventListScreenState extends State<EventListScreen> with AutomaticKeepAli
 
   void addExpiryEvets(DummyMyCatelogResponseTable2 table2, int position) {
     //eventModuleBloc.add(AddExpiryEvent(table2: table2, strContentID: table2.contentid));
+    classroomEventsController.addExpiryEvents(contentId: table2.contentid);
+  }
+
+  void addToWaitList(DummyMyCatelogResponseTable2 catalogModel) async {
+    WaitingListResponse? waitingListResponse = await classroomEventsController.waitingList(contentId: catalogModel.contentid);
+    if (waitingListResponse?.isSuccess ?? false) {
+      MyPrint.printOnConsole("IsSuccess");
+      MyToast.showToast(context, waitingListResponse!.message.trim().isNotEmpty ? waitingListResponse.message : "Operation Successful");
+
+      setState(() {
+        catalogModel.waitlistenrolls = catalogModel.waitlistenrolls + 1;
+        catalogModel.actionwaitlist = '';
+      });
+    }
+    else {
+      MyPrint.printOnConsole("Failed");
+      MyToast.showToast(context, (waitingListResponse?.message.trim().isNotEmpty ?? false) ? waitingListResponse!.message : "Operation Failed");
+    }
   }
 
   void addToEnroll(DummyMyCatelogResponseTable2 table2) {
     print('waitaction ${table2.actionwaitlist} ${table2.availableseats}');
+
     if (appBloc.uiSettingModel.allowExpiredEventsSubscription == 'true' && returnEventCompleted(table2.eventenddatetime ?? "")) {
       print("in If");
 
@@ -193,64 +202,110 @@ class _EventListScreenState extends State<EventListScreen> with AutomaticKeepAli
       avaliableSeats = table2.availableseats ?? 0;
 
       if (avaliableSeats > 0) {
-        //catalogBloc.add(AddToMyLearningEvent(contentId: table2.contentid, table2: table2));
+        catalogBloc.add(AddToMyLearningEvent(contentId: table2.contentid, table2: table2));
       }
       else if (table2.viewtype == 1 || table2.viewtype == 2) {
         if (AppDirectory.isValidString(table2.eventenddatetime ?? "") && !returnEventCompleted(table2.eventenddatetime ?? "")) {
           if (AppDirectory.isValidString(table2.actionwaitlist) && table2.actionwaitlist == "true") {
-            String alertMessage = appBloc.localstr
-                .eventdetailsenrollementAlertsubtitleEventenrollmentlimit;
+            String alertMessage = appBloc.localstr.eventdetailsenrollementAlertsubtitleEventenrollmentlimit;
             showDialog(
                 context: context,
-                builder: (BuildContext context) => new AlertDialog(
-                      title: Text(
-                        appBloc.localstr.eventsActionsheetEnrolloption,
-                        style: TextStyle(fontWeight: FontWeight.bold,color: Color(int.parse(
-                              "0xFF${appBloc.uiSettingModel.appTextColor.substring(1, 7).toUpperCase()}")),),
-                      ),
-                      content: Text(alertMessage,style: TextStyle(color: Color(int.parse(
-                              "0xFF${appBloc.uiSettingModel.appTextColor.substring(1, 7).toUpperCase()}")),)),
-                      backgroundColor: AppColors.getAppBGColor(),
-                      shape: RoundedRectangleBorder(
-                          borderRadius: new BorderRadius.circular(5)),
-                      actions: <Widget>[
-                        new FlatButton(
-                          child: Text(appBloc
-                              .localstr.mylearningAlertbuttonCancelbutton),
-                          textColor: Color(int.parse(
-                              "0xFF${appBloc.uiSettingModel.appTextColor.substring(1, 7).toUpperCase()}")),
-                          onPressed: () async {
-                            Navigator.of(context).pop();
-                          },
-                        ),
-                        new FlatButton(
-                          child: Text(
-                              appBloc.localstr.myskillAlerttitleStringconfirm),
-                          textColor: Colors.blue,
-                          onPressed: () async {
-                            Navigator.of(context).pop();
-                            //addToWaitList(table2);
-                          },
-                        ),
-                      ],
-                    ));
+                builder: (BuildContext context) => AlertDialog(
+                  title: Text(
+                    appBloc.localstr.eventsActionsheetEnrolloption,
+                    style: TextStyle(fontWeight: FontWeight.bold,color: Color(int.parse(
+                          "0xFF${appBloc.uiSettingModel.appTextColor.substring(1, 7).toUpperCase()}")),),
+                  ),
+                  content: Text(alertMessage,style: TextStyle(color: Color(int.parse(
+                          "0xFF${appBloc.uiSettingModel.appTextColor.substring(1, 7).toUpperCase()}")),)),
+                  backgroundColor: AppColors.getAppBGColor(),
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(5)),
+                  actions: <Widget>[
+                    FlatButton(
+                      child: Text(appBloc
+                          .localstr.mylearningAlertbuttonCancelbutton),
+                      textColor: Color(int.parse(
+                          "0xFF${appBloc.uiSettingModel.appTextColor.substring(1, 7).toUpperCase()}")),
+                      onPressed: () async {
+                        Navigator.of(context).pop();
+                      },
+                    ),
+                    FlatButton(
+                      child: Text(
+                          appBloc.localstr.myskillAlerttitleStringconfirm),
+                      textColor: Colors.blue,
+                      onPressed: () async {
+                        Navigator.of(context).pop();
+                        addToWaitList(table2);
+                      },
+                    ),
+                  ],
+                ),
+            );
           }
           else {
-            //catalogBloc.add(AddToMyLearningEvent(contentId: table2.contentid, table2: table2));
+            catalogBloc.add(AddToMyLearningEvent(contentId: table2.contentid, table2: table2));
           }
         }
-//        (isValidString(table2.actionwaitlist) &&
-//            table2.actionwaitlist == "true")
-
       }
       else {
-        //catalogBloc.add(AddToMyLearningEvent(contentId: table2.contentid, table2: table2));
+        catalogBloc.add(AddToMyLearningEvent(contentId: table2.contentid, table2: table2));
       }
     }
   }
 
-  void _settingMyEventBottomSheet(
-      BuildContext context, DummyMyCatelogResponseTable2 table2) {
+  void showTrackCancelEnrollDialog(DummyMyCatelogResponseTable2 table2, String isBadCancel) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) => AlertDialog(
+        title: Text(
+          appBloc.localstr.mylearningAlerttitleStringareyousure,
+          style: Theme.of(context).textTheme.headline2?.apply(color: AppColors.getAppTextColor(),),
+        ),
+        content: Text(
+          appBloc.localstr.mylearningAlertsubtitleDoyouwanttocancelenrolledevent,
+          style: Theme.of(context).textTheme.headline2?.apply(color: AppColors.getAppTextColor()),
+        ),
+        backgroundColor: AppColors.getAppBGColor(),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)),
+        actions: <Widget>[
+          FlatButton(
+            child: Text(appBloc.localstr.catalogAlertbuttonCancelbutton),
+            textColor: AppColors.getAppTextColor(),
+            onPressed: () async {
+              Navigator.of(context).pop();
+            },
+          ),
+          FlatButton(
+            child: Text(appBloc.localstr.eventsAlertbuttonOkbutton),
+            textColor: Colors.blue,
+            onPressed: () async {
+              Navigator.of(context).pop();
+              cancelTrackEnrollment(table2, isBadCancel);
+            },
+          ),
+        ],
+      ),
+    );
+  }
+
+  Future<void> cancelEnrollment(DummyMyCatelogResponseTable2 table2) async {
+    bool isCancelled = await classroomEventsController.cancelEventEnrollment(contentId: table2.contentid);
+    showTrackCancelEnrollDialog(table2, isCancelled.toString());
+  }
+
+  Future<void> cancelTrackEnrollment(DummyMyCatelogResponseTable2 table2, String isBadCancel) async {
+    bool isCancelled = await classroomEventsController.cancelTrackEventEnrollment(contentId: table2.contentid, isBadCancel: isBadCancel);
+    if (isCancelled) {
+      table2.isaddedtomylearning = 0;
+      table2.availableseats = table2.availableseats + 1;
+      mySetState();
+      MyToast.showToast(context, 'Your enrollment for the course has been successfully canceled');
+    }
+  }
+
+  void _settingMyEventBottomSheet(BuildContext context, DummyMyCatelogResponseTable2 table2) {
     print('waitaction ${table2.actionwaitlist} ${table2.viewtype}');
 
     bool menu0 = false;
@@ -262,7 +317,8 @@ class _EventListScreenState extends State<EventListScreen> with AutomaticKeepAli
     bool menu6 = false;
     bool menu7 = false;
 
-    String menu1Title = appBloc.localstr.eventsActionsheetEnrolloption;
+    // String menu1Title = appBloc.localstr.eventsActionsheetEnrolloption;
+    String menu1Title = "Enroll Now";
     print("relatedconentcount ${table2.relatedconentcount}");
     print("isaddedtomylearning ${table2.isaddedtomylearning}");
     if (table2.isaddedtomylearning == 1) {
@@ -387,14 +443,13 @@ class _EventListScreenState extends State<EventListScreen> with AutomaticKeepAli
 
     showModalBottomSheet(
       context: context,
+      shape: AppConstants().bottomSheetShapeBorder(),
       builder: (BuildContext bc) {
-        return Container(
-          color: Color(int.parse(
-              "0xFF${appBloc.uiSettingModel.appBGColor.substring(1, 7).toUpperCase()}")),
+        return AppConstants().bottomSheetContainer(
           child: SingleChildScrollView(
-            child: new Column(
+            child: Column(
               children: <Widget>[
-                BottomSheetDragger(),
+                const BottomSheetDragger(),
                 menu0
                     ? getListTile(
                         onTap: () async {
@@ -446,12 +501,10 @@ class _EventListScreenState extends State<EventListScreen> with AutomaticKeepAli
                         onTap: () async {
                           Navigator.of(context).pop();
                           if (table2.isbadcancellationenabled) {
-                            //badCancelEnrollmentMethod(table2);
-
-                            // bad cancel
+                            cancelEnrollment(table2);
                           }
                           else {
-                            //showCancelEnrollDialog(table2, table2.isbadcancellationenabled.toString());
+                            showTrackCancelEnrollDialog(table2, "false");
                           }
                         },
                         title: appBloc.localstr.eventsActionsheetCancelenrollmentoption,
@@ -462,7 +515,7 @@ class _EventListScreenState extends State<EventListScreen> with AutomaticKeepAli
                     ? getListTile(
                         onTap: () async {
                           Navigator.of(context).pop();
-                          //catalogBloc.add(AddToWishListEvent(contentId: table2.contentid));
+                          catalogBloc.add(AddToWishListEvent(contentId: table2.contentid));
                         },
                         title: appBloc.localstr.catalogActionsheetWishlistoption,
                         iconData: IconDataSolid(int.parse('0xf004')),
@@ -472,7 +525,7 @@ class _EventListScreenState extends State<EventListScreen> with AutomaticKeepAli
                     ? getListTile(
                         onTap: () async {
                           Navigator.of(context).pop();
-                          //catalogBloc.add(RemoveFromWishListEvent(contentId: table2.contentid));
+                          catalogBloc.add(RemoveFromWishListEvent(contentId: table2.contentid));
                         },
                         title: appBloc.localstr.catalogActionsheetRemovefromwishlistoption,
                         iconData: IconDataSolid(int.parse('0xf004')),
@@ -534,20 +587,12 @@ class _EventListScreenState extends State<EventListScreen> with AutomaticKeepAli
   }
 
   Widget getListTile({required String title, IconData? iconData, Color? iconColor, Color? textColor, required Future<void> Function() onTap}) {
-    return ListTile(
-      title: Text(
-        title,
-        style: TextStyle(
-          color: textColor ?? AppColors.getAppTextColor(),
-        ),
-      ),
-      leading: Icon(
-        Icons.add_circle,
-        color: iconColor ?? AppColors.getAppTextColor(),
-      ),
-      onTap: () {
-        onTap();
-      },
+    return BottomsheetOptionTile(
+       text: title,
+        iconData:iconData ?? Icons.add_circle,
+        onTap: () {
+          onTap();
+        },
     );
   }
 
@@ -557,25 +602,29 @@ class _EventListScreenState extends State<EventListScreen> with AutomaticKeepAli
     classroomEventsController.mainEventsList.forEach((element) {
       //final DateTime today = DateTime.now();
 
-      DateTime startTime = DateTime.now();
+      if(classroomEventsController.mainMapOfEvents[element] != null) {
+        DummyMyCatelogResponseTable2 event = classroomEventsController.mainMapOfEvents[element]!;
 
-      try {
-        //print("Date:${element.eventstartdatedisplay}");
-        if((element.eventstartdatedisplay?.toString() ?? "").isNotEmpty) startTime = new DateFormat("yyyy-MM-ddThh:mm:ss").parse(element.eventstartdatedisplay);
-      }
-      catch(e, s) {
-        print("Error in Date Format Parsing:$e");
-        print(s);
-      }
+        DateTime startTime = DateTime.now();
 
-      //final DateTime endTime = startTime.add(Duration(hours: 2));
-      meetings.add(Meeting(
-          "${element.name}",
+        try {
+          //print("Date:${element.eventstartdatedisplay}");
+          if((event.eventstartdatedisplay?.toString() ?? "").isNotEmpty) startTime = DateFormat("yyyy-MM-ddThh:mm:ss").parse(event.eventstartdatedisplay);
+        }
+        catch(e, s) {
+          print("Error in Date Format Parsing:$e");
+          print(s);
+        }
+
+        //final DateTime endTime = startTime.add(Duration(hours: 2));
+        meetings.add(Meeting(
+          "${event.name}",
           startTime,
           startTime,
-          Color(int.parse(
-              "0xFF${appBloc.uiSettingModel.appButtonBgColor.substring(1, 7).toUpperCase()}")),
-          false));
+          AppColors.getAppButtonBGColor(),
+          false,
+        ));
+      }
     });
     return meetings;
   }
@@ -614,7 +663,7 @@ class _EventListScreenState extends State<EventListScreen> with AutomaticKeepAli
       }
     }
     else {
-      classroomEventsController = ClassroomEventsController(searchString: widget.searchString);
+      classroomEventsController = ClassroomEventsController(searchString: widget.searchString, mainMapOfEvents: {});
       searchEvents();
     }
 
@@ -661,39 +710,84 @@ class _EventListScreenState extends State<EventListScreen> with AutomaticKeepAli
       pageMounted = true;
     });
 
-
     MyPrint.printOnConsole("ClassroomEventsController Consumer Called");
 
-    return ChangeNotifierProvider<ClassroomEventsController>.value(
-      value: classroomEventsController,
-      child: Consumer(
-        builder: (BuildContext context, ClassroomEventsController controller, Widget? child) {
-          MyPrint.printOnConsole("ClassroomEventsController Consumer Called");
+    //MyPrint.printOnConsole("TabId:${widget.tabId}, TabValue:${widget.tabValue}");
 
-          return ModalProgressHUD(
-            inAsyncCall: classroomEventsController.isLoading,
-            progressIndicator: SpinKitCircle(color: AppColors.getAppButtonBGColor(),),
-            child: Container(
-              child: Scaffold(
-                body: Column(
-                  children: [
-                    getSearchTextField(classroomEventsController),
-                    Expanded(
-                      child: getEventsListViewWidget(classroomEventsController),
+    return BlocConsumer<CatalogBloc, CatalogState>(
+      bloc: catalogBloc,
+      listener: (context, catalogstate) {
+        //print("Status:${state.status}, State:${state.runtimeType}");
+
+        if (catalogstate is AddToWishListState || catalogstate is RemoveFromWishListState) {
+          if (catalogstate.status == Status.COMPLETED) {
+            //evntModuleBloc.isFirstLoading = true;
+
+            //(state as AddToWishListState).contentId
+            searchEvents();
+            if (catalogstate is AddToWishListState) {
+              MyToast.showToast(context, appBloc.localstr.catalogAlertsubtitleItemaddedtowishlistsuccesfully);
+              appBloc.add(WishlistCountEvent());
+            }
+            if (catalogstate is RemoveFromWishListState) {
+              MyToast.showToast(context, appBloc.localstr.catalogActionsheetRemovefromwishlistoption);
+              appBloc.add(WishlistCountEvent());
+            }
+          }
+        }
+        else if (catalogstate is AddToMyLearningState) {
+          if (catalogstate.status == Status.COMPLETED) {
+            MyToast.showToast(context, appBloc.localstr.catalogAlertsubtitleThiscontentitemhasbeenaddedto);
+
+            setState(() {
+              catalogstate.table2.isaddedtomylearning = 1;
+              catalogstate.table2.availableseats = catalogstate.table2.availableseats - 1;
+            });
+
+            searchEvents();
+          }
+        }
+        else if(catalogstate is SaveInAppPurchaseState) {
+          if (AppDirectory.isValidString(catalogstate.response) && catalogstate.response.contains('success')) {
+            MyToast.showToast(context, appBloc.localstr.catalogAlertsubtitleThiscontentitemhasbeenaddedto);
+
+            searchEvents();
+          }
+        }
+      },
+      builder: (context, catalogstate) {
+        return ChangeNotifierProvider<ClassroomEventsController>.value(
+          value: classroomEventsController,
+          child: Consumer(
+            builder: (BuildContext context, ClassroomEventsController controller, Widget? child) {
+              MyPrint.printOnConsole("ClassroomEventsController Consumer Called");
+
+              return ModalProgressHUD(
+                inAsyncCall: classroomEventsController.isLoading || catalogstate.status == Status.LOADING,
+                progressIndicator: getCommonLoading(color: AppColors.getAppButtonBGColor()),
+                child: Container(
+                  child: Scaffold(
+                    body: Column(
+                      children: [
+                        getSearchTextField(classroomEventsController),
+                        Expanded(
+                          child: getEventsListViewWidget(classroomEventsController),
+                        ),
+                      ],
                     ),
-                  ],
+                  ),
                 ),
-              ),
-            ),
-          );
-        },
-      ),
+              );
+            },
+          ),
+        );
+      },
     );
   }
 
   Widget getSearchTextField(ClassroomEventsController classroomEventsController) {
     if(!enableSearching) {
-      return SizedBox();
+      return const SizedBox();
     }
 
     return Padding(
@@ -712,7 +806,7 @@ class _EventListScreenState extends State<EventListScreen> with AutomaticKeepAli
                     _controller.clear();
                     searchEvents(isRefresh: true, searchString: "");
                   },
-                  icon: Icon(
+                  icon: const Icon(
                     Icons.close,
                   ),
                 )
@@ -734,9 +828,6 @@ class _EventListScreenState extends State<EventListScreen> with AutomaticKeepAli
   Widget getEventsListViewWidget(ClassroomEventsController classroomEventsController) {
     MyPrint.printOnConsole("Object in Event List Screen:${classroomEventsController.hashCode}");
 
-    /*int length = 0;
-    if()*/
-
     return RefreshIndicator(
       color: AppColors.getAppButtonBGColor(),
       onRefresh: () async {
@@ -746,76 +837,30 @@ class _EventListScreenState extends State<EventListScreen> with AutomaticKeepAli
         mobile: ListView(
           scrollDirection: Axis.vertical,
           keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
-          physics: AlwaysScrollableScrollPhysics(),
+          physics: const AlwaysScrollableScrollPhysics(),
           shrinkWrap: true,
           children: [
             getCalenderWidget(classroomEventsController),
             ...getEventsListWidgets(classroomEventsController),
           ],
         ),
-        tab: GridView.builder(
+        tab: GridView(
           gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
             crossAxisCount: 2,
             childAspectRatio: MediaQuery.of(context).size.width / 960,
           ),
           controller: _sc,
           scrollDirection: Axis.vertical,
-          itemCount: classroomEventsController.listOfEventsToShow.length,
-          itemBuilder: (context, i) {
-            /*if (classroomEventBloc.list.length == 0) {
-              if (state.status == Status.LOADING &&
-                  state is GetTabContentState) {
-//                        print("gone in _buildProgressIndicator");
-                return Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: new Center(
-                    child: new Opacity(
-                      opacity: 1.0,
-                      child: new CircularProgressIndicator(),
-                    ),
-                  ),
-                );
-              } else {
-                return Container();
-              }
-            } else {
-
-            }*/
-
-            return widgetMyEventItems(classroomEventsController.listOfEventsToShow[i]);
-          },
+          children: getEventsListWidgets(classroomEventsController).toList(),
         ),
-        web: GridView.builder(
-          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+        web: GridView(
+          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
             crossAxisCount: 5,
-            childAspectRatio: MediaQuery.of(context).size.width / 960,
+            childAspectRatio: 1,
           ),
           controller: _sc,
           scrollDirection: Axis.vertical,
-          itemCount: classroomEventsController.listOfEventsToShow.length,
-          itemBuilder: (context, i) {
-            /*if (classroomEventBloc.list.length == 0) {
-              if (state.status == Status.LOADING &&
-                  state is GetTabContentState) {
-//                        print("gone in _buildProgressIndicator");
-                return Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: new Center(
-                    child: new Opacity(
-                      opacity: 1.0,
-                      child: new CircularProgressIndicator(),
-                    ),
-                  ),
-                );
-              } else {
-                return Container();
-              }
-            } else {
-
-            }*/
-
-            return widgetMyEventItems(classroomEventsController.listOfEventsToShow[i]);
-          },
+          children: getEventsListWidgets(classroomEventsController).toList(),
         ),
       ),
     );
@@ -839,460 +884,40 @@ class _EventListScreenState extends State<EventListScreen> with AutomaticKeepAli
             );
           }
           else {
-            yield SizedBox();
+            yield const SizedBox();
           }
         }
         else {
-          yield widgetMyEventItems(classroomEventsController.listOfEventsToShow[index]);
+          // yield widgetMyEventItems(classroomEventsController.listOfEventsToShow[index]);
+          DummyMyCatelogResponseTable2? event = classroomEventsController.mainMapOfEvents[classroomEventsController.listOfEventsToShow[index]];
+          if(event != null) {
+            yield ClassroomEventCard(
+              table2: event,
+              tabVal: widget.tabValue,
+              classroomEventCardType: ["Calendar-Schedule"].contains(widget.tabId) ? ClassroomEventCardType.SCHEDULE : ClassroomEventCardType.NORMAL,
+              detailsBloc: detailsBloc,
+              onMoreTap: _settingMyEventBottomSheet,
+              onBuyTap: _buyProduct,
+              onEnrollTap: addToEnroll,
+              onViewTap: (DummyMyCatelogResponseTable2 table2) {
+                NavigationController().navigateToCommonDetailsScreen(
+                  context: context,
+                  table2: table2,
+                  detailsBloc: detailsBloc,
+                  isFromReschedule: false,
+                  screenType: ScreenType.Events,
+                );
+              },
+            );
+          }
         }
       }
     }
   }
 
-  Widget widgetMyEventItems(DummyMyCatelogResponseTable2 table2) {
-    //https://stackoverflow.com/questions/49838021/how-do-i-stack-widgets-overlapping-each-other-in-flutter
-    String imgUrl = "https://image.shutterstock.com/z/stock-photo-high-angle-view-of-video-conference-with-teacher-on-laptop-at-home-top-view-of-girl-in-video-call-1676998303.jpg";
-    //print("Id:${table2.contentid}, isWishlist:${table2.iswishlistcontent}");
-
-    bool isratingbarVissble = false;
-    bool isReviewVissble = false;
-
-    double ratingRequired = 0;
-    String availableSeat = '';
-
-    availableSeat = checkAvailableSeats(table2);
-
-    try {
-      ratingRequired = double.parse(appBloc.uiSettingModel.minimumRatingRequiredToShowRating);
-    }
-    catch (e) {
-      ratingRequired = 0;
-    }
-
-    if (table2.totalratings >= int.parse(appBloc.uiSettingModel.numberOfRatingsRequiredToShowRating) && table2.ratingid >= ratingRequired) {
-      isReviewVissble = false;
-      isratingbarVissble = true;
-    }
-
-    DateTime startTempDate = DateTime.now();
-
-    try {
-      //print("Date:${table2.eventstartdatedisplay}");
-      if((table2.eventstartdatedisplay?.toString() ?? "").isNotEmpty) startTempDate = new DateFormat("yyyy-MM-ddThh:mm:ss").parse(table2.eventstartdatedisplay);
-    }
-    catch(e, s) {
-      print("Error in Date Format Parsing:$e");
-      print(s);
-    }
-
-    DateTime endTempDate = DateTime.now();
-
-    try {
-      //print("Date:${table2.eventenddatedisplay}");
-      if((table2.eventenddatedisplay?.toString() ?? "").isNotEmpty) endTempDate = new DateFormat("yyyy-MM-ddThh:mm:ss").parse(table2.eventenddatedisplay);
-    }
-    catch(e, s) {
-      print("Error in Date Format Parsing:$e");
-      print(s);
-    }
-
-    String startDate = DateFormat("MM/dd/yyyy hh:mm:ss a").format(startTempDate);
-    String endDate = DateFormat("MM/dd/yyyy hh:mm:ss a").format(endTempDate);
-
-    String thumbnailPath = table2.thumbnailimagepath.startsWith("http")
-        ? table2.thumbnailimagepath.trim()
-        : table2.siteurl + table2.thumbnailimagepath.trim();
-
-    String contentIconPath = table2.iconpath;
-
-    if (AppDirectory.isValidString(appBloc.uiSettingModel.azureRootPath)) {
-      contentIconPath = contentIconPath.startsWith('http')
-          ? table2.iconpath
-          : appBloc.uiSettingModel.azureRootPath + table2.iconpath;
-
-      contentIconPath = contentIconPath.toLowerCase().trim();
-    }
-    else {
-      contentIconPath = table2.siteurl + contentIconPath;
-    }
-
-    return Padding(
-      padding: EdgeInsets.only(top: ScreenUtil().setHeight(10)),
-      child: Card(
-        color: AppColors.getAppBGColor(),
-        elevation: 4,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[
-            Stack(
-              children: <Widget>[
-                Container(
-                  height: ScreenUtil().setHeight(kCellThumbHeight),
-                  child: InkWell(
-                    onTap: () {
-                      /*if (menu0) {
-                        checkRelatedContent(table2);
-                      }
-                      else if (menu3) {
-                        Navigator.of(context).push(MaterialPageRoute(
-                            builder: (context) => ChangeNotifierProvider(
-                              create: (context) => ProviderModel(),
-                              child: CommonDetailScreen(
-                                screenType: ScreenType.Events,
-                                contentid: table2.contentid,
-                                objtypeId: table2.objecttypeid,
-                                detailsBloc: detailsBloc,
-                                table2: table2,
-                                isFromReschedule: false,
-                              ),
-                            ),
-                        ));
-                      }*/
-                    },
-                    child: CachedNetworkImage(
-                      imageUrl: thumbnailPath,
-                      width: MediaQuery.of(context).size.width,
-                      //placeholder: (context, url) => CircularProgressIndicator(),
-                      placeholder: (context, url) => Container(
-                          color: Colors.grey.withOpacity(0.5),
-                          child: Center(
-                              heightFactor: ScreenUtil().setWidth(20),
-                              widthFactor: ScreenUtil().setWidth(20),
-                              child: CircularProgressIndicator(
-                                valueColor: new AlwaysStoppedAnimation<Color>(
-                                    Colors.orange),
-                              ))),
-                      errorWidget: (context, url, error) => Image.asset(
-                        'assets/cellimage.jpg',
-                        width: MediaQuery.of(context).size.width,
-                        fit: BoxFit.cover,
-                      ),
-                      fit: BoxFit.cover,
-                    ),
-                  ),
-                ),
-                Positioned.fill(
-                  child: Align(
-                      alignment: Alignment.center,
-                      child: Visibility(
-                        visible: kShowContentTypeIcon,
-                        child: Container(
-                            padding: EdgeInsets.all(2.0),
-                            color: Colors.white,
-                            child: CachedNetworkImage(
-                              height: 30,
-                              imageUrl: contentIconPath,
-                              width: 30,
-                              fit: BoxFit.contain,
-                            )),
-                      )),
-                ),
-              ],
-            ),
-            Container(
-              padding: EdgeInsets.all(ScreenUtil().setWidth(15)),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: <Widget>[
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: <Widget>[
-                      Expanded(
-                        flex: 1,
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: <Widget>[
-                            Text(
-                              table2.description,
-                              style: TextStyle(
-                                  fontSize: ScreenUtil().setSp(14),
-                                  color: Color(int.parse(
-                                      "0xFF${appBloc.uiSettingModel.appTextColor.substring(1, 7).toUpperCase()}"))),
-                            ),
-                            SizedBox(
-                              height: ScreenUtil().setHeight(10),
-                            ),
-                            Text(
-                              table2.name,
-                              style: TextStyle(
-                                  fontSize: ScreenUtil().setSp(15),
-                                  color: Color(int.parse(
-                                      "0xFF${appBloc.uiSettingModel.appTextColor.substring(1, 7).toUpperCase()}"))),
-                            ),
-                          ],
-                        ),
-                      ),
-                      GestureDetector(
-                        onTap: () {
-                          //_settingMyEventBottomSheet(context, table2);
-                        },
-                        child: Icon(
-                          Icons.more_vert,
-                          color: AppColors.getAppTextColor(),
-                        ),
-                      ),
-                    ],
-                  ),
-                  SizedBox(
-                    height: ScreenUtil().setHeight(10),
-                  ),
-                  Row(
-                    children: <Widget>[
-                      new Container(
-                          width: ScreenUtil().setWidth(20),
-                          height: ScreenUtil().setWidth(20),
-                          decoration: new BoxDecoration(
-                              shape: BoxShape.circle,
-                              image: new DecorationImage(
-                                  fit: BoxFit.fill,
-                                  image: new NetworkImage(imgUrl)))),
-                      SizedBox(
-                        width: ScreenUtil().setWidth(5),
-                      ),
-                      Text(
-                        table2.authordisplayname,
-                        style: TextStyle(
-                            fontSize: ScreenUtil().setSp(13),
-                            color: Color(int.parse(
-                                    "0xFF${appBloc.uiSettingModel.appTextColor.substring(1, 7).toUpperCase()}"))
-                                .withOpacity(0.5)),
-                      ),
-                      SizedBox(
-                        width: ScreenUtil().setWidth(5),
-                      ),
-                      Container(
-                        color: Color(int.parse(
-                            "0xFF${appBloc.uiSettingModel.appTextColor.substring(1, 7).toUpperCase()}")),
-                        height: 10.h,
-                        width: 1.h,
-                      ),
-                      SizedBox(
-                        width: ScreenUtil().setWidth(5),
-                      ),
-                      Text(availableSeat,
-                          style: TextStyle(
-                            fontSize: ScreenUtil().setSp(13),
-                            color: Color(int.parse(
-                                    "0xFF${appBloc.uiSettingModel.appTextColor.substring(1, 7).toUpperCase()}"))
-                                .withOpacity(0.5),
-                          ))
-                    ],
-                  ),
-                  SizedBox(
-                    height: ScreenUtil().setHeight(3),
-                  ),
-                  Row(
-                    children: <Widget>[
-                      isratingbarVissble
-                          ? SmoothStarRating(
-                              allowHalfRating: false,
-                              onRatingChanged: (v) {},
-                              starCount: 5,
-                              rating: table2.ratingid,
-                              size: ScreenUtil().setHeight(16),
-                              // filledIconData: Icons.blur_off,
-                              // halfFilledIconData: Icons.blur_on,
-                              color: Colors.orange,
-                              borderColor: Colors.orange,
-                              spacing: 0.0)
-                          : Container(),
-                      SizedBox(
-                        width: ScreenUtil().setWidth(10),
-                      ),
-                      isReviewVissble
-                          ? Expanded(
-                              child: GestureDetector(
-                                onTap: () {
-                                  /*Navigator.of(context).push(MaterialPageRoute(
-                                      builder: (context) => ReviewScreen(
-                                          table2.contentid,
-                                          false,
-                                          myLearningDetailsBloc)));*/
-                                },
-                                child: Text(
-                                  "See Reviews".toUpperCase(),
-                                  style: TextStyle(
-                                      fontSize: ScreenUtil().setSp(12),
-                                      color: Color(int.parse(
-                                          "0xFF${appBloc.uiSettingModel.appButtonBgColor.substring(1, 7).toUpperCase()}"))),
-                                ),
-                              ),
-                            )
-                          : Container(),
-                      SizedBox(
-                        width: ScreenUtil().setWidth(30),
-                      ),
-                      /*QrImage(
-                        data: "1234567890",
-                        version: QrVersions.auto,
-                        size: 70.h,
-                      ),*/
-                    ],
-                  ),
-                  AppDirectory.isValidString(table2.shortdescription)
-                      ? SizedBox(
-                          height: ScreenUtil().setHeight(10),
-                        )
-                      : Container(),
-                  Text(
-                    table2.shortdescription,
-                    maxLines: 2,
-                    style: TextStyle(
-                        fontSize: ScreenUtil().setSp(13),
-                        color: Color(int.parse(
-                                "0xFF${appBloc.uiSettingModel.appTextColor.substring(1, 7).toUpperCase()}"))
-                            .withOpacity(0.5)),
-                  ),
-                  AppDirectory.isValidString(table2.shortdescription)
-                      ? SizedBox(
-                          height: ScreenUtil().setHeight(10),
-                        )
-                      : Container(),
-                  Padding(
-                    padding: const EdgeInsets.all(2.0),
-                    child: Row(
-                      children: <Widget>[
-                        Text(
-                          "Start Date :  ",
-                          style: TextStyle(
-                              fontSize: ScreenUtil().setSp(13),
-                              color: AppColors.getAppTextColor().withOpacity(0.8),
-                          ),
-                        ),
-                        Text(
-                          startDate.toUpperCase(),
-                          style: TextStyle(
-                              fontSize: ScreenUtil().setSp(13),
-                              color: Color(int.parse(
-                                  "0xFF${appBloc.uiSettingModel.appTextColor.substring(1, 7).toUpperCase()}"))),
-                        )
-                      ],
-                    ),
-                  ),
-                  SizedBox(height: 8),
-                  Padding(
-                    padding: const EdgeInsets.all(2.0),
-                    child: Row(
-                      children: <Widget>[
-                        Text(
-                          "End Date :    ",
-                          style: TextStyle(
-                              fontSize: ScreenUtil().setSp(13),
-                              color: AppColors.getAppTextColor().withOpacity(0.8),
-                          ),
-                        ),
-                        Text(
-                          endDate.toUpperCase(),
-                          style: TextStyle(
-                              fontSize: ScreenUtil().setSp(13),
-                              color: Color(int.parse(
-                                  "0xFF${appBloc.uiSettingModel.appTextColor.substring(1, 7).toUpperCase()}"))),
-                        )
-                      ],
-                    ),
-                  ),
-                  SizedBox(height: 8),
-                  Padding(
-                    padding: const EdgeInsets.all(2.0),
-                    child: Row(
-                      children: <Widget>[
-                        Text(
-                          "Time Zone : ",
-                          style: TextStyle(
-                              fontSize: ScreenUtil().setSp(13),
-                              color: AppColors.getAppTextColor().withOpacity(0.8),
-                          ),
-                        ),
-                        Text(
-                          table2.timezone ?? "",
-                          style: TextStyle(
-                              fontSize: ScreenUtil().setSp(13),
-                              color: Color(int.parse(
-                                  "0xFF${appBloc.uiSettingModel.appTextColor.substring(1, 7).toUpperCase()}"))),
-                        )
-                      ],
-                    ),
-                  ),
-                  SizedBox(height: 8),
-                  Padding(
-                    padding: const EdgeInsets.all(2.0),
-                    child: Row(
-                      children: <Widget>[
-                        Text(
-                          "Location :     ",
-                          style: TextStyle(
-                              fontSize: ScreenUtil().setSp(13),
-                              color: AppColors.getAppTextColor().withOpacity(0.8),
-                          ),
-                        ),
-                        Text(
-                          table2.locationname,
-                          style: TextStyle(
-                              fontSize: ScreenUtil().setSp(13),
-                              color: Color(int.parse(
-                                  "0xFF${appBloc.uiSettingModel.appTextColor.substring(1, 7).toUpperCase()}"))),
-                        ),
-                      ],
-                    ),
-                  ),
-                  SizedBox(
-                    height: ScreenUtil().setHeight(5),
-                  ),
-                  (table2.viewtype == 3 && table2.isaddedtomylearning == 0)
-                      ? Row(
-                          children: <Widget>[
-                            // commented till offline integration done
-                            Text(
-                              " ${table2.saleprice} \$",
-                              style: TextStyle(
-                                fontSize: 21,
-                                fontWeight: FontWeight.normal,
-                                color: Color(int.parse(
-                                    "0xFF${appBloc.uiSettingModel.appTextColor.substring(1, 7).toUpperCase()}")),
-                              ),
-                            ),
-                            SizedBox(
-                              width: ScreenUtil().setWidth(140),
-                            ),
-                            buyOption(table2),
-                          ],
-                        )
-                      : Container(),
-                ],
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget buyOption(DummyMyCatelogResponseTable2 table2) {
-    return Expanded(
-      child: FlatButton.icon(
-        color: AppColors.getAppButtonBGColor(),
-        icon: Icon(
-          IconDataSolid(int.parse('0x${"f155"}')),
-          color: AppColors.getAppButtonTextColor(),
-        ),
-        label: Text(
-          appBloc.localstr.detailsButtonBuybutton.toUpperCase(),
-          style: TextStyle(
-            fontSize: ScreenUtil().setSp(14),
-            color: AppColors.getAppButtonTextColor(),
-          ),
-        ),
-        onPressed: () async {
-          //  buy functionlaity here
-          _buyProduct(table2);
-        },
-      ),
-    );
-  }
-
   Widget getCalenderWidget(ClassroomEventsController classroomEventsController) {
     if(widget.tabValue != "calendar") {
-      return SizedBox();
+      return const SizedBox();
     }
 
     MyPrint.printOnConsole("classroomEventsController.calenderSelecteddates:${classroomEventsController.calenderSelecteddates}");
@@ -1306,6 +931,8 @@ class _EventListScreenState extends State<EventListScreen> with AutomaticKeepAli
           child: SfCalendar(
             backgroundColor: AppColors.getAppBGColor(),
             view: CalendarView.month,
+            allowViewNavigation: true,
+            showNavigationArrow: true,
             cellBorderColor: Colors.transparent,
             dataSource: MeetingDataSource(_getDataSource()),
             monthViewSettings: MonthViewSettings(
@@ -1313,7 +940,6 @@ class _EventListScreenState extends State<EventListScreen> with AutomaticKeepAli
                 textStyle: Theme.of(context).textTheme.bodyText1?.apply(color: AppColors.getAppTextColor()),
                 leadingDatesTextStyle: Theme.of(context).textTheme.bodyText2?.apply(color: AppColors.getAppTextColor().withOpacity(0.5)),
                 trailingDatesTextStyle: Theme.of(context).textTheme.bodyText2?.apply(color: AppColors.getAppTextColor().withOpacity(0.5)),
-
                 // backgroundColor:
                 //     Color(int.parse(
                 //         "0xFF${appBloc.uiSettingModel.appTextColor.substring(1, 7).toUpperCase()}"))
@@ -1335,9 +961,10 @@ class _EventListScreenState extends State<EventListScreen> with AutomaticKeepAli
             },
             headerStyle: CalendarHeaderStyle(
               textStyle: Theme.of(context).textTheme.headline1?.apply(color: AppColors.getAppTextColor()),
-              textAlign:
-              TextAlign.center,
+              textAlign: TextAlign.center,
               backgroundColor: AppColors.getAppBGColor(),
+
+
             ),
           ),
         ),
@@ -1346,12 +973,12 @@ class _EventListScreenState extends State<EventListScreen> with AutomaticKeepAli
   }
 
   Widget getLoadingWidget() {
-    return Padding(
-      padding: const EdgeInsets.all(8.0),
-      child: new Center(
-        child: new Opacity(
+    return const Padding(
+      padding: EdgeInsets.all(8.0),
+      child: Center(
+        child: Opacity(
           opacity: 1.0,
-          child: new CircularProgressIndicator(),
+          child: CircularProgressIndicator(),
         ),
       ),
     );
@@ -1359,8 +986,8 @@ class _EventListScreenState extends State<EventListScreen> with AutomaticKeepAli
 
   Widget getNoEventsFoundWidget(){
     return ListView(
-      physics: AlwaysScrollableScrollPhysics(),
-      padding: EdgeInsets.symmetric(horizontal: 30),
+      physics: const AlwaysScrollableScrollPhysics(),
+      padding: const EdgeInsets.symmetric(horizontal: 30),
       children: [
         SizedBox(height: MediaQuery.of(context).size.height * 0.25,),
         Column(
@@ -1387,8 +1014,8 @@ class _EventListScreenState extends State<EventListScreen> with AutomaticKeepAli
 
   Widget getNoEventsFoundWidget2(){
     return ListView(
-      physics: NeverScrollableScrollPhysics(),
-      padding: EdgeInsets.symmetric(horizontal: 30),
+      physics: const NeverScrollableScrollPhysics(),
+      padding: const EdgeInsets.symmetric(horizontal: 30),
       shrinkWrap: true,
       children: [
         SizedBox(height: MediaQuery.of(context).size.height * 0.15,),
@@ -1416,4 +1043,46 @@ class _EventListScreenState extends State<EventListScreen> with AutomaticKeepAli
 
   @override
   bool get wantKeepAlive => true;
+  // bool get wantKeepAlive => false;
+}
+
+class MeetingDataSource extends CalendarDataSource {
+  MeetingDataSource(List<Meeting> source) {
+    appointments = source;
+  }
+
+  @override
+  DateTime getStartTime(int index) {
+    return appointments?[index].from;
+  }
+
+  @override
+  DateTime getEndTime(int index) {
+    return appointments?[index].to;
+  }
+
+  @override
+  String getSubject(int index) {
+    return appointments?[index].eventName;
+  }
+
+  @override
+  Color getColor(int index) {
+    return appointments?[index].background;
+  }
+
+  @override
+  bool isAllDay(int index) {
+    return appointments?[index].isAllDay;
+  }
+}
+
+class Meeting {
+  Meeting(this.eventName, this.from, this.to, this.background, this.isAllDay);
+
+  String eventName;
+  DateTime from;
+  DateTime to;
+  Color background;
+  bool isAllDay;
 }

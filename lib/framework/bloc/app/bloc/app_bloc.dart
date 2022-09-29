@@ -32,6 +32,8 @@ class AppBloc extends Bloc<AppEvent, AppState> {
   LocalStr localstr = LocalStr.fromJson({});
   final LocalDataProvider _localHelper = LocalDataProvider(localDataProviderType: LocalDataProviderType.hive);
   String imageUrl = "";
+  String profilePic = "";
+  String userName = "";
   String count = '';
   String wishlistcount = '';
   Locale appLocale = Locale('en');
@@ -110,7 +112,9 @@ class AppBloc extends Bloc<AppEvent, AppState> {
           MyPrint.logOnConsole("mobileGetLearningPortalInfoResponsStr:${mobileGetLearningPortalInfoResponsStr}");
 
           try {
-            MobileGetLearningPortalInfoResponse mobileGetLearningPortalInfoResponse = mobileGetLearningPortalInfoResponseFromJson(mobileGetLearningPortalInfoResponsStr);
+            MobileGetLearningPortalInfoResponse mobileGetLearningPortalInfoResponse = mobileGetLearningPortalInfoResponseFromJson(
+              mobileGetLearningPortalInfoResponsStr.isNotEmpty ? mobileGetLearningPortalInfoResponsStr : "{}"
+            );
             setUiSettingFromMobileGetLearningPortalInfo(mobileGetLearningPortalInfoResponse);
           }
           catch(e, s) {
@@ -120,10 +124,11 @@ class AppBloc extends Bloc<AppEvent, AppState> {
           uiSettingModel.setappname('in');
           uiSettingModel.setExpiredBGColor("#b3b0b8");
           String mobileGetNativeMenusResponseStr = await _getLocalData(mobileGetNativeMenusKey);
-          developer.log("mobileGetNativeMenusResponseStr:$mobileGetNativeMenusResponseStr");
+          MyPrint.logOnConsole("mobileGetNativeMenusResponseStr:$mobileGetNativeMenusResponseStr");
           MobileGetNativeMenusResponse mobileGetNativeMenusResponse = mobileGetNativeMenusResponseFromJson(
             mobileGetNativeMenusResponseStr.isNotEmpty ? mobileGetNativeMenusResponseStr : "{}"
           );
+          MyPrint.printOnConsole("Menus :Length:${mobileGetNativeMenusResponse.table.length}");
 
           setNativeMenusModal(mobileGetNativeMenusResponse);
           sharePrefSaveString(sharedPref_appLogo, uiSettingModel.appLogoURl);
@@ -138,8 +143,8 @@ class AppBloc extends Bloc<AppEvent, AppState> {
           savedThemes ? setDarkTheme() : print("obj ect");
         }
         catch(err, s) {
-          MyPrint.logOnConsole(err);
-          MyPrint.printOnConsole(s);
+          MyPrint.logOnConsole("Error in Parsing:${err}");
+          MyPrint.printOnConsole("Stack Trace:${s}");
         }
 
         yield SetUiSettingState(uiSettingModel, listNativeModel, localstr);
@@ -253,8 +258,7 @@ class AppBloc extends Bloc<AppEvent, AppState> {
     return news;
   }
 
-  void setUiSettingFromMobileGetLearningPortalInfo(
-      MobileGetLearningPortalInfoResponse response) {
+  void setUiSettingFromMobileGetLearningPortalInfo(MobileGetLearningPortalInfoResponse response) {
 //    print("App bloc response.table1 ---------- ${response.table1.length}");
 //    print("App bloc response.table2 ---------- ${response.table2.length}");
 //    print("App bloc response.table1 ---------- ${response.table1[0].csseditingpalceholderdisplayname}");
@@ -275,53 +279,40 @@ class AppBloc extends Bloc<AppEvent, AppState> {
             .setappBGColor(element.bgcolor.toString().substring(0, 7));
         uiSettingModel
             .setappLoginBGColor(element.bgcolor.toString().substring(0, 7));
-      } else if (element.csseditingpalceholderdisplayname ==
-          "SITE TEXT COLOR") {
-        uiSettingModel
-            .setappTextColor(element.textcolor.toString().substring(0, 7));
-        uiSettingModel
-            .setappLoginTextolor(element.textcolor.toString().substring(0, 7));
-      } else if (element.csseditingpalceholderdisplayname ==
-          "HEADER BACKGROUND") {
-        uiSettingModel
-            .setappHeaderColor(element.bgcolor.toString().substring(0, 7));
-      } else if (element.csseditingpalceholderdisplayname ==
-          "HEADER TEXT COLOR") {
-        uiSettingModel.setappHeaderTextColor(
-            element.textcolor.toString().substring(0, 7));
-      } else if (element.csseditingpalceholderdisplayname ==
-          "MENU BACKGROUND") {
-        uiSettingModel
-            .setmenuBGColor(element.bgcolor.toString().substring(0, 7));
-      } else if (element.csseditingpalceholderdisplayname ==
-          "MENU TEXT COLOR") {
-        uiSettingModel
-            .setmenuTextColor(element.textcolor.toString().substring(0, 7));
-      } else if (element.csseditingpalceholderdisplayname ==
-          "MENU SEPARATOR COLOR") {
-      } else if (element.csseditingpalceholderdisplayname ==
-          "SELECTED MENU BACKGROUND") {
-        uiSettingModel
-            .setselectedMenuBGColor(element.bgcolor.toString().substring(0, 7));
-      } else if (element.csseditingpalceholderdisplayname ==
-          "SELECTED MENU TEXT COLOR") {
-        uiSettingModel.setselectedMenuTextColor(
-            element.textcolor.toString().substring(0, 7));
-      } else if (element.csseditingpalceholderdisplayname ==
-          "BUTTON BACKGROUND") {
-        uiSettingModel
-            .setappButtonBgColor(element.bgcolor.toString().substring(0, 7));
-      } else if (element.csseditingpalceholderdisplayname ==
-          "BUTTON TEXT COLOR") {
+      }
+      else if (element.csseditingpalceholderdisplayname == "SITE TEXT COLOR") {
+        uiSettingModel.setappTextColor(element.textcolor.toString().substring(0, 7));
+        uiSettingModel.setappLoginTextolor(element.textcolor.toString().substring(0, 7));
+      }
+      else if (element.csseditingpalceholderdisplayname == "HEADER BACKGROUND") {
+        uiSettingModel.setappHeaderColor(element.bgcolor.toString().substring(0, 7));
+      }
+      else if (element.csseditingpalceholderdisplayname == "HEADER TEXT COLOR") {
+        uiSettingModel.setappHeaderTextColor(element.textcolor.toString().substring(0, 7));
+      }
+      else if (element.csseditingpalceholderdisplayname == "MENU BACKGROUND") {
+        uiSettingModel.setmenuBGColor(element.bgcolor.toString().substring(0, 7));
+      }
+      else if (element.csseditingpalceholderdisplayname == "MENU TEXT COLOR") {
+        uiSettingModel.setmenuTextColor(element.textcolor.toString().substring(0, 7));
+      }
+      else if (element.csseditingpalceholderdisplayname == "MENU SEPARATOR COLOR") {}
+      else if (element.csseditingpalceholderdisplayname == "SELECTED MENU BACKGROUND") {
+        uiSettingModel.setselectedMenuBGColor(element.bgcolor.toString().substring(0, 7));
+      }
+      else if (element.csseditingpalceholderdisplayname == "SELECTED MENU TEXT COLOR") {
+        uiSettingModel.setselectedMenuTextColor(element.textcolor.toString().substring(0, 7));
+      }
+      else if (element.csseditingpalceholderdisplayname == "BUTTON BACKGROUND") {
+        uiSettingModel.setappButtonBgColor(element.bgcolor.toString().substring(0, 7));
+      }
+      else if (element.csseditingpalceholderdisplayname == "BUTTON TEXT COLOR") {
         print("color ---------- ${element.textcolor}");
-        uiSettingModel.setappButtonTextColor(
-            element.textcolor.toString().substring(0, 7));
-      } else if (element.csseditingpalceholderdisplayname ==
-          "FOOTER BACKGROUND") {
-      } else if (element.csseditingpalceholderdisplayname ==
-          "FOOTER TEXT COLOR") {
-      } else if (element.csseditingpalceholderdisplayname ==
-          "MENU ALTERNATE COLOR") {}
+        uiSettingModel.setappButtonTextColor(element.textcolor.toString().substring(0, 7));
+      }
+      else if (element.csseditingpalceholderdisplayname == "FOOTER BACKGROUND") {}
+      else if (element.csseditingpalceholderdisplayname == "FOOTER TEXT COLOR") {}
+      else if (element.csseditingpalceholderdisplayname == "MENU ALTERNATE COLOR") {}
     });
 
     response.table2.forEach((element) {
@@ -334,6 +325,15 @@ class AppBloc extends Bloc<AppEvent, AppState> {
       }
       else if (element.name == "EnableEcommerce") {
         uiSettingModel.setEnableEcommerce(element.keyvalue.toString());
+      }
+      else if (element.name == "DateFormat") {
+        uiSettingModel.setDateFormat(element.keyvalue.toString());
+      }
+      else if (element.name == "DateTimeFormat") {
+        uiSettingModel.setDateTimeFormat(element.keyvalue.toString());
+      }
+      else if (element.name == "EventDateTimeFormat") {
+        uiSettingModel.setEventDateTimeFormat(element.keyvalue.toString());
       }
       else if (element.name == "SiteLanguage") {
         uiSettingModel.setSiteLanguage(element.keyvalue.toString());
@@ -464,43 +464,34 @@ class AppBloc extends Bloc<AppEvent, AppState> {
         uiSettingModel.setBotGreetingContent(element.keyvalue.toString());
       }
       else if (element.name == "AllowExpiredEventsSubscription") {
-        uiSettingModel
-            .setAllowExpiredEventsSubscription(element.keyvalue.toString());
+        uiSettingModel.setAllowExpiredEventsSubscription(element.keyvalue.toString());
       }
       else if (element.name == "NumberOfRatingsRequiredToShowRating") {
-        uiSettingModel.setNumberOfRatingsRequiredToShowRating(
-            element.keyvalue.toString());
+        uiSettingModel.setNumberOfRatingsRequiredToShowRating(element.keyvalue.toString());
       }
       else if (element.name == "MinimimRatingRequiredToShowRating") {
-        uiSettingModel
-            .setMinimumRatingRequiredToShowRating(element.keyvalue.toString());
+        uiSettingModel.setMinimumRatingRequiredToShowRating(element.keyvalue.toString());
       }
       else if (element.name == "NoOfDaysForCourseTargetDate") {
-        uiSettingModel
-            .setNoOfDaysForCourseTargetDate(element.keyvalue.toString());
+        uiSettingModel.setNoOfDaysForCourseTargetDate(element.keyvalue.toString());
       }
       else if (element.name == "EnableMultipleInstancesforEvent") {
-        uiSettingModel
-            .setEnableMultipleInstancesForEvent(element.keyvalue.toString());
+        uiSettingModel.setEnableMultipleInstancesForEvent(element.keyvalue.toString());
       }
       else if (element.name == "ShowMembershipContentPricebyStrikeThrough") {
-        uiSettingModel.setShowMembershipContentPriceByStrikeThrough(
-            element.keyvalue.toString());
+        uiSettingModel.setShowMembershipContentPriceByStrikeThrough(element.keyvalue.toString());
       }
       else if (element.name == "showEventAvailableFewSeatsLeft") {
-        uiSettingModel
-            .setShowEventAvailableFewSeatsLeft(element.keyvalue.toString());
+        uiSettingModel.setShowEventAvailableFewSeatsLeft(element.keyvalue.toString());
       }
       else if (element.name == "EnableWishlist") {
         uiSettingModel.setEnableWishlist(element.keyvalue.toString());
       }
       else if (element.name == "dontallowPrerequitieDesiredContent") {
-        uiSettingModel
-            .setDoNotAllowPrerequisiteDesiredContent(element.keyvalue.toString());
+        uiSettingModel.setDoNotAllowPrerequisiteDesiredContent(element.keyvalue.toString());
       }
       else if (element.name == "MembershipExpiryAlertMessage") {
-        uiSettingModel
-            .setMembershipExpiryAlertMessage(element.keyvalue.toString());
+        uiSettingModel.setMembershipExpiryAlertMessage(element.keyvalue.toString());
       }
       //sreekanth commented
       //
@@ -510,15 +501,13 @@ class AppBloc extends Bloc<AppEvent, AppState> {
       // }
 
       else if (element.name == "DaysBeforemembershipexpiry") {
-        uiSettingModel
-            .setDaysBeforeMembershipExpiry(element.keyvalue.toString());
+        uiSettingModel.setDaysBeforeMembershipExpiry(element.keyvalue.toString());
       }
       else if (element.name == "MobileAppMenuPosition") {
         uiSettingModel.setMobileAppMenuPosition(element.keyvalue.toString());
       }
       else if (element.name == "ShowMoreActionforBottommenu") {
-        uiSettingModel
-            .setShowMoreActionForBottomMenu(element.keyvalue.toString());
+        uiSettingModel.setShowMoreActionForBottomMenu(element.keyvalue.toString());
       }
       else if (element.name == "isCloudStorageEnabled") {
         uiSettingModel.setIsCloudStorageEnabled(element.keyvalue.toString());
@@ -600,13 +589,11 @@ class AppBloc extends Bloc<AppEvent, AppState> {
     }
   }
 
-  void setNativeMenusModal(
-      MobileGetNativeMenusResponse mobileGetNativeMenusResponse) {
+  void setNativeMenusModal(MobileGetNativeMenusResponse mobileGetNativeMenusResponse) {
     listNativeModel = [];
 
     mobileGetNativeMenusResponse.table.forEach((element) {
-      developer.log(
-          "listNativeModel Title:${element.displayname}, Conditions:${element.conditions}");
+      developer.log("listNativeModel Title:${element.displayname}, Conditions:${element.conditions}, Id:${element.contextmenuid}");
       nativeMenuModel = new NativeMenuModel(categoryStyle: "",componentId: "",conditions: "",contextTitle: "",contextmenuId: "",displayOrder: 0,displayname: "",image: "",isEnabled: "",isofflineMenu: "",landingpageType: "",menuid: "",parameterString: "",parentMenuId: "",repositoryId: "",siteId: "",siteUrl: "",webMenuId: 0);
       if (element.menuid != 0) {
         nativeMenuModel.setmenuid(element.menuid.toString());
