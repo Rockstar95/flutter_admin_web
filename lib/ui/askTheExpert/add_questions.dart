@@ -1,11 +1,9 @@
-import 'dart:io';
 
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_admin_web/utils/my_print.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:flutter_admin_web/framework/bloc/app/bloc/app_bloc.dart';
 import 'package:flutter_admin_web/framework/bloc/askTheExpert/bloc/ask_the_expert_bloc.dart';
@@ -19,6 +17,7 @@ import 'package:flutter_admin_web/ui/askTheExpert/skill_category.dart';
 import 'package:flutter_admin_web/ui/common/app_colors.dart';
 import 'package:flutter_admin_web/ui/common/common_toast.dart';
 
+import '../../configs/constants.dart';
 import '../common/outline_button.dart';
 
 class AddQuestion extends StatefulWidget {
@@ -436,10 +435,7 @@ class _AddQuestionState extends State<AddQuestion> with SingleTickerProviderStat
           return askTheExpertBloc.isFirstLoading
               ? Align(
                   child: AbsorbPointer(
-                    child: SpinKitCircle(
-                      color: Colors.grey,
-                      size: 70.h,
-                    ),
+                    child: AppConstants().getLoaderWidget(iconSize: 70)
                   ),
                 )
               : Container();
@@ -536,7 +532,7 @@ class _AddQuestionState extends State<AddQuestion> with SingleTickerProviderStat
 
     skillCategoriesListLocal.isNotEmpty
         ? skillCategoriesListLocal.forEach((element) {
-            selectedCategoryID.add('${element.skillID}');
+            selectedCategoryID.add(element.skillID);
           })
         : selectedCategoryID.clear();
     MyPrint.printOnConsole('selectedCategoryID ${formatString(selectedCategoryID)}');

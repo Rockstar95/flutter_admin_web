@@ -687,6 +687,7 @@ class _GlobalSearchScreenState extends State<GlobalSearchScreen> {
       case 3219:
         // selectedWidget = EventMainPage(enableSearching: false, searchString: globalSearchBloc.searchString,);
         selectedWidget = EventMainPage2(enableSearching: false, searchString: globalSearchBloc.searchString,);
+
         break;
       case 50014:
         appBloc.listNativeModel.forEach((element) async {

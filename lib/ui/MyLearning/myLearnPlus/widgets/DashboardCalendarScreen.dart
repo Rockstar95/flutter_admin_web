@@ -1422,7 +1422,7 @@ class DashboardCalendar extends State<DashboardCalendarScreen> with TickerProvid
         builder: (BuildContext bc) {
           return AppConstants().bottomSheetContainer(
             child: SingleChildScrollView(
-              child: Column(
+              child: new Column(
                 children: <Widget>[
                   BottomSheetDragger(),
                   //displayPlay(table2),
@@ -1715,16 +1715,19 @@ class DashboardCalendar extends State<DashboardCalendarScreen> with TickerProvid
               ) {
             Navigator.of(context)
                 .push(MaterialPageRoute(
-                    builder: (context) => CommonDetailScreen(
-                      screenType: ScreenType.MyLearning,
-                      contentid: table2.contentid,
-                      objtypeId: table2.objecttypeid,
-                      detailsBloc: detailsBloc,
-                      table2: table2,
-                      //     nativeModel: widget.nativeModel,
-                      isFromReschedule: false,
-                      //isFromMyLearning: false
-                    )))
+                    builder: (context) => ChangeNotifierProvider(
+                          create: (context) => ProviderModel(),
+                          child: CommonDetailScreen(
+                            screenType: ScreenType.MyLearning,
+                            contentid: table2.contentid,
+                            objtypeId: table2.objecttypeid,
+                            detailsBloc: detailsBloc,
+                            table2: table2,
+                            //     nativeModel: widget.nativeModel,
+                            isFromReschedule: false,
+                            //isFromMyLearning: false
+                          ),
+                        )))
                 .then((value) => {
                       if (value == true)
                         { Container(),
@@ -1740,13 +1743,16 @@ class DashboardCalendar extends State<DashboardCalendarScreen> with TickerProvid
                 'isaddedtomylearning${table2.isaddedtomylearning}');
             Navigator.of(context)
                 .push(MaterialPageRoute(
-                    builder: (context) => CommonDetailScreen(
-                        screenType: ScreenType.MyLearning,
-                        contentid: table2.contentid,
-                        objtypeId: table2.objecttypeid,
-                        detailsBloc: detailsBloc,
-                        table2: table2,
-                        isFromReschedule: false)))
+                    builder: (context) => ChangeNotifierProvider(
+                          create: (context) => ProviderModel(),
+                          child: CommonDetailScreen(
+                              screenType: ScreenType.MyLearning,
+                              contentid: table2.contentid,
+                              objtypeId: table2.objecttypeid,
+                              detailsBloc: detailsBloc,
+                              table2: table2,
+                              isFromReschedule: false),
+                        )))
                 .then((value) => {
                       if (value == true)
                         {
@@ -1761,16 +1767,19 @@ class DashboardCalendar extends State<DashboardCalendarScreen> with TickerProvid
                 'isaddedtomylearning${table2.isaddedtomylearning}');
             Navigator.of(context)
                 .push(MaterialPageRoute(
-                    builder: (context) => CommonDetailScreen(
-                        screenType: ScreenType.MyLearning,
-                        contentid: table2.contentid,
-                        objtypeId: table2.objecttypeid,
-                        detailsBloc: detailsBloc,
-                        table2: table2,
-                        pos: i,
-                        mylearninglist: myLearningBloc.list,
-                        isFromReschedule: false
-                        //isFromMyLearning: true
+                    builder: (context) => ChangeNotifierProvider(
+                          create: (context) => ProviderModel(),
+                          child: CommonDetailScreen(
+                              screenType: ScreenType.MyLearning,
+                              contentid: table2.contentid,
+                              objtypeId: table2.objecttypeid,
+                              detailsBloc: detailsBloc,
+                              table2: table2,
+                              pos: i,
+                              mylearninglist: myLearningBloc.list,
+                              isFromReschedule: false
+                              //isFromMyLearning: true
+                              ),
                         )))
                 .then((value) => {
                       if (value == true)
@@ -1972,7 +1981,7 @@ class DashboardCalendar extends State<DashboardCalendarScreen> with TickerProvid
                 flutterToast.showToast(
                   child: CommonToast(displaymsg: 'No url found'),
                   gravity: ToastGravity.BOTTOM,
-                  toastDuration: const Duration(seconds: 2),
+                  toastDuration: Duration(seconds: 2),
                 );
 //              Toast.makeText(v.getContext(), "No Url Found", Toast.LENGTH_SHORT).show();
               }

@@ -16,6 +16,8 @@ import 'package:flutter_admin_web/framework/repository/competencies/my_competenc
 import 'package:flutter_admin_web/framework/theme/ins_theme.dart';
 import 'package:flutter_admin_web/ui/competencies/user_skill.dart';
 
+import '../../configs/constants.dart';
+
 class PrefCatList extends StatefulWidget {
   final NativeMenuModel nativeMenuModel;
   final CompetencyList competencyList;
@@ -112,10 +114,7 @@ class _PrefCatListState extends State<PrefCatList> with SingleTickerProviderStat
         if (state.status == Status.LOADING && myCompetenciesBloc.isFirstLoading == true) {
           return Center(
             child: AbsorbPointer(
-              child: SpinKitCircle(
-                color: Colors.grey,
-                size: 70.0,
-              ),
+              child: AppConstants().getLoaderWidget(iconSize: 70),
             ),
           );
         }

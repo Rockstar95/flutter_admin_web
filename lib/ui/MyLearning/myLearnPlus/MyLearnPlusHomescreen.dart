@@ -276,7 +276,7 @@ class MyLearnPlusHome extends State<MyLearnPlusHomeScreen> with SingleTickerProv
       bannerBackgroundType = mapData["BannerBackgroundType"] ?? "";
       showAchievements = mapData["ShowAchievements"] ?? "";
     }catch(e){
-      print('${e.toString()}');
+      print(e.toString());
     }
     // myLearningBloc.add(getMyLearnPlusLearningObjectsEvent(
     //     pageNumber: pageNumber, pageSize: 10, searchText: "",Contentstatus: 'grade,inprogress,not attempted,incomplete,registered'));
@@ -325,15 +325,18 @@ class MyLearnPlusHome extends State<MyLearnPlusHomeScreen> with SingleTickerProv
                     Navigator.of(context)
                         .push(
                           MaterialPageRoute(
-                            builder: (context) => CommonDetailScreen(
-                              screenType: ScreenType.MyLearning,
-                              contentid: contentId,
-                              objtypeId: element.objecttypeid,
-                              detailsBloc: detailsBloc,
-                              table2: element,
-                              pos: i,
-                              mylearninglist: myLearningBloc.list,
-                              isFromReschedule: false,
+                            builder: (context) => ChangeNotifierProvider(
+                              create: (context) => ProviderModel(),
+                              child: CommonDetailScreen(
+                                screenType: ScreenType.MyLearning,
+                                contentid: contentId,
+                                objtypeId: element.objecttypeid,
+                                detailsBloc: detailsBloc,
+                                table2: element,
+                                pos: i,
+                                mylearninglist: myLearningBloc.list,
+                                isFromReschedule: false,
+                              ),
                             ),
                           ),
                         )
@@ -566,7 +569,7 @@ class MyLearnPlusHome extends State<MyLearnPlusHomeScreen> with SingleTickerProv
                       componentId: tab.componentId, //'316',
                       componentInsId: tab.tabComponentInstanceId, //'4233',
                       //componentid: '316',componentInsId: '4233',
-                      objectTypeId: '$filterContentType',
+                      objectTypeId: filterContentType,
                       type: 'today'));
 
                   myLearningBloc.add(GetMyLearnPlusLearningObjectsEvent(
@@ -580,7 +583,7 @@ class MyLearnPlusHome extends State<MyLearnPlusHomeScreen> with SingleTickerProv
                       componentInsId: tab.tabComponentInstanceId, //'4233',
                       //componentid: '316',componentInsId: '4233',
                       contentStatus: '',
-                      objectTypeId: '$filterContentType',
+                      objectTypeId: filterContentType,
                       type: 'thisweek'));
 
                   myLearningBloc.add(GetMyLearnPlusLearningObjectsEvent(
@@ -593,7 +596,7 @@ class MyLearnPlusHome extends State<MyLearnPlusHomeScreen> with SingleTickerProv
                       componentId: tab.componentId, //'316',
                       componentInsId: tab.tabComponentInstanceId, //'4233',
                       //componentid: '316',componentInsId: '4233',
-                      objectTypeId: '$filterContentType',
+                      objectTypeId: filterContentType,
                       contentStatus: '',
                       type: 'thismonth'));
 
@@ -607,7 +610,7 @@ class MyLearnPlusHome extends State<MyLearnPlusHomeScreen> with SingleTickerProv
                       componentId: tab.componentId, //'316',
                       componentInsId: tab.tabComponentInstanceId, //'4233',
                      // componentid: '316',componentInsId: '4233',
-                      objectTypeId: '$filterContentType',
+                      objectTypeId: filterContentType,
                       contentStatus: '',
                       type: 'future'));
                 }
@@ -930,7 +933,7 @@ class MyLearnPlusHome extends State<MyLearnPlusHomeScreen> with SingleTickerProv
                     contentID: state.table2.contentid,
                     objecttypeId: "${state.table2.objecttypeid}",
                     userID: "${state.table2.objecttypeid}",
-                    courseName: "${state.table2.name}",
+                    courseName: state.table2.name,
                     courseURL: state.courseUrl,
                     learnerSCOID: "${state.table2.scoid}",
                     learnerSessionID: state.response.toString()));
@@ -992,18 +995,15 @@ class MyLearnPlusHome extends State<MyLearnPlusHomeScreen> with SingleTickerProv
           if (state.status == Status.LOADING || _tabController == null) {
             return Center(
               child: AbsorbPointer(
-                child: SpinKitCircle(
-                  color: Color(
-                    int.parse(
-                        "0xFF${appBloc.uiSettingModel.appTextColor.substring(1, 7).toUpperCase()}"),
-                  ),
-                  size: 70,
-                ),
+                child: AppConstants().getLoaderWidget(iconSize: 70),
               ),
             );
           }
+
+          // MyPrint.printOnConsole("userAchievementResponse.userOverAllData:${userAchievementResponse.userOverAllData}");
+
           return SafeArea(
-                  child: Container(
+                  child: SizedBox(
                     width: MediaQuery.of(context).size.width * 1,
                     height: MediaQuery.of(context).size.height,
                     child: Column(
@@ -1043,41 +1043,41 @@ class MyLearnPlusHome extends State<MyLearnPlusHomeScreen> with SingleTickerProv
                                   apiCallingByInput(currentTabStatus,'',dynamicTabList[index]);
                                 }
 
-                                if (currentTabStatus == 'InProgress') {
-                                  myLearningPlusInProList.clear();
-                                  apiCallingByInput(currentTabStatus,'',dynamicTabList[index]);
-                                }
-                                if (currentTabStatus == 'Completed') {
-                                  apiCallingByInput(currentTabStatus,'',dynamicTabList[index]);
-                                }
-                                if (currentTabStatus == 'Archive') {
-                                  apiCallingByInput(currentTabStatus,'',dynamicTabList[index]);
-                                }
-                                //  ApicallingByinput(tab.tabId,'');
-                              },
-                              tabs: tabList),
-                        ),
-                       // (dynamicTabList.isNotEmpty) ?
-                             Expanded(
-                                child: Container(height: 100,
-                                  child: TabBarView(
-                                    controller: _tabController,
-                                    children: getList(),
-                                    physics: const NeverScrollableScrollPhysics(),//PageScrollPhysics(),
-                                  ),
-                                ),
-                              )//: SizedBox(),
-
-                      ],
-                    ),
+                          if (currentTabStatus == 'InProgress') {
+                            myLearningPlusInProList.clear();
+                            apiCallingByInput(currentTabStatus,'',dynamicTabList[index]);
+                          }
+                          if (currentTabStatus == 'Completed') {
+                            apiCallingByInput(currentTabStatus,'',dynamicTabList[index]);
+                          }
+                          if (currentTabStatus == 'Archive') {
+                            apiCallingByInput(currentTabStatus,'',dynamicTabList[index]);
+                          }
+                          //  ApicallingByinput(tab.tabId,'');
+                        },
+                        tabs: tabList),
                   ),
-                );
+                 // (dynamicTabList.isNotEmpty) ?
+                       Expanded(
+                          child: Container(height: 100,
+                            child: TabBarView(
+                              controller: _tabController,
+                              children: getList(),
+                              physics: NeverScrollableScrollPhysics(),//PageScrollPhysics(),
+                            ),
+                          ),
+                        )//: SizedBox(),
+
+                ],
+              ),
+            ),
+          );
         },
       ),
     );
   }
 
-   List<Widget> getList(){
+  List<Widget> getList(){
     if(dynamicTabList.isNotEmpty){
      return dynamicTabList.map((ConnectionDynamicTab element) {
         print('keytabb ${element.mobileDisplayName}');
@@ -1126,10 +1126,9 @@ class MyLearnPlusHome extends State<MyLearnPlusHomeScreen> with SingleTickerProv
         if (table2.objecttypeid == 26) {
           // assignmenturl = await '$assignmenturl/ismobilecontentview/true';
           // print('assignmenturl is : $assignmenturl');
-          await Navigator.of(context)
-              .push(MaterialPageRoute(
+          await Navigator.of(context).push(MaterialPageRoute(
               builder: (context) =>
-                  InAppWebCourseLaunch(courseUrl, table2)));
+                  AdvancedWebCourseLaunch(courseUrl, table2.name)));
         } else {
           // assignmenturl = await '$assignmenturl/ismobilecontentview/true';
           //print('assignmenturl is : $assignmenturl');
@@ -1301,7 +1300,7 @@ class MyLearnPlusHome extends State<MyLearnPlusHomeScreen> with SingleTickerProv
             dateFilter: 'today',
             componentId: tab.componentId, //'316',
             componentInsId: tab.tabComponentInstanceId, //'4233',
-            objectTypeId: '$filterContentType',
+            objectTypeId: filterContentType,
             contentStatus: '',
             type: 'today'));
 
@@ -1315,7 +1314,7 @@ class MyLearnPlusHome extends State<MyLearnPlusHomeScreen> with SingleTickerProv
             componentId: tab.componentId, //'316',
             componentInsId: tab.tabComponentInstanceId, //'4233',
            // componentid: '316',componentInsId: '4233',
-            objectTypeId: '$filterContentType',
+            objectTypeId: filterContentType,
             contentStatus: '',
             type: 'thisweek'));
 
@@ -1326,7 +1325,7 @@ class MyLearnPlusHome extends State<MyLearnPlusHomeScreen> with SingleTickerProv
             isWishlistCount: 0,
             isWait: false,
             dateFilter: 'thismonth',
-            objectTypeId: '$filterContentType',
+            objectTypeId: filterContentType,
              componentId: tab.componentId, //'316',
             componentInsId: tab.tabComponentInstanceId, //'4233',
             // componentid: '316',componentInsId: '4233',
@@ -1340,7 +1339,7 @@ class MyLearnPlusHome extends State<MyLearnPlusHomeScreen> with SingleTickerProv
             isWishlistCount: 0,
             isWait: false,
             dateFilter: 'future',
-            objectTypeId: '$filterContentType',
+            objectTypeId: filterContentType,
             componentId: tab.componentId, //'316',
             componentInsId: tab.tabComponentInstanceId, //'4233',
             //componentid: '316',componentInsId: '4233',
@@ -1789,7 +1788,7 @@ class MyLearnPlusHome extends State<MyLearnPlusHomeScreen> with SingleTickerProv
                         children: <Widget>[
                           Padding(
                               padding: const EdgeInsets.all(10.0),
-                              child: Container(
+                              child: SizedBox(
                                 height: 40.0,
                                 child:InsSearchTextField(
                         onTapAction: () {
@@ -2270,11 +2269,11 @@ class MyLearnPlusHome extends State<MyLearnPlusHomeScreen> with SingleTickerProv
                       borderRadius: BorderRadius.circular(5)),
                   actions: <Widget>[
                     FlatButton(
-                      child: Text(appBloc.localstr.eventsAlertbuttonOkbutton),
                       textColor: Colors.blue,
                       onPressed: () async {
                         Navigator.of(context).pop();
                       },
+                      child: Text(appBloc.localstr.eventsAlertbuttonOkbutton),
                     ),
                   ],
                 ));
@@ -2301,7 +2300,7 @@ class MyLearnPlusHome extends State<MyLearnPlusHomeScreen> with SingleTickerProv
                     children: <Widget>[
                       Stack(
                         children: [
-                          Container(
+                          SizedBox(
                             width: ScreenUtil().setHeight(200),
                             child: CachedNetworkImage(
                               imageUrl: obj.thumbnailimagepath.startsWith('http')
@@ -2386,7 +2385,7 @@ class MyLearnPlusHome extends State<MyLearnPlusHomeScreen> with SingleTickerProv
                           children: [
                             Expanded(
                               child: Text(
-                                '${obj.contenttype.toLowerCase().toUpperCase()}',
+                                '${obj.contenttype}',
                                 style: TextStyle(
                                   color: Color(int.parse(
                                       "0xFF${appBloc.uiSettingModel.appTextColor.substring(1, 7).toUpperCase()}")),
@@ -2430,14 +2429,14 @@ class MyLearnPlusHome extends State<MyLearnPlusHomeScreen> with SingleTickerProv
                           ],
                         ),
                       ),
-                      const SizedBox(
+                      SizedBox(
                         height: 10,
                       ),
                       Container(
                         width: ScreenUtil().setHeight(210),
                         alignment: Alignment.topLeft,
                         child: Text(
-                          '${obj.name.toString().trim()}',
+                          obj.name.toString().trim(),
                           style: TextStyle(
                               color: Color(int.parse(
                                   "0xFF${appBloc.uiSettingModel.appTextColor.substring(1, 7).toUpperCase()}")),
@@ -2448,7 +2447,7 @@ class MyLearnPlusHome extends State<MyLearnPlusHomeScreen> with SingleTickerProv
                       const SizedBox(
                         height: 30,
                       ),
-                      Container(
+                      SizedBox(
                         width: ScreenUtil().setHeight(210),
                         child: Row(
                           children: <Widget>[
@@ -2477,7 +2476,7 @@ class MyLearnPlusHome extends State<MyLearnPlusHomeScreen> with SingleTickerProv
                       const SizedBox(
                         height: 10,
                       ),
-                      Container(
+                      SizedBox(
                         width: ScreenUtil().setHeight(210),
                         child: Row(
                           children: <Widget>[
@@ -2564,7 +2563,7 @@ class MyLearnPlusHome extends State<MyLearnPlusHomeScreen> with SingleTickerProv
                       ),
                       isExpired
                           ? Container()
-                          : Container(
+                          : SizedBox(
                               width: ScreenUtil().setHeight(210),
                               child: Row(
                                 children: <Widget>[
@@ -2677,15 +2676,18 @@ class MyLearnPlusHome extends State<MyLearnPlusHomeScreen> with SingleTickerProv
                         Navigator.of(context)
                             .push(
                               MaterialPageRoute(
-                                builder: (context) => CommonDetailScreen(
-                                  screenType: ScreenType.MyLearning,
-                                  contentid: contentId,
-                                  objtypeId: element.objecttypeid,
-                                  detailsBloc: detailsBloc,
-                                  table2: element,
-                                  pos: i,
-                                  mylearninglist: myLearningBloc.list,
-                                  isFromReschedule: false,
+                                builder: (context) => ChangeNotifierProvider(
+                                  create: (context) => ProviderModel(),
+                                  child: CommonDetailScreen(
+                                    screenType: ScreenType.MyLearning,
+                                    contentid: contentId,
+                                    objtypeId: element.objecttypeid,
+                                    detailsBloc: detailsBloc,
+                                    table2: element,
+                                    pos: i,
+                                    mylearninglist: myLearningBloc.list,
+                                    isFromReschedule: false,
+                                  ),
                                 ),
                               ),
                             )
@@ -2804,11 +2806,11 @@ class MyLearnPlusHome extends State<MyLearnPlusHomeScreen> with SingleTickerProv
                       borderRadius: BorderRadius.circular(5)),
                   actions: <Widget>[
                     FlatButton(
-                      child: Text(appBloc.localstr.eventsAlertbuttonOkbutton),
                       textColor: Colors.blue,
                       onPressed: () async {
                         Navigator.of(context).pop();
                       },
+                      child: Text(appBloc.localstr.eventsAlertbuttonOkbutton),
                     ),
                   ],
                 ));
@@ -2832,7 +2834,7 @@ class MyLearnPlusHome extends State<MyLearnPlusHomeScreen> with SingleTickerProv
                   children: <Widget>[
                     Stack(
                       children: [
-                        Container(
+                        SizedBox(
                           height: ScreenUtil().setHeight(kCellThumbHeight),
                           child: CachedNetworkImage(
                             imageUrl: obj.thumbnailimagepath.startsWith('http')
@@ -2917,7 +2919,7 @@ class MyLearnPlusHome extends State<MyLearnPlusHomeScreen> with SingleTickerProv
                       valueColor: AlwaysStoppedAnimation<Color>(statuscolor),
                       backgroundColor: Colors.grey,
                     ),
-                    const SizedBox(
+                    SizedBox(
                       height: 10,
                     ),
                     Container(
@@ -2926,11 +2928,10 @@ class MyLearnPlusHome extends State<MyLearnPlusHomeScreen> with SingleTickerProv
                         children: [
                           Expanded(
                             child: Text(
-                              '${obj.contenttype.toLowerCase().toUpperCase()}',
+                              obj.contenttype,
                               style: TextStyle(
-                                color: Color(int.parse(
-                                    "0xFF${appBloc.uiSettingModel.appTextColor.substring(1, 7).toUpperCase()}")),
-                                fontSize: 12.0,
+                                color: AppColors.getAppTextColor().withOpacity(0.5),
+                                fontSize: ScreenUtil().setSp(13),
                               ),
                               textAlign: TextAlign.start,
                             ),
@@ -2981,17 +2982,16 @@ class MyLearnPlusHome extends State<MyLearnPlusHomeScreen> with SingleTickerProv
                     Container(
                       alignment: Alignment.topLeft,
                       child: Text(
-                        '${obj.name.toString().trim()}',
+                        obj.name.toString().trim(),
                         style: TextStyle(
-                            color: Color(int.parse(
-                                "0xFF${appBloc.uiSettingModel.appTextColor.substring(1, 7).toUpperCase()}")),
-                            fontSize: 13.0),
+                            color: AppColors.getAppTextColor(),
+                            fontSize: 15.0),
                         textAlign: TextAlign.start,
                       ),
                     ),
 
-                    const SizedBox(
-                      height: 30,
+                    SizedBox(
+                      height: 15,
                     ),
 
                     Row(
@@ -3239,9 +3239,9 @@ class MyLearnPlusHome extends State<MyLearnPlusHomeScreen> with SingleTickerProv
         size: 25,
       ),
       label: Text(
-        mylearningActionsheetViewoption.toUpperCase(),
+        mylearningActionsheetViewoption,
         style: TextStyle(
-          fontSize: ScreenUtil().setSp(14),
+          fontSize: ScreenUtil().setSp(17),
           color: Color(int.parse(
               "0xFF${appBloc.uiSettingModel.appButtonTextColor.substring(1, 7).toUpperCase()}")),
         ),
@@ -3304,11 +3304,11 @@ class MyLearnPlusHome extends State<MyLearnPlusHomeScreen> with SingleTickerProv
                         borderRadius: BorderRadius.circular(5)),
                     actions: <Widget>[
                       FlatButton(
-                        child: Text(appBloc.localstr.eventsAlertbuttonOkbutton),
                         textColor: Colors.blue,
                         onPressed: () async {
                           Navigator.of(context).pop();
                         },
+                        child: Text(appBloc.localstr.eventsAlertbuttonOkbutton),
                       ),
                     ],
                   ));
@@ -3419,19 +3419,8 @@ class MyLearnPlusHome extends State<MyLearnPlusHomeScreen> with SingleTickerProv
       print('urldataaaaa $url');
       if (url!.isNotEmpty) {
         if (table2.objecttypeid == 26) {
-          Navigator.of(context)
-              .push(MaterialPageRoute(
-              builder: (context) => InAppWebCourseLaunch(url, table2)))
-              .then((value) => {
-            if (value)
-              {
-                //  ApicallingByinput(currentTabStatus,'',tabInfo)
-                myLearningBloc.add(GetListEvent(pageNumber: 1, pageSize: 10, searchText: myLearningBloc.searchMyCourseString))
-
-                // myLearningBloc.add(GetListEvent(
-                //     pageNumber: 1, pageSize: 100, searchText: ""))
-              }
-          });
+          Navigator.of(context).push(MaterialPageRoute(
+              builder: (context) => AdvancedWebCourseLaunch(url, table2.name)));
         } else {
           Navigator.of(context)
               .push(MaterialPageRoute(
@@ -3552,46 +3541,45 @@ class MyLearnPlusHome extends State<MyLearnPlusHomeScreen> with SingleTickerProv
       context, DummyMyCatelogResponseTable2 table2, int i,ConnectionDynamicTab tabInfo) {
 //    print('bottomsheetobjit ${table2.objecttypeid}');
     showModalBottomSheet(
+        shape: AppConstants().bottomSheetShapeBorder(),
         context: context,
         builder: (BuildContext bc) {
-          return Container(
-            color: Color(
-              int.parse(
-                  "0xFF${appBloc.uiSettingModel.appBGColor.substring(1, 7).toUpperCase()}"),
-            ),
+          return AppConstants().bottomSheetContainer(
             child: SingleChildScrollView(
-              child: Column(
-                children: <Widget>[
-                  const BottomSheetDragger(),
-                  displayPlay(table2,tabInfo),
-                  displayView(table2,tabInfo),
-                  (table2.iswishlistcontent == 1) ? displayAddToMyLearning(table2): Container(),
-                  displayDetails(table2, i,tabInfo),
-                  (table2.iswishlistcontent == 1) ? displayRemovefromwishlist(table2) : Container(),
-                  displayJoin(table2),
-                  // // displayDownload(table2, i), commented for till offline implementation
-                  displayReport(table2),
-                  displayaddToCalendar(table2),
-                  displaySetComplete(table2),
-                  displayRelatedContent(table2),
-                  displayCancelEnrollemnt(table2, i),
-                  displayDelete(table2),
-                  myLearningBloc.showArchieve == "true"
-                      ?  (table2.iswishlistcontent != 1) ? displayArchive(table2) : Container()
-                      : Container(),
+              child: Container(
+                child: new Column(
+                  children: <Widget>[
+                    BottomSheetDragger(),
+                    displayPlay(table2,tabInfo),
+                    displayView(table2,tabInfo),
+                    (table2.iswishlistcontent == 1) ? displayAddToMyLearning(table2): Container(),
+                    displayDetails(table2, i,tabInfo),
+                    (table2.iswishlistcontent == 1) ? displayRemovefromwishlist(table2) : Container(),
+                    displayJoin(table2),
+                    // // displayDownload(table2, i), commented for till offline implementation
+                    displayReport(table2),
+                    displayaddToCalendar(table2),
+                    displaySetComplete(table2),
+                    displayRelatedContent(table2),
+                    displayCancelEnrollemnt(table2, i),
+                    displayDelete(table2),
+                    myLearningBloc.showArchieve == "true"
+                        ?  (table2.iswishlistcontent != 1) ? displayArchive(table2) : Container()
+                        : Container(),
 
-                  displayUnArachive(table2),
-                  displayRemove(table2),
-                  displayReschedule(table2,tabInfo),
-                  displayCertificate(table2),
-                  displayQRCode(table2),
-                  displayEventRecording(table2),
-                  displayShare(table2),
-                  displayShareConnection(table2),
+                    displayUnArachive(table2),
+                    displayRemove(table2),
+                    displayReschedule(table2,tabInfo),
+                    displayCertificate(table2),
+                    displayQRCode(table2),
+                    displayEventRecording(table2),
+                    displayShare(table2),
+                    displayShareConnection(table2),
 
-                  //sreekanth commented
-                  // displaySendViaEmail(table2)
-                ],
+                    //sreekanth commented
+                    // displaySendViaEmail(table2)
+                  ],
+                ),
               ),
             ),
           );
@@ -3649,17 +3637,10 @@ class MyLearnPlusHome extends State<MyLearnPlusHomeScreen> with SingleTickerProv
   Widget displayShare(DummyMyCatelogResponseTable2 table2) {
     if ((table2.suggesttoconnlink.isNotEmpty ||
         table2.suggesttoconnlink.isNotEmpty) && table2.iswishlistcontent != 1) {
-      return ListTile(
-        leading: Icon(
+      return  BottomsheetOptionTile(
+        iconData:
           IconDataSolid(int.parse('0xf1e0')),
-          color: InsColor(appBloc).appIconColor,
-        ),
-        title: Text('Share with Connection',
-            style: TextStyle(
-                color: Color(
-              int.parse(
-                  "0xFF${appBloc.uiSettingModel.appTextColor.substring(1, 7).toUpperCase()}"),
-            ))),
+        text:'Share with Connection',
         onTap: () {
           Navigator.pop(context);
 
@@ -3676,19 +3657,9 @@ class MyLearnPlusHome extends State<MyLearnPlusHomeScreen> with SingleTickerProv
   Widget displayShareConnection(DummyMyCatelogResponseTable2 table2) {
     if ((table2.suggestwithfriendlink.isNotEmpty ||
         table2.suggestwithfriendlink.isNotEmpty) && table2.iswishlistcontent != 1) {
-      return ListTile(
-        leading: Icon(
-          IconDataSolid(
-            int.parse('0xf079'),
-          ),
-          color: InsColor(appBloc).appIconColor,
-        ),
-        title: Text("Share with People",
-            style: TextStyle(
-                color: Color(
-              int.parse(
-                  "0xFF${appBloc.uiSettingModel.appTextColor.substring(1, 7).toUpperCase()}"),
-            ))),
+      return new BottomsheetOptionTile(
+  iconData:          IconDataSolid(int.parse('0xf079'),),
+        text:"Share with People",
         onTap: () {
           Navigator.pop(context);
 
@@ -3704,17 +3675,10 @@ class MyLearnPlusHome extends State<MyLearnPlusHomeScreen> with SingleTickerProv
 
   Widget displayUnArachive(DummyMyCatelogResponseTable2 table2) {
     if (detailsBloc.myLearningDetailsModel.isArchived) {
-      return ListTile(
-          leading: Icon(
-            IconDataSolid(int.parse('0xf187')),
-            color: InsColor(appBloc).appIconColor,
-          ),
-          title: Text(appBloc.localstr.mylearningActionsheetUnarchiveoption,
-              style: TextStyle(
-                  color: Color(
-                int.parse(
-                    "0xFF${appBloc.uiSettingModel.appTextColor.substring(1, 7).toUpperCase()}"),
-              ))),
+      return
+        BottomsheetOptionTile(
+  iconData:            IconDataSolid(int.parse('0xf187')),
+          text:appBloc.localstr.mylearningActionsheetUnarchiveoption,
           onTap: () {
             myLearningBloc.add(RemoveToArchiveCall(
               isArchive: false,
@@ -3732,18 +3696,9 @@ class MyLearnPlusHome extends State<MyLearnPlusHomeScreen> with SingleTickerProv
 //    print('removetable ${table2.removelink}');
     if ((table2.objecttypeid == 70 && table2.bit4 != null && table2.bit4) ||
         (table2.removelink)) {
-      return ListTile(
-          leading: Icon(
-            IconDataSolid(int.parse('0xf056')),
-            color: InsColor(appBloc).appIconColor,
-          ),
-          title: Text(
-              appBloc.localstr.mylearningActionsheetRemovefrommylearning,
-              style: TextStyle(
-                  color: Color(
-                int.parse(
-                    "0xFF${appBloc.uiSettingModel.appTextColor.substring(1, 7).toUpperCase()}"),
-              ))),
+      return BottomsheetOptionTile(
+          iconData:IconDataSolid(int.parse('0xf056')),
+          text:  appBloc.localstr.mylearningActionsheetRemovefrommylearning,
           onTap: () {
             Navigator.of(context).pop();
             showDialog(
@@ -3772,9 +3727,9 @@ class MyLearnPlusHome extends State<MyLearnPlusHomeScreen> with SingleTickerProv
                             "0xFF${appBloc.uiSettingModel.appBGColor.substring(1, 7).toUpperCase()}"),
                       ),
                       shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(5)),
+                          borderRadius: new BorderRadius.circular(5)),
                       actions: <Widget>[
-                        FlatButton(
+                        new FlatButton(
                           child: Text(
                               appBloc.localstr.mylearningAlertbuttonYesbutton),
                           textColor: Colors.blue,
@@ -3799,18 +3754,9 @@ class MyLearnPlusHome extends State<MyLearnPlusHomeScreen> with SingleTickerProv
 
   Widget displayReschedule(DummyMyCatelogResponseTable2 table2,ConnectionDynamicTab tabInfo) {
     if ((table2.reschduleparentid != null) && (isValidString(table2.reschduleparentid))) {
-      return ListTile(
-          leading: Icon(
-            IconDataSolid(int.parse('0xf783')),
-            color: InsColor(appBloc).appIconColor,
-          ),
-          title: Text(
-              appBloc.localstr.mylearningActionbuttonRescheduleactionbutton,
-              style: TextStyle(
-                  color: Color(
-                int.parse(
-                    "0xFF${appBloc.uiSettingModel.appTextColor.substring(1, 7).toUpperCase()}"),
-              ))),
+      return BottomsheetOptionTile(
+          iconData: IconDataSolid(int.parse('0xf783')),
+          text:   appBloc.localstr.mylearningActionbuttonRescheduleactionbutton,
 
           // TODO : Sprint -3
 
@@ -3820,16 +3766,18 @@ class MyLearnPlusHome extends State<MyLearnPlusHomeScreen> with SingleTickerProv
                 table2.objecttypeid == 70 && table2.eventscheduletype == 1) {
               Navigator.of(context)
                   .push(MaterialPageRoute(
-                      builder: (context) => CommonDetailScreen(
-                        screenType: ScreenType.MyLearning,
-                        contentid: table2.reschduleparentid,
-                        objtypeId: table2.objecttypeid,
-                        detailsBloc: detailsBloc,
-                        table2: table2,
-                        //     nativeModel: widget.nativeModel,
-                        isFromReschedule: true,
-                        //isFromMyLearning: true
-                      )))
+                      builder: (context) => ChangeNotifierProvider(
+                          create: (context) => ProviderModel(),
+                          child: CommonDetailScreen(
+                            screenType: ScreenType.MyLearning,
+                            contentid: table2.reschduleparentid,
+                            objtypeId: table2.objecttypeid,
+                            detailsBloc: detailsBloc,
+                            table2: table2,
+                            //     nativeModel: widget.nativeModel,
+                            isFromReschedule: true,
+                            //isFromMyLearning: true
+                          ))))
                   .then((value) => {
                         if (true)
                           {
@@ -3849,20 +3797,10 @@ class MyLearnPlusHome extends State<MyLearnPlusHomeScreen> with SingleTickerProv
 
   Widget displayCertificate(DummyMyCatelogResponseTable2 table2) {
     if ((table2.certificateaction != null) && isValidString(table2.certificateaction)) {
-      return ListTile(
-          leading: SvgPicture.asset(
-            'assets/Certificate.svg',
-            width: 25.h,
-            height: 25.h,
-            color: InsColor(appBloc).appIconColor,
-          ),
-          title: Text(
-              appBloc.localstr.mylearningActionsheetViewcertificateoption,
-              style: TextStyle(
-                  color: Color(
-                int.parse(
-                    "0xFF${appBloc.uiSettingModel.appTextColor.substring(1, 7).toUpperCase()}"),
-              ))),
+      return BottomsheetOptionTile(
+        svgImageUrl: "assets/Certificate.svg",
+        iconColor: InsColor(appBloc).appIconColor ,
+        text: appBloc.localstr.mylearningActionsheetViewcertificateoption,
           onTap: () {
             if ((table2.certificateaction != null) && !isValidString(table2.certificateaction) ||
                 table2.certificateaction == 'notearned') {
@@ -3870,37 +3808,37 @@ class MyLearnPlusHome extends State<MyLearnPlusHomeScreen> with SingleTickerProv
 
               showDialog(
                   context: context,
-                  builder: (BuildContext context) => AlertDialog(
-                        title: Text(
-                          appBloc.localstr
-                              .mylearningActionsheetViewcertificateoption,
-                          style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              color: Color(int.parse(
-                                  "0xFF${appBloc.uiSettingModel.appTextColor.substring(1, 7).toUpperCase()}"))),
-                        ),
-                        content: Text(
-                          appBloc.localstr
-                              .mylearningAlertsubtitleForviewcertificate,
-                          style: TextStyle(
-                              color: Color(int.parse(
-                                  "0xFF${appBloc.uiSettingModel.appTextColor.substring(1, 7).toUpperCase()}"))),
-                        ),
-                        backgroundColor: Color(int.parse(
-                            "0xFF${appBloc.uiSettingModel.appBGColor.substring(1, 7).toUpperCase()}")),
-                        shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(5)),
-                        actions: <Widget>[
-                          FlatButton(
-                            child: Text(appBloc.localstr
-                                .mylearningClosebuttonactionClosebuttonalerttitle),
-                            textColor: Colors.blue,
-                            onPressed: () async {
-                              Navigator.of(context).pop();
-                            },
-                          ),
-                        ],
-                      ));
+                  builder: (BuildContext context) => new AlertDialog(
+                    title: Text(
+                      appBloc.localstr
+                          .mylearningActionsheetViewcertificateoption,
+                      style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          color: Color(int.parse(
+                              "0xFF${appBloc.uiSettingModel.appTextColor.substring(1, 7).toUpperCase()}"))),
+                    ),
+                    content: Text(
+                      appBloc.localstr
+                          .mylearningAlertsubtitleForviewcertificate,
+                      style: TextStyle(
+                          color: Color(int.parse(
+                              "0xFF${appBloc.uiSettingModel.appTextColor.substring(1, 7).toUpperCase()}"))),
+                    ),
+                    backgroundColor: Color(int.parse(
+                        "0xFF${appBloc.uiSettingModel.appBGColor.substring(1, 7).toUpperCase()}")),
+                    shape: RoundedRectangleBorder(
+                        borderRadius: new BorderRadius.circular(5)),
+                    actions: <Widget>[
+                      new FlatButton(
+                        child: Text(appBloc.localstr
+                            .mylearningClosebuttonactionClosebuttonalerttitle),
+                        textColor: Colors.blue,
+                        onPressed: () async {
+                          Navigator.of(context).pop();
+                        },
+                      ),
+                    ],
+                  ));
             } else {
               detailsBloc.myLearningDetailsModel.setcontentID(table2.contentid);
               detailsBloc.myLearningDetailsModel
@@ -3913,7 +3851,9 @@ class MyLearnPlusHome extends State<MyLearnPlusHomeScreen> with SingleTickerProv
                   builder: (context) =>
                       ViewCertificate(detailsBloc: detailsBloc)));
             }
-          });
+          }
+      );
+
     }
     return Container();
   }
@@ -3923,17 +3863,10 @@ class MyLearnPlusHome extends State<MyLearnPlusHomeScreen> with SingleTickerProv
       if ((table2.qrimagename != null) && isValidString(table2.qrimagename) &&
           (table2.qrcodeimagepath != null) && isValidString(table2.qrcodeimagepath) &&
           !table2.bit4) {
-        return ListTile(
-          leading: Icon(
-            IconDataSolid(int.parse('0xf029')),
-            color: InsColor(appBloc).appIconColor,
-          ),
-          title: Text(appBloc.localstr.mylearningActionsheetViewqrcode,
-              style: TextStyle(
-                  color: Color(
-                int.parse(
-                    "0xFF${appBloc.uiSettingModel.appTextColor.substring(1, 7).toUpperCase()}"),
-              ))),
+        return new BottomsheetOptionTile(
+          iconData:  IconDataSolid(int.parse('0xf029')),
+          text:
+              appBloc.localstr.mylearningActionsheetViewqrcode,
           onTap: () {
             Navigator.pop(context);
             Navigator.of(context).push(MaterialPageRoute(
@@ -3953,13 +3886,10 @@ class MyLearnPlusHome extends State<MyLearnPlusHomeScreen> with SingleTickerProv
       if (table2.isaddedtomylearning == 1 ||
           typeFrom == "event" ||
           typeFrom == "track") {
-        return ListTile(
-          leading: Icon(
-            IconDataSolid(int.parse('0xf8d9')),
-            color: InsColor(appBloc).appIconColor,
-          ),
-          title:
-              Text(appBloc.localstr.learningtrackLabelEventviewrecording),
+        return new BottomsheetOptionTile(
+          iconData: IconDataSolid(int.parse('0xf8d9')),
+          text:
+              appBloc.localstr.learningtrackLabelEventviewrecording,
           onTap: () => {
             //todo : sprint -3
 //            Navigator.of(context).push(MaterialPageRoute(
@@ -3976,17 +3906,7 @@ class MyLearnPlusHome extends State<MyLearnPlusHomeScreen> with SingleTickerProv
 
   Widget displayArchive(DummyMyCatelogResponseTable2 table2) {
     if (!detailsBloc.myLearningDetailsModel.isArchived) {
-      return ListTile(
-          leading: Icon(
-            IconDataSolid(int.parse('0xf187')),
-            color: InsColor(appBloc).appIconColor,
-          ),
-          title: Text(appBloc.localstr.mylearningActionsheetArchiveoption,
-              style: TextStyle(
-                  color: Color(
-                int.parse(
-                    "0xFF${appBloc.uiSettingModel.appTextColor.substring(1, 7).toUpperCase()}"),
-              ))),
+      return BottomsheetOptionTile(iconData:  IconDataSolid(int.parse('0xf187')), text: appBloc.localstr.mylearningActionsheetArchiveoption,
           onTap: () {
             myLearningBloc.add(AddToArchiveCall(isArchive: true, strContentID: table2.contentid, table2: table2));
             if (table2.actualstatus == "completed") { //Completed
@@ -4006,7 +3926,7 @@ class MyLearnPlusHome extends State<MyLearnPlusHomeScreen> with SingleTickerProv
               myLearningPlusWaitProList.remove(table2);
             }
             Navigator.pop(context);
-          });
+      });
     } else {
       return Container();
     }
@@ -4022,23 +3942,13 @@ class MyLearnPlusHome extends State<MyLearnPlusHomeScreen> with SingleTickerProv
         table2.objecttypeid == 52) {
       if (table2.objecttypeid == 11 &&
           (table2.mediatypeid == 3 || table2.mediatypeid == 4)) {
-        return ListTile(
-            leading: Icon(
-              IconDataSolid(int.parse('0xf144')),
-              color: InsColor(appBloc).appIconColor,
-            ),
-            title: Text(
-              (appBloc.localstr.mylearningActionsheetPlayoption != null) ? appBloc.localstr.mylearningActionsheetPlayoption : '',
-              style: TextStyle(
-                  color: Color(
-                int.parse(
-                    "0xFF${appBloc.uiSettingModel.appTextColor.substring(1, 7).toUpperCase()}"),
-              )),
-            ),
-            onTap: () {
-              Navigator.of(context).pop();
+        return BottomsheetOptionTile(
+          text: (appBloc.localstr.mylearningActionsheetPlayoption != null) ? appBloc.localstr.mylearningActionsheetPlayoption : '',
+          iconData:  IconDataSolid(int.parse('0xf144')),
+          onTap: (){
+            Navigator.of(context).pop();
 
-              if ((table2.viewprerequisitecontentstatus != null) && isValidString(table2.viewprerequisitecontentstatus)) {
+            if ((table2.viewprerequisitecontentstatus != null) && isValidString(table2.viewprerequisitecontentstatus)) {
 //                print('ifdataaaaa');
                 String alertMessage =
                     appBloc.localstr.prerequistesalerttitle6Alerttitle6;
@@ -4069,12 +3979,12 @@ class MyLearnPlusHome extends State<MyLearnPlusHomeScreen> with SingleTickerProv
                               borderRadius: BorderRadius.circular(5)),
                           actions: <Widget>[
                             FlatButton(
-                              child: Text(
-                                  appBloc.localstr.eventsAlertbuttonOkbutton),
                               textColor: Colors.blue,
                               onPressed: () async {
                                 Navigator.of(context).pop();
                               },
+                              child: Text(
+                                  appBloc.localstr.eventsAlertbuttonOkbutton),
                             ),
                           ],
                         ));
@@ -4097,112 +4007,219 @@ class MyLearnPlusHome extends State<MyLearnPlusHomeScreen> with SingleTickerProv
     if (table2.objecttypeid == 70 && (table2.bit4 != null && table2.bit4)) {
       return Container();
     }
-    return ListTile(
-        leading: Icon(
-          IconDataSolid(int.parse('0xf570')),
-          color: InsColor(appBloc).appIconColor,
-        ),
-        title: Text((appBloc.localstr.mylearningActionsheetDetailsoption != null) ? appBloc.localstr.mylearningActionsheetDetailsoption : appBloc.localstr.mylearningActionsheetDetailsoption,
-            style: TextStyle(
-                color: Color(
-              int.parse(
-                  "0xFF${appBloc.uiSettingModel.appTextColor.substring(1, 7).toUpperCase()}"),
-            ))),
+    return BottomsheetOptionTile(
+        iconData: IconDataSolid(int.parse('0xf570')),
+      text: (appBloc.localstr.mylearningActionsheetDetailsoption != null) ? appBloc.localstr.mylearningActionsheetDetailsoption : appBloc.localstr.mylearningActionsheetDetailsoption ,
         onTap: () {
           Navigator.pop(context);
           if (table2.objecttypeid == 70 && table2.eventscheduletype == 2
-              /*appBloc.uiSettingModel.EnableMultipleInstancesforEvent ==
+          /*appBloc.uiSettingModel.EnableMultipleInstancesforEvent ==
                   'true'*/
-              ) {
+          ) {
             Navigator.of(context)
                 .push(MaterialPageRoute(
-                    builder: (context) => CommonDetailScreen(
-                      screenType: ScreenType.MyLearning,
-                      contentid: table2.contentid,
-                      objtypeId: table2.objecttypeid,
-                      detailsBloc: detailsBloc,
-                      table2: table2,
-                      //     nativeModel: widget.nativeModel,
-                      isFromReschedule: false,
-                      //isFromMyLearning: false
-                    )))
+                builder: (context) => ChangeNotifierProvider(
+                  create: (context) => ProviderModel(),
+                  child: CommonDetailScreen(
+                    screenType: ScreenType.MyLearning,
+                    contentid: table2.contentid,
+                    objtypeId: table2.objecttypeid,
+                    detailsBloc: detailsBloc,
+                    table2: table2,
+                    //     nativeModel: widget.nativeModel,
+                    isFromReschedule: false,
+                    //isFromMyLearning: false
+                  ),
+                )))
                 .then((value) => {
-                      if (value == true)
-                        {
+              if (value == true)
+                {
 
-                          apiCallingByInput(currentTabStatus,'',tabInfo)
+                  apiCallingByInput(currentTabStatus,'',tabInfo)
 
-                          // myLearningBloc.add(GetListEvent(
-                          //     pageNumber: 1, pageSize: 10, searchText: ""))
-                        }
-                    });
+                  // myLearningBloc.add(GetListEvent(
+                  //     pageNumber: 1, pageSize: 10, searchText: ""))
+                }
+            });
           } else if (table2.objecttypeid == 70) {
             print(
                 'isaddedtomylearning${table2.isaddedtomylearning}');
             Navigator.of(context)
                 .push(MaterialPageRoute(
-                    builder: (context) => CommonDetailScreen(
-                        screenType: ScreenType.MyLearning,
-                        contentid: table2.contentid,
-                        objtypeId: table2.objecttypeid,
-                        detailsBloc: detailsBloc,
-                        table2: table2,
-                        isFromReschedule: false)))
+                builder: (context) => ChangeNotifierProvider(
+                  create: (context) => ProviderModel(),
+                  child: CommonDetailScreen(
+                      screenType: ScreenType.MyLearning,
+                      contentid: table2.contentid,
+                      objtypeId: table2.objecttypeid,
+                      detailsBloc: detailsBloc,
+                      table2: table2,
+                      isFromReschedule: false),
+                )))
                 .then((value) => {
-                      if (value == true)
-                        {
-                          apiCallingByInput(currentTabStatus,'',tabInfo)
+              if (value == true)
+                {
+                  apiCallingByInput(currentTabStatus,'',tabInfo)
 
-                          // myLearningBloc.add(GetListEvent(
-                          //     pageNumber: 1, pageSize: 10, searchText: ""))
-                        }
-                    });
+                  // myLearningBloc.add(GetListEvent(
+                  //     pageNumber: 1, pageSize: 10, searchText: ""))
+                }
+            });
           } else {
             print(
                 'isaddedtomylearning${table2.isaddedtomylearning}');
             Navigator.of(context)
                 .push(MaterialPageRoute(
-                    builder: (context) => CommonDetailScreen(
-                        screenType: ScreenType.MyLearning,
-                        contentid: table2.contentid,
-                        objtypeId: table2.objecttypeid,
-                        detailsBloc: detailsBloc,
-                        table2: table2,
-                        pos: i,
-                        mylearninglist: myLearningBloc.list,
-                        isFromReschedule: false
-                        //isFromMyLearning: true
-                        )))
+                builder: (context) => ChangeNotifierProvider(
+                  create: (context) => ProviderModel(),
+                  child: CommonDetailScreen(
+                      screenType: ScreenType.MyLearning,
+                      contentid: table2.contentid,
+                      objtypeId: table2.objecttypeid,
+                      detailsBloc: detailsBloc,
+                      table2: table2,
+                      pos: i,
+                      mylearninglist: myLearningBloc.list,
+                      isFromReschedule: false
+                    //isFromMyLearning: true
+                  ),
+                )))
                 .then((value) => {
-                      if (value == true)
-                        {
-                          apiCallingByInput(currentTabStatus,'',tabInfo)
+              if (value == true)
+                {
+                  apiCallingByInput(currentTabStatus,'',tabInfo)
 
-                          // myLearningBloc.add(GetListEvent(
-                          //     pageNumber: 1, pageSize: 10, searchText: ""))
-                        }
-                    });
+                  // myLearningBloc.add(GetListEvent(
+                  //     pageNumber: 1, pageSize: 10, searchText: ""))
+                }
+            });
           }
-        });
+        }
+    );
+
+      // new ListTile(
+      //   leading: Icon(
+      //     IconDataSolid(int.parse('0xf570')),
+      //     color: InsColor(appBloc).appIconColor,
+      //   ),
+      //   title: new Text((appBloc.localstr.mylearningActionsheetDetailsoption != null) ? appBloc.localstr.mylearningActionsheetDetailsoption : appBloc.localstr.mylearningActionsheetDetailsoption,
+      //       style: TextStyle(
+      //           color: Color(
+      //         int.parse(
+      //             "0xFF${appBloc.uiSettingModel.appTextColor.substring(1, 7).toUpperCase()}"),
+      //       ))),
+      //   onTap: () {
+      //     Navigator.pop(context);
+      //     if (table2.objecttypeid == 70 && table2.eventscheduletype == 2
+      //         /*appBloc.uiSettingModel.EnableMultipleInstancesforEvent ==
+      //             'true'*/
+      //         ) {
+      //       Navigator.of(context)
+      //           .push(MaterialPageRoute(
+      //               builder: (context) => ChangeNotifierProvider(
+      //                     create: (context) => ProviderModel(),
+      //                     child: CommonDetailScreen(
+      //                       screenType: ScreenType.MyLearning,
+      //                       contentid: table2.contentid,
+      //                       objtypeId: table2.objecttypeid,
+      //                       detailsBloc: detailsBloc,
+      //                       table2: table2,
+      //                       //     nativeModel: widget.nativeModel,
+      //                       isFromReschedule: false,
+      //                       //isFromMyLearning: false
+      //                     ),
+      //                   )))
+      //           .then((value) => {
+      //                 if (value == true)
+      //                   {
+      //
+      //                     apiCallingByInput(currentTabStatus,'',tabInfo)
+      //
+      //                     // myLearningBloc.add(GetListEvent(
+      //                     //     pageNumber: 1, pageSize: 10, searchText: ""))
+      //                   }
+      //               });
+      //     } else if (table2.objecttypeid == 70) {
+      //       print(
+      //           'isaddedtomylearning' + table2.isaddedtomylearning.toString());
+      //       Navigator.of(context)
+      //           .push(MaterialPageRoute(
+      //               builder: (context) => ChangeNotifierProvider(
+      //                     create: (context) => ProviderModel(),
+      //                     child: CommonDetailScreen(
+      //                         screenType: ScreenType.MyLearning,
+      //                         contentid: table2.contentid,
+      //                         objtypeId: table2.objecttypeid,
+      //                         detailsBloc: detailsBloc,
+      //                         table2: table2,
+      //                         isFromReschedule: false),
+      //                   )))
+      //           .then((value) => {
+      //                 if (value == true)
+      //                   {
+      //                     apiCallingByInput(currentTabStatus,'',tabInfo)
+      //
+      //                     // myLearningBloc.add(GetListEvent(
+      //                     //     pageNumber: 1, pageSize: 10, searchText: ""))
+      //                   }
+      //               });
+      //     } else {
+      //       print(
+      //           'isaddedtomylearning' + table2.isaddedtomylearning.toString());
+      //       Navigator.of(context)
+      //           .push(MaterialPageRoute(
+      //               builder: (context) => ChangeNotifierProvider(
+      //                     create: (context) => ProviderModel(),
+      //                     child: CommonDetailScreen(
+      //                         screenType: ScreenType.MyLearning,
+      //                         contentid: table2.contentid,
+      //                         objtypeId: table2.objecttypeid,
+      //                         detailsBloc: detailsBloc,
+      //                         table2: table2,
+      //                         pos: i,
+      //                         mylearninglist: myLearningBloc.list,
+      //                         isFromReschedule: false
+      //                         //isFromMyLearning: true
+      //                         ),
+      //                   )))
+      //           .then((value) => {
+      //                 if (value == true)
+      //                   {
+      //                     apiCallingByInput(currentTabStatus,'',tabInfo)
+      //
+      //                     // myLearningBloc.add(GetListEvent(
+      //                     //     pageNumber: 1, pageSize: 10, searchText: ""))
+      //                   }
+      //               });
+      //     }
+      //   });
   }
 
   Widget displayRemovefromwishlist(DummyMyCatelogResponseTable2 table2){
-    return ListTile(
-      title: Text(
-          appBloc.localstr
-              .catalogActionsheetRemovefromwishlistoption,
-          style: TextStyle(
-              color: InsColor(appBloc).appTextColor)),
-      leading: Icon(
-        Icons.favorite,
-        color: InsColor(appBloc).appIconColor,
-      ),
-      onTap: () {
+    return BottomsheetOptionTile(iconData:Icons.favorite,
+    text: appBloc.localstr.catalogActionsheetRemovefromwishlistoption,
+      onTap: (){
         catalogBloc.add(RemoveFromWishListEvent(
             contentId: table2.contentid));
         Navigator.of(context).pop();
       },
     );
+    //   ListTile(
+    //   title: Text(
+    //       appBloc.localstr
+    //           .catalogActionsheetRemovefromwishlistoption,
+    //       style: TextStyle(
+    //           color: InsColor(appBloc).appTextColor)),
+    //   leading: Icon(
+    //     Icons.favorite,
+    //     color: InsColor(appBloc).appIconColor,
+    //   ),
+    //   onTap: () {
+    //     catalogBloc.add(RemoveFromWishListEvent(
+    //         contentId: table2.contentid));
+    //     Navigator.of(context).pop();
+    //   },
+    // );
   }
 
   Widget displayJoin(DummyMyCatelogResponseTable2 table2) {
@@ -4210,17 +4227,7 @@ class MyLearnPlusHome extends State<MyLearnPlusHomeScreen> with SingleTickerProv
       if ((table2.eventenddatetime != null) && isValidString(table2.eventenddatetime)) if (!returnEventCompleted(
           table2.eventenddatetime)) {
         if (table2.typeofevent == 2) {
-          return ListTile(
-            leading: Icon(
-              IconDataSolid(int.parse('0xf234')),
-              color: InsColor(appBloc).appIconColor,
-            ),
-            title: Text(appBloc.localstr.mylearningActionsheetJoinoption,
-                style: TextStyle(
-                    color: Color(
-                  int.parse(
-                      "0xFF${appBloc.uiSettingModel.appTextColor.substring(1, 7).toUpperCase()}"),
-                ))),
+          return BottomsheetOptionTile(iconData: IconDataSolid(int.parse('0xf234')), text: appBloc.localstr.mylearningActionsheetJoinoption,
             onTap: () {
               Navigator.pop(context);
               String joinUrl = table2.joinurl;
@@ -4261,18 +4268,11 @@ class MyLearnPlusHome extends State<MyLearnPlusHomeScreen> with SingleTickerProv
         return Container();
       } else {
         if(table2.iswishlistcontent != 1){
-        return ListTile(
-          leading: Icon(
-            IconDataSolid(int.parse('0xf06e')),
-            color: InsColor(appBloc).appIconColor,
-          ),
-          title: Text((appBloc.localstr.mylearningActionsheetViewoption != null) ? appBloc.localstr.mylearningActionsheetViewoption: '',
-              style: TextStyle(
-                  color: Color(
-                int.parse(
-                    "0xFF${appBloc.uiSettingModel.appTextColor.substring(1, 7).toUpperCase()}"),
-              ))),
-          onTap: () {
+        return BottomsheetOptionTile(
+
+          text: (appBloc.localstr.mylearningActionsheetViewoption != null) ? appBloc.localstr.mylearningActionsheetViewoption: '',
+          iconData:IconDataSolid(int.parse('0xf06e')),
+          onTap: (){
             Navigator.of(context).pop();
 
             if ((table2.viewprerequisitecontentstatus != null) && isValidString(table2.viewprerequisitecontentstatus)) {
@@ -4328,12 +4328,12 @@ class MyLearnPlusHome extends State<MyLearnPlusHomeScreen> with SingleTickerProv
                             borderRadius: BorderRadius.circular(5)),
                         actions: <Widget>[
                           FlatButton(
-                            child: Text(
-                                appBloc.localstr.eventsAlertbuttonOkbutton),
                             textColor: Colors.blue,
                             onPressed: () async {
                               Navigator.of(context).pop();
                             },
+                            child: Text(
+                                appBloc.localstr.eventsAlertbuttonOkbutton),
                           ),
                         ],
                       ));
@@ -4342,7 +4342,98 @@ class MyLearnPlusHome extends State<MyLearnPlusHomeScreen> with SingleTickerProv
               launchCourse(table2, context, false,tabInfo:tabInfo);
             }
           },
-        );}else return Container();
+        );
+
+//           new ListTile(
+//           leading: Icon(
+//             IconDataSolid(int.parse('0xf06e')),
+//             color: InsColor(appBloc).appIconColor,
+//           ),
+//           title: new Text((appBloc.localstr.mylearningActionsheetViewoption != null) ? appBloc.localstr.mylearningActionsheetViewoption: '',
+//               style: TextStyle(
+//                   color: Color(
+//                 int.parse(
+//                     "0xFF${appBloc.uiSettingModel.appTextColor.substring(1, 7).toUpperCase()}"),
+//               ))),
+//           onTap: () {
+//             Navigator.of(context).pop();
+//
+//             if ((table2.viewprerequisitecontentstatus != null) && isValidString(table2.viewprerequisitecontentstatus)) {
+// //              print('ifdataaaaa');
+//               String alertMessage =
+//                   appBloc.localstr.prerequistesalerttitle6Alerttitle6;
+//               alertMessage = alertMessage +
+//                   "  \"" +
+//                   appBloc.localstr.prerequisLabelContenttypelabel +
+//                   "\" " +
+//                   appBloc.localstr.prerequistesalerttitle5Alerttitle7;
+//
+//               showDialog(
+//                   context: context,
+//                   builder: (BuildContext context) => new AlertDialog(
+//                         title: Text(
+//                           appBloc.localstr.detailsAlerttitleStringalert,
+//                           style: TextStyle(
+//                               color: Color(
+//                                 int.parse(
+//                                     "0xFF${appBloc.uiSettingModel.appTextColor.substring(1, 7).toUpperCase()}"),
+//                               ),
+//                               fontWeight: FontWeight.bold),
+//                         ),
+//                         content: Column(
+//                           children: [
+//                             Text(alertMessage,
+//                                 style: TextStyle(
+//                                     color: Color(
+//                                   int.parse(
+//                                       "0xFF${appBloc.uiSettingModel.appTextColor.substring(1, 7).toUpperCase()}"),
+//                                 ))),
+//                             Text(
+//                                 table2.viewprerequisitecontentstatus
+//                                     .toString()
+//                                     .split('#%')[1]
+//                                     .split('\$;')[0],
+//                                 style: TextStyle(
+//                                     color: Color(
+//                                   int.parse(
+//                                       "0xFF${appBloc.uiSettingModel.appTextColor.substring(1, 7).toUpperCase()}"),
+//                                 ))),
+//                             Text(
+//                                 table2.viewprerequisitecontentstatus
+//                                     .toString()
+//                                     .split('#%')[1]
+//                                     .split('\$;')[1],
+//                                 style: TextStyle(
+//                                     color: Color(
+//                                   int.parse(
+//                                       "0xFF${appBloc.uiSettingModel.appTextColor.substring(1, 7).toUpperCase()}"),
+//                                 )))
+//                           ],
+//                         ),
+//                         backgroundColor: InsColor(appBloc).appBGColor,
+//                         shape: RoundedRectangleBorder(
+//                             borderRadius: new BorderRadius.circular(5)),
+//                         actions: <Widget>[
+//                           new FlatButton(
+//                             child: Text(
+//                                 appBloc.localstr.eventsAlertbuttonOkbutton),
+//                             textColor: Colors.blue,
+//                             onPressed: () async {
+//                               Navigator.of(context).pop();
+//                             },
+//                           ),
+//                         ],
+//                       ));
+//             } else {
+// //
+//               launchCourse(table2, context, false,tabInfo:tabInfo);
+//             }
+//           },
+//         );
+
+        }
+
+        else return Container();
       }
     } else if (table2.objecttypeid == 688 || table2.objecttypeid == 70) {
       return Container();
@@ -4416,9 +4507,9 @@ class MyLearnPlusHome extends State<MyLearnPlusHomeScreen> with SingleTickerProv
                       ),
                       backgroundColor: InsColor(appBloc).appBGColor,
                       shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(5)),
+                          borderRadius: new BorderRadius.circular(5)),
                       actions: <Widget>[
-                        FlatButton(
+                        new FlatButton(
                           child:
                               Text(appBloc.localstr.eventsAlertbuttonOkbutton),
                           textColor: Colors.blue,
@@ -4439,23 +4530,33 @@ class MyLearnPlusHome extends State<MyLearnPlusHomeScreen> with SingleTickerProv
   }
 
   Widget displayAddToMyLearning(DummyMyCatelogResponseTable2 table2,){
-   return  ListTile(
-    title: Text(
-        appBloc.localstr
-            .catalogActionsheetAddtomylearningoption,
-        style: TextStyle(
-            color: InsColor(appBloc).appTextColor)),
-    leading: Icon(
-      Icons.add,
-      color: InsColor(appBloc).appIconColor,
-    ),
-    onTap: () {
-      catalogBloc.add(AddToMyLearningEvent(
-          contentId: table2.contentid,
-          table2: table2));
-      Navigator.of(context).pop();
-    },
-  );
+   return BottomsheetOptionTile(
+     text:  appBloc.localstr.catalogActionsheetAddtomylearningoption,
+     iconData: Icons.add,
+     onTap: () {
+       catalogBloc.add(AddToMyLearningEvent(
+           contentId: table2.contentid,
+           table2: table2));
+       Navigator.of(context).pop();
+     },
+   );
+  //    ListTile(
+  //   title: Text(
+  //       appBloc.localstr
+  //           .catalogActionsheetAddtomylearningoption,
+  //       style: TextStyle(
+  //           color: InsColor(appBloc).appTextColor)),
+  //   leading: Icon(
+  //     Icons.add,
+  //     color: InsColor(appBloc).appIconColor,
+  //   ),
+  //   onTap: () {
+  //     catalogBloc.add(AddToMyLearningEvent(
+  //         contentId: table2.contentid,
+  //         table2: table2));
+  //     Navigator.of(context).pop();
+  //   },
+  // );
   }
 
   Widget displayReport(DummyMyCatelogResponseTable2 table2) {
@@ -4478,25 +4579,37 @@ class MyLearnPlusHome extends State<MyLearnPlusHomeScreen> with SingleTickerProv
           return Container();
         }
 
-        return ListTile(
-            leading: SvgPicture.asset(
-              'assets/Report.svg',
-              width: 25.h,
-              height: 25.h,
-              color: InsColor(appBloc).appIconColor,
-            ),
-            title: Text(appBloc.localstr.mylearningActionsheetReportoption,
-                style: TextStyle(
-                    color: Color(
-                  int.parse(
-                      "0xFF${appBloc.uiSettingModel.appTextColor.substring(1, 7).toUpperCase()}"),
-                ))),
-            onTap: () {
-              Navigator.pop(context);
-              Navigator.of(context).push(MaterialPageRoute(
-                  builder: (context) =>
-                      ProgressReport(table2, detailsBloc, "", "-1")));
-            });
+        return BottomsheetOptionTile(
+          text: appBloc.localstr.mylearningActionsheetReportoption,
+          svgImageUrl:"assets/Report.svg",
+          iconColor:InsColor(appBloc).appIconColor,
+          onTap: () {
+            Navigator.pop(context);
+            Navigator.of(context).push(MaterialPageRoute(
+                builder: (context) =>
+                    ProgressReport(table2, detailsBloc, "", "-1")));
+          }
+        );
+
+          // ListTile(
+          //   leading: SvgPicture.asset(
+          //     'assets/Report.svg',
+          //     width: 25.h,
+          //     height: 25.h,
+          //     color: InsColor(appBloc).appIconColor,
+          //   ),
+          //   title: new Text(appBloc.localstr.mylearningActionsheetReportoption,
+          //       style: TextStyle(
+          //           color: Color(
+          //         int.parse(
+          //             "0xFF${appBloc.uiSettingModel.appTextColor.substring(1, 7).toUpperCase()}"),
+          //       ))),
+          //   onTap: () {
+          //     Navigator.pop(context);
+          //     Navigator.of(context).push(MaterialPageRoute(
+          //         builder: (context) =>
+          //             ProgressReport(table2, detailsBloc, "", "-1")));
+          //   });
       }
     }
 
@@ -4510,47 +4623,35 @@ class MyLearnPlusHome extends State<MyLearnPlusHomeScreen> with SingleTickerProv
 
       if ((table2.eventenddatetime != null) && isValidString(table2.eventenddatetime)) if (!returnEventCompleted(
           table2.eventenddatetime)) {
-        return ListTile(
-          leading: Icon(
-            IconDataSolid(int.parse('0xf271')),
-            color: InsColor(appBloc).appIconColor,
-          ),
-          title: Text(
-              appBloc.localstr.mylearningActionsheetAddtocalendaroption,
-              style: TextStyle(
-                  color: Color(
-                int.parse(
-                    "0xFF${appBloc.uiSettingModel.appTextColor.substring(1, 7).toUpperCase()}"),
-              ))),
-          onTap: () {
-            DateTime startDate = DateFormat("yyyy-MM-ddTHH:mm:ss")
-                .parse(table2.eventstartdatetime);
-            DateTime endDate = DateFormat("yyyy-MM-ddTHH:mm:ss")
-                .parse(table2.eventenddatetime);
+        return BottomsheetOptionTile(iconData: IconDataSolid(int.parse('0xf271')), text: appBloc.localstr.mylearningActionsheetAddtocalendaroption, onTap: (){
+          DateTime startDate = new DateFormat("yyyy-MM-ddTHH:mm:ss")
+              .parse(table2.eventstartdatetime);
+          DateTime endDate = new DateFormat("yyyy-MM-ddTHH:mm:ss")
+              .parse(table2.eventenddatetime);
 
 //            print(
 //                'event start-end time ${table2.eventstartdatetime}  ${table2.eventenddatetime}');
-            Event event = Event(
-              title: table2.name,
-              description: table2.shortdescription,
-              location: table2.locationname,
-              startDate: startDate,
-              endDate: endDate,
-              allDay: false,
-            );
+          Event event = Event(
+            title: table2.name,
+            description: table2.shortdescription,
+            location: table2.locationname,
+            startDate: startDate,
+            endDate: endDate,
+            allDay: false,
+          );
 
-            Add2Calendar.addEvent2Cal(event).then((success) {
-              flutterToast.showToast(
-                child: CommonToast(
-                    displaymsg: success
-                        ? 'Event added successfully'
-                        : 'Error occured while adding event'),
-                gravity: ToastGravity.BOTTOM,
-                toastDuration: const Duration(seconds: 2),
-              );
-            });
-          },
-        );
+          Add2Calendar.addEvent2Cal(event).then((success) {
+            flutterToast.showToast(
+              child: CommonToast(
+                  displaymsg: success
+                      ? 'Event added successfully'
+                      : 'Error occured while adding event'),
+              gravity: ToastGravity.BOTTOM,
+              toastDuration: Duration(seconds: 2),
+            );
+          });
+
+        },);
       }
 
       if (table2.eventscheduletype == 1 &&
@@ -4575,24 +4676,14 @@ class MyLearnPlusHome extends State<MyLearnPlusHomeScreen> with SingleTickerProv
       if ((table2.actualstatus != null) && isValidString(table2.actualstatus) &&
           ((table2.actualstatus != 'completed') &&
             (table2.actualstatus != 'not attempted'))) {
-        return ListTile(
-            leading: SvgPicture.asset(
-              'assets/SetComplete.svg',
-              width: 25.h,
-              height: 25.h,
-              color: InsColor(appBloc).appIconColor,
-            ),
-            title: Text(
-                appBloc.localstr.mylearningActionsheetSetcompleteoption,
-                style: TextStyle(
-                    color: Color(
-                  int.parse(
-                      "0xFF${appBloc.uiSettingModel.appTextColor.substring(1, 7).toUpperCase()}"),
-                ))),
+        return BottomsheetOptionTile(
+            text: appBloc.localstr.mylearningActionsheetSetcompleteoption,
+            svgImageUrl:"assets/SetComplete.svg",iconColor:InsColor(appBloc).appIconColor,
             onTap: () {
               Navigator.pop(context);
               detailsBloc.add(SetCompleteEvent(table2: table2));
-            });
+            }
+        );
       } else {
         return Container();
       }
@@ -4604,18 +4695,7 @@ class MyLearnPlusHome extends State<MyLearnPlusHomeScreen> with SingleTickerProv
   Widget displayRelatedContent(DummyMyCatelogResponseTable2 table2) {
     if (table2.objecttypeid == 70) {
       if (table2.relatedconentcount > 0) {
-        return ListTile(
-            leading: Icon(
-              Icons.content_copy,
-              color: InsColor(appBloc).appIconColor,
-            ),
-            title: Text(
-                appBloc.localstr.mylearningActionsheetRelatedcontentoption,
-                style: TextStyle(
-                    color: Color(
-                  int.parse(
-                      "0xFF${appBloc.uiSettingModel.appTextColor.substring(1, 7).toUpperCase()}"),
-                ))),
+        return  BottomsheetOptionTile(iconData:Icons.content_copy_outlined,text:  appBloc.localstr.mylearningActionsheetRelatedcontentoption,
             onTap: () {
               Navigator.of(context).pop();
 
@@ -4645,21 +4725,21 @@ class MyLearnPlusHome extends State<MyLearnPlusHomeScreen> with SingleTickerProv
                               int.parse(
                                   "0xFF${appBloc.uiSettingModel.appTextColor.substring(1, 7).toUpperCase()}"),
                             )),
-                          ),
-                          backgroundColor: InsColor(appBloc).appBGColor,
-                          shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(5)),
-                          actions: <Widget>[
-                            FlatButton(
-                              child: Text(
-                                  appBloc.localstr.eventsAlertbuttonOkbutton),
-                              textColor: Colors.blue,
-                              onPressed: () async {
-                                Navigator.of(context).pop();
-                              },
-                            ),
-                          ],
-                        ));
+                      ),
+                      backgroundColor: InsColor(appBloc).appBGColor,
+                      shape: RoundedRectangleBorder(
+                          borderRadius: new BorderRadius.circular(5)),
+                      actions: <Widget>[
+                        new FlatButton(
+                          child: Text(
+                              appBloc.localstr.eventsAlertbuttonOkbutton),
+                          textColor: Colors.blue,
+                          onPressed: () async {
+                            Navigator.of(context).pop();
+                          },
+                        ),
+                      ],
+                    ));
               } else {
                 if (table2.objecttypeid == 70) {
                   Navigator.of(context).push(MaterialPageRoute(
@@ -4677,7 +4757,8 @@ class MyLearnPlusHome extends State<MyLearnPlusHomeScreen> with SingleTickerProv
                           )));
                 }
               }
-            });
+            }
+        );
       }
     }
 
@@ -4693,37 +4774,20 @@ class MyLearnPlusHome extends State<MyLearnPlusHomeScreen> with SingleTickerProv
           table2.eventstartdatetime)) {
 //
         if (table2.bit2 != null && table2.bit2) {
-          return ListTile(
-              leading: Icon(
-                IconDataSolid(int.parse('0xf410')),
-                color: InsColor(appBloc).appIconColor,
-              ),
-              title: Text(
-                  appBloc.localstr.mylearningActionsheetCancelenrollmentoption,
-                  style: TextStyle(
-                      color: Color(
-                    int.parse(
-                        "0xFF${appBloc.uiSettingModel.appTextColor.substring(1, 7).toUpperCase()}"),
-                  ))),
+          return BottomsheetOptionTile(iconData:IconDataSolid(int.parse('0xf410')),text: appBloc.localstr.mylearningActionsheetCancelenrollmentoption,
               onTap: () {
                 checkCancellation(table2, context);
-              });
+              }
+          );
         }
 // for schedule events
         if (table2.eventscheduletype == 1 &&
             appBloc.uiSettingModel.enableMultipleInstancesForEvent == 'true') {
-          return ListTile(
-              leading: const Icon(Icons.cancel),
-              title: Text(
-                  appBloc.localstr.mylearningActionsheetCancelenrollmentoption,
-                  style: TextStyle(
-                      color: Color(
-                    int.parse(
-                        "0xFF${appBloc.uiSettingModel.appTextColor.substring(1, 7).toUpperCase()}"),
-                  ))),
+          return BottomsheetOptionTile(iconData:Icons.cancel,text: appBloc.localstr.mylearningActionsheetCancelenrollmentoption,
               onTap: () {
                 checkCancellation(table2, context);
-              });
+              }
+          );
         }
       }
     }
@@ -4767,18 +4831,7 @@ class MyLearnPlusHome extends State<MyLearnPlusHomeScreen> with SingleTickerProv
     downloadPath(table2.contentid, table2);
 
     if (table2.isdownloaded && table2.objecttypeid != 70) {
-      return ListTile(
-          leading: Icon(
-            IconDataSolid(int.parse('0xf1f8')),
-            color: InsColor(appBloc).appIconColor,
-          ),
-          title: Text(appBloc.localstr.mylearningActionsheetDeleteoption,
-              style: TextStyle(
-                  color: Color(
-                int.parse(
-                    "0xFF${appBloc.uiSettingModel.appTextColor.substring(1, 7).toUpperCase()}"),
-              ))),
-
+      return BottomsheetOptionTile(iconData:  IconDataSolid(int.parse('0xf1f8')),text: appBloc.localstr.mylearningActionsheetDeleteoption,
           /// TODO : Sagar sir - delete offline file
           onTap: () async {
             Navigator.pop(context);
@@ -4794,7 +4847,8 @@ class MyLearnPlusHome extends State<MyLearnPlusHomeScreen> with SingleTickerProv
                 table2.isDownloading = false;
               });
             }
-          });
+          }
+      );
     }
 
     return Container();
@@ -4859,19 +4913,19 @@ class MyLearnPlusHome extends State<MyLearnPlusHomeScreen> with SingleTickerProv
                   borderRadius: BorderRadius.circular(5)),
               actions: <Widget>[
                 FlatButton(
-                  child: Text(appBloc.localstr.catalogAlertbuttonCancelbutton),
                   textColor: Colors.blue,
                   onPressed: () async {
                     Navigator.of(context).pop();
                   },
+                  child: Text(appBloc.localstr.catalogAlertbuttonCancelbutton),
                 ),
                 FlatButton(
-                  child: Text(appBloc.localstr.eventsAlertbuttonOkbutton),
                   textColor: Colors.blue,
                   onPressed: () async {
                     Navigator.of(context).pop();
                     cancelEnrollment(table2, isSuccess);
                   },
+                  child: Text(appBloc.localstr.eventsAlertbuttonOkbutton),
                 ),
               ],
             ));
@@ -4983,6 +5037,8 @@ class MyLearnPlusHome extends State<MyLearnPlusHomeScreen> with SingleTickerProv
                             placeholder: (context, url) => ClipOval(
                               child: CircleAvatar(
                                 radius: 25,
+                                backgroundColor: Color(int.parse(
+                                    "0xFF${appBloc.uiSettingModel.appHeaderColor.substring(1, 7).toUpperCase()}")),
                                 child: Text(
                                   achievementResponse.userOverAllData?.userDisplayName ==
                                           null
@@ -4995,13 +5051,13 @@ class MyLearnPlusHome extends State<MyLearnPlusHomeScreen> with SingleTickerProv
                                       color: Color(int.parse(
                                           "0xFF${appBloc.uiSettingModel.appHeaderTextColor.substring(1, 7).toUpperCase()}"))),
                                 ),
-                                backgroundColor: Color(int.parse(
-                                    "0xFF${appBloc.uiSettingModel.appHeaderColor.substring(1, 7).toUpperCase()}")),
                               ),
                             ),
                             errorWidget: (context, url, error) => ClipOval(
                               child: CircleAvatar(
                                 radius: 25,
+                                backgroundColor: Color(int.parse(
+                                    "0xFF${appBloc.uiSettingModel.appHeaderColor.substring(1, 7).toUpperCase()}")),
                                 child: Text(
                                   achievementResponse.userOverAllData
                                               ?.userDisplayName ==
@@ -5015,8 +5071,6 @@ class MyLearnPlusHome extends State<MyLearnPlusHomeScreen> with SingleTickerProv
                                       color: Color(int.parse(
                                           "0xFF${appBloc.uiSettingModel.appHeaderTextColor.substring(1, 7).toUpperCase()}"))),
                                 ),
-                                backgroundColor: Color(int.parse(
-                                    "0xFF${appBloc.uiSettingModel.appHeaderColor.substring(1, 7).toUpperCase()}")),
                               ),
                             ),
                           ),

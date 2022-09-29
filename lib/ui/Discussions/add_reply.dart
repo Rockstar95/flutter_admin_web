@@ -14,6 +14,8 @@ import 'package:flutter_admin_web/framework/repository/Discussion/discussionTopi
 import 'package:flutter_admin_web/ui/common/app_colors.dart';
 import 'package:flutter_admin_web/ui/common/common_toast.dart';
 
+import '../../configs/constants.dart';
+
 class AddReply extends StatefulWidget {
   final ForumList forumList;
   final TopicList topicList;
@@ -31,7 +33,7 @@ class AddReply extends StatefulWidget {
 }
 
 class _AddReplyState extends State<AddReply> with SingleTickerProviderStateMixin {
-  GlobalKey<ScaffoldState> _scaffoldkey = new GlobalKey<ScaffoldState>();
+  GlobalKey<ScaffoldState> _scaffoldkey = GlobalKey<ScaffoldState>();
 
   AppBloc get appBloc => BlocProvider.of<AppBloc>(context);
   final _formKey = GlobalKey<FormState>();
@@ -100,7 +102,7 @@ class _AddReplyState extends State<AddReply> with SingleTickerProviderStateMixin
             "0xFF${appBloc.uiSettingModel.appBGColor.substring(1, 7).toUpperCase()}")),
         child: Stack(
           children: <Widget>[
-            new Column(
+            Column(
               children: [
                 Expanded(
                   child: SingleChildScrollView(
@@ -119,9 +121,9 @@ class _AddReplyState extends State<AddReply> with SingleTickerProviderStateMixin
   }
 
   Widget mainWidget() {
-    return new Column(
+    return Column(
       children: [
-        new Padding(
+        Padding(
             padding: const EdgeInsets.only(top: 0.0, left: 10.0, right: 10.0),
             child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -153,7 +155,7 @@ class _AddReplyState extends State<AddReply> with SingleTickerProviderStateMixin
                     ),*/
                   ),
                   Container(
-                    child: new Form(
+                    child: Form(
                       key: _formKey,
                       autovalidateMode: _validate
                           ? AutovalidateMode.always
@@ -238,16 +240,13 @@ class _AddReplyState extends State<AddReply> with SingleTickerProviderStateMixin
         if (state.status == Status.LOADING) {
           return Align(
             child: AbsorbPointer(
-              child: SpinKitCircle(
-                color: Colors.grey,
-                size: 70.h,
-              ),
+              child: AppConstants().getLoaderWidget(iconSize: 70)
             ),
           );
         } else {
           return Align(
             alignment: Alignment.bottomCenter,
-            child: new SizedBox(
+            child: SizedBox(
               width: double.infinity,
               child: RaisedButton(
                 padding: EdgeInsets.all(15.0),

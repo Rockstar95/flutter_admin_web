@@ -135,10 +135,7 @@ class _ViewCertificateState extends State<ViewCertificate> {
                             "0xFF${appBloc.uiSettingModel.appBGColor.substring(1, 7).toUpperCase()}")),
                         child: Center(
                             child: AbsorbPointer(
-                          child: SpinKitCircle(
-                            color: Colors.grey,
-                            size: 70.h,
-                          ),
+                          child: AppConstants().getLoaderWidget(iconSize: 70)
                         )),
                       )
                     : Container()

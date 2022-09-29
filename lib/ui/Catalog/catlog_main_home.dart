@@ -16,6 +16,8 @@ import 'package:flutter_admin_web/ui/Catalog/calalog_sub_category_screen.dart';
 import 'package:flutter_admin_web/ui/Catalog/catalog_sub_screen.dart';
 import 'package:flutter_admin_web/ui/auth/login_common_page.dart';
 
+import '../../configs/constants.dart';
+
 class CatalogMainScreen extends StatefulWidget {
   @override
   _CatalogMainScreenState createState() => _CatalogMainScreenState();
@@ -74,10 +76,7 @@ class _CatalogMainScreenState extends State<CatalogMainScreen> {
               if (state.status == Status.LOADING) {
                 return Center(
                   child: AbsorbPointer(
-                    child: SpinKitCircle(
-                      color: Colors.grey,
-                      size: 70.h,
-                    ),
+                    child: AppConstants().getLoaderWidget(iconSize: 70)
                   ),
                 );
               }
@@ -268,10 +267,7 @@ class _CatalogMainScreenState extends State<CatalogMainScreen> {
               else {
                 return Center(
                   child: AbsorbPointer(
-                    child: SpinKitCircle(
-                      color: Colors.grey,
-                      size: 70.h,
-                    ),
+                    child: AppConstants().getLoaderWidget(iconSize: 70)
                   ),
                 );
               }

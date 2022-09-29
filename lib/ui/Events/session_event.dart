@@ -17,6 +17,8 @@ import 'package:flutter_admin_web/framework/repository/event_module/model/sessio
 import 'package:flutter_admin_web/framework/repository/event_module/provider/event_repository_builder.dart';
 import 'package:flutter_admin_web/ui/common/common_toast.dart';
 
+import '../../configs/constants.dart';
+
 class SessionEvent extends StatefulWidget {
   final EvntModuleBloc? evntModuleBloc;
   final String contentId;
@@ -92,10 +94,7 @@ class _SessionEventState extends State<SessionEvent> {
                     "0xFF${appBloc.uiSettingModel.appBGColor.substring(1, 7).toUpperCase()}")),
                 child: Center(
                   child: AbsorbPointer(
-                    child: SpinKitCircle(
-                      color: Colors.grey,
-                      size: 70.h,
-                    ),
+                    child: AppConstants().getLoaderWidget(iconSize: 70)
                   ),
                 ),
               )

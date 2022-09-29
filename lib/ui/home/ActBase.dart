@@ -69,6 +69,7 @@ import '../../backend/classroom_events/classroom_events_controller.dart';
 import '../../configs/app_menu_ids.dart';
 import '../../configs/app_strings.dart';
 import '../../framework/helpers/parsing_helper.dart';
+import '../../framework/helpers/providermodel.dart';
 import '../../providers/my_learning_download_provider.dart';
 import '../MyLearning/my_downloads_screen.dart';
 import '../classroom_events/event_main_page2.dart';
@@ -1960,102 +1961,102 @@ class _ActBaseState extends State<ActBase> {
                   InkWell(
                     onTap: (){
                       Navigator.of(context).push(MaterialPageRoute(
-                          builder: (context) => WishList(
-                            categaoryID: 0,
-                            categaoryName: "",
-                            detailsBloc: detailsBloc,
-                            filterMenus: filterMenus,
+                          builder: (context) => ChangeNotifierProvider(
+                            create: (context) => ProviderModel(),
+                            child: WishList(
+                              categaoryID: 0,
+                              categaoryName: "",
+                              detailsBloc: detailsBloc,
+                              filterMenus: filterMenus,
+                            ),
                           )));
                     },
-                    child: Icon(Icons.favorite,size: 25.h,color: InsColor(appBloc).appIconColor,),
+                    child: Center(
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 11.0),
+                          child: Icon(Icons.favorite,size: 25.h,color: lableColor,),
+                        )),
 
                   ),
-                  // new IconButton(
-                  //     icon: Icon(Icons.favorite),
-                  //     color: InsColor(appBloc).appIconColor,
-                  //     onPressed: () {
-                  //       Navigator.of(context).push(MaterialPageRoute(
-                  //           builder: (context) => ChangeNotifierProvider(
-                  //                 create: (context) => ProviderModel(),
-                  //                 child: WishList(
-                  //                   categaoryID: 0,
-                  //                   categaoryName: "",
-                  //                   detailsBloc: detailsBloc,
-                  //                   filterMenus: filterMenus,
-                  //                 ),
-                  //               )));
-                  //     }),
-                  Positioned(
-                    right: 6,
-                    top: 6,
-                    child: Container(
-                      padding: const EdgeInsets.all(2),
-                      decoration: BoxDecoration(
-                        // color: Color(int.parse(
-                        //     "0xFF${appBloc.uiSettingModel.appButtonBgColor.substring(1, 7).toUpperCase()}")),
-                        // borderRadius: BorderRadius.circular(6),
-                        shape: BoxShape.circle,
-                        border: Border.all(color: backgroundColor),
-                      ),
-                      constraints: const BoxConstraints(
-                        minWidth: 14,
-                        minHeight: 14,
-                      ),
-                      child: Text(
-                        appBloc.wishlistcount,
-                        style: const TextStyle(
-                          color: Colors.white,
-                          fontSize: 8,
+                  Visibility(
+                    visible: (int.tryParse(appBloc.wishlistcount) ?? 0) > 0,
+                    child: new Positioned(
+                      right: 6,
+                      top: 14,
+                      child: new Container(
+                        padding: EdgeInsets.all(2),
+                        decoration: new BoxDecoration(
+                          color: lableColor,
+                          // color: Color(int.parse(
+                          //     "0xFF${appBloc.uiSettingModel.appButtonBgColor.substring(1, 7).toUpperCase()}")),
+                          // borderRadius: BorderRadius.circular(6),
+                          shape: BoxShape.circle,
+                          border: Border.all(color: backgroundColor),
                         ),
-                        textAlign: TextAlign.center,
+                        constraints: BoxConstraints(
+                          minWidth: 14,
+                          minHeight: 14,
+                        ),
+                        child: Text(
+                          appBloc.wishlistcount,
+                          style: TextStyle(
+                            color: backgroundColor,
+                            fontSize: 8,
+                          ),
+                          textAlign: TextAlign.center,
+                        ),
                       ),
                     ),
                   )
                 ],
               )
-            : Container(),
-        (selectedmenu == "8")
+       : Container(),
+       (selectedmenu == "8")
             ? Stack(
-              children: [
-                InkWell(
-                  onTap: (){
-                    Navigator.of(context).push(MaterialPageRoute(
-                        builder: (context) => EventWishListScreen()));
-                  },
-                  child: Center(child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 11.0),
-                    child: Icon(Icons.favorite, color: lableColor,size: 25.h),
-                  )),
-                ),
-                Visibility(
-                  visible: (int.tryParse(appBloc.wishlistcount) ?? 0) > 0,
-                  child: Positioned(
-                    right: 6,
-                    top: 14,
-                    child: Container(
-                      padding: const EdgeInsets.all(1),
-                      decoration: BoxDecoration(
-                        color: lableColor,
-                        shape: BoxShape.circle,
-                        border: Border.all(color: backgroundColor),
-                      ),
-                      constraints: const BoxConstraints(
-                        minWidth: 14,
-                        minHeight: 14,
-                      ),
-                      child: Text(
-                        appBloc.wishlistcount,
-                        style: TextStyle(
-                          color: AppColors.getAppButtonBGColor(),
-                          fontSize: 8,
+                children: [
+                  InkWell(
+                    onTap: (){
+                      Navigator.of(context).push(MaterialPageRoute(
+                          builder: (context) => EventWishListScreen()));
+                    },
+                    child: Center(child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 11.0),
+                      child: Icon(Icons.favorite, color: lableColor,size: 25.h),
+                    )),
+                  ),
+                  Visibility(
+                    visible: (int.tryParse(appBloc.wishlistcount) ?? 0) > 0,
+                    // visible: true,
+                    child: Positioned(
+                      right: 6,
+                      top: 14,
+                      child: new Container(
+                        padding: EdgeInsets.all(1),
+                        decoration: new BoxDecoration(
+                          color: lableColor,
+                          shape: BoxShape.circle,
+                          border: Border.all(color: backgroundColor),
+                          // color: Color(int.parse(
+                          //     "0xFF${appBloc.uiSettingModel.appButtonBgColor.substring(1, 7).toUpperCase()}")),
+                          // borderRadius: BorderRadius.circular(6),
                         ),
-                        textAlign: TextAlign.center,
+                        constraints: BoxConstraints(
+                          minWidth: 14,
+                          minHeight: 14,
+                        ),
+                        child: Text(
+                          appBloc.wishlistcount,
+                          style: TextStyle(
+                            color: backgroundColor,
+                            fontSize: 8,
+                          ),
+                          textAlign: TextAlign.center,
+                        ),
                       ),
                     ),
                   ),
-                ),
-              ],
-            )
+                ],
+              )
             : Container(),
         (selectedmenu == "2" && landingpageType == "0") || selectedmenu == "8"
             ? SizedBox(
@@ -2132,55 +2133,7 @@ class _ActBaseState extends State<ActBase> {
   }
 
   Widget getDrawer(bool useMobileLayout, List<Widget> drawerOptions) {
-    return Stack(
-      children: [
-        Builder(
-          builder: (context) => Container(
-            width: MediaQuery.of(context).size.width * (useMobileLayout ? 0.7 : 0.4),
-            color: Colors.white,
-            child: SafeArea(
-              child: Stack(children: <Widget>[
-              isLoading ? const SpinKitFadingCircle(color: Colors.green,) : Column(
-                  children: <Widget>[
-                    DrawerHeaderWidget(
-                      signOutFunc: signOutFunc,
-                    ),
-                    SizedBox(
-                      height: ScreenUtil().setWidth(10),
-                    ),
-                    Expanded(
-                      child: BlocConsumer<ProfileBloc, ProfileState>(
-                          bloc: profileBloc,
-                          listener: (context, state) {},
-                          builder: (context, state) {
-                            if (state.status == Status.COMPLETED) {
-                              if (isMenuExists()) {
-                                _addMessageMenu(drawerOptions, context);
-                                appBloc.uiSettingModel.setIsMsgMenuExist(true);
-                              }
-                            }
-                            return Container(
-                              color: Color(int.parse(
-                                  "0xFF${appBloc.uiSettingModel.menuBGColor.substring(1, 7).toUpperCase()}")),
-                              child: ListView.builder(
-                                itemCount: drawerOptions.length,
-                                itemBuilder: (context, pos) {
-                                  return drawerOptions[pos];
-                                },
-                              ),
-                            );
-                          }),
-                    ),
-                  ],
-                ),
-                // ? SpinKitFadingCircle(color: Colors.blue,):Container()
-              ]),
-            ),
-          ),
-        ),
-      ],
-    );
-    /*return Builder(
+    return Builder(
       builder: (context) => Container(
         width: MediaQuery.of(context).size.width * (useMobileLayout ? 0.7 : 0.4),
         color: Colors.white,
@@ -2223,7 +2176,7 @@ class _ActBaseState extends State<ActBase> {
           ),
         ),
       ),
-    );*/
+    );
   }
 
   Widget? getBottomNavigationBar(List<BottomNavigationBarItem> bottomOptions) {

@@ -31,6 +31,9 @@ import 'package:flutter_admin_web/ui/common/app_colors.dart';
 import 'package:flutter_admin_web/ui/common/ins_search_textfield.dart';
 import 'package:flutter_admin_web/utils/my_print.dart';
 
+import '../../configs/constants.dart';
+import '../common/bottomsheet_drager.dart';
+import '../common/bottomsheet_option_tile.dart';
 import '../global_search_screen.dart';
 
 class UserQuestionsList extends StatefulWidget {
@@ -43,7 +46,7 @@ class UserQuestionsList extends StatefulWidget {
 }
 
 class _UserQuestionsListState extends State<UserQuestionsList> with SingleTickerProviderStateMixin {
-  GlobalKey<ScaffoldState> _scaffoldkey = new GlobalKey<ScaffoldState>();
+  GlobalKey<ScaffoldState> _scaffoldkey = GlobalKey<ScaffoldState>();
   List<Tab> tabList = [];
   Map<String, String> filterMenus = {};
   late TabController _tabController;
@@ -55,7 +58,7 @@ class _UserQuestionsListState extends State<UserQuestionsList> with SingleTicker
   int pageQuestionNumber = 1;
   int pageNumber = 1;
   int totalPage = 10;
-  ScrollController _scArchive = new ScrollController();
+  ScrollController _scArchive = ScrollController();
   var titleSelectCategory = 'Select Skill';
   List<SkillCateModel> skillCategoriesListLocal = [];
   String filterValue = 'CreatedDate Desc';
@@ -72,13 +75,13 @@ class _UserQuestionsListState extends State<UserQuestionsList> with SingleTicker
   void initState() {
     super.initState();
 
-    tabList.add(new Tab(
+    tabList.add(const Tab(
       text: 'All Questions',
     ));
-    tabList.add(new Tab(
+    tabList.add(const Tab(
       text: "My Questions",
     ));
-    _tabController = new TabController(length: tabList.length, vsync: this);
+    _tabController = TabController(length: tabList.length, vsync: this);
 
     profileBloc = ProfileBloc(profileRepository: ProfileRepositoryBuilder.repository());
     profileBloc.add(GetProfileInfo());
@@ -125,7 +128,7 @@ class _UserQuestionsListState extends State<UserQuestionsList> with SingleTicker
     final result = await Navigator.push(
       context,
       // Create the SelectionScreen in the next step.
-      MaterialPageRoute(builder: (context) => GlobalSearchScreen(menuId: 3231)),
+      MaterialPageRoute(builder: (context) => const GlobalSearchScreen(menuId: 3231)),
     );
 
     print(result);
@@ -146,12 +149,12 @@ class _UserQuestionsListState extends State<UserQuestionsList> with SingleTicker
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
-          new Container(
-            decoration: new BoxDecoration(
+          Container(
+            decoration: BoxDecoration(
               color: Color(int.parse(
                   "0xFF${appBloc.uiSettingModel.appHeaderColor.substring(1, 7).toUpperCase()}")),
             ),
-            child: new TabBar(
+            child: TabBar(
                 controller: _tabController,
                 indicatorColor: Color(int.parse("0xFF1D293F")),
                 indicatorSize: TabBarIndicatorSize.tab,
@@ -199,10 +202,7 @@ class _UserQuestionsListState extends State<UserQuestionsList> with SingleTicker
         if (state.status == Status.LOADING && askTheExpertBloc.isQuestionFirstLoading == true) {
           return Center(
             child: AbsorbPointer(
-              child: SpinKitCircle(
-                color: Colors.grey,
-                size: 70.0,
-              ),
+              child: AppConstants().getLoaderWidget(iconSize: 70)
             ),
           );
         }
@@ -226,7 +226,7 @@ class _UserQuestionsListState extends State<UserQuestionsList> with SingleTicker
                   color: Color(int.parse(
                       "0xFF${appBloc.uiSettingModel.appButtonBgColor.substring(1, 7).toUpperCase()}")),
                   child: ListView.separated(
-                    physics: AlwaysScrollableScrollPhysics(),
+                    physics: const AlwaysScrollableScrollPhysics(),
                     keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
                     separatorBuilder: (context, index) {
                       return Divider(
@@ -289,7 +289,7 @@ class _UserQuestionsListState extends State<UserQuestionsList> with SingleTicker
           refresh(askTheExpertBloc.searchQuestionString, -1, appBloc.filterValue);
         },
         color: AppColors.getAppTextColor(),
-        icon: Icon(
+        icon: const Icon(
           Icons.close,
         ),
       );
@@ -299,7 +299,7 @@ class _UserQuestionsListState extends State<UserQuestionsList> with SingleTicker
         suffixIcon = IconButton(
           onPressed: () => moveSkillCategory(),
           color: AppColors.getFilterIconColor(),
-          icon: Icon(
+          icon: const Icon(
             Icons.tune,
           ),
         );
@@ -323,12 +323,12 @@ class _UserQuestionsListState extends State<UserQuestionsList> with SingleTicker
                   //color: Colors.red,
                   child: Row(
                     children: [
-                      suffixIcon ?? SizedBox(),
+                      suffixIcon ?? const SizedBox(),
                     ],
                   ),
                 ),
                 onSubmitAction: (value) {
-                  if (value.toString().length > 0) {
+                  if (value.toString().isNotEmpty) {
                     askTheExpertBloc.isQuestionFirstLoading = true;
                     askTheExpertBloc.isQuestionSearch = true;
                     askTheExpertBloc.searchQuestionString = value.toString();
@@ -340,7 +340,7 @@ class _UserQuestionsListState extends State<UserQuestionsList> with SingleTicker
                 },
               ),
             ),
-            SizedBox(width: 15,),
+            const SizedBox(width: 15,),
             getSortButton(),
           ],
         ),
@@ -352,20 +352,20 @@ class _UserQuestionsListState extends State<UserQuestionsList> with SingleTicker
       [int i = 0]) {
     return Padding(
       padding: EdgeInsets.only(top: ScreenUtil().setHeight(10)),
-      child: new Container(
+      child: Container(
         color: Color(int.parse(
             "0xFF${appBloc.uiSettingModel.appBGColor.substring(1, 7).toUpperCase()}")),
         padding: EdgeInsets.all(ScreenUtil().setHeight(10)),
-        child: new Column(
+        child: Column(
           children: [
-            new Row(
+            Row(
               children: [
                 (questionList.userQuestionImagePath != "" &&
-                        questionList.userQuestionImagePath.length > 0)
+                        questionList.userQuestionImagePath.isNotEmpty)
                     ? Container(
                         width: 50.0,
                         height: 50.0,
-                        decoration: new BoxDecoration(
+                        decoration: BoxDecoration(
                           color: const Color(0xff7c94b6),
                           image: DecorationImage(
                             image: questionList.userQuestionImagePath.isNotEmpty
@@ -374,50 +374,48 @@ class _UserQuestionsListState extends State<UserQuestionsList> with SingleTicker
                                         .startsWith("http")
                                     ? questionList.userQuestionImagePath
                                         .replaceAll(" ", "%20")
-                                    : '${ApiEndpoints.strSiteUrl + questionList.userQuestionImagePath..replaceAll(" ", "%20")}')
-                                : AssetImage(
+                                    : (ApiEndpoints.strSiteUrl + questionList.userQuestionImagePath..replaceAll(" ", "%20")))
+                                : const AssetImage(
                                     'assets/user.gif',
                                   ) as ImageProvider,
                             fit: BoxFit.fill,
                           ),
                           borderRadius:
-                              new BorderRadius.all(new Radius.circular(50.0)),
+                              const BorderRadius.all(Radius.circular(50.0)),
                         ),
                       )
                     : Container(),
-                new Expanded(
-                    child: new Column(
+                Expanded(
+                    child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Padding(
-                        padding: EdgeInsets.only(left: 20, right: 10.0),
-                        child: new Text(questionList.userQuestion,
+                        padding: const EdgeInsets.only(left: 20, right: 10.0),
+                        child: Text(questionList.userQuestion,
                             style: Theme.of(context).textTheme.caption?.apply(
                                 color: InsColor(appBloc).appTextColor))),
                     Padding(
-                        padding: EdgeInsets.only(
+                        padding: const EdgeInsets.only(
                           left: 20,
                         ),
-                        child: new Text(
+                        child: Text(
                             DateTime.now()
                                         .difference(askTheExpertBloc.formatter
                                             .parse(questionList.postedDate))
                                         .inDays ==
                                     0
                                 ? 'Just now'
-                                : DateTime.now()
+                                : '${DateTime.now()
                                         .difference(askTheExpertBloc.formatter
                                             .parse(questionList.postedDate))
-                                        .inDays
-                                        .toString() +
-                                    ' Days',
+                                        .inDays} Days',
                             style: Theme.of(context)
                                 .textTheme
                                 .subtitle2
                                 ?.apply(color: InsColor(appBloc).appTextColor)))
                   ],
                 )),
-                new IconButton(
+                IconButton(
                   color: Color(int.parse(
                       "0xFF${appBloc.uiSettingModel.appTextColor.substring(1, 7).toUpperCase()}")),
                   icon: Icon(Icons.more_vert,
@@ -428,13 +426,13 @@ class _UserQuestionsListState extends State<UserQuestionsList> with SingleTicker
                 ),
               ],
             ),
-            new Column(
+            Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Padding(
-                  padding: EdgeInsets.only(top: 20, left: 10.0, right: 10.0),
+                  padding: const EdgeInsets.only(top: 20, left: 10.0, right: 10.0),
                   child: Html(
-                      data: "" + questionList.userQuestionDescription + "",
+                      data: questionList.userQuestionDescription,
                       style: {
                         "body": Style(
                           color: Color(int.parse(
@@ -446,31 +444,26 @@ class _UserQuestionsListState extends State<UserQuestionsList> with SingleTicker
                       }),
                 ),
                 Padding(
-                  padding: EdgeInsets.only(top: 10.0, left: 10.0),
+                  padding: const EdgeInsets.only(top: 10.0, left: 10.0),
                   child: questionCategories(questionList.questionCategories.split(',')),
                 ),
                 Padding(
-                    padding: EdgeInsets.only(top: 10, left: 20.0),
-                    child: new Text(
-                      'Asked by: ' +
-                          questionList.userName +
-                          ' | Asked on: ' +
-                          questionList.postedDate +
-                          ' | Last Active: ' +
-                          questionList.postedDate,
+                    padding: const EdgeInsets.only(top: 10, left: 20.0),
+                    child: Text(
+                      'Asked by: ${questionList.userName} | Asked on: ${questionList.postedDate} | Last Active: ${questionList.postedDate}',
                       style: TextStyle(
                           fontSize: 11.0,
                           color: Color(int.parse(
                               "0xFF${appBloc.uiSettingModel.appTextColor.substring(1, 7).toUpperCase()}"))),
                     )),
                 Padding(
-                    padding: EdgeInsets.only(top: 10, left: 15.0),
+                    padding: const EdgeInsets.only(top: 10, left: 15.0),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.start,
                       children: [
-                        new Padding(
-                          padding: EdgeInsets.only(right: 0.0),
-                          child: new Container(
+                        Padding(
+                          padding: const EdgeInsets.only(right: 0.0),
+                          child: Container(
                             alignment: Alignment.center,
                             width: 70.0,
                             height: 25.0,
@@ -482,8 +475,8 @@ class _UserQuestionsListState extends State<UserQuestionsList> with SingleTicker
                                       .withAlpha(0),
                                 ),
                                 borderRadius:
-                                    BorderRadius.all(Radius.circular(20))),
-                            child: new Row(
+                                    const BorderRadius.all(Radius.circular(20))),
+                            child: Row(
                               mainAxisAlignment: MainAxisAlignment.start,
                               children: [
                                 IconButton(
@@ -498,7 +491,7 @@ class _UserQuestionsListState extends State<UserQuestionsList> with SingleTicker
                                       }
                                     });
                                   },
-                                  padding: new EdgeInsets.only(bottom: 1.0),
+                                  padding: const EdgeInsets.only(bottom: 1.0),
                                   color: Color(int.parse(
                                       "0xFF${appBloc.uiSettingModel.appTextColor.substring(1, 7).toUpperCase()}")),
                                   icon: Icon(
@@ -519,9 +512,9 @@ class _UserQuestionsListState extends State<UserQuestionsList> with SingleTicker
                             ),
                           ),
                         ),
-                        new Padding(
-                          padding: EdgeInsets.only(left: 5.0),
-                          child: new Container(
+                        Padding(
+                          padding: const EdgeInsets.only(left: 5.0),
+                          child: Container(
                             width: 70.0,
                             height: 25.0,
                             alignment: Alignment.center,
@@ -533,14 +526,14 @@ class _UserQuestionsListState extends State<UserQuestionsList> with SingleTicker
                                       .withAlpha(0),
                                 ),
                                 borderRadius:
-                                    BorderRadius.all(Radius.circular(20))),
-                            child: new Row(
+                                    const BorderRadius.all(Radius.circular(20))),
+                            child: Row(
                               children: [
                                 IconButton(
                                   onPressed: () {},
-                                  padding: new EdgeInsets.only(bottom: 1.0),
+                                  padding: const EdgeInsets.only(bottom: 1.0),
                                   color: Color(int.parse("0xFF1D293F")),
-                                  icon: Icon(
+                                  icon: const Icon(
                                     Icons.remove_red_eye,
                                     size: 16.0,
                                   ),
@@ -582,14 +575,11 @@ class _UserQuestionsListState extends State<UserQuestionsList> with SingleTicker
         if (state.status == Status.LOADING && askTheExpertBloc.isQuestionFirstLoading == true) {
           return Center(
             child: AbsorbPointer(
-              child: SpinKitCircle(
-                color: Colors.black54,
-                size: 70.0,
-              ),
+              child: AppConstants().getLoaderWidget(iconSize: 70)
             ),
           );
         }
-        else if (askTheExpertBloc.myQuestionList.length == 0) {
+        else if (askTheExpertBloc.myQuestionList.isEmpty) {
           return noDataFound(true);
         }
         else {
@@ -599,41 +589,40 @@ class _UserQuestionsListState extends State<UserQuestionsList> with SingleTicker
             },
             color: Color(int.parse(
                 "0xFF${appBloc.uiSettingModel.appButtonBgColor.substring(1, 7).toUpperCase()}")),
-            child: new Container(
-              padding: EdgeInsets.all(10.0),
-              child: new ListView.separated(
+            child: Container(
+              padding: const EdgeInsets.all(10.0),
+              child: ListView.separated(
                   keyboardDismissBehavior:
                       ScrollViewKeyboardDismissBehavior.onDrag,
                   shrinkWrap: true,
-                  physics: AlwaysScrollableScrollPhysics(),
+                  physics: const AlwaysScrollableScrollPhysics(),
                   itemCount: askTheExpertBloc.myQuestionList.length,
-                  separatorBuilder: (context, index) => Divider(
+                  separatorBuilder: (context, index) => const Divider(
                         color: Colors.grey,
                       ),
                   itemBuilder: (context, index) {
-                    return new GestureDetector(
+                    return GestureDetector(
                       onTap: () => {
                         // openDiscussionTopic(index),
                       },
                       child: Padding(
                         padding:
                             EdgeInsets.only(top: ScreenUtil().setHeight(10)),
-                        child: new Column(
+                        child: Column(
                           children: [
-                            new Row(
+                            Row(
                               children: [
                                 (askTheExpertBloc.myQuestionList[index]
                                                 .userQuestionImagePath !=
                                             "" &&
                                         askTheExpertBloc.myQuestionList[index]
-                                                .userQuestionImagePath.length >
-                                            0)
+                                                .userQuestionImagePath.isNotEmpty)
                                     ? Container(
                                         width: 50.0,
                                         height: 50.0,
-                                        decoration: new BoxDecoration(
+                                        decoration: BoxDecoration(
                                           color: const Color(0xff7c94b6),
-                                          image: new DecorationImage(
+                                          image: DecorationImage(
                                             image: askTheExpertBloc
                                                         .myQuestionList[index]
                                                         .userQuestionImagePath !=
@@ -646,25 +635,25 @@ class _UserQuestionsListState extends State<UserQuestionsList> with SingleTicker
                                                         .myQuestionList[index]
                                                         .userQuestionImagePath
                                                         .replaceAll(" ", "%20")
-                                                    : '${ApiEndpoints.strSiteUrl + askTheExpertBloc.myQuestionList[index].userQuestionImagePath.replaceAll(" ", "%20")}')
-                                                : AssetImage(
+                                                    : ApiEndpoints.strSiteUrl + askTheExpertBloc.myQuestionList[index].userQuestionImagePath.replaceAll(" ", "%20"))
+                                                : const AssetImage(
                                                     'assets/user.gif',
                                                   ) as ImageProvider,
                                             fit: BoxFit.fill,
                                           ),
-                                          borderRadius: new BorderRadius.all(
-                                              new Radius.circular(50.0)),
+                                          borderRadius: const BorderRadius.all(
+                                              Radius.circular(50.0)),
                                         ),
                                       )
                                     : Container(),
-                                new Expanded(
-                                    child: new Column(
+                                Expanded(
+                                    child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     Padding(
-                                        padding: EdgeInsets.only(
+                                        padding: const EdgeInsets.only(
                                             left: 20, right: 10.0),
-                                        child: new Text(
+                                        child: Text(
                                             askTheExpertBloc
                                                 .myQuestionList[index]
                                                 .userQuestion,
@@ -675,10 +664,10 @@ class _UserQuestionsListState extends State<UserQuestionsList> with SingleTicker
                                                     color: InsColor(appBloc)
                                                         .appTextColor))),
                                     Padding(
-                                        padding: EdgeInsets.only(
+                                        padding: const EdgeInsets.only(
                                           left: 20,
                                         ),
-                                        child: new Text(
+                                        child: Text(
                                             DateTime.now()
                                                         .difference(askTheExpertBloc
                                                             .formatter
@@ -689,19 +678,17 @@ class _UserQuestionsListState extends State<UserQuestionsList> with SingleTicker
                                                         .inDays ==
                                                     0
                                                 ? 'Just now'
-                                                : DateTime.now()
+                                                : '${DateTime.now()
                                                         .difference(askTheExpertBloc
                                                             .formatter
                                                             .parse(askTheExpertBloc
                                                                 .myQuestionList[index]
                                                                 .postedDate))
-                                                        .inDays
-                                                        .toString() +
-                                                    ' Days',
+                                                        .inDays} Days',
                                             style: Theme.of(context).textTheme.subtitle2?.apply(color: InsColor(appBloc).appTextColor)))
                                   ],
                                 )),
-                                new IconButton(
+                                IconButton(
                                   color: Color(int.parse(
                                       "0xFF${appBloc.uiSettingModel.appTextColor.substring(1, 7).toUpperCase()}")),
                                   icon: Icon(Icons.more_vert,
@@ -712,17 +699,15 @@ class _UserQuestionsListState extends State<UserQuestionsList> with SingleTicker
                                 ),
                               ],
                             ),
-                            new Column(
+                            Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Padding(
-                                  padding: EdgeInsets.only(
+                                  padding: const EdgeInsets.only(
                                       top: 20, left: 10.0, right: 10.0),
                                   child: Html(
-                                      data: "" +
-                                          askTheExpertBloc.myQuestionList[index]
-                                              .userQuestionDescription +
-                                          "",
+                                      data: askTheExpertBloc.myQuestionList[index]
+                                              .userQuestionDescription,
                                       style: {
                                         "body": Style(
                                           color: Color(int.parse(
@@ -736,39 +721,34 @@ class _UserQuestionsListState extends State<UserQuestionsList> with SingleTicker
                                 ),
                                 Padding(
                                   padding:
-                                      EdgeInsets.only(top: 10.0, left: 10.0),
+                                      const EdgeInsets.only(top: 10.0, left: 10.0),
                                   child: questionCategories(askTheExpertBloc
                                       .myQuestionList[index].questionCategories
                                       .split(',')),
                                 ),
                                 Padding(
                                     padding:
-                                        EdgeInsets.only(top: 10, left: 20.0),
-                                    child: new Text(
-                                      'Asked by: ' +
-                                          askTheExpertBloc
-                                              .myQuestionList[index].userName +
-                                          ' | Asked on: ' +
-                                          askTheExpertBloc.myQuestionList[index]
-                                              .postedDate +
-                                          ' | Last Active: ' +
-                                          askTheExpertBloc
-                                              .myQuestionList[index].postedDate,
+                                        const EdgeInsets.only(top: 10, left: 20.0),
+                                    child: Text(
+                                      'Asked by: ${askTheExpertBloc
+                                              .myQuestionList[index].userName} | Asked on: ${askTheExpertBloc.myQuestionList[index]
+                                              .postedDate} | Last Active: ${askTheExpertBloc
+                                              .myQuestionList[index].postedDate}',
                                       style: TextStyle(
                                           fontSize: 11.0,
                                           color: Color(int.parse(
                                               "0xFF${appBloc.uiSettingModel.appTextColor.substring(1, 7).toUpperCase()}"))),
                                     )),
                                 Padding(
-                                    padding: EdgeInsets.only(
+                                    padding: const EdgeInsets.only(
                                       top: 10,
                                     ),
                                     child: Row(
                                       mainAxisAlignment: MainAxisAlignment.start,
                                       children: [
-                                        new Padding(
-                                          padding: EdgeInsets.only(right: 0.0),
-                                          child: new Container(
+                                        Padding(
+                                          padding: const EdgeInsets.only(right: 0.0),
+                                          child: Container(
                                             alignment: Alignment.center,
                                             width: 70.0,
                                             height: 25.0,
@@ -780,9 +760,9 @@ class _UserQuestionsListState extends State<UserQuestionsList> with SingleTicker
                                                       .appTextColor
                                                       .withAlpha(0),
                                                 ),
-                                                borderRadius: BorderRadius.all(
+                                                borderRadius: const BorderRadius.all(
                                                     Radius.circular(20))),
-                                            child: new Row(
+                                            child: Row(
                                               mainAxisAlignment:
                                                   MainAxisAlignment.start,
                                               children: [
@@ -801,7 +781,7 @@ class _UserQuestionsListState extends State<UserQuestionsList> with SingleTicker
                                                       }
                                                     });
                                                   },
-                                                  padding: new EdgeInsets.only(
+                                                  padding: const EdgeInsets.only(
                                                       bottom: 1.0),
                                                   color: Color(int.parse(
                                                       "0xFF${appBloc.uiSettingModel.appTextColor.substring(1, 7).toUpperCase()}")),
@@ -827,9 +807,9 @@ class _UserQuestionsListState extends State<UserQuestionsList> with SingleTicker
                                             ),
                                           ),
                                         ),
-                                        new Padding(
-                                          padding: EdgeInsets.only(left: 5.0),
-                                          child: new Container(
+                                        Padding(
+                                          padding: const EdgeInsets.only(left: 5.0),
+                                          child: Container(
                                             width: 70.0,
                                             height: 25.0,
                                             alignment: Alignment.center,
@@ -841,17 +821,17 @@ class _UserQuestionsListState extends State<UserQuestionsList> with SingleTicker
                                                       .appTextColor
                                                       .withAlpha(0),
                                                 ),
-                                                borderRadius: BorderRadius.all(
+                                                borderRadius: const BorderRadius.all(
                                                     Radius.circular(20))),
-                                            child: new Row(
+                                            child: Row(
                                               children: [
                                                 IconButton(
                                                   onPressed: () {},
-                                                  padding: new EdgeInsets.only(
+                                                  padding: const EdgeInsets.only(
                                                       bottom: 1.0),
                                                   color: Color(
                                                       int.parse("0xFF1D293F")),
-                                                  icon: Icon(
+                                                  icon: const Icon(
                                                     Icons.remove_red_eye,
                                                     size: 16.0,
                                                   ),
@@ -894,13 +874,7 @@ class _UserQuestionsListState extends State<UserQuestionsList> with SingleTicker
         ),
         child: PopupMenuButton(
           color: AppColors.getAppBGColor(),
-          child: Padding(
-              padding: EdgeInsets.only(right: 8.0),
-              child: Icon(
-                Icons.filter_list,
-                color: AppColors.getFilterIconColor(),
-              ),
-          ),
+
           elevation: 3.2,
           onSelected: (String value) {
             appBloc.filterValue = value;
@@ -917,6 +891,13 @@ class _UserQuestionsListState extends State<UserQuestionsList> with SingleTicker
               );
             }).toList();
           },
+          child: Padding(
+            padding: const EdgeInsets.only(right: 8.0),
+            child: Icon(
+              Icons.filter_list,
+              color: AppColors.getFilterIconColor(),
+            ),
+          ),
         ),
       ),
     );
@@ -932,23 +913,23 @@ class _UserQuestionsListState extends State<UserQuestionsList> with SingleTicker
           }
         },
         builder: (context, state) {
-          return new FloatingActionButton(
+          return FloatingActionButton(
               elevation: 0.0,
-              child: new Icon(
-                Icons.add,
-              ),
               backgroundColor: Color(int.parse(
                   "0xFF${appBloc.uiSettingModel.appButtonBgColor.substring(1, 7).toUpperCase()}")),
               onPressed: () {
                 Navigator.of(context)
                     .push(
-                        MaterialPageRoute(builder: (context) => AddQuestion()))
+                        MaterialPageRoute(builder: (context) => const AddQuestion()))
                     .then((value) {
                   if (value ?? true) {
                     refresh(askTheExpertBloc.searchQuestionString, -1, appBloc.filterValue);
                   }
                 });
-              });
+              },
+              child: const Icon(
+                Icons.add,
+              ));
         });
   }
 
@@ -960,7 +941,7 @@ class _UserQuestionsListState extends State<UserQuestionsList> with SingleTicker
             },
             color: AppColors.getAppButtonBGColor(),
             child: SingleChildScrollView(
-              physics: AlwaysScrollableScrollPhysics(),
+              physics: const AlwaysScrollableScrollPhysics(),
               child: Column(
                 children: <Widget>[
                   SizedBox(height: MediaQuery.of(context).size.height * 0.3,),
@@ -983,7 +964,7 @@ class _UserQuestionsListState extends State<UserQuestionsList> with SingleTicker
               ),
             ),
           )
-        : new Container();
+        : Container();
   }
 
   Widget questionCategories(List<String> questionCategories) {
@@ -998,8 +979,8 @@ class _UserQuestionsListState extends State<UserQuestionsList> with SingleTicker
     return Wrap(
       children: List.generate(questionCategories.length, (index) {
         return Container(
-          margin: EdgeInsets.symmetric(vertical: 5),
-          padding: EdgeInsets.only(left: 5.0, right: 5.0),
+          margin: const EdgeInsets.symmetric(vertical: 5),
+          padding: const EdgeInsets.only(left: 5.0, right: 5.0),
           child: Visibility(
             visible: questionCategories[index].trim().isEmpty ? false : true,
             child: Container(
@@ -1009,9 +990,9 @@ class _UserQuestionsListState extends State<UserQuestionsList> with SingleTicker
                   border: Border.all(
                     color: InsColor(appBloc).appTextColor.withAlpha(0),
                   ),
-                  borderRadius: BorderRadius.all(Radius.circular(20))),
+                  borderRadius: const BorderRadius.all(Radius.circular(20))),
               child: Padding(
-                padding: EdgeInsets.symmetric(horizontal: 8.0, vertical: 8.0),
+                padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 8.0),
                 child: Text(questionCategories[index],
                   style: TextStyle(
                     color: Color(int.parse("0xFF1D293F")),
@@ -1143,8 +1124,8 @@ class _UserQuestionsListState extends State<UserQuestionsList> with SingleTicker
   }
 
   Map<String, String> generateHashMap(List<String> conditionsArray) {
-    Map<String, String> map = new Map();
-    if (conditionsArray.length != 0) {
+    Map<String, String> map = Map();
+    if (conditionsArray.isNotEmpty) {
       for (int i = 0; i < conditionsArray.length; i++) {
         var filterArray = conditionsArray[i].split("=");
         print(" forvalue   $filterArray");
@@ -1157,12 +1138,12 @@ class _UserQuestionsListState extends State<UserQuestionsList> with SingleTicker
   }
 
   Widget _buildProgressIndicator() {
-    return new Padding(
-      padding: const EdgeInsets.all(8.0),
-      child: new Center(
-        child: new Opacity(
+    return const Padding(
+      padding: EdgeInsets.all(8.0),
+      child: Center(
+        child: Opacity(
           opacity: 1.0,
-          child: new CircularProgressIndicator(),
+          child: CircularProgressIndicator(),
         ),
       ),
     );
@@ -1199,8 +1180,7 @@ class _UserQuestionsListState extends State<UserQuestionsList> with SingleTicker
 
   void _settingModalBottomSheet(context, index) {
     showModalBottomSheet(
-        backgroundColor: Color(int.parse(
-            "0xFF${appBloc.uiSettingModel.appBGColor.substring(1, 7).toUpperCase()}")),
+      shape: AppConstants().bottomSheetShapeBorder(),
         context: context,
         builder: (BuildContext bc) {
           return BlocConsumer<AskTheExpertBloc, AskTheExpertState>(
@@ -1212,153 +1192,263 @@ class _UserQuestionsListState extends State<UserQuestionsList> with SingleTicker
                 }
               },
               builder: (context, state) {
-                return Container(
-                  color: Color(int.parse(
-                      "0xFF${appBloc.uiSettingModel.appBGColor.substring(1, 7).toUpperCase()}")),
-                  child: new Wrap(
-                    children: <Widget>[
-                      Visibility(
-                          visible: askTheExpertBloc.strUserID ==
-                                  askTheExpertBloc.questionList[index].userID
-                                      .toString()
-                              ? true
-                              : false,
-                          child: new ListTile(
-                              tileColor: Color(int.parse(
-                                  "0xFF${appBloc.uiSettingModel.appBGColor.substring(1, 7).toUpperCase()}")),
-                              leading: new Icon(
-                                Icons.edit,
-                                color: InsColor(appBloc).appIconColor,
-                              ),
-                              title: new Text(
-                                'Edit',
-                                style: TextStyle(
-                                    color: Color(int.parse(
-                                        "0xFF${appBloc.uiSettingModel.appTextColor.substring(1, 7).toUpperCase()}"))),
-                              ),
-                              onTap: () => {
-                                    Navigator.of(context).pop(true),
-                                    Navigator.of(context)
-                                        .push(MaterialPageRoute(
-                                            builder: (context) => EditQuestion(
-                                                questionList: askTheExpertBloc
-                                                    .questionList[index])))
-                                        .then((value) {
+                return AppConstants().bottomSheetContainer(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      const BottomSheetDragger(),
+                      Container(
+                        color: Color(int.parse(
+                            "0xFF${appBloc.uiSettingModel.appBGColor.substring(1, 7).toUpperCase()}")),
+                        child: Wrap(
+                          children: <Widget>[
+                            Visibility(
+                                visible: askTheExpertBloc.strUserID ==
+                                        askTheExpertBloc.questionList[index].userID
+                                            .toString()
+                                    ? true
+                                    : false,
+                                child:
+                                customListTile(Icons.edit,'Edit', onTap: () => {
+                                  Navigator.of(context).pop(true),
+                                  Navigator.of(context)
+                                      .push(MaterialPageRoute(
+                                      builder: (context) => EditQuestion(
+                                          questionList: askTheExpertBloc
+                                              .questionList[index])))
+                                      .then((value) {
+                                    if (value ?? true) {
+                                      refresh(askTheExpertBloc.searchQuestionString, -1, appBloc.filterValue);
+                                    }
+                                  })
+                                },),),
+                                // new ListTile(
+                                //     tileColor: Color(int.parse(
+                                //         "0xFF${appBloc.uiSettingModel.appBGColor.substring(1, 7).toUpperCase()}")),
+                                //     leading: new Icon(
+                                //       Icons.edit,
+                                //       color: InsColor(appBloc).appIconColor,
+                                //
+                                //     ),
+                                //     title: new Text(
+                                //       'Edit',
+                                //       style: TextStyle(
+                                //           color: Color(int.parse(
+                                //               "0xFF${appBloc.uiSettingModel.appTextColor.substring(1, 7).toUpperCase()}"))),
+                                //     ),
+                                //     onTap: () => {
+                                //           Navigator.of(context).pop(true),
+                                //           Navigator.of(context)
+                                //               .push(MaterialPageRoute(
+                                //                   builder: (context) => EditQuestion(
+                                //                       questionList: askTheExpertBloc
+                                //                           .questionList[index])))
+                                //               .then((value) {
+                                //             if (value ?? true) {
+                                //               refresh(askTheExpertBloc.searchQuestionString, -1, appBloc.filterValue);
+                                //             }
+                                //           })
+                                //         })),
+                            Visibility(
+                                visible: askTheExpertBloc.strUserID ==
+                                        askTheExpertBloc.questionList[index].userID
+                                            .toString()
+                                    ? true
+                                    : false,
+                                child:
+                                customListTile(Icons.delete,'Delete', onTap: () => {
+                                  showAlertDialog(context, index)
+                                },),
+                            ),
+                                // new ListTile(
+                                //     leading: new Icon(
+                                //       Icons.delete,
+                                //       color: InsColor(appBloc).appIconColor,
+                                //     ),
+                                //     title: new Text(
+                                //       'Delete',
+                                //       style: TextStyle(
+                                //           color: Color(int.parse(
+                                //               "0xFF${appBloc.uiSettingModel.appTextColor.substring(1, 7).toUpperCase()}"))),
+                                //     ),
+                                //     onTap: () => {
+                                //           // Navigator.of(context).pop(true),
+                                //           showAlertDialog(context, index)
+                                //         })),
+                            Visibility(
+                                visible: askTheExpertBloc
+                                        .questionList[index].answerBtnWithLink.isEmpty
+                                    ? false
+                                    : true,
+                                child:
+                                customListTile(Icons.add_circle,"Answer",onTap: (){
+                                      Navigator.of(context).pop(true);
+                                      Navigator.of(context)
+                                          .push(MaterialPageRoute(
+                                      builder: (context) => AddAnswer(
+                                      questionList: askTheExpertBloc
+                                          .questionList[index],
+                                      isEdit: false)))
+                                          .then((value) {
                                       if (value ?? true) {
-                                        refresh(askTheExpertBloc.searchQuestionString, -1, appBloc.filterValue);
-                                      }
-                                    })
-                                  })),
-                      Visibility(
-                          visible: askTheExpertBloc.strUserID ==
-                                  askTheExpertBloc.questionList[index].userID
-                                      .toString()
-                              ? true
-                              : false,
-                          child: new ListTile(
-                              leading: new Icon(
-                                Icons.delete,
-                                color: InsColor(appBloc).appIconColor,
-                              ),
-                              title: new Text(
-                                'Delete',
-                                style: TextStyle(
-                                    color: Color(int.parse(
-                                        "0xFF${appBloc.uiSettingModel.appTextColor.substring(1, 7).toUpperCase()}"))),
-                              ),
-                              onTap: () => {
-                                    // Navigator.of(context).pop(true),
-                                    showAlertDialog(context, index)
-                                  })),
-                      Visibility(
-                          visible: askTheExpertBloc
-                                  .questionList[index].answerBtnWithLink.isEmpty
-                              ? false
-                              : true,
-                          child: new ListTile(
-                              leading: new Icon(
-                                Icons.add_circle,
-                                color: InsColor(appBloc).appIconColor,
-                              ),
-                              title: new Text(
-                                'Answer',
-                                style: TextStyle(
-                                    color: Color(int.parse(
-                                        "0xFF${appBloc.uiSettingModel.appTextColor.substring(1, 7).toUpperCase()}"))),
-                              ),
-                              onTap: () => {
-                                    Navigator.of(context).pop(true),
-                                    Navigator.of(context)
-                                        .push(MaterialPageRoute(
-                                            builder: (context) => AddAnswer(
-                                                questionList: askTheExpertBloc
-                                                    .questionList[index],
-                                                isEdit: false)))
-                                        .then((value) {
-                                      if (value ?? true) {
-                                        refresh(askTheExpertBloc.searchQuestionString, -1, filterValue);
-                                      }
-                                    })
-                                  })),
-                      new ListTile(
-                        leading: new Icon(
-                          IconDataSolid(
-                            int.parse('0xf079'),
-                          ),
-                          color: Color(int.parse(
-                              "0xFF${appBloc.uiSettingModel.appTextColor.substring(1, 7).toUpperCase()}")),
-                        ),
-                        title: new Text(
-                          'Share with People',
-                          style: TextStyle(
-                              color: Color(int.parse(
-                                  "0xFF${appBloc.uiSettingModel.appTextColor.substring(1, 7).toUpperCase()}"))),
-                        ),
-                        onTap: () => {
-                          Navigator.pop(context),
-                          Navigator.of(context).push(MaterialPageRoute(
-                              builder: (context) => ShareMainScreen(
-                                  true,
-                                  false,
-                                  true,
-                                  askTheExpertBloc
-                                      .questionList[index].questionID
-                                      .toString(),
-                                  askTheExpertBloc
-                                      .questionList[index].userQuestion)))
-                        },
-                      ),
-                      ListTile(
-                        leading: Icon(
-                          IconDataSolid(int.parse('0xf1e0')),
-                          color: Color(int.parse(
-                              "0xFF${appBloc.uiSettingModel.appTextColor.substring(1, 7).toUpperCase()}")),
-                        ),
-                        title: new Text(
-                          'Share with Connection',
-                          style: TextStyle(
-                              color: Color(int.parse(
-                                  "0xFF${appBloc.uiSettingModel.appTextColor.substring(1, 7).toUpperCase()}"))),
-                        ),
-                        onTap: () {
-                          Navigator.pop(context);
+                                      refresh(askTheExpertBloc.searchQuestionString, -1, filterValue);
+                                    }
+                                  });
+                                })
+                            ),
 
-                          Navigator.of(context).push(MaterialPageRoute(
-                              builder: (context) => ShareWithConnections(
-                                  false,
-                                  true,
-                                  askTheExpertBloc
-                                      .questionList[index].userQuestion,
-                                  askTheExpertBloc
-                                      .questionList[index].questionID
-                                      .toString())));
-                        },
+
+                                // ListTile(
+                                //     leading: new Icon(
+                                //       Icons.add_circle,
+                                //       color: InsColor(appBloc).appIconColor,
+                                //     ),
+                                //     title: new Text(
+                                //       'Answer',
+                                //       style: TextStyle(
+                                //           color: Color(int.parse(
+                                //               "0xFF${appBloc.uiSettingModel.appTextColor.substring(1, 7).toUpperCase()}"))),
+                                //     ),
+                                //     onTap: () => {
+                                //           Navigator.of(context).pop(true),
+                                //           Navigator.of(context)
+                                //               .push(MaterialPageRoute(
+                                //                   builder: (context) => AddAnswer(
+                                //                       questionList: askTheExpertBloc
+                                //                           .questionList[index],
+                                //                       isEdit: false)))
+                                //               .then((value) {
+                                //             if (value ?? true) {
+                                //               refresh(askTheExpertBloc.searchQuestionString, -1, filterValue);
+                                //             }
+                                //           })
+                                //         })),
+                            // new ListTile(
+                            //   leading: new Icon(
+                            //     IconDataSolid(
+                            //       int.parse('0xf079'),
+                            //     ),
+                            //     color: Color(int.parse(
+                            //         "0xFF${appBloc.uiSettingModel.appTextColor.substring(1, 7).toUpperCase()}")),
+                            //   ),
+                            //   title: new Text(
+                            //     'Share with People',
+                            //     style: TextStyle(
+                            //         color: Color(int.parse(
+                            //             "0xFF${appBloc.uiSettingModel.appTextColor.substring(1, 7).toUpperCase()}"))),
+                            //   ),
+                            //   onTap: () => {
+                            //     Navigator.pop(context),
+                            //     Navigator.of(context).push(MaterialPageRoute(
+                            //         builder: (context) => ShareMainScreen(
+                            //             true,
+                            //             false,
+                            //             true,
+                            //             askTheExpertBloc
+                            //                 .questionList[index].questionID
+                            //                 .toString(),
+                            //             askTheExpertBloc
+                            //                 .questionList[index].userQuestion)))
+                            //   },
+                            // ),
+                            // SizedBox(height: 10,),
+                            customListTile(IconDataSolid(int.parse('0xf079'),),'Share with People', onTap: () => {
+                              Navigator.pop(context),
+                              Navigator.of(context).push(MaterialPageRoute(
+                                  builder: (context) => ShareMainScreen(
+                                      true,
+                                      false,
+                                      true,
+                                      askTheExpertBloc
+                                          .questionList[index].questionID
+                                          .toString(),
+                                      askTheExpertBloc
+                                          .questionList[index].userQuestion)))
+                              },
+                              iconSize: 18
+                            ),
+                            customListTile(IconDataSolid(int.parse('0xf1e0')),"Share with Connection",onTap: (){
+                              Navigator.pop(context);
+
+                              Navigator.of(context).push(MaterialPageRoute(
+                                  builder: (context) => ShareWithConnections(
+                                      false,
+                                      true,
+                                      askTheExpertBloc
+                                          .questionList[index].userQuestion,
+                                      askTheExpertBloc
+                                          .questionList[index].questionID
+                                          .toString())));
+                              },
+                              iconSize: 18
+                            ),
+                            // ListTile(
+                            //   leading: Icon(
+                            //     IconDataSolid(int.parse('0xf1e0')),
+                            //     color: Color(int.parse(
+                            //         "0xFF${appBloc.uiSettingModel.appTextColor.substring(1, 7).toUpperCase()}")),
+                            //   ),
+                            //   title: new Text(
+                            //     'Share with Connection',
+                            //     style: TextStyle(
+                            //         color: Color(int.parse(
+                            //             "0xFF${appBloc.uiSettingModel.appTextColor.substring(1, 7).toUpperCase()}"))),
+                            //   ),
+                            //   onTap: () {
+                            //     Navigator.pop(context);
+                            //
+                            //     Navigator.of(context).push(MaterialPageRoute(
+                            //         builder: (context) => ShareWithConnections(
+                            //             false,
+                            //             true,
+                            //             askTheExpertBloc
+                            //                 .questionList[index].userQuestion,
+                            //             askTheExpertBloc
+                            //                 .questionList[index].questionID
+                            //                 .toString())));
+                            //   },
+                            // ),
+                          ],
+                        ),
                       ),
                     ],
                   ),
                 );
               });
         });
+  }
+
+  Widget customListTile(IconData icon, String title,{Function()? onTap, double iconSize = 20} ){
+    return BottomsheetOptionTile(
+      iconData: icon,
+      text: title,
+      onTap: onTap,
+    );
+    //   Container(
+    //   child: InkWell(
+    //     onTap: onTap,
+    //     child: Padding(
+    //       padding: EdgeInsets.symmetric(horizontal:20).copyWith(bottom: 34),
+    //       child: Row(
+    //         children: [
+    //           Icon(
+    //             icon,
+    //             color: InsColor(appBloc).appIconColor,
+    //             size: iconSize,
+    //           ),
+    //           SizedBox(width: 25,),
+    //           Text(title,
+    //             style: TextStyle(
+    //                 color: Color(int.parse(
+    //                     "0xFF${appBloc.uiSettingModel.appTextColor.substring(1, 7).toUpperCase()}"),),),
+    //           ),
+    //         ],
+    //       ),
+    //     ),
+    //   ),
+    // );
   }
 
   void _settingMyQuestBottomSheet(context, index) {
@@ -1371,115 +1461,113 @@ class _UserQuestionsListState extends State<UserQuestionsList> with SingleTicker
                 if (state.status == Status.COMPLETED) {}
               },
               builder: (context, state) {
-                return Container(
-                  child: new Wrap(
-                    children: <Widget>[
-                      Visibility(
-                          visible: askTheExpertBloc.strUserID ==
-                                  askTheExpertBloc.myQuestionList[index].userID
-                                      .toString()
-                              ? true
-                              : false,
-                          child: new ListTile(
-                              leading: new Icon(Icons.edit),
-                              title: new Text('Edit'),
-                              onTap: () => {
-                                    Navigator.of(context).pop(true),
-                                    Navigator.of(context)
-                                        .push(MaterialPageRoute(
-                                            builder: (context) => EditQuestion(
-                                                questionList: askTheExpertBloc
-                                                    .myQuestionList[index])))
-                                        .then((value) {
-                                      if (value ?? true) {
-                                        refresh(askTheExpertBloc.searchQuestionString, -1, appBloc.filterValue);
-                                      }
-                                    })
-                                  })),
-                      Visibility(
-                          visible: askTheExpertBloc.strUserID ==
-                                  askTheExpertBloc.myQuestionList[index].userID
-                                      .toString()
-                              ? true
-                              : false,
-                          child: new ListTile(
-                              leading: new Icon(Icons.delete),
-                              title: new Text('Delete'),
-                              onTap: () => {
-                                    Navigator.of(context).pop(true),
-                                    showAlertDialog(context, index)
-                                  })),
-                      Visibility(
-                          visible: askTheExpertBloc.myQuestionList[index]
-                                  .answerBtnWithLink.isEmpty
-                              ? false
-                              : true,
-                          child: new ListTile(
-                              leading: new Icon(Icons.add_circle),
-                              title: new Text('Answer'),
-                              onTap: () => {
-                                    Navigator.of(context).pop(true),
-                                    Navigator.of(context)
-                                        .push(MaterialPageRoute(
-                                            builder: (context) => AddAnswer(
-                                                questionList: askTheExpertBloc
-                                                    .myQuestionList[index])))
-                                        .then((value) {
-                                      if (value ?? true) {
-                                        refresh(askTheExpertBloc.searchQuestionString, -1, filterValue);
-                                      }
-                                    })
-                                  })),
-                      new ListTile(
-                        leading: new Icon(
-                          IconDataSolid(
-                            int.parse('0xf079'),
-                          ),
-                          color: Color(int.parse(
-                              "0xFF${appBloc.uiSettingModel.appTextColor.substring(1, 7).toUpperCase()}")),
+                return Wrap(
+                  children: <Widget>[
+                    Visibility(
+                        visible: askTheExpertBloc.strUserID ==
+                                askTheExpertBloc.myQuestionList[index].userID
+                                    .toString()
+                            ? true
+                            : false,
+                        child: ListTile(
+                            leading: const Icon(Icons.edit),
+                            title: const Text('Edit'),
+                            onTap: () => {
+                                  Navigator.of(context).pop(true),
+                                  Navigator.of(context)
+                                      .push(MaterialPageRoute(
+                                          builder: (context) => EditQuestion(
+                                              questionList: askTheExpertBloc
+                                                  .myQuestionList[index])))
+                                      .then((value) {
+                                    if (value ?? true) {
+                                      refresh(askTheExpertBloc.searchQuestionString, -1, appBloc.filterValue);
+                                    }
+                                  })
+                                })),
+                    Visibility(
+                        visible: askTheExpertBloc.strUserID ==
+                                askTheExpertBloc.myQuestionList[index].userID
+                                    .toString()
+                            ? true
+                            : false,
+                        child: ListTile(
+                            leading: const Icon(Icons.delete),
+                            title: const Text('Delete'),
+                            onTap: () => {
+                                  Navigator.of(context).pop(true),
+                                  showAlertDialog(context, index)
+                                })),
+                    Visibility(
+                        visible: askTheExpertBloc.myQuestionList[index]
+                                .answerBtnWithLink.isEmpty
+                            ? false
+                            : true,
+                        child: ListTile(
+                            leading: const Icon(Icons.add_circle),
+                            title: const Text('Answer'),
+                            onTap: () => {
+                                  Navigator.of(context).pop(true),
+                                  Navigator.of(context)
+                                      .push(MaterialPageRoute(
+                                          builder: (context) => AddAnswer(
+                                              questionList: askTheExpertBloc
+                                                  .myQuestionList[index])))
+                                      .then((value) {
+                                    if (value ?? true) {
+                                      refresh(askTheExpertBloc.searchQuestionString, -1, filterValue);
+                                    }
+                                  })
+                                })),
+                    ListTile(
+                      leading: Icon(
+                        IconDataSolid(
+                          int.parse('0xf079'),
                         ),
-                        title: new Text('Share with People',
-                            style: TextStyle(
-                                color: Color(
-                              int.parse(
-                                  "0xFF${appBloc.uiSettingModel.appTextColor.substring(1, 7).toUpperCase()}"),
-                            ))),
-                        onTap: () => {
-                          Navigator.pop(context),
-                          Navigator.of(context).push(MaterialPageRoute(
-                              builder: (context) => ShareMainScreen(
-                                  true,
-                                  false,
-                                  true,
-                                  askTheExpertBloc
-                                      .myQuestionList[index].questionID
-                                      .toString(),
-                                  askTheExpertBloc
-                                      .myQuestionList[index].userQuestion)))
-                        },
+                        color: Color(int.parse(
+                            "0xFF${appBloc.uiSettingModel.appTextColor.substring(1, 7).toUpperCase()}")),
                       ),
-                      ListTile(
-                        leading: Icon(
-                          IconDataSolid(int.parse('0xf1e0')),
-                          color: Colors.grey,
-                        ),
-                        title: new Text('Share with Connection'),
-                        onTap: () {
-                          Navigator.pop(context);
+                      title: Text('Share with People',
+                          style: TextStyle(
+                              color: Color(
+                            int.parse(
+                                "0xFF${appBloc.uiSettingModel.appTextColor.substring(1, 7).toUpperCase()}"),
+                          ))),
+                      onTap: () => {
+                        Navigator.pop(context),
+                        Navigator.of(context).push(MaterialPageRoute(
+                            builder: (context) => ShareMainScreen(
+                                true,
+                                false,
+                                true,
+                                askTheExpertBloc
+                                    .myQuestionList[index].questionID
+                                    .toString(),
+                                askTheExpertBloc
+                                    .myQuestionList[index].userQuestion)))
+                      },
+                    ),
+                    ListTile(
+                      leading: Icon(
+                        IconDataSolid(int.parse('0xf1e0')),
+                        color: Colors.grey,
+                      ),
+                      title: const Text('Share with Connection'),
+                      onTap: () {
+                        Navigator.pop(context);
 
-                          Navigator.of(context).push(MaterialPageRoute(
-                              builder: (context) => ShareWithConnections(
-                                  false,
-                                  true,
-                                  askTheExpertBloc
-                                      .myQuestionList[index].userQuestion,
-                                  askTheExpertBloc
-                                      .myQuestionList[index].questionID
-                                      .toString())));
-                        },
-                      ),
-                    ],
-                  ),
+                        Navigator.of(context).push(MaterialPageRoute(
+                            builder: (context) => ShareWithConnections(
+                                false,
+                                true,
+                                askTheExpertBloc
+                                    .myQuestionList[index].userQuestion,
+                                askTheExpertBloc
+                                    .myQuestionList[index].questionID
+                                    .toString())));
+                      },
+                    ),
+                  ],
                 );
               });
         });
@@ -1488,14 +1576,14 @@ class _UserQuestionsListState extends State<UserQuestionsList> with SingleTicker
   showAlertDialog(BuildContext context, int index) {
     // Create button
     Widget deleteButton = FlatButton(
-      child: Text("Cancel"),
+      child: const Text("Cancel"),
       onPressed: () {
         Navigator.of(context).pop(true);
         Navigator.pop(context);
       },
     );
     Widget cancelButton = FlatButton(
-      child: Text(
+      child: const Text(
         "Delete",
         style: TextStyle(color: Colors.red),
       ),
@@ -1548,7 +1636,7 @@ class _UserQuestionsListState extends State<UserQuestionsList> with SingleTicker
         MaterialPageRoute(
             builder: (context) =>
                 SkillCategory(skillCateModel: skillCategoriesListLocal)));
-    if (skillCategoriesListLocal.length == 0) {
+    if (skillCategoriesListLocal.isEmpty) {
       refresh(askTheExpertBloc.searchQuestionString, -1, filterValue);
     } else {
       refresh(askTheExpertBloc.searchQuestionString, int.parse(updateSelectedCatId()), appBloc.filterValue);
@@ -1569,9 +1657,9 @@ class _UserQuestionsListState extends State<UserQuestionsList> with SingleTicker
   String updateSelectedCatId() {
     List<String> selectedCategoryID = [];
 
-    skillCategoriesListLocal.length > 0
+    skillCategoriesListLocal.isNotEmpty
         ? skillCategoriesListLocal.forEach((element) {
-            selectedCategoryID.add('${element.skillID}');
+            selectedCategoryID.add(element.skillID);
           })
         : selectedCategoryID.clear();
     print('selectedCategoryID ${formatString(selectedCategoryID)}');

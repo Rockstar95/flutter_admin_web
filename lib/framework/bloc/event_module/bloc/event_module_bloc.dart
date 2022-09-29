@@ -475,7 +475,6 @@ class EvntModuleBloc extends Bloc<EvntModuleEvent, EvntModuleState> {
       }
     }
     catch (e, s) {
-      LogUtil().printLog(message: 'Error is ===> $e');
       MyPrint.printOnConsole("Error in EvntModuleBloc.mapEventToState():$e");
       MyPrint.printOnConsole(s);
     }

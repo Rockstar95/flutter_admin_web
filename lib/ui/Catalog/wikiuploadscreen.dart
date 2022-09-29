@@ -13,6 +13,7 @@ import 'package:flutter_admin_web/framework/helpers/ApiEndpoints.dart';
 import 'package:flutter_admin_web/framework/repository/Catalog/wikiuploadrepo/wikiupload_repositry_builder.dart';
 import 'package:flutter_admin_web/ui/common/common_toast.dart';
 
+import '../../configs/constants.dart';
 import '../common/outline_button.dart';
 import 'wiki_categoriesscreen.dart';
 
@@ -114,14 +115,11 @@ class _WikiUploadScreenState extends State<WikiUploadScreen> {
               print("wikiUploadBloc Status:${state.status}");
 
               if (state is PostWikiUploadState && state.status == Status.LOADING/* && wikiUploadBloc.isFirstLoading == true*/) {
-                return const Center(
+                return  Center(
                   //heightFactor: ScreenUtil().setWidth(10),
                   //widthFactor: ScreenUtil().setWidth(10),
-                  child: const AbsorbPointer(
-                    child: const SpinKitCircle(
-                      color: Colors.grey,
-                      size: 70,
-                    ),
+                  child: AbsorbPointer(
+                    child: AppConstants().getLoaderWidget(iconSize: 70)
                   ),
                 );
               }

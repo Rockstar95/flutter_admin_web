@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:flutter_admin_web/framework/bloc/app/bloc/app_bloc.dart';
 import 'package:flutter_admin_web/framework/bloc/app/native_menu_model.dart';
 import 'package:flutter_admin_web/framework/bloc/competencies/bloc/my_competencies_bloc.dart';
@@ -16,6 +15,8 @@ import 'package:flutter_admin_web/framework/theme/ins_theme.dart';
 import 'package:flutter_admin_web/ui/competencies/add_job_role.dart';
 import 'package:flutter_admin_web/ui/competencies/pref_cat_list.dart';
 
+import '../../configs/constants.dart';
+
 class JobRoleSkills extends StatefulWidget {
   final NativeMenuModel nativeMenuModel;
 
@@ -26,7 +27,7 @@ class JobRoleSkills extends StatefulWidget {
 }
 
 class _JobRoleSkillsState extends State<JobRoleSkills> with SingleTickerProviderStateMixin {
-  GlobalKey<ScaffoldState> _scaffoldkey = new GlobalKey<ScaffoldState>();
+  GlobalKey<ScaffoldState> _scaffoldkey = GlobalKey<ScaffoldState>();
 
   AppBloc get appBloc => BlocProvider.of<AppBloc>(context);
   late MyCompetenciesBloc myCompetenciesBloc;
@@ -69,14 +70,11 @@ class _JobRoleSkillsState extends State<JobRoleSkills> with SingleTickerProvider
         if (state.status == Status.LOADING && myCompetenciesBloc.isFirstLoading == true) {
           return Center(
             child: AbsorbPointer(
-              child: SpinKitCircle(
-                color: Colors.grey,
-                size: 70.0,
-              ),
+              child: AppConstants().getLoaderWidget(iconSize: 70),
             ),
           );
         }
-        else if (myCompetenciesBloc.jobRoleSkillsResponse.competencyList.length == 0) {
+        else if (myCompetenciesBloc.jobRoleSkillsResponse.competencyList.isEmpty) {
           return noDataFound(true);
         }
         else {
@@ -107,7 +105,7 @@ class _JobRoleSkillsState extends State<JobRoleSkills> with SingleTickerProvider
                               color: Colors.grey.shade300,
                               spreadRadius: 0,
                               blurRadius: 5,
-                              offset: Offset(0, 5),
+                              offset: const Offset(0, 5),
                             ),
                           ],
                           border: Border.all(color: Color(int.parse("0xFF${appBloc.uiSettingModel.appTextColor.substring(1, 7).toUpperCase()}")).withOpacity(0.15)),
@@ -115,9 +113,9 @@ class _JobRoleSkillsState extends State<JobRoleSkills> with SingleTickerProvider
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: <Widget>[
-                            new Text(
+                            Text(
                               competencyList.jobRoleName,
-                              style: new TextStyle(
+                              style: TextStyle(
                                 fontSize: 15.h,
                                 fontWeight: FontWeight.w400,
                                 color: Color(int.parse("0xFF${appBloc.uiSettingModel.appTextColor.substring(1, 7).toUpperCase()}")),
@@ -159,7 +157,7 @@ class _JobRoleSkillsState extends State<JobRoleSkills> with SingleTickerProvider
               )
             ],
           )
-        : new Container();
+        : Container();
   }
 
   void openPrefCatList(CompetencyList competencyList, NativeMenuModel nativeMenuModel) {
@@ -177,8 +175,7 @@ class _JobRoleSkillsState extends State<JobRoleSkills> with SingleTickerProvider
         bloc: myCompetenciesBloc,
         listener: (context, state) {
           if (state.status == Status.LOADING &&
-              myCompetenciesBloc.jobRoleResponse.parentJobRolesList.length ==
-                  0) {
+              myCompetenciesBloc.jobRoleResponse.parentJobRolesList.isEmpty) {
             /*return Center(
               child: AbsorbPointer(
                 child: SpinKitCircle(
@@ -198,9 +195,8 @@ class _JobRoleSkillsState extends State<JobRoleSkills> with SingleTickerProvider
                               null
                           ? true
                           : false,
-                  child: new FloatingActionButton(
+                  child: FloatingActionButton(
                       elevation: 0.0,
-                      child: new Icon(Icons.add),
                       backgroundColor: Color(int.parse(
                           "0xFF${appBloc.uiSettingModel.appButtonBgColor.substring(1, 7).toUpperCase()}")),
                       onPressed: () {
@@ -214,7 +210,8 @@ class _JobRoleSkillsState extends State<JobRoleSkills> with SingleTickerProvider
                                     ))).then((value) => {
                               if (value) {refresh()}
                             });
-                      }),
+                      },
+                      child: const Icon(Icons.add)),
                 )
               : Container();
         });

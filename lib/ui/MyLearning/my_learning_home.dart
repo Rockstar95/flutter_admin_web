@@ -167,12 +167,9 @@ class _ActMyLearningState extends State<ActMyLearning> with SingleTickerProvider
 
     await showModalBottomSheet(
       context: context,
+      shape: AppConstants().bottomSheetShapeBorder(),
       builder: (BuildContext bc) {
-        return Container(
-          color: Color(
-            int.parse(
-                '0xFF${appBloc.uiSettingModel.appBGColor.substring(1, 7).toUpperCase()}'),
-          ),
+        return AppConstants().bottomSheetContainer(
           child: SingleChildScrollView(
             child: Column(
               children: <Widget>[
@@ -452,9 +449,9 @@ class _ActMyLearningState extends State<ActMyLearning> with SingleTickerProvider
     tabList.add(Tab(
       text: appBloc.localstr.mylearningHeaderArchivetitlelabel,
     ));
-    tabList.add(Tab(
+    /*tabList.add(Tab(
       text: "My Downloads",
-    ));
+    ));*/
     _tabController = TabController(length: tabList.length, vsync: this);
     _sc.addListener(() {
       if (_sc.position.pixels == _sc.position.maxScrollExtent) {
@@ -720,7 +717,7 @@ getComponentId() async{
                       children: <Widget>[
                         _myCourceList(),
                         _archiveList(),
-                        getMyDownloadsListView(),
+                        // getMyDownloadsListView(),
                       ],
                     ),
                   ),
@@ -792,13 +789,7 @@ getComponentId() async{
         if (state.status == Status.LOADING && myLearningBloc.isArchiveFirstLoading == true) {
           return Center(
             child: AbsorbPointer(
-              child: SpinKitCircle(
-                color: Color(
-                  int.parse(
-                      '0xFF${appBloc.uiSettingModel.appTextColor.substring(1, 7).toUpperCase()}'),
-                ),
-                size: 70.h,
-              ),
+              child: AppConstants().getLoaderWidget(iconSize: 70),
             ),
           );
         }
@@ -889,13 +880,7 @@ getComponentId() async{
                           if (myLearningBloc.isLoadingArchievedCources) {
                             return Center(
                               child: AbsorbPointer(
-                                child: SpinKitCircle(
-                                  color: Color(
-                                    int.parse(
-                                        '0xFF${appBloc.uiSettingModel.appTextColor.substring(1, 7).toUpperCase()}'),
-                                  ),
-                                  size: 70.h,
-                                ),
+                                child: AppConstants().getLoaderWidget(iconSize: 70),
                               ),
                             );
                           } else
@@ -1069,13 +1054,7 @@ getComponentId() async{
                                 if (myLearningBloc.isLoadingArchievedCources) {
                                   return Center(
                                     child: AbsorbPointer(
-                                      child: SpinKitCircle(
-                                        color: Color(
-                                          int.parse(
-                                              '0xFF${appBloc.uiSettingModel.appTextColor.substring(1, 7).toUpperCase()}'),
-                                        ),
-                                        size: 70.h,
-                                      ),
+                                      child: AppConstants().getLoaderWidget(iconSize: 70)
                                     ),
                                   );
                                 } else
@@ -1202,15 +1181,18 @@ getComponentId() async{
                             .push(
                           MaterialPageRoute(
                             builder: (context) =>
-                                CommonDetailScreen(
-                                  screenType: ScreenType.MyLearning,
-                                  contentid: contentId,
-                                  objtypeId: element.objecttypeid,
-                                  detailsBloc: detailsBloc,
-                                  table2: element,
-                                  pos: i,
-                                  mylearninglist: myLearningBloc.list,
-                                  isFromReschedule: false,
+                                ChangeNotifierProvider(
+                                  create: (context) => ProviderModel(),
+                                  child: CommonDetailScreen(
+                                    screenType: ScreenType.MyLearning,
+                                    contentid: contentId,
+                                    objtypeId: element.objecttypeid,
+                                    detailsBloc: detailsBloc,
+                                    table2: element,
+                                    pos: i,
+                                    mylearninglist: myLearningBloc.list,
+                                    isFromReschedule: false,
+                                  ),
                                 ),
                           ),
                         )
@@ -1348,13 +1330,7 @@ getComponentId() async{
               if (myLearningBloc.isFirstLoading == true) {
                 return Center(
                   child: AbsorbPointer(
-                    child: SpinKitCircle(
-                      color: Color(
-                        int.parse(
-                            '0xFF${appBloc.uiSettingModel.appTextColor.substring(1, 7).toUpperCase()}'),
-                      ),
-                      size: 70.h,
-                    ),
+                    child: AppConstants().getLoaderWidget(iconSize: 70)
                   ),
                 );
               }
@@ -1577,13 +1553,7 @@ getComponentId() async{
                                     if (myLearningBloc.isLoadingMyCources) {
                                       return Center(
                                         child: AbsorbPointer(
-                                          child: SpinKitCircle(
-                                            color: Color(
-                                              int.parse(
-                                                  '0xFF${appBloc.uiSettingModel.appTextColor.substring(1, 7).toUpperCase()}'),
-                                            ),
-                                            size: 70.h,
-                                          ),
+                                          child: AppConstants().getLoaderWidget(iconSize: 70)
                                         ),
                                       );
                                     } else
@@ -1660,13 +1630,7 @@ getComponentId() async{
           (state.status == Status.LOADING)
               ? Center(
                   child: AbsorbPointer(
-                    child: SpinKitCircle(
-                      color: Color(
-                        int.parse(
-                            '0xFF${appBloc.uiSettingModel.appTextColor.substring(1, 7).toUpperCase()}'),
-                      ),
-                      size: 70.h,
-                    ),
+                    child: AppConstants().getLoaderWidget(iconSize: 70)
                   ),
                 )
               : SizedBox(
@@ -1745,13 +1709,7 @@ getComponentId() async{
                       if (myLearningBloc.isLoadingArchievedCources) {
                         return Center(
                           child: AbsorbPointer(
-                            child: SpinKitCircle(
-                              color: Color(
-                                int.parse(
-                                    '0xFF${appBloc.uiSettingModel.appTextColor.substring(1, 7).toUpperCase()}'),
-                              ),
-                              size: 70.h,
-                            ),
+                            child: AppConstants().getLoaderWidget(iconSize: 70),
                           ),
                         );
                       } else {
@@ -1952,6 +1910,7 @@ getComponentId() async{
 
         return MyLearningComponentCard(
           table2: table2,
+          trackModel: downloadModel?.trackModel,
           trackContentId: downloadModel?.trackContentId ?? "",
           trackContentName: downloadModel?.trackContentName ?? "",
           isArchive: isArchive,
@@ -2574,19 +2533,10 @@ getComponentId() async{
     if ([11, 14, 20, 21, 28, 36, 52].contains(table2.objecttypeid)) {
       if (table2.objecttypeid == 11 &&
           (table2.mediatypeid == 3 || table2.mediatypeid == 4)) {
-        return ListTile(
-            leading: Icon(
-              IconDataSolid(int.parse('0xf144')),
-              color: InsColor(appBloc).appIconColor,
-            ),
-            title: Text(
-              appBloc.localstr.mylearningActionsheetPlayoption,
-              style: TextStyle(
-                  color: Color(
-                int.parse(
-                    '0xFF${appBloc.uiSettingModel.appTextColor.substring(1, 7).toUpperCase()}'),
-              )),
-            ),
+        return BottomsheetOptionTile(
+            text: (appBloc.localstr.mylearningActionsheetPlayoption != null) ? appBloc.localstr.mylearningActionsheetPlayoption : '',
+            iconData:  IconDataSolid(int.parse('0xf144')),
+
             onTap: () async {
               Navigator.of(context).pop();
 
@@ -2676,17 +2626,11 @@ getComponentId() async{
           (table2.mediatypeid == 3 || table2.mediatypeid == 4)) {
         return Container();
       } else {
-        return ListTile(
-          leading: Icon(
-            IconDataSolid(int.parse('0xf06e')),
-            color: InsColor(appBloc).appIconColor,
-          ),
-          title: Text(appBloc.localstr.mylearningActionsheetViewoption,
-              style: TextStyle(
-                  color: Color(
-                int.parse(
-                    '0xFF${appBloc.uiSettingModel.appTextColor.substring(1, 7).toUpperCase()}'),
-              ))),
+        return BottomsheetOptionTile(
+
+          text: (appBloc.localstr.mylearningActionsheetViewoption != null) ? appBloc.localstr.mylearningActionsheetViewoption: '',
+          iconData:IconDataSolid(int.parse('0xf06e')),
+
           onTap: () async {
             Navigator.of(context).pop();
 
@@ -2915,32 +2859,27 @@ getComponentId() async{
     if (table2.objecttypeid == 70 && (table2.bit4 != null && table2.bit4)) {
       return Container();
     }
-    return ListTile(
-        leading: Icon(
-          IconDataSolid(int.parse('0xf570')),
-          color: InsColor(appBloc).appIconColor,
-        ),
-        title: Text(appBloc.localstr.mylearningActionsheetDetailsoption,
-            style: TextStyle(
-                color: Color(
-                  int.parse(
-                      '0xFF${appBloc.uiSettingModel.appTextColor.substring(1, 7).toUpperCase()}'),
-                ))),
+    return BottomsheetOptionTile(
+        iconData: IconDataSolid(int.parse('0xf570')),
+        text: appBloc.localstr.mylearningActionsheetDetailsoption,
         onTap: () {
           Navigator.pop(context);
           print("Object Type Id:${table2.objecttypeid}");
           if (table2.objecttypeid == 70 && table2.eventscheduletype == 2 /*appBloc.uiSettingModel.EnableMultipleInstancesforEvent == 'true'*/) {
             Navigator.of(context)
                 .push(MaterialPageRoute(
-                builder: (context) => CommonDetailScreen(
-                  screenType: ScreenType.MyLearning,
-                  contentid: table2.contentid,
-                  objtypeId: table2.objecttypeid,
-                  detailsBloc: detailsBloc,
-                  table2: table2,
-                  //     nativeModel: widget.nativeModel,
-                  isFromReschedule: false,
-                  //isFromMyLearning: false
+                builder: (context) => ChangeNotifierProvider(
+                  create: (context) => ProviderModel(),
+                  child: CommonDetailScreen(
+                    screenType: ScreenType.MyLearning,
+                    contentid: table2.contentid,
+                    objtypeId: table2.objecttypeid,
+                    detailsBloc: detailsBloc,
+                    table2: table2,
+                    //     nativeModel: widget.nativeModel,
+                    isFromReschedule: false,
+                    //isFromMyLearning: false
+                  ),
                 )))
                 .then((value) => {
               if (value == true)
@@ -2954,13 +2893,16 @@ getComponentId() async{
                 'isaddedtomylearning' + table2.isaddedtomylearning.toString());
             Navigator.of(context)
                 .push(MaterialPageRoute(
-                builder: (context) => CommonDetailScreen(
-                    screenType: ScreenType.MyLearning,
-                    contentid: table2.contentid,
-                    objtypeId: table2.objecttypeid,
-                    detailsBloc: detailsBloc,
-                    table2: table2,
-                    isFromReschedule: false)))
+                builder: (context) => ChangeNotifierProvider(
+                  create: (context) => ProviderModel(),
+                  child: CommonDetailScreen(
+                      screenType: ScreenType.MyLearning,
+                      contentid: table2.contentid,
+                      objtypeId: table2.objecttypeid,
+                      detailsBloc: detailsBloc,
+                      table2: table2,
+                      isFromReschedule: false),
+                )))
                 .then((value) => {
               if (value == true)
                 {
@@ -2973,16 +2915,19 @@ getComponentId() async{
                 'isaddedtomylearning' + table2.isaddedtomylearning.toString());
             Navigator.of(context)
                 .push(MaterialPageRoute(
-                builder: (context) => CommonDetailScreen(
-                    screenType: ScreenType.MyLearning,
-                    contentid: table2.contentid,
-                    objtypeId: table2.objecttypeid,
-                    detailsBloc: detailsBloc,
-                    table2: table2,
-                    pos: i,
-                    mylearninglist: myLearningBloc.list,
-                    isFromReschedule: false
-                  //isFromMyLearning: true
+                builder: (context) => ChangeNotifierProvider(
+                  create: (context) => ProviderModel(),
+                  child: CommonDetailScreen(
+                      screenType: ScreenType.MyLearning,
+                      contentid: table2.contentid,
+                      objtypeId: table2.objecttypeid,
+                      detailsBloc: detailsBloc,
+                      table2: table2,
+                      pos: i,
+                      mylearninglist: myLearningBloc.list,
+                      isFromReschedule: false
+                    //isFromMyLearning: true
+                  ),
                 )))
                 .then((value) => {
               if (value == true)
@@ -3001,17 +2946,8 @@ getComponentId() async{
       if (isValidString(table2.eventenddatetime ??
           "")) if (!returnEventCompleted(table2.eventenddatetime ?? "")) {
         if (table2.typeofevent == 2) {
-          return ListTile(
-            leading: Icon(
-              IconDataSolid(int.parse('0xf234')),
-              color: InsColor(appBloc).appIconColor,
-            ),
-            title: Text(appBloc.localstr.mylearningActionsheetJoinoption,
-                style: TextStyle(
-                    color: Color(
-                      int.parse(
-                          '0xFF${appBloc.uiSettingModel.appTextColor.substring(1, 7).toUpperCase()}'),
-                    ))),
+          return BottomsheetOptionTile(iconData: IconDataSolid(int.parse('0xf234')), text: appBloc.localstr.mylearningActionsheetJoinoption,
+
             onTap: () {
               Navigator.pop(context);
               String joinUrl = table2.joinurl;
@@ -3051,25 +2987,17 @@ getComponentId() async{
         return Container();
       }
 
-      return ListTile(
-          leading: SvgPicture.asset(
-            'assets/Report.svg',
-            width: 25.h,
-            height: 25.h,
-            color: InsColor(appBloc).appIconColor,
-          ),
-          title: Text(appBloc.localstr.mylearningActionsheetReportoption,
-              style: TextStyle(
-                  color: Color(
-                    int.parse(
-                        '0xFF${appBloc.uiSettingModel.appTextColor.substring(1, 7).toUpperCase()}'),
-                  ))),
+      return BottomsheetOptionTile(
+          text: appBloc.localstr.mylearningActionsheetReportoption,
+          svgImageUrl:"assets/Report.svg",
+          iconColor:InsColor(appBloc).appIconColor,
           onTap: () {
             Navigator.pop(context);
             Navigator.of(context).push(MaterialPageRoute(
                 builder: (context) =>
                     ProgressReport(table2, detailsBloc, '', '-1')));
-          });
+          },
+      );
     }
   }
 
@@ -3080,17 +3008,10 @@ getComponentId() async{
 
       if (isValidString(table2.eventenddatetime ??
           "")) if (!returnEventCompleted(table2.eventenddatetime ?? "")) {
-        return ListTile(
-          leading: Icon(
+        return BottomsheetOptionTile(
+          iconData:
             IconDataSolid(int.parse('0xf271')),
-            color: InsColor(appBloc).appIconColor,
-          ),
-          title: Text(appBloc.localstr.mylearningActionsheetAddtocalendaroption,
-              style: TextStyle(
-                  color: Color(
-                    int.parse(
-                        '0xFF${appBloc.uiSettingModel.appTextColor.substring(1, 7).toUpperCase()}'),
-                  ))),
+          text: appBloc.localstr.mylearningActionsheetAddtocalendaroption,
           onTap: () {
             DateTime startDate = DateFormat('yyyy-MM-ddTHH:mm:ss')
                 .parse(table2.eventstartdatetime ?? "");
@@ -3137,19 +3058,10 @@ getComponentId() async{
       if (isValidString(table2.actualstatus) &&
           ((table2.actualstatus != 'completed') &&
               (table2.actualstatus != 'not attempted'))) {
-        return ListTile(
-            leading: SvgPicture.asset(
-              'assets/SetComplete.svg',
-              width: 25.h,
-              height: 25.h,
-              color: InsColor(appBloc).appIconColor,
-            ),
-            title: Text(appBloc.localstr.mylearningActionsheetSetcompleteoption,
-                style: TextStyle(
-                    color: Color(
-                      int.parse(
-                          '0xFF${appBloc.uiSettingModel.appTextColor.substring(1, 7).toUpperCase()}'),
-                    ))),
+        return BottomsheetOptionTile(
+              svgImageUrl: 'assets/SetComplete.svg',
+              iconColor: InsColor(appBloc).appIconColor,
+            text:appBloc.localstr.mylearningActionsheetSetcompleteoption,
             onTap: () {
               Navigator.pop(context);
               detailsBloc.add(SetCompleteEvent(table2: table2));
@@ -3165,18 +3077,9 @@ getComponentId() async{
   Widget displayRelatedContent(DummyMyCatelogResponseTable2 table2) {
     if (table2.objecttypeid == 70) {
       if (table2.relatedconentcount > 0) {
-        return ListTile(
-          leading: Icon(
-            Icons.content_copy,
-            color: InsColor(appBloc).appIconColor,
-          ),
-          title:
-          Text(appBloc.localstr.mylearningActionsheetRelatedcontentoption,
-              style: TextStyle(
-                  color: Color(
-                    int.parse(
-                        '0xFF${appBloc.uiSettingModel.appTextColor.substring(1, 7).toUpperCase()}'),
-                  ))),
+        return BottomsheetOptionTile(
+iconData:            Icons.content_copy,
+          text:appBloc.localstr.mylearningActionsheetRelatedcontentoption,
           onTap: () {
             Navigator.of(context).pop();
 
@@ -3277,20 +3180,9 @@ getComponentId() async{
     if (isValidString(table2.eventstartdatetime ?? "")) {
       if (!returnEventCompleted(table2.eventstartdatetime ?? "")) {
         if (table2.bit2 != null && table2.bit2) {
-          return ListTile(
-            leading: Icon(
-              IconDataSolid(int.parse('0xf410')),
-              color: InsColor(appBloc).appIconColor,
-            ),
-            title: Text(
-              appBloc.localstr.mylearningActionsheetCancelenrollmentoption,
-              style: TextStyle(
-                color: Color(
-                  int.parse(
-                      '0xFF${appBloc.uiSettingModel.appTextColor.substring(1, 7).toUpperCase()}'),
-                ),
-              ),
-            ),
+          return BottomsheetOptionTile(
+            iconData:IconDataSolid(int.parse('0xf410')),
+            text:appBloc.localstr.mylearningActionsheetCancelenrollmentoption,
             onTap: () {
               Navigator.of(context).pop();
               checkCancellation(table2, context);
@@ -3301,15 +3193,9 @@ getComponentId() async{
         // for schedule events
         if (table2.eventscheduletype == 1 &&
             appBloc.uiSettingModel.enableMultipleInstancesForEvent == 'true') {
-          return ListTile(
-              leading: Icon(Icons.cancel),
-              title: Text(
-                  appBloc.localstr.mylearningActionsheetCancelenrollmentoption,
-                  style: TextStyle(
-                      color: Color(
-                        int.parse(
-                            '0xFF${appBloc.uiSettingModel.appTextColor.substring(1, 7).toUpperCase()}'),
-                      ))),
+          return BottomsheetOptionTile(
+              iconData:Icons.cancel,
+                  text:appBloc.localstr.mylearningActionsheetCancelenrollmentoption,
               onTap: () {
                  Navigator.of(context).pop();
                 checkCancellation(table2, context);
@@ -3325,20 +3211,9 @@ getComponentId() async{
     downloadPath(table2.contentid, table2);
 
     if (table2.isdownloaded && table2.objecttypeid != 70) {
-      return ListTile(
-        leading: Icon(
-          IconDataSolid(int.parse('0xf1f8')),
-          color: InsColor(appBloc).appIconColor,
-        ),
-        title: Text(
-          appBloc.localstr.mylearningActionsheetDeleteoption,
-          style: TextStyle(
-            color: Color(
-              int.parse(
-                  '0xFF${appBloc.uiSettingModel.appTextColor.substring(1, 7).toUpperCase()}'),
-            ),
-          ),
-        ),
+      return BottomsheetOptionTile(
+      iconData: IconDataSolid(int.parse('0xf1f8')),
+      text: appBloc.localstr.mylearningActionsheetDeleteoption,
 
         /// TODO : Sagar sir - delete offline file
         onTap: () async {
@@ -3364,20 +3239,9 @@ getComponentId() async{
     if (table2.isarchived) {
       return Container();
     }
-    return ListTile(
-      leading: Icon(
-        IconDataSolid(int.parse('0xf187')),
-        color: InsColor(appBloc).appIconColor,
-      ),
-      title: Text(
-        appBloc.localstr.mylearningActionsheetArchiveoption,
-        style: TextStyle(
-          color: Color(
-            int.parse(
-                '0xFF${appBloc.uiSettingModel.appTextColor.substring(1, 7).toUpperCase()}'),
-          ),
-        ),
-      ),
+    return BottomsheetOptionTile(
+      iconData:        IconDataSolid(int.parse('0xf187')),
+      text:        appBloc.localstr.mylearningActionsheetArchiveoption,
       onTap: () {
         myLearningBloc.add(
           AddToArchiveCall(
@@ -3395,20 +3259,9 @@ getComponentId() async{
     if (!table2.isarchived) {
       return Container();
     }
-    return ListTile(
-      leading: Icon(
-        IconDataSolid(int.parse('0xf187')),
-        color: InsColor(appBloc).appIconColor,
-      ),
-      title: Text(
-        appBloc.localstr.mylearningActionsheetUnarchiveoption,
-        style: TextStyle(
-          color: Color(
-            int.parse(
-                '0xFF${appBloc.uiSettingModel.appTextColor.substring(1, 7).toUpperCase()}'),
-          ),
-        ),
-      ),
+    return BottomsheetOptionTile(
+      iconData:        IconDataSolid(int.parse('0xf187')),
+      text:        appBloc.localstr.mylearningActionsheetUnarchiveoption,
       onTap: () {
         myLearningBloc.add(
           RemoveToArchiveCall(
@@ -3424,20 +3277,9 @@ getComponentId() async{
 
   Widget displayRemove(DummyMyCatelogResponseTable2 table2) {
     if ((table2.objecttypeid == 70 && table2.bit4 != null && table2.bit4) || table2.removelink) {
-      return ListTile(
-          leading: Icon(
-            IconDataSolid(int.parse('0xf056')),
-            color: InsColor(appBloc).appIconColor,
-          ),
-          title: Text(
-            appBloc.localstr.mylearningActionsheetRemovefrommylearning,
-            style: TextStyle(
-              color: Color(
-                int.parse(
-                    '0xFF${appBloc.uiSettingModel.appTextColor.substring(1, 7).toUpperCase()}'),
-              ),
-            ),
-          ),
+      return BottomsheetOptionTile(
+          iconData: IconDataSolid(int.parse('0xf056')),
+          text: appBloc.localstr.mylearningActionsheetRemovefrommylearning,
           onTap: () {
             Navigator.of(context).pop();
             showDialog(
@@ -3499,22 +3341,10 @@ getComponentId() async{
       return Container();
     }
 
-    return ListTile(
-        leading: Icon(
-          IconDataSolid(int.parse('0xf783')),
-          color: InsColor(appBloc).appIconColor,
-        ),
-        title: Text(
-          appBloc.localstr.mylearningActionbuttonRescheduleactionbutton,
-          style: TextStyle(
-            color: Color(
-              int.parse(
-                  '0xFF${appBloc.uiSettingModel.appTextColor.substring(1, 7).toUpperCase()}'),
-            ),
-          ),
-        ),
-
-        // TODO : Sprint -3
+    return BottomsheetOptionTile(
+      iconData: IconDataSolid(int.parse('0xf783')),
+      text: appBloc.localstr.mylearningActionbuttonRescheduleactionbutton,
+              // TODO : Sprint -3
 
         onTap: () {
           Navigator.pop(context);
@@ -3523,14 +3353,17 @@ getComponentId() async{
             Navigator.of(context)
                 .push(
               MaterialPageRoute(
-                builder: (context) => CommonDetailScreen(
-                  screenType: ScreenType.MyLearning,
-                  contentid: table2.reschduleparentid,
-                  objtypeId: table2.objecttypeid,
-                  detailsBloc: detailsBloc,
-                  table2: table2,
-                  isFromReschedule: true,
-                  isShowShedule: true,
+                builder: (context) => ChangeNotifierProvider(
+                  create: (context) => ProviderModel(),
+                  child: CommonDetailScreen(
+                    screenType: ScreenType.MyLearning,
+                    contentid: table2.reschduleparentid,
+                    objtypeId: table2.objecttypeid,
+                    detailsBloc: detailsBloc,
+                    table2: table2,
+                    isFromReschedule: true,
+                    isShowShedule: true,
+                  ),
                 ),
               ),
             )
@@ -3543,20 +3376,11 @@ getComponentId() async{
 
   Widget displayCertificate(DummyMyCatelogResponseTable2 table2) {
     if (isValidString(table2.certificateaction)) {
-      return ListTile(
-          leading: SvgPicture.asset(
-            'assets/Certificate.svg',
-            width: 25.h,
-            height: 25.h,
-            color: InsColor(appBloc).appIconColor,
-          ),
-          title:
-          Text(appBloc.localstr.mylearningActionsheetViewcertificateoption,
-              style: TextStyle(
-                  color: Color(
-                    int.parse(
-                        '0xFF${appBloc.uiSettingModel.appTextColor.substring(1, 7).toUpperCase()}'),
-                  ))),
+      return BottomsheetOptionTile(
+          svgImageUrl: 'assets/Certificate.svg',
+            iconColor: InsColor(appBloc).appIconColor,
+          text:
+          appBloc.localstr.mylearningActionsheetViewcertificateoption,
           onTap: () {
             if (!isValidString(table2.certificateaction) ||
                 table2.certificateaction == 'notearned') {
@@ -3629,29 +3453,18 @@ getComponentId() async{
       if (isValidString(table2.qrimagename) &&
           isValidString(table2.qrcodeimagepath) &&
           !table2.bit4) {
-        return ListTile(
-          leading: Icon(
-            IconDataSolid(int.parse('0xf029')),
-            color: InsColor(appBloc).appIconColor,
-          ),
-          title: Text(
-            appBloc.localstr.mylearningActionsheetViewqrcode,
-            style: TextStyle(
-              color: Color(
-                int.parse(
-                    '0xFF${appBloc.uiSettingModel.appTextColor.substring(1, 7).toUpperCase()}'),
-              ),
-            ),
-          ),
-          onTap: () {
-            Navigator.pop(context);
-            Navigator.of(context).push(
-              MaterialPageRoute(
-                builder: (context) => QrCodeScreen(
-                    '${ApiEndpoints.strSiteUrl}${table2.qrcodeimagepath}'),
-              ),
-            );
-          },
+        return BottomsheetOptionTile(
+           iconData: IconDataSolid(int.parse('0xf029')),
+            text:appBloc.localstr.mylearningActionsheetViewqrcode,
+            onTap: () {
+              Navigator.pop(context);
+              Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (context) => QrCodeScreen(
+                      '${ApiEndpoints.strSiteUrl}${table2.qrcodeimagepath}'),
+                ),
+              );
+            },
         );
       }
     }
@@ -3665,12 +3478,9 @@ getComponentId() async{
       if (table2.isaddedtomylearning == 1 ||
           typeFrom == 'event' ||
           typeFrom == 'track') {
-        return ListTile(
-          leading: Icon(
-            IconDataSolid(int.parse('0xf8d9')),
-            color: InsColor(appBloc).appIconColor,
-          ),
-          title: Text(appBloc.localstr.learningtrackLabelEventviewrecording),
+        return BottomsheetOptionTile(
+            iconData:IconDataSolid(int.parse('0xf8d9')),
+          text: appBloc.localstr.learningtrackLabelEventviewrecording,
           onTap: () => {
             //todo : sprint -3
 //            Navigator.of(context).push(MaterialPageRoute(
@@ -3690,20 +3500,9 @@ getComponentId() async{
       return Container();
     }
 
-    return ListTile(
-      leading: Icon(
-        IconDataSolid(int.parse('0xf1e0')),
-        color: InsColor(appBloc).appIconColor,
-      ),
-      title: Text(
-        'Share with Connection',
-        style: TextStyle(
-          color: Color(
-            int.parse(
-                '0xFF${appBloc.uiSettingModel.appTextColor.substring(1, 7).toUpperCase()}'),
-          ),
-        ),
-      ),
+    return BottomsheetOptionTile(
+        iconData:IconDataSolid(int.parse('0xf1e0')),
+text:        'Share with Connection',
       onTap: () {
         Navigator.pop(context);
 
@@ -3726,22 +3525,9 @@ getComponentId() async{
       return Container();
     }
 
-    return ListTile(
-      leading: Icon(
-        IconDataSolid(
-          int.parse('0xf079'),
-        ),
-        color: InsColor(appBloc).appIconColor,
-      ),
-      title: Text(
-        'Share with People',
-        style: TextStyle(
-          color: Color(
-            int.parse(
-                '0xFF${appBloc.uiSettingModel.appTextColor.substring(1, 7).toUpperCase()}'),
-          ),
-        ),
-      ),
+    return BottomsheetOptionTile(
+      iconData:IconDataSolid(int.parse('0xf079'),),
+      text: 'Share with People',
       onTap: () {
         Navigator.pop(context);
 
@@ -3759,21 +3545,12 @@ getComponentId() async{
     //if ((table2?.ShareContentwithUser?.length ?? 0) > 0) {
     if (privilegeCreateForumIdExists()) {
       if (table2.objecttypeid == 14) {
-        return ListTile(
-          leading: Icon(
-            Icons.email,
-            // IconDataSolid(int.parse('0xf06e')),
-            color: InsColor(appBloc).appIconColor,
-          ),
-          title: Text(
-              appBloc.localstr.mylearningsendviaemailnewoption.isEmpty
+        return BottomsheetOptionTile(
+            iconData:Icons.email,
+            text:  appBloc.localstr.mylearningsendviaemailnewoption.isEmpty
                   ? 'Share via Email'
                   : appBloc.localstr.mylearningsendviaemailnewoption,
-              style: TextStyle(
-                  color: Color(
-                    int.parse(
-                        '0xFF${appBloc.uiSettingModel.appTextColor.substring(1, 7).toUpperCase()}'),
-                  ))),
+
           onTap: () {
             Navigator.pop(context);
             Navigator.of(context).push(MaterialPageRoute(
@@ -3801,19 +3578,9 @@ getComponentId() async{
       return SizedBox();
     }
 
-    return ListTile(
-      leading: Icon(
-        Icons.pause,
-        color: InsColor(appBloc).appIconColor,
-      ),
-      title: Text(
-        "Pause Download",
-        style: TextStyle(
-            color: Color(
-              int.parse(
-                  '0xFF${appBloc.uiSettingModel.appTextColor.substring(1, 7).toUpperCase()}'),
-            )),
-      ),
+    return BottomsheetOptionTile(
+        iconData:Icons.pause,
+text:        "Pause Download",
       onTap: () async {
         Navigator.of(context).pop();
 
@@ -3827,19 +3594,9 @@ getComponentId() async{
       return SizedBox();
     }
 
-    return ListTile(
-      leading: Icon(
-        Icons.play_arrow,
-        color: InsColor(appBloc).appIconColor,
-      ),
-      title: Text(
-        "Resume Download",
-        style: TextStyle(
-            color: Color(
-              int.parse(
-                  '0xFF${appBloc.uiSettingModel.appTextColor.substring(1, 7).toUpperCase()}'),
-            )),
-      ),
+    return BottomsheetOptionTile(
+        iconData:Icons.play_arrow,
+text:        "Resume Download",
       onTap: () async {
         Navigator.of(context).pop();
 
@@ -3853,19 +3610,9 @@ getComponentId() async{
       return SizedBox();
     }
 
-    return ListTile(
-      leading: Icon(
-        Icons.delete,
-        color: InsColor(appBloc).appIconColor,
-      ),
-      title: Text(
-        "Cancel Download",
-        style: TextStyle(
-            color: Color(
-              int.parse(
-                  '0xFF${appBloc.uiSettingModel.appTextColor.substring(1, 7).toUpperCase()}'),
-            )),
-      ),
+    return BottomsheetOptionTile(
+        iconData:Icons.delete,
+text:        "Cancel Download",
       onTap: () async {
         MyPrint.printOnConsole('Cancel Download Called:${downloadModel.taskId}');
 
@@ -3882,20 +3629,10 @@ getComponentId() async{
       return SizedBox();
     }
 
-    return ListTile(
-      leading: Icon(
-        Icons.delete,
-        color: InsColor(appBloc).appIconColor,
-      ),
-      title: Text(
-        "Remove from Downloads",
-        style: TextStyle(
-            color: Color(
-              int.parse(
-                  '0xFF${appBloc.uiSettingModel.appTextColor.substring(1, 7).toUpperCase()}'),
-            )),
-      ),
-      onTap: () async {
+    return BottomsheetOptionTile(
+        iconData:Icons.delete,
+        text:  "Remove from Downloads",
+        onTap: () async {
         MyPrint.printOnConsole('Cancel Download Called:${downloadModel.taskId}');
 
         Navigator.of(context).pop();
@@ -4540,19 +4277,11 @@ getComponentId() async{
         if (table2.objecttypeid == 26) {
           // assignmenturl = await '$assignmenturl/ismobilecontentview/true';
           // print('assignmenturl is : $assignmenturl');
-          await Navigator.of(context)
-              .push(
+          await Navigator.of(context).push(
             MaterialPageRoute(
-              builder: (context) => InAppWebCourseLaunch(courseUrl, table2),
+              builder: (context) =>
+                  AdvancedWebCourseLaunch(courseUrl, table2.name),
             ),
-          )
-              .then(
-                (value) => {
-              if (value ?? true)
-                {
-                  refreshMyLearningContents()
-                }
-            },
           );
         } else {
           // assignmenturl = await '$assignmenturl/ismobilecontentview/true';

@@ -12,7 +12,7 @@ import 'package:intl/intl.dart';
 import 'package:video_player/video_player.dart';
 import 'package:webviewx/webviewx.dart';
 
-class MessageItem extends StatelessWidget {
+class MessageItem extends StatefulWidget {
   MessageItem({
     Key? key,
     required this.appBloc,
@@ -37,17 +37,24 @@ class MessageItem extends StatelessWidget {
   final BuildContext context;
 
   @override
+  State<MessageItem> createState() => _MessageItemState();
+}
+
+class _MessageItemState extends State<MessageItem> {
+  @override
   Widget build(BuildContext context) {
     DeviceData deviceData = DeviceData.init(context);
 
-    MyPrint.printOnConsole("fromUserId:$fromUserId, toUser.userId:${toUser.userId}");
-    bool isMessageReceived = fromUserId == toUser.userId;
+    MyPrint.printOnConsole("fromUserId:${widget.fromUserId}, toUser.userId:${widget.toUser.userId}");
+    bool isMessageReceived = widget.fromUserId == widget.toUser.userId;
 
     Color messageColor = Colors.white;
     if(!isMessageReceived) {
       // messageColor = Color(int.parse("0xFF${appBloc.uiSettingModel.appButtonBgColor.substring(1, 7).toUpperCase()}")).withOpacity(0.35);
       messageColor = AppColors.getAppButtonBGColor();
     }
+
+    double radius = 0.045;
 
     return Container(
       margin: EdgeInsets.only(
@@ -63,10 +70,10 @@ class MessageItem extends StatelessWidget {
             : MainAxisAlignment.end,
         children: <Widget>[
           isMessageReceived
-              ? showFriendImage == true
+              ? widget.showFriendImage == true
                   ? AvatarIcon(
-                      user: toUser,
-                      radius: 0.045,
+                      user: widget.toUser,
+                      radius: radius,
                       errorWidgetColor: Colors.black,
                       placeholderColor: Colors.black,
                     )
@@ -113,33 +120,80 @@ class MessageItem extends StatelessWidget {
                   //             "0xFF${appBloc.uiSettingModel.appBGColor.substring(1, 7).toUpperCase()}")),
                   //   ),
                   // ),
-                  messageWidget(msgType,isMessageReceived),
+                  messageWidget(widget.msgType,isMessageReceived),
                   SizedBox(height: 4),
                   Text(
-                    "${DateFormat.jm().format(date)}",
+                    "${DateFormat.jm().format(widget.date)}",
                     style: TextStyle(
                       fontSize: deviceData.screenHeight * 0.01,
                       color: isMessageReceived ? AppColors.getAppTextColor(): Colors.white
                     ),
-                  )
+                  ),
                 ],
               ),
             ),
           ),
+          Visibility(
+            visible: !isMessageReceived,
+            child: Padding(
+              padding: EdgeInsets.only(left:10),
+              child: getUserProfile(radius),
+            ),
+          )
         ],
       ),
     );
   }
 
+  Widget getUserProfile(double radius){
+    MyPrint.printOnConsole("image url: ${widget.appBloc.profilePic} userName : ${widget.appBloc.userName}");
+
+    return AvatarIcon(
+      user: ChatUser(
+        profPic: widget.appBloc.profilePic.length == 0
+              ? imgUrl
+              : widget.appBloc.profilePic,
+      ),
+      radius: radius,
+      errorWidgetColor: Colors.black,
+      placeholderColor: Colors.black,
+    );
+  }
+
+  String imgUrl = "https://www.insertcart.com/wp-content/uploads/2018/05/thumbnail.jpg";
+
+  String userName = "";
+
+  Future<void> getUserName() async {
+    // String name = await sharePrefGetString(sharedPref_LoginUserName);
+    // List<String> nameinfo = name.split(" ");
+    // String shortName = "";
+    // if (nameinfo.length > 1) {
+    //   for (int i = 0; i < nameinfo.length; i++) {
+    //     shortName += nameinfo[i][0];
+    //   }
+    // }
+    // /*print("nameinfo length:${nameinfo.length}");
+    // print("nameinfo:${nameinfo}");
+    // print("username:${username}");*/
+    // if (nameinfo.length == 1) {
+    //   shortName += name.isNotEmpty ? name[0] : "";
+    // }
+    // else {}
+    // userName = name;
+    // setState(() {});
+  }
+
+  // Widget getUserProfile(){
   Widget messageWidget(MessageType type,bool isMessageReceived) {
-    DeviceData deviceData = DeviceData.init(context);
+    DeviceData deviceData = DeviceData.init(widget.context);
 
     switch (type) {
       case MessageType.Text:
         return Container(
           margin: const EdgeInsets.only(top: 5.0),
           child: Text(
-            text,
+            widget.text,
             style: TextStyle(
               color: isMessageReceived? AppColors.getAppTextColor():Colors.white,
               fontSize: isMessageReceived?16:14
@@ -151,8 +205,8 @@ class MessageItem extends StatelessWidget {
           //margin: const EdgeInsets.only(top: 5.0),
           child: InkWell(
             onTap: () {
-              Navigator.of(context).push(MaterialPageRoute(
-                  builder: (context) => FileViewer(fileUrl: fileUrl)));
+              Navigator.of(widget.context).push(MaterialPageRoute(
+                  builder: (context) => FileViewer(fileUrl: widget.fileUrl)));
             },
             child: Container(
               width: 150,
@@ -162,7 +216,7 @@ class MessageItem extends StatelessWidget {
                 borderRadius:
                 BorderRadius.circular(deviceData.screenWidth * 0.05),
                 child: Image.network(
-                  fileUrl,
+                  widget.fileUrl,
                   fit: BoxFit.cover,
                 ),
               ),
@@ -174,8 +228,8 @@ class MessageItem extends StatelessWidget {
           //margin: const EdgeInsets.only(top: 5.0),
           child: InkWell(
             onTap: () async {
-              Navigator.of(context).push(MaterialPageRoute(
-                  builder: (context) => FileViewer(fileUrl: fileUrl)));
+              Navigator.of(widget.context).push(MaterialPageRoute(
+                  builder: (context) => FileViewer(fileUrl: widget.fileUrl)));
               //PDFDocument doc = await PDFDocument.fromURL(fileUrl);
 
               // final result = await Navigator.push(
@@ -204,7 +258,7 @@ class MessageItem extends StatelessWidget {
                         /*child: InAppWebView(
                             initialUrlRequest:
                             URLRequest(url: Uri.tryParse(fileUrl))),*/
-                      child: WebViewX(width: 150, height: 150, initialSourceType: SourceType.url, initialContent: fileUrl),
+                      child: WebViewX(width: 150, height: 150, initialSourceType: SourceType.url, initialContent: widget.fileUrl),
                     ),
                   ),
                   Center(
@@ -216,7 +270,7 @@ class MessageItem extends StatelessWidget {
           ),
         );
       case MessageType.Video:
-        final videoPlayerController = VideoPlayerController.network(fileUrl);
+        final videoPlayerController = VideoPlayerController.network(widget.fileUrl);
 
         videoPlayerController.initialize();
 
@@ -239,8 +293,8 @@ class MessageItem extends StatelessWidget {
               //_controller.initialize();
               //PDFViewer(document: doc);
 
-              Navigator.of(context).push(MaterialPageRoute(
-                  builder: (context) => FileViewer(fileUrl: fileUrl)));
+              Navigator.of(widget.context).push(MaterialPageRoute(
+                  builder: (context) => FileViewer(fileUrl: widget.fileUrl)));
             },
             child: Container(
                 width: 150,
@@ -267,7 +321,7 @@ class MessageItem extends StatelessWidget {
             ),
           ),
         );
-      case MessageType.Audio:
+        case MessageType.Audio:
         return Container(
           //margin: const EdgeInsets.only(top: 5.0),
           child: InkWell(
@@ -275,8 +329,8 @@ class MessageItem extends StatelessWidget {
               //_controller.initialize();
               //PDFViewer(document: doc);
 
-              Navigator.of(context).push(MaterialPageRoute(
-                  builder: (context) => FileViewer(fileUrl: fileUrl)));
+              Navigator.of(widget.context).push(MaterialPageRoute(
+                  builder: (context) => FileViewer(fileUrl: widget.fileUrl)));
             },
             child: Container(
               width: 150,
@@ -368,7 +422,7 @@ class AvatarIcon extends StatelessWidget {
   Widget build(BuildContext context) {
     final deviceData = DeviceData.init(context);
     return ClipOval(
-      child: ImageType.network == ImageType.network
+      child: ImageType.network != ImageType.network
           ? Image(
               image: Image.asset('').image,
               width: deviceData.screenHeight * radius,
@@ -400,7 +454,8 @@ class AvatarIcon extends StatelessWidget {
                   ),
               width: deviceData.screenHeight * radius,
               height: deviceData.screenHeight * radius,
-              fit: BoxFit.cover),
+              fit: BoxFit.cover,
+      ),
     );
   }
 }

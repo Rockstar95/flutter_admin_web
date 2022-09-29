@@ -28,6 +28,9 @@ import '../common/outline_button.dart';
 import 'education_info.dart';
 import 'experience_info.dart';
 
+import '../../configs/constants.dart';
+
+
 class Profile extends StatefulWidget {
   final bool isFromProfile, isMyProfile;
   final String connectionUserId;

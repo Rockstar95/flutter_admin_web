@@ -16,6 +16,8 @@ import 'package:flutter_admin_web/framework/repository/askTheExpert/ask_the_expe
 import 'package:flutter_admin_web/framework/theme/ins_theme.dart';
 import 'package:flutter_admin_web/ui/common/common_toast.dart';
 
+import '../../configs/constants.dart';
+
 class EditAnswerComment extends StatefulWidget {
   final CommentList table;
 
@@ -201,7 +203,7 @@ class _EditAnswerCommentState extends State<EditAnswerComment>
                     ),
                   ),
                 ),
-                Container(
+                SizedBox(
                   width: useMobileLayout
                       ? double.infinity
                       : MediaQuery.of(context).size.width / 3,
@@ -222,7 +224,7 @@ class _EditAnswerCommentState extends State<EditAnswerComment>
                 ),
                 Visibility(
                   visible: (askTheExpertBloc.fileBytes != null),
-                  child: Container(
+                  child: SizedBox(
                     width: useMobileLayout
                         ? double.infinity
                         : MediaQuery.of(context).size.width / 2,
@@ -253,7 +255,7 @@ class _EditAnswerCommentState extends State<EditAnswerComment>
                                     ),
                                     Text(
                                       askTheExpertBloc.fileBytes != null
-                                          ? (askTheExpertBloc.fileBytes!.length / 1024).toStringAsFixed(0) + 'kb'
+                                          ? '${(askTheExpertBloc.fileBytes!.length / 1024).toStringAsFixed(0)}kb'
                                           : '',
                                       style: TextStyle(
                                           fontSize: 12.0,
@@ -310,10 +312,7 @@ class _EditAnswerCommentState extends State<EditAnswerComment>
         if (state.status == Status.LOADING) {
           return Align(
             child: AbsorbPointer(
-              child: SpinKitCircle(
-                color: Colors.grey,
-                size: 70.h,
-              ),
+              child: AppConstants().getLoaderWidget(iconSize: 70)
             ),
           );
         } else {
