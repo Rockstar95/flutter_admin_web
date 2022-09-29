@@ -73,6 +73,8 @@ import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher_string.dart';
 
+import '../../configs/constants.dart';
+import '../common/bottomsheet_option_tile.dart';
 import '../global_search_screen.dart';
 import 'common_detail_screen.dart';
 
@@ -1181,18 +1183,15 @@ getComponentId() async{
                             .push(
                           MaterialPageRoute(
                             builder: (context) =>
-                                ChangeNotifierProvider(
-                                  create: (context) => ProviderModel(),
-                                  child: CommonDetailScreen(
-                                    screenType: ScreenType.MyLearning,
-                                    contentid: contentId,
-                                    objtypeId: element.objecttypeid,
-                                    detailsBloc: detailsBloc,
-                                    table2: element,
-                                    pos: i,
-                                    mylearninglist: myLearningBloc.list,
-                                    isFromReschedule: false,
-                                  ),
+                                CommonDetailScreen(
+                                  screenType: ScreenType.MyLearning,
+                                  contentid: contentId,
+                                  objtypeId: element.objecttypeid,
+                                  detailsBloc: detailsBloc,
+                                  table2: element,
+                                  pos: i,
+                                  mylearninglist: myLearningBloc.list,
+                                  isFromReschedule: false,
                                 ),
                           ),
                         )
@@ -2868,18 +2867,15 @@ getComponentId() async{
           if (table2.objecttypeid == 70 && table2.eventscheduletype == 2 /*appBloc.uiSettingModel.EnableMultipleInstancesforEvent == 'true'*/) {
             Navigator.of(context)
                 .push(MaterialPageRoute(
-                builder: (context) => ChangeNotifierProvider(
-                  create: (context) => ProviderModel(),
-                  child: CommonDetailScreen(
-                    screenType: ScreenType.MyLearning,
-                    contentid: table2.contentid,
-                    objtypeId: table2.objecttypeid,
-                    detailsBloc: detailsBloc,
-                    table2: table2,
-                    //     nativeModel: widget.nativeModel,
-                    isFromReschedule: false,
-                    //isFromMyLearning: false
-                  ),
+                builder: (context) => CommonDetailScreen(
+                  screenType: ScreenType.MyLearning,
+                  contentid: table2.contentid,
+                  objtypeId: table2.objecttypeid,
+                  detailsBloc: detailsBloc,
+                  table2: table2,
+                  //     nativeModel: widget.nativeModel,
+                  isFromReschedule: false,
+                  //isFromMyLearning: false
                 )))
                 .then((value) => {
               if (value == true)
@@ -2893,16 +2889,13 @@ getComponentId() async{
                 'isaddedtomylearning' + table2.isaddedtomylearning.toString());
             Navigator.of(context)
                 .push(MaterialPageRoute(
-                builder: (context) => ChangeNotifierProvider(
-                  create: (context) => ProviderModel(),
-                  child: CommonDetailScreen(
-                      screenType: ScreenType.MyLearning,
-                      contentid: table2.contentid,
-                      objtypeId: table2.objecttypeid,
-                      detailsBloc: detailsBloc,
-                      table2: table2,
-                      isFromReschedule: false),
-                )))
+                builder: (context) => CommonDetailScreen(
+                    screenType: ScreenType.MyLearning,
+                    contentid: table2.contentid,
+                    objtypeId: table2.objecttypeid,
+                    detailsBloc: detailsBloc,
+                    table2: table2,
+                    isFromReschedule: false)))
                 .then((value) => {
               if (value == true)
                 {
@@ -2915,19 +2908,16 @@ getComponentId() async{
                 'isaddedtomylearning' + table2.isaddedtomylearning.toString());
             Navigator.of(context)
                 .push(MaterialPageRoute(
-                builder: (context) => ChangeNotifierProvider(
-                  create: (context) => ProviderModel(),
-                  child: CommonDetailScreen(
-                      screenType: ScreenType.MyLearning,
-                      contentid: table2.contentid,
-                      objtypeId: table2.objecttypeid,
-                      detailsBloc: detailsBloc,
-                      table2: table2,
-                      pos: i,
-                      mylearninglist: myLearningBloc.list,
-                      isFromReschedule: false
-                    //isFromMyLearning: true
-                  ),
+                builder: (context) => CommonDetailScreen(
+                    screenType: ScreenType.MyLearning,
+                    contentid: table2.contentid,
+                    objtypeId: table2.objecttypeid,
+                    detailsBloc: detailsBloc,
+                    table2: table2,
+                    pos: i,
+                    mylearninglist: myLearningBloc.list,
+                    isFromReschedule: false
+                  //isFromMyLearning: true
                 )))
                 .then((value) => {
               if (value == true)
@@ -3353,17 +3343,14 @@ iconData:            Icons.content_copy,
             Navigator.of(context)
                 .push(
               MaterialPageRoute(
-                builder: (context) => ChangeNotifierProvider(
-                  create: (context) => ProviderModel(),
-                  child: CommonDetailScreen(
-                    screenType: ScreenType.MyLearning,
-                    contentid: table2.reschduleparentid,
-                    objtypeId: table2.objecttypeid,
-                    detailsBloc: detailsBloc,
-                    table2: table2,
-                    isFromReschedule: true,
-                    isShowShedule: true,
-                  ),
+                builder: (context) => CommonDetailScreen(
+                  screenType: ScreenType.MyLearning,
+                  contentid: table2.reschduleparentid,
+                  objtypeId: table2.objecttypeid,
+                  detailsBloc: detailsBloc,
+                  table2: table2,
+                  isFromReschedule: true,
+                  isShowShedule: true,
                 ),
               ),
             )

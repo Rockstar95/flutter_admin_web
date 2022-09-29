@@ -80,6 +80,7 @@ class NavigationController {
 
     return value;
   }
+
   Future<dynamic> navigateToEventTrackListScreen({required BuildContext context, required DummyMyCatelogResponseTable2 myLearningModel, required bool isTraxkList,}) async {
     dynamic value = await Navigator.of(context).push(MaterialPageRoute(builder: (context) => EventTrackList(
       myLearningModel,

@@ -1,5 +1,4 @@
 import 'package:flutter/foundation.dart';
-
 import 'app_error_model.dart';
 
 @immutable

@@ -350,10 +350,14 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
         countryList.clear();
         yield FetchCountriesState.loading('Please wait');
         ApiResponse? apiResponse = await profileRepository.fetchCountries();
-        print('issuccessval ${apiResponse?.data}');
+        print('issuccessval ${apiResponse?.data.toString()}');
         if (apiResponse?.status == 200) {
           countryResponse = apiResponse?.data;
+          print('issuccessval ${countryResponse.table5}');
+
           for (Table5 table in countryResponse.table5) {
+            print('issuccessval ${table.choicetext} id: ${table.choiceid}');
+
             if (table.attributeconfigid == 25) {
               countryList.add(table);
             }

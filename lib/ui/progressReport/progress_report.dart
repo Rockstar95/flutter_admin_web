@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:flutter_admin_web/framework/bloc/app/bloc/app_bloc.dart';
 import 'package:flutter_admin_web/framework/bloc/app/native_menu_model.dart';
@@ -20,6 +19,8 @@ import 'package:flutter_admin_web/ui/MyLearning/view_certificate.dart';
 import 'package:flutter_admin_web/ui/common/app_colors.dart';
 import 'package:flutter_admin_web/ui/progressReport/course_summary.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
+
+import '../../configs/constants.dart';
 
 class ProgressReportGraph extends StatefulWidget {
   final NativeMenuModel nativeMenuModel;
@@ -169,12 +170,9 @@ class _ProgressReportState extends State<ProgressReportGraph> with SingleTickerP
       },
       builder: (context, state) {
         if (state.status == Status.LOADING && progressReportBloc.isFirstLoading == true) {
-          return const Center(
+          return Center(
             child: AbsorbPointer(
-              child: SpinKitCircle(
-                color: Colors.grey,
-                size: 70.0,
-              ),
+              child: AppConstants().getLoaderWidget(iconSize: 70),
             ),
           );
         }
@@ -278,7 +276,7 @@ class _ProgressReportState extends State<ProgressReportGraph> with SingleTickerP
                                     text,
                                     style: TextStyle(
                                       fontSize: 8.h,
-                                      color: Colors.black,
+                                      color: Colors.white,
                                     )
                                   );
                                 },
@@ -352,7 +350,7 @@ class _ProgressReportState extends State<ProgressReportGraph> with SingleTickerP
                                 text,
                                 style: TextStyle(
                                   fontSize: 8.h,
-                                  color: Colors.black,
+                                  color: Colors.white,
                                 )
                             );
                           },
@@ -512,12 +510,9 @@ class _ProgressReportState extends State<ProgressReportGraph> with SingleTickerP
       },
       builder: (context, state) {
         if (state.status == Status.LOADING && progressReportBloc.isFirstLoading == true) {
-          return const Center(
+          return Center(
             child: AbsorbPointer(
-              child: SpinKitCircle(
-                color: Colors.grey,
-                size: 70.0,
-              ),
+              child: AppConstants().getLoaderWidget(iconSize: 70),
             ),
           );
         }
@@ -848,6 +843,7 @@ class _ProgressReportState extends State<ProgressReportGraph> with SingleTickerP
                                                   borderRadius: const BorderRadius.all(
                                                     Radius.circular(20.0),
                                                   ),
+                                                  // color: Color(int.parse("0xFFECF1F5")),
                                                   color:progressReportBloc.progressReportGraphResponse[0].parentData[index].childData.isNotEmpty
                                                       ? AppColors.getAppBGColor()
                                                       : Color(int.parse("0xFFECF1F5")) ,

@@ -25,6 +25,7 @@ import 'package:flutter_admin_web/ui/MyLearning/helper/gotoCourseLaunchConteniso
 import 'package:flutter_admin_web/ui/MyLearning/helper/inapp_webcourse_launch.dart';
 import 'package:flutter_admin_web/ui/TrackList/event_track_list.dart';
 import 'package:flutter_admin_web/utils/my_print.dart';
+import 'package:open_file/open_file.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
 import 'package:uuid/uuid.dart';
@@ -34,6 +35,7 @@ import '../framework/common/api_response.dart';
 import '../framework/common/constants.dart';
 import '../framework/common/pref_manger.dart';
 import '../framework/helpers/ApiEndpoints.dart';
+import '../framework/helpers/sync_helper.dart';
 import '../framework/helpers/utils.dart';
 import '../framework/repository/general/contract/general_repository.dart';
 import '../framework/repository/general/provider/general_repository_builder.dart';
@@ -591,24 +593,29 @@ class MyLearningController {
     required DummyMyCatelogResponseTable2 table2,
     bool isContentisolation = false
   }) async {
-    bool networkAvailable = true;
-    // bool networkAvailable = await AppDirectory.checkInternetConnectivity();
-    // bool isCourseDownloaded = await checkIfContentIsAvailableOffline(
-    //   context: context,
-    //   table2: table2,
-    // );
-    bool isCourseDownloaded = false;
+    bool networkAvailable = true, isCourseDownloaded = false;
+
+    if(!kIsWeb) {
+      networkAvailable = await AppDirectory.checkInternetConnectivity();
+      isCourseDownloaded = await checkIfContentIsAvailableOffline(
+        context: context,
+        table2: table2,
+      );
+    }
     MyPrint.printOnConsole("networkAvailable:$networkAvailable");
     MyPrint.printOnConsole("isCourseDownloaded:$isCourseDownloaded");
 
     if (networkAvailable && isCourseDownloaded) {
       // launch offline
-      bool isLaunched = true;
+      bool isLaunched = await launchCourseOffline(context: context, table2: table2);
+      if(isLaunched) {
+        await SyncData().syncData();
+      }
       return isLaunched;
     }
     else if (!networkAvailable && isCourseDownloaded) {
       // launch offline
-      return true;
+      return await launchCourseOffline(context: context, table2: table2);
     }
     else if (networkAvailable && !isCourseDownloaded) {
       // launch online
@@ -707,6 +714,7 @@ class MyLearningController {
     }*/
 
     print('Table2 Objet Id:${table2.objecttypeid}');
+    print('Table2 Start Page:${table2.startpage}');
     if (table2.objecttypeid == 10 && table2.bit5) {
       // Need to open EventTrackListTabsActivity
       print('Navigation to EventTrackList called');
@@ -798,17 +806,22 @@ class MyLearningController {
               if (table2.objecttypeid == 26) {
                 // assignmenturl = await '$assignmenturl/ismobilecontentview/true';
                 // print('assignmenturl is : $assignmenturl');
-                dynamic value = await Navigator.of(context).push(MaterialPageRoute(
-                  builder: (context) => InAppWebCourseLaunch(courseUrl, table2),
-                ),);
 
-                isGetData = (value is bool) ? value : true;
-                // await Navigator.of(context).push(
-                //   MaterialPageRoute(
-                //     builder: (context) =>
-                //         AdvancedWebCourseLaunch(courseUrl, table2.name),
-                //   ),
-                // );
+                if(kIsWeb) {
+                  dynamic value = await Navigator.of(context).push(MaterialPageRoute(
+                    builder: (context) => InAppWebCourseLaunch(courseUrl, table2),
+                  ),);
+
+                  isGetData = (value is bool) ? value : true;
+                }
+                else {
+                  await Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (context) =>
+                          AdvancedWebCourseLaunch(courseUrl, table2.name),
+                    ),
+                  );
+                }
               }
               else {
                 // assignmenturl = await '$assignmenturl/ismobilecontentview/true';
@@ -857,17 +870,21 @@ class MyLearningController {
         if (table2.objecttypeid == 26) {
           print('Navigation to AdvancedWebCourseLaunch called');
 
-          dynamic value = await Navigator.of(context).push(MaterialPageRoute(
-            builder: (context) => InAppWebCourseLaunch(url, table2),
-          ),);
-          return (value is bool) ? value : true;
-          // isGetData = (value is bool) ? value : true;
-          // Navigator.of(context).push(
-          //   MaterialPageRoute(
-          //     builder: (context) => AdvancedWebCourseLaunch(url, table2.name),
-          //   ),
-          // );
-          // return false;
+          if(kIsWeb) {
+            dynamic value = await Navigator.of(context).push(MaterialPageRoute(
+              builder: (context) => InAppWebCourseLaunch(url, table2),
+            ),);
+
+            return (value is bool) ? value : true;
+          }
+          else {
+            Navigator.of(context).push(
+              MaterialPageRoute(
+                builder: (context) => AdvancedWebCourseLaunch(url, table2.name),
+              ),
+            );
+            return false;
+          }
         }
         else {
           print('Navigation to InAppWebCourseLaunch called');
@@ -879,6 +896,114 @@ class MyLearningController {
             ),);
           return (value is bool) ? value : true;
         }
+      }
+    }
+
+    return false;
+  }
+
+  Future<bool> launchCourseOffline({required BuildContext context, required DummyMyCatelogResponseTable2 table2}) async {
+    AppBloc appBloc = BlocProvider.of<AppBloc>(context, listen: false);
+    Map<String, bool> removedFromDownload = await MyLearningDownloadController().getRemovedFromDownloadMap();
+
+    if(removedFromDownload[table2.contentid] == true) {
+      _courseNotDownloadedDialog(context, appBloc);
+      return false;
+    }
+
+    if (table2.objecttypeid == 10 && table2.bit5){
+      // Need to open EventTrackListTabsActivity
+      print('Navigation to EventTrackList called');
+      MyLearningBloc myLearningBloc = BlocProvider.of<MyLearningBloc>(context, listen: false);
+      String tracklistCollectionName = '$tracklistCollection-${table2.contentid}-${appBloc.userid}';
+      var courseData = await HiveDbHandler().readData(tracklistCollectionName);
+      if(courseData.isEmpty) {
+        print('Course not saved offline');
+        _courseNotDownloadedDialog(context, appBloc);
+        return false;
+      }
+
+      await Navigator.of(context).push(
+        MaterialPageRoute(
+          builder: (context) => EventTrackList(
+            table2,
+            true,
+            myLearningBloc.list,
+          ),
+        ),
+      );
+      return true;
+    }
+    else if(table2.objecttypeid == 70){
+      /// No download for this file type
+    }
+    else if (table2.objecttypeid == 694) {
+      // TODO: Phase 2
+    }
+    else if([8, 9, 21, 26, 28, 102].contains(table2.objecttypeid) || (table2.objecttypeid == 10 && !table2.bit5)) {
+      bool fileCheck = await fileExistCheck(table2, appBloc.userid);
+      print("launchCourseOffline called with isDownloaded:$fileCheck");
+
+      if(!fileCheck) {
+        _courseNotDownloadedDialog(context, appBloc);
+        return false;
+      }
+
+      // await Navigator.push(
+      //   context,
+      //   MaterialPageRoute(
+      //     builder: (BuildContext context) => OfflineContentLauncherInAppWebview(
+      //       table2: table2,
+      //     ),
+      //   ),
+      // );
+      return true;
+    }
+    else {
+      bool fileCheck = await fileExistCheck(table2, appBloc.userid);
+      print("launchCourseOffline called with isDownloaded:$fileCheck");
+
+      if(!fileCheck) {
+        _courseNotDownloadedDialog(context, appBloc);
+        return false;
+      }
+      try {
+        String downloadDestFolderPath = '';
+        if(table2.objecttypeid.toString() == '20') {
+          downloadDestFolderPath = await AppDirectory.getDocumentsDirectory() +
+              "$pathSeparator.Mydownloads${pathSeparator}Contentdownloads" +
+              "$pathSeparator" +
+              table2.contentid +
+              '-' +
+              "${appBloc.userid}${pathSeparator}glossary_english.html";
+        }
+        else if(table2.objecttypeid.toString() == '52') {
+          downloadDestFolderPath = await AppDirectory.getDocumentsDirectory() +
+              "$pathSeparator.Mydownloads${pathSeparator}Contentdownloads" +
+              "$pathSeparator" +
+              table2.contentid +
+              '-' +
+              "${appBloc.userid}$pathSeparator${table2.contentid}.pdf";
+        }
+        else {
+          downloadDestFolderPath = await AppDirectory.getDocumentsDirectory() +
+              "$pathSeparator.Mydownloads${pathSeparator}Contentdownloads" +
+              "$pathSeparator" +
+              table2.contentid +
+              '-' +
+              "${appBloc.userid}$pathSeparator${table2.startpage}";
+        }
+        File file = File(downloadDestFolderPath);
+        // downloadDestFolderPath = downloadDestFolderPath.replaceFirst('/', '');
+        OpenResult result = await OpenFile.open(file.path);
+        if(result.type != ResultType.done) {
+          SnackBar snackBar = SnackBar(content: Text(result.message));
+          ScaffoldMessenger.of(context).showSnackBar(snackBar);
+          return false;
+        }
+        return true;
+      } catch (err) {
+        return false;
       }
     }
 

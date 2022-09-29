@@ -1095,8 +1095,8 @@ class GetConnectionCard extends StatelessWidget {
   const GetConnectionCard({
     Key? key,
     required this.response,
-    this.isUserCheckedIconVisible = true,
     required this.userChecked,
+    this.isUserCheckedIconVisible = true,
     required this.onCheck,
   }) : super(key: key);
 

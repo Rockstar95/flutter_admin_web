@@ -18,6 +18,8 @@ import 'package:flutter_admin_web/framework/helpers/ApiEndpoints.dart';
 import 'package:flutter_admin_web/framework/theme/ins_theme.dart';
 import 'package:flutter_admin_web/packages/smooth_star_rating.dart';
 
+import '../../configs/constants.dart';
+
 class ProgressReport extends StatefulWidget {
   final DummyMyCatelogResponseTable2 myLearningModel;
   final MyLearningDetailsBloc detailsBloc;

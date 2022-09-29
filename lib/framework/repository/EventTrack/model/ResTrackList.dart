@@ -141,8 +141,7 @@ class Table5 {
         startpage: json["startpage"] ?? "",
         name: json["name"] ?? "",
         iconpath: json["iconpath"] ?? "",
-        downloadable:
-            json["downloadable"] ?? false,
+        downloadable: json["downloadable"] ?? false,
         viewtype: json["viewtype"] ?? 0,
         saleprice: json["saleprice"],
         scoid: json["scoid"] ?? 0,
@@ -200,10 +199,8 @@ class Table5 {
         "viewtype": viewtype,
         "saleprice": saleprice,
         "scoid": scoid,
-        "thumbnailimagepath":
-            thumbnailimagepath,
-        "contenttypethumbnail":
-            contenttypethumbnail,
+        "thumbnailimagepath": thumbnailimagepath,
+        "contenttypethumbnail": contenttypethumbnail,
         "medianame": medianame,
         "version": version,
         "author": author,
@@ -212,8 +209,7 @@ class Table5 {
         "currency": currency,
         "shortdescription": shortdescription,
         "longdescription": longdescription,
-        "createddate":
-            createddate == null ? null : createddate?.toIso8601String(),
+        "createddate": createddate == null ? null : createddate?.toIso8601String(),
         "eventstartdatetime": eventstartdatetime,
         "eventenddatetime": eventenddatetime,
         "bit5": bit5,

@@ -70,6 +70,7 @@ import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher_string.dart';
 
+import '../../configs/constants.dart';
 import '../../controllers/connection_controller.dart';
 import '../../controllers/my_learning_download_controller.dart';
 import '../../controllers/mylearning_controller.dart';
@@ -80,6 +81,7 @@ import '../../providers/my_learning_download_provider.dart';
 import '../../utils/my_print.dart';
 import '../../utils/my_utils.dart';
 import '../common/bottomsheet_drager.dart';
+import '../common/bottomsheet_option_tile.dart';
 import 'SendviaEmailMylearning.dart';
 import 'helper/advanced_webcourse_launch.dart';
 import 'helper/gotoCourseLaunchContenisolation.dart';
@@ -2355,12 +2357,10 @@ class _CommonDetailScreenState extends State<CommonDetailScreen> with SingleTick
       child: GestureDetector(
         onTap: () {
           Navigator.of(context).push(MaterialPageRoute(
-              builder: (context) => ChangeNotifierProvider(
-                  create: (context) => ProviderModel(),
-                  child: CommonDetailScreen(
+              builder: (context) => CommonDetailScreen(
                     table2: widget.table2,
                     detailsBloc: detailsBloc,
-                  ))));
+                  )));
         },
         child: Card(
           elevation: 4,
@@ -2667,12 +2667,10 @@ class _CommonDetailScreenState extends State<CommonDetailScreen> with SingleTick
       child: GestureDetector(
         onTap: () {
           Navigator.of(context).push(MaterialPageRoute(
-              builder: (context) => ChangeNotifierProvider(
-                  create: (context) => ProviderModel(),
-                  child: CommonDetailScreen(
-                    table2: widget.table2,
-                    detailsBloc: detailsBloc,
-                  ))));
+              builder: (context) => CommonDetailScreen(
+                table2: widget.table2,
+                detailsBloc: detailsBloc,
+              )));
         },
         child: Card(
           elevation: 4,

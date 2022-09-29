@@ -709,23 +709,17 @@ class _ActBaseState extends State<ActBase> {
             MyPrint.printOnConsole("isChanged:$isChanged");
             try {
               if (isChanged) {
-                return ChangeNotifierProvider(
-                  create: (context) => ProviderModel(),
-                  child: CatalogRefreshScreen(
+                return CatalogRefreshScreen(
+                  categaoryID: 0,
+                  categaoryName: "",
+                  nativeMenuModel: nativeMenuModel!,
+                );
+              } else {
+                return CatalogSubScreen(
                     categaoryID: 0,
                     categaoryName: "",
                     nativeMenuModel: nativeMenuModel!,
-                  ),
-                );
-              } else {
-                return ChangeNotifierProvider(
-                  create: (context) => ProviderModel(),
-                  child: CatalogSubScreen(
-                      categaoryID: 0,
-                      categaoryName: "",
-                      nativeMenuModel: nativeMenuModel!,
-                      contentId: contentID),
-                );
+                    contentId: contentID);
               }
             } catch (e) {
               print('error : $e');

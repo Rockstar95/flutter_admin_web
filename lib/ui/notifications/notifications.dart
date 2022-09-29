@@ -32,8 +32,6 @@ import 'package:intl/intl.dart';
 
 import '../../configs/constants.dart';
 
-
-
 class Notifications extends StatefulWidget {
   final NativeMenuModel nativeMenuModel;
 

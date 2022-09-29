@@ -155,7 +155,8 @@ class MyLearningDetailsBloc extends Bloc<MyLearningDetailsEvent, MyLearningDetai
             String hiveCollectionName = '';
             if(event.isTrackListItem) {
               hiveCollectionName = "$tracklistCollection-${event.eventTrackModel?.contentid}-${appBloc.userid}";
-            } else {
+            }
+            else {
               hiveCollectionName = "$myLearningCollection-${appBloc.userid}";
             }
             String completedCollectionName = "$completedOfflineCourses-${appBloc.userid}";
@@ -173,16 +174,18 @@ class MyLearningDetailsBloc extends Bloc<MyLearningDetailsEvent, MyLearningDetai
             return;
           }
 
-          Response? response = await myLearningRepository.setCompleteStatus(
-              event.table2.contentid, event.table2.scoid.toString());
+          Response? response = await myLearningRepository.setCompleteStatus(event.table2.contentid, event.table2.scoid.toString());
           if (response?.statusCode == 200) {
             yield SetCompleteState.completed(isCompleted: true);
-          } else if (response?.statusCode == 401) {
+          }
+          else if (response?.statusCode == 401) {
             yield SetCompleteState.error("401");
-          } else {
+          }
+          else {
             yield SetCompleteState.error("Something went wrong");
           }
-        } catch (e, s) {
+        }
+        catch (e, s) {
           print(s);
           yield SetCompleteState.error("Something went wrong");
         }

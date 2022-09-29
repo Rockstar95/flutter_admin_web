@@ -2297,10 +2297,10 @@ class _CatalogRefreshScreenState extends State<CatalogRefreshScreen> with Single
   Widget _buildProgressIndicator() {
     return const Padding(
       padding: EdgeInsets.all(8.0),
-      child: Center(
+      child: const Center(
         child: Opacity(
           opacity: 1.0,
-          child: CircularProgressIndicator(),
+          child: const CircularProgressIndicator(),
         ),
       ),
     );

@@ -168,7 +168,8 @@ class MessagesRepositoryPublic extends MessagesRepository {
         'MarkAsRead': markAsRead.toString()
       };
 
-      response = await RestClient.postApiData(ApiEndpoints.postChatMessage(), data);
+      response = await RestClient.uploadFilesData(ApiEndpoints.postChatMessage(), data);
+      // response = await RestClient.postApiData(ApiEndpoints.postChatMessage(), data);
       //response = await RestClient.uploadFilesData(ApiEndpoints.postChatMessage(), data);
       print('response:${response?.body}');
       //response = await RestClient.uploadFilesData(ApiEndpoints.postChatMessage(), data); // .postApiData(ApiEndpoints.postChatMessage(), data);

@@ -14,7 +14,7 @@ class ApiEndpoints {
   // //static String mainSiteURL = "https://enterprisedemo.instancy.net/";
 
 
-  // //static String mainSiteURL = "https://entmobileGetLearningPortalInfoResponseerprisedemo.instancy.net/";
+  // //static String mainSiteURL = "https://enterprisedemo.instancy.net/";
   // //static String appAuthURL = "https://newazureplatform.instancy.com/api/";
   static String appAuthURL = "https://masterapilive.instancy.com/api/";
 

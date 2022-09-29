@@ -501,7 +501,7 @@ class _EducationAddState extends State<EducationAdd> {
                                               ?.apply(
                                                   color: InsColor(appBloc)
                                                       .appTextColor),
-                                          children: <TextSpan>[
+                                          children: const <TextSpan>[
                                             TextSpan(
                                                 text: ' *',
                                                 style: TextStyle(
@@ -605,7 +605,7 @@ class _EducationAddState extends State<EducationAdd> {
                                               ?.apply(
                                                   color: InsColor(appBloc)
                                                       .appTextColor),
-                                          children: <TextSpan>[
+                                          children: const <TextSpan>[
                                             TextSpan(
                                                 text: ' *',
                                                 style: TextStyle(
@@ -686,7 +686,7 @@ class _EducationAddState extends State<EducationAdd> {
                                             text: TextSpan(
                                                 text: appBloc.localstr.profileLabelEducationfromlabel,
                                                 style: Theme.of(context).textTheme.headline2?.apply(color: InsColor(appBloc).appTextColor),
-                                                children: <TextSpan>[
+                                                children: const <TextSpan>[
                                                   TextSpan(
                                                       text: ' *',
                                                       style: TextStyle(
@@ -766,7 +766,7 @@ class _EducationAddState extends State<EducationAdd> {
                                             text: TextSpan(
                                                 text: appBloc.localstr.profileLabelEducationtolabel,
                                                 style: Theme.of(context).textTheme.headline2?.apply(color: InsColor(appBloc).appTextColor),
-                                                children: <TextSpan>[
+                                                children: const <TextSpan>[
                                                   TextSpan(
                                                       text: ' *',
                                                       style: TextStyle(
@@ -978,7 +978,7 @@ class _EducationAddState extends State<EducationAdd> {
           text: TextSpan(
               text: headerText,
               style: Theme.of(context).textTheme.headline2?.apply(color: InsColor(appBloc).appTextColor),
-              children: <TextSpan>[
+              children: const <TextSpan>[
                 TextSpan(
                     text: ' *',
                     style: TextStyle(

@@ -1,6 +1,4 @@
 import 'dart:async';
-
-import 'package:flutter/foundation.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:http/http.dart';
@@ -150,7 +148,8 @@ class SplashBloc extends Bloc<SplashEvent, SplashState> {
 
         yield GetFourApiCallState(isSuccess: true);
       }
-    } catch (e, s) {
+    }
+    catch (e, s) {
       print("Error in SplashBloc.mapEventToState():$e");
       MyPrint.printOnConsole(s);
     }
