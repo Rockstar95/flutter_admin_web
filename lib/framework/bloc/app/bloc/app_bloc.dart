@@ -124,7 +124,7 @@ class AppBloc extends Bloc<AppEvent, AppState> {
           uiSettingModel.setappname('in');
           uiSettingModel.setExpiredBGColor("#b3b0b8");
           String mobileGetNativeMenusResponseStr = await _getLocalData(mobileGetNativeMenusKey);
-          developer.log("mobileGetNativeMenusResponseStr:$mobileGetNativeMenusResponseStr");
+          MyPrint.logOnConsole("mobileGetNativeMenusResponseStr:$mobileGetNativeMenusResponseStr");
           MobileGetNativeMenusResponse mobileGetNativeMenusResponse = mobileGetNativeMenusResponseFromJson(
             mobileGetNativeMenusResponseStr.isNotEmpty ? mobileGetNativeMenusResponseStr : "{}"
           );
