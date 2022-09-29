@@ -75,6 +75,10 @@ import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher_string.dart';
 
+import '../../../configs/constants.dart';
+import '../../common/app_colors.dart';
+import '../../common/bottomsheet_option_tile.dart';
+
 class MyLearnPlusHomeScreen extends StatefulWidget {
   final NativeMenuModel nativeModel;
   final String contentId;
@@ -325,9 +329,7 @@ class MyLearnPlusHome extends State<MyLearnPlusHomeScreen> with SingleTickerProv
                     Navigator.of(context)
                         .push(
                           MaterialPageRoute(
-                            builder: (context) => ChangeNotifierProvider(
-                              create: (context) => ProviderModel(),
-                              child: CommonDetailScreen(
+                            builder: (context) => CommonDetailScreen(
                                 screenType: ScreenType.MyLearning,
                                 contentid: contentId,
                                 objtypeId: element.objecttypeid,
@@ -337,7 +339,6 @@ class MyLearnPlusHome extends State<MyLearnPlusHomeScreen> with SingleTickerProv
                                 mylearninglist: myLearningBloc.list,
                                 isFromReschedule: false,
                               ),
-                            ),
                           ),
                         )
                         .then((value) => {
@@ -1062,8 +1063,8 @@ class MyLearnPlusHome extends State<MyLearnPlusHomeScreen> with SingleTickerProv
                           child: Container(height: 100,
                             child: TabBarView(
                               controller: _tabController,
-                              children: getList(),
-                              physics: NeverScrollableScrollPhysics(),//PageScrollPhysics(),
+                              physics: const NeverScrollableScrollPhysics(),
+                              children: getList(),//PageScrollPhysics(),
                             ),
                           ),
                         )//: SizedBox(),
@@ -2384,6 +2385,7 @@ class MyLearnPlusHome extends State<MyLearnPlusHomeScreen> with SingleTickerProv
                         child: Row(
                           children: [
                             Expanded(
+                              flex: 9,
                               child: Text(
                                 '${obj.contenttype}',
                                 style: TextStyle(
@@ -2393,7 +2395,6 @@ class MyLearnPlusHome extends State<MyLearnPlusHomeScreen> with SingleTickerProv
                                 ),
                                 textAlign: TextAlign.start,
                               ),
-                              flex: 9,
                             ),
 
                             Expanded(
@@ -2429,7 +2430,7 @@ class MyLearnPlusHome extends State<MyLearnPlusHomeScreen> with SingleTickerProv
                           ],
                         ),
                       ),
-                      SizedBox(
+                      const SizedBox(
                         height: 10,
                       ),
                       Container(
@@ -2676,9 +2677,7 @@ class MyLearnPlusHome extends State<MyLearnPlusHomeScreen> with SingleTickerProv
                         Navigator.of(context)
                             .push(
                               MaterialPageRoute(
-                                builder: (context) => ChangeNotifierProvider(
-                                  create: (context) => ProviderModel(),
-                                  child: CommonDetailScreen(
+                                builder: (context) => CommonDetailScreen(
                                     screenType: ScreenType.MyLearning,
                                     contentid: contentId,
                                     objtypeId: element.objecttypeid,
@@ -2688,7 +2687,6 @@ class MyLearnPlusHome extends State<MyLearnPlusHomeScreen> with SingleTickerProv
                                     mylearninglist: myLearningBloc.list,
                                     isFromReschedule: false,
                                   ),
-                                ),
                               ),
                             )
                             .then((value) => {
@@ -2919,7 +2917,7 @@ class MyLearnPlusHome extends State<MyLearnPlusHomeScreen> with SingleTickerProv
                       valueColor: AlwaysStoppedAnimation<Color>(statuscolor),
                       backgroundColor: Colors.grey,
                     ),
-                    SizedBox(
+                    const SizedBox(
                       height: 10,
                     ),
                     Container(
@@ -2927,6 +2925,7 @@ class MyLearnPlusHome extends State<MyLearnPlusHomeScreen> with SingleTickerProv
                       child: Row(
                         children: [
                           Expanded(
+                            flex: 9,
                             child: Text(
                               obj.contenttype,
                               style: TextStyle(
@@ -2935,7 +2934,6 @@ class MyLearnPlusHome extends State<MyLearnPlusHomeScreen> with SingleTickerProv
                               ),
                               textAlign: TextAlign.start,
                             ),
-                            flex: 9,
                           ),
                           Expanded(
                             flex: 1,
@@ -2990,7 +2988,7 @@ class MyLearnPlusHome extends State<MyLearnPlusHomeScreen> with SingleTickerProv
                       ),
                     ),
 
-                    SizedBox(
+                    const SizedBox(
                       height: 15,
                     ),
 
@@ -3547,9 +3545,9 @@ class MyLearnPlusHome extends State<MyLearnPlusHomeScreen> with SingleTickerProv
           return AppConstants().bottomSheetContainer(
             child: SingleChildScrollView(
               child: Container(
-                child: new Column(
+                child: Column(
                   children: <Widget>[
-                    BottomSheetDragger(),
+                    const BottomSheetDragger(),
                     displayPlay(table2,tabInfo),
                     displayView(table2,tabInfo),
                     (table2.iswishlistcontent == 1) ? displayAddToMyLearning(table2): Container(),
@@ -3657,8 +3655,8 @@ class MyLearnPlusHome extends State<MyLearnPlusHomeScreen> with SingleTickerProv
   Widget displayShareConnection(DummyMyCatelogResponseTable2 table2) {
     if ((table2.suggestwithfriendlink.isNotEmpty ||
         table2.suggestwithfriendlink.isNotEmpty) && table2.iswishlistcontent != 1) {
-      return new BottomsheetOptionTile(
-  iconData:          IconDataSolid(int.parse('0xf079'),),
+      return BottomsheetOptionTile(
+        iconData: IconDataSolid(int.parse('0xf079'),),
         text:"Share with People",
         onTap: () {
           Navigator.pop(context);
@@ -3727,11 +3725,9 @@ class MyLearnPlusHome extends State<MyLearnPlusHomeScreen> with SingleTickerProv
                             "0xFF${appBloc.uiSettingModel.appBGColor.substring(1, 7).toUpperCase()}"),
                       ),
                       shape: RoundedRectangleBorder(
-                          borderRadius: new BorderRadius.circular(5)),
+                          borderRadius: BorderRadius.circular(5)),
                       actions: <Widget>[
-                        new FlatButton(
-                          child: Text(
-                              appBloc.localstr.mylearningAlertbuttonYesbutton),
+                        FlatButton(
                           textColor: Colors.blue,
                           onPressed: () async {
                             Navigator.of(context).pop();
@@ -3742,6 +3738,8 @@ class MyLearnPlusHome extends State<MyLearnPlusHomeScreen> with SingleTickerProv
                                   contentId: table2.contentid));
                             });
                           },
+                          child: Text(
+                              appBloc.localstr.mylearningAlertbuttonYesbutton),
                         ),
                       ],
                     ));
@@ -3766,9 +3764,7 @@ class MyLearnPlusHome extends State<MyLearnPlusHomeScreen> with SingleTickerProv
                 table2.objecttypeid == 70 && table2.eventscheduletype == 1) {
               Navigator.of(context)
                   .push(MaterialPageRoute(
-                      builder: (context) => ChangeNotifierProvider(
-                          create: (context) => ProviderModel(),
-                          child: CommonDetailScreen(
+                      builder: (context) => CommonDetailScreen(
                             screenType: ScreenType.MyLearning,
                             contentid: table2.reschduleparentid,
                             objtypeId: table2.objecttypeid,
@@ -3777,7 +3773,7 @@ class MyLearnPlusHome extends State<MyLearnPlusHomeScreen> with SingleTickerProv
                             //     nativeModel: widget.nativeModel,
                             isFromReschedule: true,
                             //isFromMyLearning: true
-                          ))))
+                          )))
                   .then((value) => {
                         if (true)
                           {
@@ -3808,7 +3804,7 @@ class MyLearnPlusHome extends State<MyLearnPlusHomeScreen> with SingleTickerProv
 
               showDialog(
                   context: context,
-                  builder: (BuildContext context) => new AlertDialog(
+                  builder: (BuildContext context) => AlertDialog(
                     title: Text(
                       appBloc.localstr
                           .mylearningActionsheetViewcertificateoption,
@@ -3827,15 +3823,15 @@ class MyLearnPlusHome extends State<MyLearnPlusHomeScreen> with SingleTickerProv
                     backgroundColor: Color(int.parse(
                         "0xFF${appBloc.uiSettingModel.appBGColor.substring(1, 7).toUpperCase()}")),
                     shape: RoundedRectangleBorder(
-                        borderRadius: new BorderRadius.circular(5)),
+                        borderRadius: BorderRadius.circular(5)),
                     actions: <Widget>[
-                      new FlatButton(
-                        child: Text(appBloc.localstr
-                            .mylearningClosebuttonactionClosebuttonalerttitle),
+                      FlatButton(
                         textColor: Colors.blue,
                         onPressed: () async {
                           Navigator.of(context).pop();
                         },
+                        child: Text(appBloc.localstr
+                            .mylearningClosebuttonactionClosebuttonalerttitle),
                       ),
                     ],
                   ));
@@ -3863,7 +3859,7 @@ class MyLearnPlusHome extends State<MyLearnPlusHomeScreen> with SingleTickerProv
       if ((table2.qrimagename != null) && isValidString(table2.qrimagename) &&
           (table2.qrcodeimagepath != null) && isValidString(table2.qrcodeimagepath) &&
           !table2.bit4) {
-        return new BottomsheetOptionTile(
+        return BottomsheetOptionTile(
           iconData:  IconDataSolid(int.parse('0xf029')),
           text:
               appBloc.localstr.mylearningActionsheetViewqrcode,
@@ -3886,7 +3882,7 @@ class MyLearnPlusHome extends State<MyLearnPlusHomeScreen> with SingleTickerProv
       if (table2.isaddedtomylearning == 1 ||
           typeFrom == "event" ||
           typeFrom == "track") {
-        return new BottomsheetOptionTile(
+        return BottomsheetOptionTile(
           iconData: IconDataSolid(int.parse('0xf8d9')),
           text:
               appBloc.localstr.learningtrackLabelEventviewrecording,
@@ -4018,9 +4014,7 @@ class MyLearnPlusHome extends State<MyLearnPlusHomeScreen> with SingleTickerProv
           ) {
             Navigator.of(context)
                 .push(MaterialPageRoute(
-                builder: (context) => ChangeNotifierProvider(
-                  create: (context) => ProviderModel(),
-                  child: CommonDetailScreen(
+                builder: (context) => CommonDetailScreen(
                     screenType: ScreenType.MyLearning,
                     contentid: table2.contentid,
                     objtypeId: table2.objecttypeid,
@@ -4029,8 +4023,7 @@ class MyLearnPlusHome extends State<MyLearnPlusHomeScreen> with SingleTickerProv
                     //     nativeModel: widget.nativeModel,
                     isFromReschedule: false,
                     //isFromMyLearning: false
-                  ),
-                )))
+                  )))
                 .then((value) => {
               if (value == true)
                 {
@@ -4046,16 +4039,14 @@ class MyLearnPlusHome extends State<MyLearnPlusHomeScreen> with SingleTickerProv
                 'isaddedtomylearning${table2.isaddedtomylearning}');
             Navigator.of(context)
                 .push(MaterialPageRoute(
-                builder: (context) => ChangeNotifierProvider(
-                  create: (context) => ProviderModel(),
-                  child: CommonDetailScreen(
+                builder: (context) => CommonDetailScreen(
                       screenType: ScreenType.MyLearning,
                       contentid: table2.contentid,
                       objtypeId: table2.objecttypeid,
                       detailsBloc: detailsBloc,
                       table2: table2,
-                      isFromReschedule: false),
-                )))
+                      isFromReschedule: false,
+                  )))
                 .then((value) => {
               if (value == true)
                 {
@@ -4070,9 +4061,7 @@ class MyLearnPlusHome extends State<MyLearnPlusHomeScreen> with SingleTickerProv
                 'isaddedtomylearning${table2.isaddedtomylearning}');
             Navigator.of(context)
                 .push(MaterialPageRoute(
-                builder: (context) => ChangeNotifierProvider(
-                  create: (context) => ProviderModel(),
-                  child: CommonDetailScreen(
+                builder: (context) => CommonDetailScreen(
                       screenType: ScreenType.MyLearning,
                       contentid: table2.contentid,
                       objtypeId: table2.objecttypeid,
@@ -4082,8 +4071,7 @@ class MyLearnPlusHome extends State<MyLearnPlusHomeScreen> with SingleTickerProv
                       mylearninglist: myLearningBloc.list,
                       isFromReschedule: false
                     //isFromMyLearning: true
-                  ),
-                )))
+                  )))
                 .then((value) => {
               if (value == true)
                 {
@@ -4507,15 +4495,15 @@ class MyLearnPlusHome extends State<MyLearnPlusHomeScreen> with SingleTickerProv
                       ),
                       backgroundColor: InsColor(appBloc).appBGColor,
                       shape: RoundedRectangleBorder(
-                          borderRadius: new BorderRadius.circular(5)),
+                          borderRadius: BorderRadius.circular(5)),
                       actions: <Widget>[
-                        new FlatButton(
-                          child:
-                              Text(appBloc.localstr.eventsAlertbuttonOkbutton),
+                        FlatButton(
                           textColor: Colors.blue,
                           onPressed: () async {
                             Navigator.of(context).pop();
                           },
+                          child:
+                              Text(appBloc.localstr.eventsAlertbuttonOkbutton),
                         ),
                       ],
                     ));
@@ -4624,9 +4612,9 @@ class MyLearnPlusHome extends State<MyLearnPlusHomeScreen> with SingleTickerProv
       if ((table2.eventenddatetime != null) && isValidString(table2.eventenddatetime)) if (!returnEventCompleted(
           table2.eventenddatetime)) {
         return BottomsheetOptionTile(iconData: IconDataSolid(int.parse('0xf271')), text: appBloc.localstr.mylearningActionsheetAddtocalendaroption, onTap: (){
-          DateTime startDate = new DateFormat("yyyy-MM-ddTHH:mm:ss")
+          DateTime startDate = DateFormat("yyyy-MM-ddTHH:mm:ss")
               .parse(table2.eventstartdatetime);
-          DateTime endDate = new DateFormat("yyyy-MM-ddTHH:mm:ss")
+          DateTime endDate = DateFormat("yyyy-MM-ddTHH:mm:ss")
               .parse(table2.eventenddatetime);
 
 //            print(
@@ -4647,7 +4635,7 @@ class MyLearnPlusHome extends State<MyLearnPlusHomeScreen> with SingleTickerProv
                       ? 'Event added successfully'
                       : 'Error occured while adding event'),
               gravity: ToastGravity.BOTTOM,
-              toastDuration: Duration(seconds: 2),
+              toastDuration: const Duration(seconds: 2),
             );
           });
 
@@ -4728,15 +4716,15 @@ class MyLearnPlusHome extends State<MyLearnPlusHomeScreen> with SingleTickerProv
                       ),
                       backgroundColor: InsColor(appBloc).appBGColor,
                       shape: RoundedRectangleBorder(
-                          borderRadius: new BorderRadius.circular(5)),
+                          borderRadius: BorderRadius.circular(5)),
                       actions: <Widget>[
-                        new FlatButton(
-                          child: Text(
-                              appBloc.localstr.eventsAlertbuttonOkbutton),
+                        FlatButton(
                           textColor: Colors.blue,
                           onPressed: () async {
                             Navigator.of(context).pop();
                           },
+                          child: Text(
+                              appBloc.localstr.eventsAlertbuttonOkbutton),
                         ),
                       ],
                     ));

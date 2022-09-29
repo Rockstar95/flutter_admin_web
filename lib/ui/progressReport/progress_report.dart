@@ -170,7 +170,7 @@ class _ProgressReportState extends State<ProgressReportGraph> with SingleTickerP
       },
       builder: (context, state) {
         if (state.status == Status.LOADING && progressReportBloc.isFirstLoading == true) {
-          return const Center(
+          return Center(
             child: AbsorbPointer(
               child: AppConstants().getLoaderWidget(iconSize: 70),
             ),
@@ -510,7 +510,7 @@ class _ProgressReportState extends State<ProgressReportGraph> with SingleTickerP
       },
       builder: (context, state) {
         if (state.status == Status.LOADING && progressReportBloc.isFirstLoading == true) {
-          return const Center(
+          return Center(
             child: AbsorbPointer(
               child: AppConstants().getLoaderWidget(iconSize: 70),
             ),
