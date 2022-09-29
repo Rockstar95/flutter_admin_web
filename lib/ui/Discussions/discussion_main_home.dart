@@ -33,7 +33,9 @@ import 'package:flutter_admin_web/ui/common/common_toast.dart';
 import 'package:flutter_admin_web/ui/common/ins_search_textfield.dart';
 import 'package:intl/intl.dart';
 
+import '../../configs/constants.dart';
 import '../common/bottomsheet_drager.dart';
+import '../common/bottomsheet_option_tile.dart';
 import '../global_search_screen.dart';
 
 class DiscussionMain extends StatefulWidget {
@@ -55,7 +57,7 @@ class DiscussionMain extends StatefulWidget {
 }
 
 class _DiscussionMainState extends State<DiscussionMain> with SingleTickerProviderStateMixin, AutomaticKeepAliveClientMixin {
-  GlobalKey<ScaffoldState> _scaffoldkey = new GlobalKey<ScaffoldState>();
+  GlobalKey<ScaffoldState> _scaffoldkey = GlobalKey<ScaffoldState>();
 
   TabController? _tabController;
   List<Tab> tabList = [];
@@ -64,7 +66,7 @@ class _DiscussionMainState extends State<DiscussionMain> with SingleTickerProvid
   int totalPage = 10;
   late DiscussionMainHomeBloc discussionMainHomeBloc;
   late ProfileBloc profileBloc;
-  ScrollController _scArchive = new ScrollController();
+  ScrollController _scArchive = ScrollController();
   NativeMenuModel? nativeMenuModel;
 
   AppBloc get appBloc => BlocProvider.of<AppBloc>(context);
@@ -94,13 +96,13 @@ class _DiscussionMainState extends State<DiscussionMain> with SingleTickerProvid
     }
     else {
       refresh(!widget.isFromDiscussionForumPage, '', discussionMainHomeBloc.SearchForumString);
-      tabList.add(new Tab(
+      tabList.add(Tab(
         text: 'All Discussions',
       ));
-      tabList.add(new Tab(
+      tabList.add(Tab(
         text: "My Discussions",
       ));
-      _tabController = new TabController(length: tabList.length, vsync: this);
+      _tabController = TabController(length: tabList.length, vsync: this);
     }
 
     List<NativeMenuModel> list = appBloc.listNativeModel.where((element) => element.contextmenuId == "4").toList();
@@ -169,12 +171,12 @@ class _DiscussionMainState extends State<DiscussionMain> with SingleTickerProvid
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
-          new Container(
-            decoration: new BoxDecoration(
+          Container(
+            decoration: BoxDecoration(
               color: Color(int.parse(
                   "0xFF${appBloc.uiSettingModel.appButtonBgColor.substring(1, 7).toUpperCase()}")),
             ),
-            child: new TabBar(
+            child: TabBar(
                 controller: _tabController,
                 indicatorColor: Color(int.parse("0xFF1D293F")),
                 indicatorSize: TabBarIndicatorSize.tab,
@@ -249,10 +251,7 @@ class _DiscussionMainState extends State<DiscussionMain> with SingleTickerProvid
         if (state.status == Status.LOADING && discussionMainHomeBloc.isFirstLoading == true) {
           return Center(
             child: AbsorbPointer(
-              child: SpinKitCircle(
-                color: Colors.black54,
-                size: 70.0,
-              ),
+              child: AppConstants().getLoaderWidget(iconSize: 70)
             ),
           );
         }
@@ -260,7 +259,7 @@ class _DiscussionMainState extends State<DiscussionMain> with SingleTickerProvid
           return noDataFound(true);
         }
         else {
-          return discussionMainHomeBloc.list.length == 0
+          return discussionMainHomeBloc.list.isEmpty
               ? Column(
                   children: <Widget>[
                     Visibility(
@@ -292,7 +291,7 @@ class _DiscussionMainState extends State<DiscussionMain> with SingleTickerProvid
                                   )
                                 : null,
                             onSubmitAction: (value) {
-                              if (value.toString().length > 0) {
+                              if (value.toString().isNotEmpty) {
                                 discussionMainHomeBloc.isFirstLoading = true;
                                 discussionMainHomeBloc.isForumSearch = true;
                                 discussionMainHomeBloc.SearchForumString = value.toString();
@@ -371,7 +370,7 @@ class _DiscussionMainState extends State<DiscussionMain> with SingleTickerProvid
                                         : null,*/
                               ,
                               onSubmitAction: (value) {
-                                if (value.toString().length > 0) {
+                                if (value.toString().isNotEmpty) {
                                   discussionMainHomeBloc.isFirstLoading = true;
                                   discussionMainHomeBloc.isForumSearch = true;
                                   discussionMainHomeBloc.SearchForumString = value.toString();
@@ -428,28 +427,28 @@ class _DiscussionMainState extends State<DiscussionMain> with SingleTickerProvid
     }
     int differenceInDays = DateTime.now().difference(createdDate).inDays;
 
-    return new Container(
+    return Container(
         color: InsColor(appBloc).appBGColor,
-        child: new GestureDetector(
+        child: GestureDetector(
           onTap: () => {
             openDiscussionTopic(list),
           },
           child: Padding(
               padding: EdgeInsets.only(top: ScreenUtil().setHeight(5)),
-              child: new Container(
+              child: Container(
                 color: InsColor(appBloc).appBGColor,
                 padding: EdgeInsets.all(ScreenUtil().setHeight(5)),
-                child: new Column(
+                child: Column(
                   children: [
-                    new Row(
+                    Row(
                       children: [
-                        (list.forumThumbnailPath.length > 0)
+                        (list.forumThumbnailPath.isNotEmpty)
                             ? Container(
                                 width: 45.0,
                                 height: 45.0,
                                 padding: EdgeInsets.all(20.0),
-                                decoration: new BoxDecoration(
-                                  image: new DecorationImage(
+                                decoration: BoxDecoration(
+                                  image: DecorationImage(
                                     image: list.forumThumbnailPath != ""
                                         ? NetworkImage(list.forumThumbnailPath.startsWith('http')
                                             ? list.forumThumbnailPath
@@ -459,18 +458,18 @@ class _DiscussionMainState extends State<DiscussionMain> with SingleTickerProvid
                                           ) as ImageProvider,
                                     fit: BoxFit.fill,
                                   ),
-                                  borderRadius: new BorderRadius.all(
-                                      new Radius.circular(50.0)),
+                                  borderRadius: BorderRadius.all(
+                                      Radius.circular(50.0)),
                                 ),
                               )
                             : Container(),
-                        new Expanded(
-                            child: new Column(
+                        Expanded(
+                            child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Padding(
                                 padding: EdgeInsets.only(left: 20, bottom: 5.0),
-                                child: new Text(
+                                child: Text(
                                   list.name,
                                   style: Theme.of(context)
                                       .textTheme
@@ -483,7 +482,7 @@ class _DiscussionMainState extends State<DiscussionMain> with SingleTickerProvid
                                 padding: EdgeInsets.only(
                                   left: 20,
                                 ),
-                                child: new Text(
+                                child: Text(
                                   list.createdDate != ''
                                       //? DateTime.now().difference(discussionMainHomeBloc.formatter.parse(list.createdDate)).inDays == 0
                                       //print("check for datetime ${DateTime.now().difference(DateFormat("MM/dd/yyyy hh:mm aa").parse(list.createdDate)).inDays}");
@@ -513,7 +512,7 @@ class _DiscussionMainState extends State<DiscussionMain> with SingleTickerProvid
                         ),
                       ],
                     ),
-                    new Column(
+                    Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Padding(
@@ -539,15 +538,15 @@ class _DiscussionMainState extends State<DiscussionMain> with SingleTickerProvid
                             ),
                         Padding(
                             padding: EdgeInsets.only(top: 10, left: 10.0),
-                            child: new Row(
+                            child: Row(
                               children: [
-                                new Container(
+                                Container(
                                   width: 20.0,
                                   height: 20.0,
                                   padding: EdgeInsets.all(15.0),
-                                  decoration: new BoxDecoration(
+                                  decoration: BoxDecoration(
                                     color: Colors.grey,
-                                    image: new DecorationImage(
+                                    image: DecorationImage(
                                       image: list.dFProfileImage != ""
                                           ? NetworkImage(
                                               list.dFProfileImage.startsWith('http')
@@ -559,8 +558,8 @@ class _DiscussionMainState extends State<DiscussionMain> with SingleTickerProvid
                                             ) as ImageProvider,
                                       fit: BoxFit.fill,
                                     ),
-                                    borderRadius: new BorderRadius.all(
-                                        new Radius.circular(30.0)),
+                                    borderRadius: BorderRadius.all(
+                                        Radius.circular(30.0)),
                                   ),
                                 ),
                                 Visibility(
@@ -569,14 +568,14 @@ class _DiscussionMainState extends State<DiscussionMain> with SingleTickerProvid
                                         padding: EdgeInsets.only(left: 5.0),
                                         child: Text(
                                           'Created by: ',
-                                          style: new TextStyle(
+                                          style: TextStyle(
                                               fontSize: 12.0,
                                               color: Color(int.parse(
                                                   "0xFF${appBloc.uiSettingModel.appTextColor.substring(1, 7).toUpperCase()}"))),
                                         ))),
                                 Text(
                                   list.author,
-                                  style: new TextStyle(
+                                  style: TextStyle(
                                       fontSize: 12.0,
                                       color: Color(int.parse(
                                           "0xFF${appBloc.uiSettingModel.appTextColor.substring(1, 7).toUpperCase()}"))),
@@ -594,7 +593,7 @@ class _DiscussionMainState extends State<DiscussionMain> with SingleTickerProvid
                                       padding: EdgeInsets.only(left: 5.0),
                                       child: Text(
                                         'Moderator: ',
-                                        style: new TextStyle(
+                                        style: TextStyle(
                                             fontSize: 12.0,
                                             color: Color(int.parse(
                                                 "0xFF${appBloc.uiSettingModel.appTextColor.substring(1, 7).toUpperCase()}"))),
@@ -605,7 +604,7 @@ class _DiscussionMainState extends State<DiscussionMain> with SingleTickerProvid
                                 child: Text(
                                   list.moderatorName,
                                   maxLines: 1,
-                                  style: new TextStyle(
+                                  style: TextStyle(
                                       fontSize: 12.0,
                                       color: Color(int.parse("0xFF${appBloc.uiSettingModel.appTextColor.substring(1, 7).toUpperCase()}")),
                                   ),
@@ -622,9 +621,9 @@ class _DiscussionMainState extends State<DiscussionMain> with SingleTickerProvid
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.start,
                               children: [
-                                new Padding(
+                                Padding(
                                   padding: EdgeInsets.only(right: 0.0),
-                                  child: new Container(
+                                  child: Container(
                                     alignment: Alignment.center,
                                     width: 70.0,
                                     height: 25.0,
@@ -637,7 +636,7 @@ class _DiscussionMainState extends State<DiscussionMain> with SingleTickerProvid
                                         ),
                                         borderRadius: BorderRadius.all(
                                             Radius.circular(20))),
-                                    child: new Row(
+                                    child: Row(
                                       mainAxisAlignment:
                                           MainAxisAlignment.start,
                                       children: [
@@ -652,7 +651,7 @@ class _DiscussionMainState extends State<DiscussionMain> with SingleTickerProvid
                                                               forumList:
                                                                   list)));
                                             },
-                                            padding: new EdgeInsets.only(
+                                            padding: EdgeInsets.only(
                                                 bottom: 1.0),
                                             icon: Icon(Icons.thumb_up,
                                                 size: 16.0,
@@ -660,7 +659,7 @@ class _DiscussionMainState extends State<DiscussionMain> with SingleTickerProvid
                                                     int.parse("0xFF1D293F")))),
                                         Text(
                                           list.totalLikes == null ||
-                                                  list.totalLikes.length == 0
+                                                  list.totalLikes.isEmpty
                                               ? '0'
                                               : list.totalLikes.length
                                                   .toString(),
@@ -674,9 +673,9 @@ class _DiscussionMainState extends State<DiscussionMain> with SingleTickerProvid
                                     ),
                                   ),
                                 ),
-                                new Padding(
+                                Padding(
                                   padding: EdgeInsets.only(left: 5.0),
-                                  child: new Container(
+                                  child: Container(
                                     width: 70.0,
                                     height: 25.0,
                                     alignment: Alignment.center,
@@ -689,7 +688,7 @@ class _DiscussionMainState extends State<DiscussionMain> with SingleTickerProvid
                                         ),
                                         borderRadius: BorderRadius.all(
                                             Radius.circular(20))),
-                                    child: new Row(
+                                    child: Row(
                                       children: [
                                         IconButton(
                                           color: Color(int.parse(
@@ -698,7 +697,7 @@ class _DiscussionMainState extends State<DiscussionMain> with SingleTickerProvid
                                             openDiscussionTopic(list);
                                           },
                                           padding:
-                                              new EdgeInsets.only(bottom: 1.0),
+                                              EdgeInsets.only(bottom: 1.0),
                                           icon: Icon(
                                             Icons.comment,
                                             color:
@@ -721,7 +720,7 @@ class _DiscussionMainState extends State<DiscussionMain> with SingleTickerProvid
                                     visible: list.createNewTopic ? true : false,
                                     child: Padding(
                                         padding: EdgeInsets.only(left: 10.0),
-                                        child: new GestureDetector(
+                                        child: GestureDetector(
                                           onTap: () {
                                             Navigator.push(
                                                 context,
@@ -770,18 +769,15 @@ class _DiscussionMainState extends State<DiscussionMain> with SingleTickerProvid
         if (state.status == Status.LOADING && discussionMainHomeBloc.isFirstLoading == true) {
           return Center(
             child: AbsorbPointer(
-              child: SpinKitCircle(
-                color: Colors.black54,
-                size: 70.0,
-              ),
+              child: AppConstants().getLoaderWidget(iconSize: 70)
             ),
           );
         }
-        else if (discussionMainHomeBloc.myDiscussionForumList.length == 0) {
+        else if (discussionMainHomeBloc.myDiscussionForumList.isEmpty) {
           return noDataFound(true);
         }
         else {
-          return new Container(
+          return Container(
             color: Color(int.parse(
                 "0xFF${appBloc.uiSettingModel.appBGColor.substring(1, 7).toUpperCase()}")),
             child: RefreshIndicator(
@@ -790,7 +786,7 @@ class _DiscussionMainState extends State<DiscussionMain> with SingleTickerProvid
               },
               color: Color(int.parse(
                   "0xFF${appBloc.uiSettingModel.appButtonBgColor.substring(1, 7).toUpperCase()}")),
-              child: new ListView.separated(
+              child: ListView.separated(
                   physics: AlwaysScrollableScrollPhysics(),
                   separatorBuilder: (context, index) {
                     return Divider(
@@ -803,26 +799,26 @@ class _DiscussionMainState extends State<DiscussionMain> with SingleTickerProvid
                   itemBuilder: (context, index) {
                     ForumList forumList = discussionMainHomeBloc.myDiscussionForumList[index];
 
-                    return new GestureDetector(
+                    return GestureDetector(
                       onTap: () => {
                         openDiscussionTopic(forumList),
                       },
                       child: Padding(
                           padding: EdgeInsets.only(top: ScreenUtil().setHeight(5)),
-                          child: new Container(
+                          child: Container(
                             color: Color(int.parse(
                                 "0xFF${appBloc.uiSettingModel.appBGColor.substring(1, 7).toUpperCase()}")),
                             padding: EdgeInsets.all(ScreenUtil().setHeight(10)),
-                            child: new Column(
+                            child: Column(
                               children: [
-                                new Row(
+                                Row(
                                   children: [
-                                    new Container(
+                                    Container(
                                       width: 45.0,
                                       height: 45.0,
                                       padding: EdgeInsets.all(20.0),
-                                      decoration: new BoxDecoration(
-                                        image: new DecorationImage(
+                                      decoration: BoxDecoration(
+                                        image: DecorationImage(
                                           image: forumList.forumThumbnailPath != ""
                                               ? NetworkImage(forumList.forumThumbnailPath.startsWith('http')
                                                   ? forumList.forumThumbnailPath
@@ -832,18 +828,18 @@ class _DiscussionMainState extends State<DiscussionMain> with SingleTickerProvid
                                                 ) as ImageProvider,
                                           fit: BoxFit.fill,
                                         ),
-                                        borderRadius: new BorderRadius.all(
-                                            new Radius.circular(50.0)),
+                                        borderRadius: BorderRadius.all(
+                                            Radius.circular(50.0)),
                                       ),
                                     ),
-                                    new Expanded(
-                                      child: new Column(
+                                    Expanded(
+                                      child: Column(
                                         crossAxisAlignment: CrossAxisAlignment.start,
                                         children: [
                                           Padding(
                                               padding: EdgeInsets.only(
                                                   left: 20, bottom: 5.0),
-                                              child: new Text(
+                                              child: Text(
                                                 forumList.name,
                                                 style: Theme.of(context).textTheme.caption?.apply(color: InsColor(appBloc).appTextColor),
                                               ),
@@ -852,7 +848,7 @@ class _DiscussionMainState extends State<DiscussionMain> with SingleTickerProvid
                                               padding: EdgeInsets.only(
                                                 left: 20,
                                               ),
-                                              child: new Text(
+                                              child: Text(
                                                 forumList.createdDate != ''
                                                     ? DateTime.now().difference(discussionMainHomeBloc.formatter.parse(forumList.createdDate)).inDays == 0
                                                         ? 'Just now'
@@ -879,13 +875,13 @@ class _DiscussionMainState extends State<DiscussionMain> with SingleTickerProvid
                                     ),
                                   ],
                                 ),
-                                new Column(
+                                Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     Padding(
                                         padding: EdgeInsets.only(
                                             top: 20, left: 10.0, right: 10.0),
-                                        child: new Text(
+                                        child: Text(
                                             forumList.description,
                                             style: TextStyle(
                                                 fontSize:
@@ -896,7 +892,7 @@ class _DiscussionMainState extends State<DiscussionMain> with SingleTickerProvid
                                     Padding(
                                         padding: EdgeInsets.only(
                                             top: 10, left: 10.0),
-                                        child: new Row(
+                                        child: Row(
                                           children: [
                                             CircleAvatar(
                                               radius: 10,
@@ -914,7 +910,7 @@ class _DiscussionMainState extends State<DiscussionMain> with SingleTickerProvid
                                               padding: EdgeInsets.only(left: 10.0),
                                               child: Text(
                                                 'Moderator: ',
-                                                style: new TextStyle(
+                                                style: TextStyle(
                                                     fontSize: 12.0,
                                                     fontWeight: FontWeight.w400,
                                                     color: Color(int.parse(
@@ -923,7 +919,7 @@ class _DiscussionMainState extends State<DiscussionMain> with SingleTickerProvid
                                             ),
                                             Text(
                                               forumList.moderatorName,
-                                              style: new TextStyle(
+                                              style: TextStyle(
                                                   fontSize: 12.0,
                                                   fontWeight: FontWeight.w400,
                                                   color: Color(int.parse(
@@ -939,9 +935,9 @@ class _DiscussionMainState extends State<DiscussionMain> with SingleTickerProvid
                                         child: Row(
                                           mainAxisAlignment: MainAxisAlignment.start,
                                           children: [
-                                            new Padding(
+                                            Padding(
                                               padding: EdgeInsets.only(right: 0.0),
-                                              child: new Container(
+                                              child: Container(
                                                 alignment: Alignment.center,
                                                 width: 70.0,
                                                 height: 25.0,
@@ -957,7 +953,7 @@ class _DiscussionMainState extends State<DiscussionMain> with SingleTickerProvid
                                                         BorderRadius.all(
                                                             Radius.circular(
                                                                 20))),
-                                                child: new Row(
+                                                child: Row(
                                                   mainAxisAlignment:
                                                       MainAxisAlignment.start,
                                                   children: [
@@ -967,7 +963,7 @@ class _DiscussionMainState extends State<DiscussionMain> with SingleTickerProvid
                                                       onPressed: () {
                                                         Navigator.of(context).push(MaterialPageRoute(builder: (context) => DiscussionForumLikes(forumList: forumList)));
                                                       },
-                                                      padding: new EdgeInsets.only(
+                                                      padding: EdgeInsets.only(
                                                               bottom: 1.0),
                                                       icon: Icon(Icons.thumb_up,
                                                           size: 16.0,
@@ -988,9 +984,9 @@ class _DiscussionMainState extends State<DiscussionMain> with SingleTickerProvid
                                                 ),
                                               ),
                                             ),
-                                            new Padding(
+                                            Padding(
                                               padding: EdgeInsets.only(left: 5.0),
-                                              child: new Container(
+                                              child: Container(
                                                 width: 70.0,
                                                 height: 25.0,
                                                 alignment: Alignment.center,
@@ -1006,13 +1002,13 @@ class _DiscussionMainState extends State<DiscussionMain> with SingleTickerProvid
                                                         BorderRadius.all(
                                                             Radius.circular(
                                                                 20))),
-                                                child: new Row(
+                                                child: Row(
                                                   children: [
                                                     IconButton(
                                                       onPressed: () {
                                                         openDiscussionTopic(forumList);
                                                       },
-                                                      padding: new EdgeInsets.only(
+                                                      padding: EdgeInsets.only(
                                                               bottom: 1.0),
                                                       icon: Icon(
                                                         Icons.comment,
@@ -1034,7 +1030,7 @@ class _DiscussionMainState extends State<DiscussionMain> with SingleTickerProvid
                                             ),
                                             Padding(
                                                 padding: EdgeInsets.only(left: 10.0),
-                                                child: new GestureDetector(
+                                                child: GestureDetector(
                                                   onTap: () {
                                                     Navigator.of(context)
                                                         .push(MaterialPageRoute(builder: (context) => AddTopic(forumList:forumList,)))
@@ -1099,9 +1095,9 @@ class _DiscussionMainState extends State<DiscussionMain> with SingleTickerProvid
               //print("IsCreate Forum:${discussionMainHomeBloc.isCreateForum}");
               return Visibility(
                 visible: discussionMainHomeBloc.isCreateForum == true,
-                child: new FloatingActionButton(
+                child: FloatingActionButton(
                     elevation: 0.0,
-                    child: new Icon(Icons.add),
+                    child: Icon(Icons.add),
                     backgroundColor: Color(int.parse(
                         "0xFF${appBloc.uiSettingModel.appButtonBgColor.substring(1, 7).toUpperCase()}")),
                     onPressed: () {
@@ -1133,6 +1129,7 @@ class _DiscussionMainState extends State<DiscussionMain> with SingleTickerProvid
 
   void _settingModalBottomSheet(context, ForumList list, int index) {
     showModalBottomSheet(
+        shape: AppConstants().bottomSheetShapeBorder(),
         context: context,
         builder: (BuildContext bc) {
           return BlocConsumer<DiscussionMainHomeBloc, DiscussionMainHomeState>(
@@ -1148,25 +1145,15 @@ class _DiscussionMainState extends State<DiscussionMain> with SingleTickerProvid
                 print("My User Id:${appBloc.userid}");
                 print("Created User Id:${list.createdUserID}");
 
-                return Container(
-                  color: Color(int.parse(
-                      "0xFF${appBloc.uiSettingModel.appBGColor.substring(1, 7).toUpperCase()}")),
-                  child: new Wrap(
+                return AppConstants().bottomSheetContainer(
+                  child: Wrap(
                     children: <Widget>[
                       BottomSheetDragger(),
                       Visibility(
                           visible: discussionMainHomeBloc.isEditForum && appBloc.userid == list.createdUserID.toString() ? true : false,
-                          child: new ListTile(
-                              leading: new Icon(
-                                Icons.edit,
-                                color: InsColor(appBloc).appIconColor,
-                              ),
-                              title: new Text(
-                                'Edit',
-                                style: TextStyle(
-                                    color: Color(int.parse(
-                                        "0xFF${appBloc.uiSettingModel.appTextColor.substring(1, 7).toUpperCase()}"))),
-                              ),
+                          child: BottomsheetOptionTile(
+                              iconData: Icons.edit,
+                              text:'Edit',
                               onTap: () => {
                                     Navigator.of(context).pop(true),
                                     Navigator.of(context)
@@ -1182,18 +1169,9 @@ class _DiscussionMainState extends State<DiscussionMain> with SingleTickerProvid
                                   })),
                       Visibility(
                           visible: list.createNewTopic ? true : false,
-                          child: new ListTile(
-                            leading: new Icon(
-                              Icons.message,
-                              color: Color(int.parse(
-                                  "0xFF${appBloc.uiSettingModel.appTextColor.substring(1, 7).toUpperCase()}")),
-                            ),
-                            title: new Text(
-                              'Add Topic',
-                              style: TextStyle(
-                                  color: Color(int.parse(
-                                      "0xFF${appBloc.uiSettingModel.appTextColor.substring(1, 7).toUpperCase()}"))),
-                            ),
+                          child: BottomsheetOptionTile(
+                              iconData:Icons.message,
+                              text:'Add Topic',
                             onTap: () => {
                               Navigator.of(context).pop(),
                               Navigator.of(context)
@@ -1209,20 +1187,9 @@ class _DiscussionMainState extends State<DiscussionMain> with SingleTickerProvid
                           )),
                       Visibility(
                           visible: list.allowShare ? true : false,
-                          child: new ListTile(
-                            leading: new Icon(
-                              IconDataSolid(
-                                int.parse('0xf079'),
-                              ),
-                              color: Color(int.parse(
-                                  "0xFF${appBloc.uiSettingModel.appTextColor.substring(1, 7).toUpperCase()}")),
-                            ),
-                            title: new Text(
-                              'Share with People',
-                              style: TextStyle(
-                                  color: Color(int.parse(
-                                      "0xFF${appBloc.uiSettingModel.appTextColor.substring(1, 7).toUpperCase()}"))),
-                            ),
+                          child: BottomsheetOptionTile(
+                              iconData:IconDataSolid(int.parse('0xf079'),),
+                              text:'Share with People',
                             onTap: () => {
                               Navigator.pop(context),
                               Navigator.of(context).push(MaterialPageRoute(
@@ -1236,18 +1203,9 @@ class _DiscussionMainState extends State<DiscussionMain> with SingleTickerProvid
                           )),
                       Visibility(
                           visible: list.allowShare ? true : false,
-                          child: ListTile(
-                            leading: Icon(
-                              IconDataSolid(int.parse('0xf1e0')),
-                              color: Color(int.parse(
-                                  "0xFF${appBloc.uiSettingModel.appTextColor.substring(1, 7).toUpperCase()}")),
-                            ),
-                            title: new Text(
-                              'Share with Connection',
-                              style: TextStyle(
-                                  color: Color(int.parse(
-                                      "0xFF${appBloc.uiSettingModel.appTextColor.substring(1, 7).toUpperCase()}"))),
-                            ),
+                          child: BottomsheetOptionTile(
+                              iconData:IconDataSolid(int.parse('0xf1e0')),
+                              text:'Share with Connection',
                             onTap: () {
                               Navigator.pop(context);
 
@@ -1261,15 +1219,9 @@ class _DiscussionMainState extends State<DiscussionMain> with SingleTickerProvid
                           )),
                       Visibility(
                         visible: discussionMainHomeBloc.isDeleteForum && appBloc.userid == list.createdUserID.toString() ? true : false,
-                        child: new ListTile(
-                          leading: new Icon(
-                            Icons.delete,
-                            color: Colors.red,
-                          ),
-                          title: new Text(
-                            'Delete',
-                            style: new TextStyle(color: Colors.red),
-                          ),
+                        child: BottomsheetOptionTile(
+                          iconData: Icons.delete,
+                          text:'Delete',
                           onTap: () => {
                             //Navigator.of(context).pop(),
                             showAlertDialog(context, index),
@@ -1331,7 +1283,7 @@ class _DiscussionMainState extends State<DiscussionMain> with SingleTickerProvid
               ),
           ),
         )
-        : new Container();
+        : Container();
   }
 
   void refresh(bool isTab, String contentId, String value) async {
@@ -1414,12 +1366,12 @@ class _DiscussionMainState extends State<DiscussionMain> with SingleTickerProvid
   }
 
   Widget _buildProgressIndicator() {
-    return new Padding(
+    return Padding(
       padding: const EdgeInsets.all(8.0),
-      child: new Center(
-        child: new Opacity(
+      child: Center(
+        child: Opacity(
           opacity: 1.0,
-          child: new CircularProgressIndicator(),
+          child: CircularProgressIndicator(),
         ),
       ),
     );

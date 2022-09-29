@@ -19,7 +19,9 @@ import 'package:flutter_admin_web/ui/MyLearning/share_with_connections.dart';
 import 'package:flutter_admin_web/ui/askTheExpert/view_comment.dart';
 import 'package:flutter_admin_web/ui/common/Viewimagenew.dart';
 
+import '../../configs/constants.dart';
 import '../common/bottomsheet_drager.dart';
+import '../common/bottomsheet_option_tile.dart';
 import 'add_answer.dart';
 import 'add_answer_comment.dart';
 
@@ -33,7 +35,7 @@ class ViewAnswers extends StatefulWidget {
 }
 
 class _ViewAnswersState extends State<ViewAnswers> with SingleTickerProviderStateMixin {
-  GlobalKey<ScaffoldState> _scaffoldkey = new GlobalKey<ScaffoldState>();
+  GlobalKey<ScaffoldState> _scaffoldkey = GlobalKey<ScaffoldState>();
   final scaffoldKey = GlobalKey<ScaffoldState>();
 
   AppBloc get appBloc => BlocProvider.of<AppBloc>(context);
@@ -44,7 +46,7 @@ class _ViewAnswersState extends State<ViewAnswers> with SingleTickerProviderStat
   @override
   void initState() {
     super.initState();
-    askTheExpertBloc = new AskTheExpertBloc(
+    askTheExpertBloc = AskTheExpertBloc(
         askTheExpertRepository: AskTheExpertRepositoryBuilder.repository());
 
     refresh();
@@ -101,15 +103,15 @@ class _ViewAnswersState extends State<ViewAnswers> with SingleTickerProviderStat
             color: Color(int.parse(
                 "0xFF${appBloc.uiSettingModel.appButtonBgColor.substring(1, 7).toUpperCase()}")),
             child: SingleChildScrollView(
-              physics: AlwaysScrollableScrollPhysics(),
-              child: new Column(
+              physics: const AlwaysScrollableScrollPhysics(),
+              child: Column(
                 children: [
-                  Divider(
+                  const Divider(
                     height: 2,
                     color: Colors.black87,
                   ),
                   userQuestion(),
-                  Divider(
+                  const Divider(
                     height: 2,
                     color: Colors.black87,
                   ),
@@ -154,47 +156,44 @@ class _ViewAnswersState extends State<ViewAnswers> with SingleTickerProviderStat
         if (!isGetAnswersDone || !isUpdateViewDone) {
           return Center(
             child: AbsorbPointer(
-              child: SpinKitCircle(
-                color: Colors.black54,
-                size: 70.0,
-              ),
+              child: AppConstants().getLoaderWidget(iconSize: 70)
             ),
           );
         }
-        else if (askTheExpertBloc.answersResponse.table1.length == 0) {
+        else if (askTheExpertBloc.answersResponse.table1.isEmpty) {
           return noDataFound(true);
         }
         else {
-          return new Container(
+          return Container(
             color: Color(int.parse(
                 "0xFF${appBloc.uiSettingModel.appBGColor.substring(1, 7).toUpperCase()}")),
-            padding: EdgeInsets.all(20.0),
-            child: new ListView.separated(
+            padding: const EdgeInsets.all(20.0),
+            child: ListView.separated(
                 shrinkWrap: true,
                 primary: false,
-                physics: NeverScrollableScrollPhysics(),
+                physics: const NeverScrollableScrollPhysics(),
                 scrollDirection: Axis.vertical,
                 itemCount: askTheExpertBloc.answersResponse.table1.length,
-                separatorBuilder: (context, index) => Divider(
+                separatorBuilder: (context, index) => const Divider(
                       color: Colors.grey,
                     ),
                 itemBuilder: (context, index) {
-                  return new GestureDetector(
+                  return GestureDetector(
                     onTap: () => {
                       // openDiscussionTopic(index),
                     },
-                    child: new Container(
-                      child: new Column(
+                    child: Container(
+                      child: Column(
                         children: [
-                          new Row(
+                          Row(
                             children: [
-                              new Container(
+                              Container(
                                 width: 60.0,
                                 height: 60.0,
-                                padding: EdgeInsets.all(20.0),
-                                decoration: new BoxDecoration(
+                                padding: const EdgeInsets.all(20.0),
+                                decoration: BoxDecoration(
                                   color: const Color(0xff7c94b6),
-                                  image: new DecorationImage(
+                                  image: DecorationImage(
                                     image: askTheExpertBloc.answersResponse
                                                 .table1[index].picture !=
                                             ""
@@ -205,47 +204,47 @@ class _ViewAnswersState extends State<ViewAnswers> with SingleTickerProviderStat
                                                 .startsWith('http')
                                             ? askTheExpertBloc.answersResponse
                                                 .table1[index].picture
-                                            : '${ApiEndpoints.strSiteUrl + askTheExpertBloc.answersResponse.table1[index].picture}')
-                                        : AssetImage(
+                                            : ApiEndpoints.strSiteUrl + askTheExpertBloc.answersResponse.table1[index].picture)
+                                        : const AssetImage(
                                             'assets/user.gif',
                                           ) as ImageProvider,
                                     fit: BoxFit.fill,
                                   ),
-                                  borderRadius: new BorderRadius.all(
-                                      new Radius.circular(50.0)),
+                                  borderRadius: const BorderRadius.all(
+                                      const Radius.circular(50.0)),
                                 ),
                               ),
                               Expanded(
-                                  child: new Column(
+                                  child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Padding(
-                                      padding: EdgeInsets.only(
+                                      padding: const EdgeInsets.only(
                                           left: 20, right: 10.0),
-                                      child: new Text(
+                                      child: Text(
                                         askTheExpertBloc.answersResponse
                                             .table1[index].respondedUserName,
-                                        style: new TextStyle(
+                                        style: TextStyle(
                                             color: Color(int.parse(
                                                 "0xFF${appBloc.uiSettingModel.appTextColor.substring(1, 7).toUpperCase()}")),
                                             fontSize: 12.0,
                                             fontWeight: FontWeight.bold),
                                       )),
                                   Padding(
-                                      padding: EdgeInsets.only(
+                                      padding: const EdgeInsets.only(
                                         left: 20,
                                       ),
-                                      child: new Text(
+                                      child: Text(
                                         askTheExpertBloc
                                             .answersResponse.table1[index].days,
-                                        style: new TextStyle(
+                                        style: TextStyle(
                                             color: Color(int.parse(
                                                 "0xFF${appBloc.uiSettingModel.appTextColor.substring(1, 7).toUpperCase()}")),
                                             fontSize: 10.0),
                                       ))
                                 ],
                               )),
-                              new IconButton(
+                              IconButton(
                                 color: Color(int.parse(
                                     "0xFF${appBloc.uiSettingModel.appTextColor.substring(1, 7).toUpperCase()}")),
                                 icon: Icon(
@@ -258,17 +257,15 @@ class _ViewAnswersState extends State<ViewAnswers> with SingleTickerProviderStat
                               ),
                             ],
                           ),
-                          new Column(
+                          Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Padding(
-                                padding: EdgeInsets.only(
+                                padding: const EdgeInsets.only(
                                     top: 20, left: 10.0, right: 10.0),
                                 child: Html(
-                                    data: "" +
-                                        askTheExpertBloc.answersResponse
-                                            .table1[index].response +
-                                        "",
+                                    data: askTheExpertBloc.answersResponse
+                                            .table1[index].response,
                                     style: {
                                       "body": Style(
                                           color: Color(int.parse(
@@ -311,20 +308,20 @@ class _ViewAnswersState extends State<ViewAnswers> with SingleTickerProviderStat
                               // ),
 
                               Padding(
-                                padding: EdgeInsets.only(top: 10, left: 10.0),
+                                padding: const EdgeInsets.only(top: 10, left: 10.0),
                                 child: InkWell(
                                   child: askTheExpertBloc
                                           .answersResponse
                                           .table1[index]
                                           .userResponseImagePath
                                           .isNotEmpty
-                                      ? new Container(
+                                      ? Container(
                                           width: 20.0,
                                           height: 20.0,
-                                          padding: EdgeInsets.all(10.0),
-                                          decoration: new BoxDecoration(
+                                          padding: const EdgeInsets.all(10.0),
+                                          decoration: BoxDecoration(
                                             color: const Color(0xff7c94b6),
-                                            image: new DecorationImage(
+                                            image: DecorationImage(
                                               image: askTheExpertBloc
                                                           .answersResponse
                                                           .table1[index]
@@ -339,14 +336,14 @@ class _ViewAnswersState extends State<ViewAnswers> with SingleTickerProviderStat
                                                           .answersResponse
                                                           .table1[index]
                                                           .userResponseImagePath
-                                                      : '${ApiEndpoints.strSiteUrl + askTheExpertBloc.answersResponse.table1[index].userResponseImagePath}')
-                                                  : AssetImage(
+                                                      : ApiEndpoints.strSiteUrl + askTheExpertBloc.answersResponse.table1[index].userResponseImagePath)
+                                                  : const AssetImage(
                                                       'assets/user.gif',
                                                     ) as ImageProvider,
                                               fit: BoxFit.fill,
                                             ),
-                                            borderRadius: new BorderRadius.all(
-                                                new Radius.circular(50.0)),
+                                            borderRadius: const BorderRadius.all(
+                                                const Radius.circular(50.0)),
                                           ),
                                         )
                                       : Container(),
@@ -380,13 +377,13 @@ class _ViewAnswersState extends State<ViewAnswers> with SingleTickerProviderStat
                                 //  : Container(),
                               ),
                               Padding(
-                                  padding: EdgeInsets.only(top: 10, left: 10),
+                                  padding: const EdgeInsets.only(top: 10, left: 10),
                                   child: Row(
                                     mainAxisAlignment: MainAxisAlignment.start,
                                     children: [
-                                      new Padding(
-                                        padding: EdgeInsets.only(right: 0.0),
-                                        child: new Container(
+                                      Padding(
+                                        padding: const EdgeInsets.only(right: 0.0),
+                                        child: Container(
                                           alignment: Alignment.center,
                                           width: 70.0,
                                           height: 25.0,
@@ -398,9 +395,9 @@ class _ViewAnswersState extends State<ViewAnswers> with SingleTickerProviderStat
                                                     .appTextColor
                                                     .withAlpha(0),
                                               ),
-                                              borderRadius: BorderRadius.all(
+                                              borderRadius: const BorderRadius.all(
                                                   Radius.circular(20))),
-                                          child: new Row(
+                                          child: Row(
                                             mainAxisAlignment:
                                                 MainAxisAlignment.start,
                                             children: [
@@ -418,7 +415,7 @@ class _ViewAnswersState extends State<ViewAnswers> with SingleTickerProviderStat
                                                           3,
                                                           true));
                                                 },
-                                                padding: new EdgeInsets.only(
+                                                padding: const EdgeInsets.only(
                                                     bottom: 1.0),
                                                 icon: Icon(
                                                   Icons.thumb_up_alt_outlined,
@@ -451,9 +448,9 @@ class _ViewAnswersState extends State<ViewAnswers> with SingleTickerProviderStat
                                           ),
                                         ),
                                       ),
-                                      new Padding(
-                                        padding: EdgeInsets.only(left: 5.0),
-                                        child: new Container(
+                                      Padding(
+                                        padding: const EdgeInsets.only(left: 5.0),
+                                        child: Container(
                                           width: 50.0,
                                           height: 25.0,
                                           alignment: Alignment.center,
@@ -465,9 +462,9 @@ class _ViewAnswersState extends State<ViewAnswers> with SingleTickerProviderStat
                                                     .appTextColor
                                                     .withAlpha(0),
                                               ),
-                                              borderRadius: BorderRadius.all(
+                                              borderRadius: const BorderRadius.all(
                                                   Radius.circular(20))),
-                                          child: new Row(
+                                          child: Row(
                                             children: [
                                               IconButton(
                                                 onPressed: () {
@@ -481,7 +478,7 @@ class _ViewAnswersState extends State<ViewAnswers> with SingleTickerProviderStat
                                                           3,
                                                           false));
                                                 },
-                                                padding: new EdgeInsets.only(
+                                                padding: const EdgeInsets.only(
                                                     bottom: 1.0),
                                                 icon: Icon(
                                                   Icons.thumb_down_alt_outlined,
@@ -494,9 +491,9 @@ class _ViewAnswersState extends State<ViewAnswers> with SingleTickerProviderStat
                                           ),
                                         ),
                                       ),
-                                      new Padding(
-                                        padding: EdgeInsets.only(left: 5.0),
-                                        child: new Container(
+                                      Padding(
+                                        padding: const EdgeInsets.only(left: 5.0),
+                                        child: Container(
                                           width: 70.0,
                                           height: 25.0,
                                           alignment: Alignment.center,
@@ -508,9 +505,9 @@ class _ViewAnswersState extends State<ViewAnswers> with SingleTickerProviderStat
                                                     .appTextColor
                                                     .withAlpha(0),
                                               ),
-                                              borderRadius: BorderRadius.all(
+                                              borderRadius: const BorderRadius.all(
                                                   Radius.circular(20))),
-                                          child: new Row(
+                                          child: Row(
                                             children: [
                                               IconButton(
                                                 onPressed: () {
@@ -528,7 +525,7 @@ class _ViewAnswersState extends State<ViewAnswers> with SingleTickerProviderStat
                                                     }
                                                   });
                                                 },
-                                                padding: new EdgeInsets.only(
+                                                padding: const EdgeInsets.only(
                                                     bottom: 1.0),
                                                 icon: Icon(
                                                   Icons.message,
@@ -552,8 +549,8 @@ class _ViewAnswersState extends State<ViewAnswers> with SingleTickerProviderStat
                                         ),
                                       ),
                                       Padding(
-                                          padding: EdgeInsets.only(left: 10.0),
-                                          child: new GestureDetector(
+                                          padding: const EdgeInsets.only(left: 10.0),
+                                          child: GestureDetector(
                                             onTap: () {
                                               Navigator.push(
                                                   context,
@@ -569,7 +566,7 @@ class _ViewAnswersState extends State<ViewAnswers> with SingleTickerProviderStat
                                                 }
                                               });
                                             },
-                                            child: Text(
+                                            child: const Text(
                                               'Add Comment',
                                               style: TextStyle(
                                                   fontSize: 12,
@@ -593,60 +590,58 @@ class _ViewAnswersState extends State<ViewAnswers> with SingleTickerProviderStat
   }
 
   Widget userQuestion() {
-    return new Container(
+    return Container(
       color: Color(int.parse(
           "0xFF${appBloc.uiSettingModel.appBGColor.substring(1, 7).toUpperCase()}")),
       padding: EdgeInsets.all(ScreenUtil().setHeight(10)),
-      child: new Column(
+      child: Column(
         children: [
-          new Row(
+          Row(
             children: [
-              new Container(
+              Container(
                 width: 60.0,
                 height: 60.0,
-                padding: EdgeInsets.all(20.0),
-                decoration: new BoxDecoration(
+                padding: const EdgeInsets.all(20.0),
+                decoration: BoxDecoration(
                   color: const Color(0xff7c94b6),
-                  image: new DecorationImage(
+                  image: DecorationImage(
                     image: widget.questionList.userQuestionImagePath != ""
                         ? NetworkImage(widget.questionList.userQuestionImagePath
                                 .startsWith('http')
                             ? widget.questionList.userQuestionImagePath
-                            : '${ApiEndpoints.strSiteUrl + widget.questionList.userQuestionImagePath}')
-                        : AssetImage(
+                            : ApiEndpoints.strSiteUrl + widget.questionList.userQuestionImagePath)
+                        : const AssetImage(
                             'assets/user.gif',
                           ) as ImageProvider,
                     fit: BoxFit.fill,
                   ),
-                  borderRadius: new BorderRadius.all(new Radius.circular(50.0)),
+                  borderRadius: const BorderRadius.all(Radius.circular(50.0)),
                 ),
               ),
-              new Expanded(
-                  child: new Column(
+              Expanded(
+                  child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Padding(
-                      padding: EdgeInsets.only(left: 20, right: 10.0),
-                      child: new Text(
+                      padding: const EdgeInsets.only(left: 20, right: 10.0),
+                      child: Text(
                         widget.questionList.userQuestion,
-                        style: new TextStyle(
+                        style: TextStyle(
                             color: Color(int.parse(
                                 "0xFF${appBloc.uiSettingModel.appTextColor.substring(1, 7).toUpperCase()}")),
                             fontSize: 12.0,
                             fontWeight: FontWeight.bold),
                       )),
                   Padding(
-                      padding: EdgeInsets.only(
+                      padding: const EdgeInsets.only(
                         left: 20,
                       ),
-                      child: new Text(
-                        DateTime.now()
+                      child: Text(
+                        '${DateTime.now()
                                 .difference(askTheExpertBloc.formatter
                                     .parse(widget.questionList.postedDate))
-                                .inDays
-                                .toString() +
-                            ' Days',
-                        style: new TextStyle(
+                                .inDays} Days',
+                        style: TextStyle(
                             color: Color(int.parse(
                                 "0xFF${appBloc.uiSettingModel.appTextColor.substring(1, 7).toUpperCase()}")),
                             fontSize: 10.0),
@@ -655,13 +650,13 @@ class _ViewAnswersState extends State<ViewAnswers> with SingleTickerProviderStat
               )),
             ],
           ),
-          new Column(
+          Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Padding(
-                padding: EdgeInsets.only(top: 20, left: 10.0, right: 10.0),
+                padding: const EdgeInsets.only(top: 20, left: 10.0, right: 10.0),
                 child: Html(
-                    data: "" + widget.questionList.userQuestionDescription + "",
+                    data: widget.questionList.userQuestionDescription,
                     style: {
                       "body": Style(
                           color: Color(int.parse(
@@ -671,31 +666,26 @@ class _ViewAnswersState extends State<ViewAnswers> with SingleTickerProviderStat
                     }),
               ),
               Padding(
-                padding: EdgeInsets.only(top: 10.0, left: 10.0),
+                padding: const EdgeInsets.only(top: 10.0, left: 10.0),
                 child: questionCategories(widget.questionList.questionCategories.split(',')),
               ),
               Padding(
-                  padding: EdgeInsets.only(top: 10, left: 20.0),
-                  child: new Text(
-                    'Asked by: ' +
-                        widget.questionList.userName +
-                        ' | Asked on: ' +
-                        widget.questionList.postedDate +
-                        ' | Last Active: ' +
-                        widget.questionList.postedDate,
+                  padding: const EdgeInsets.only(top: 10, left: 20.0),
+                  child: Text(
+                    'Asked by: ${widget.questionList.userName} | Asked on: ${widget.questionList.postedDate} | Last Active: ${widget.questionList.postedDate}',
                     style: TextStyle(
                         fontSize: 11.0,
                         color: Color(int.parse(
                             "0xFF${appBloc.uiSettingModel.appTextColor.substring(1, 7).toUpperCase()}"))),
                   )),
               Padding(
-                  padding: EdgeInsets.only(top: 10, left: 8),
+                  padding: const EdgeInsets.only(top: 10, left: 8),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: [
-                      new Padding(
-                        padding: EdgeInsets.only(left: 10.0, right: 0.0),
-                        child: new Container(
+                      Padding(
+                        padding: const EdgeInsets.only(left: 10.0, right: 0.0),
+                        child: Container(
                           alignment: Alignment.center,
                           width: 70.0,
                           height: 25.0,
@@ -706,8 +696,8 @@ class _ViewAnswersState extends State<ViewAnswers> with SingleTickerProviderStat
                                     InsColor(appBloc).appTextColor.withAlpha(0),
                               ),
                               borderRadius:
-                                  BorderRadius.all(Radius.circular(20))),
-                          child: new Row(
+                                  const BorderRadius.all(const Radius.circular(20))),
+                          child: Row(
                             mainAxisAlignment: MainAxisAlignment.start,
                             children: [
                               IconButton(
@@ -721,7 +711,7 @@ class _ViewAnswersState extends State<ViewAnswers> with SingleTickerProviderStat
                                   //             ViewAnswers(
                                   //                 widget.questionList)));
                                 },
-                                padding: new EdgeInsets.only(bottom: 1.0),
+                                padding: const EdgeInsets.only(bottom: 1.0),
                                 icon: Icon(
                                   Icons.question_answer,
                                   size: 16.0,
@@ -740,9 +730,9 @@ class _ViewAnswersState extends State<ViewAnswers> with SingleTickerProviderStat
                           ),
                         ),
                       ),
-                      new Padding(
-                        padding: EdgeInsets.only(left: 5.0),
-                        child: new Container(
+                      Padding(
+                        padding: const EdgeInsets.only(left: 5.0),
+                        child: Container(
                           width: 70.0,
                           height: 25.0,
                           alignment: Alignment.center,
@@ -753,14 +743,14 @@ class _ViewAnswersState extends State<ViewAnswers> with SingleTickerProviderStat
                                     InsColor(appBloc).appTextColor.withAlpha(0),
                               ),
                               borderRadius:
-                                  BorderRadius.all(Radius.circular(20))),
-                          child: new Row(
+                                  const BorderRadius.all(const Radius.circular(20))),
+                          child: Row(
                             children: [
                               IconButton(
                                 color: Color(int.parse(
                                     "0xFF${appBloc.uiSettingModel.appTextColor.substring(1, 7).toUpperCase()}")),
                                 onPressed: () {},
-                                padding: new EdgeInsets.only(bottom: 1.0),
+                                padding: const EdgeInsets.only(bottom: 1.0),
                                 icon: Icon(
                                   Icons.remove_red_eye,
                                   color: Color(int.parse("0xFF1D293F")),
@@ -806,7 +796,7 @@ class _ViewAnswersState extends State<ViewAnswers> with SingleTickerProviderStat
               )
             ],
           )
-        : new Container();
+        : Container();
   }
 
   void refresh() {
@@ -823,8 +813,7 @@ class _ViewAnswersState extends State<ViewAnswers> with SingleTickerProviderStat
 
   void _settingModalBottomSheet(context, index) {
     showModalBottomSheet(
-        backgroundColor: Color(int.parse(
-            "0xFF${appBloc.uiSettingModel.appBGColor.substring(1, 7).toUpperCase()}")),
+        shape: AppConstants().bottomSheetShapeBorder(),
         context: context,
         builder: (BuildContext bc) {
           return BlocConsumer<AskTheExpertBloc, AskTheExpertState>(
@@ -833,30 +822,19 @@ class _ViewAnswersState extends State<ViewAnswers> with SingleTickerProviderStat
                 if (state.status == Status.COMPLETED) {}
               },
               builder: (context, state) {
-                return Container(
-                  color: Color(int.parse(
-                      "0xFF${appBloc.uiSettingModel.appBGColor.substring(1, 7).toUpperCase()}")),
-                  child: new Wrap(
+                return AppConstants().bottomSheetContainer(
+                  child: Wrap(
                     children: <Widget>[
-                      BottomSheetDragger(),
+                      const BottomSheetDragger(),
                       Visibility(
                           visible: askTheExpertBloc.answersResponse
                                       .table1[index].respondedUserName ==
                                   askTheExpertBloc.strUserName
                               ? true
                               : false,
-                          child: new ListTile(
-                            leading: Icon(
-                              Icons.edit,
-                              color: Color(int.parse(
-                                  "0xFF${appBloc.uiSettingModel.appTextColor.substring(1, 7).toUpperCase()}")),
-                            ),
-                            title: new Text(
-                              'Edit',
-                              style: TextStyle(
-                                  color: Color(int.parse(
-                                      "0xFF${appBloc.uiSettingModel.appTextColor.substring(1, 7).toUpperCase()}"))),
-                            ),
+                          child: BottomsheetOptionTile(
+                            iconData: Icons.edit,
+                            text: 'Edit',
                             onTap: () => {
                               Navigator.pop(context),
                               Navigator.of(context)
@@ -874,18 +852,9 @@ class _ViewAnswersState extends State<ViewAnswers> with SingleTickerProviderStat
                               })
                             },
                           )),
-                      ListTile(
-                        leading: Icon(
-                          Icons.message,
-                          color: Color(int.parse(
-                              "0xFF${appBloc.uiSettingModel.appTextColor.substring(1, 7).toUpperCase()}")),
-                        ),
-                        title: new Text(
-                          'Add Comment',
-                          style: TextStyle(
-                              color: Color(int.parse(
-                                  "0xFF${appBloc.uiSettingModel.appTextColor.substring(1, 7).toUpperCase()}"))),
-                        ),
+                      BottomsheetOptionTile(
+                        iconData: Icons.message,
+                        text: 'Add Comment',
                         onTap: () => {
                           Navigator.pop(context),
                           Navigator.push(
@@ -900,20 +869,11 @@ class _ViewAnswersState extends State<ViewAnswers> with SingleTickerProviderStat
                           })
                         },
                       ),
-                      ListTile(
-                        leading: new Icon(
-                          IconDataSolid(
+                      BottomsheetOptionTile(
+                        iconData: IconDataSolid(
                             int.parse('0xf079'),
                           ),
-                          color: Color(int.parse(
-                              "0xFF${appBloc.uiSettingModel.appTextColor.substring(1, 7).toUpperCase()}")),
-                        ),
-                        title: new Text(
-                          'Share with People',
-                          style: TextStyle(
-                              color: Color(int.parse(
-                                  "0xFF${appBloc.uiSettingModel.appTextColor.substring(1, 7).toUpperCase()}"))),
-                        ),
+                        text: 'Share with People',
                         onTap: () => {
                           Navigator.pop(context),
                           Navigator.of(context).push(MaterialPageRoute(
@@ -928,18 +888,9 @@ class _ViewAnswersState extends State<ViewAnswers> with SingleTickerProviderStat
                                       .answersResponse.table1[index].response)))
                         },
                       ),
-                      ListTile(
-                        leading: Icon(
-                          IconDataSolid(int.parse('0xf1e0')),
-                          color: Color(int.parse(
-                              "0xFF${appBloc.uiSettingModel.appTextColor.substring(1, 7).toUpperCase()}")),
-                        ),
-                        title: new Text(
-                          'Share with Connection',
-                          style: TextStyle(
-                              color: Color(int.parse(
-                                  "0xFF${appBloc.uiSettingModel.appTextColor.substring(1, 7).toUpperCase()}"))),
-                        ),
+                      BottomsheetOptionTile(
+                        iconData: IconDataSolid(int.parse('0xf1e0')),
+                        text: 'Share with Connection',
                         onTap: () {
                           Navigator.pop(context);
 
@@ -957,18 +908,9 @@ class _ViewAnswersState extends State<ViewAnswers> with SingleTickerProviderStat
                                   askTheExpertBloc.strUserName
                               ? true
                               : false,
-                          child: new ListTile(
-                            leading: Icon(
-                              Icons.delete,
-                              color: Color(int.parse(
-                                  "0xFF${appBloc.uiSettingModel.appTextColor.substring(1, 7).toUpperCase()}")),
-                            ),
-                            title: new Text(
-                              'Delete',
-                              style: TextStyle(
-                                  color: Color(int.parse(
-                                      "0xFF${appBloc.uiSettingModel.appTextColor.substring(1, 7).toUpperCase()}"))),
-                            ),
+                          child: BottomsheetOptionTile(
+                            iconData: Icons.delete,
+                            text: 'Delete',
                             onTap: () => {showAlertDialog(context, index)},
                           )),
                     ],
@@ -991,8 +933,8 @@ class _ViewAnswersState extends State<ViewAnswers> with SingleTickerProviderStat
     return Wrap(
       children: List.generate(questionCategories.length, (index) {
         return Container(
-          margin: EdgeInsets.symmetric(vertical: 5),
-          padding: EdgeInsets.only(left: 5.0, right: 5.0),
+          margin: const EdgeInsets.symmetric(vertical: 5),
+          padding: const EdgeInsets.only(left: 5.0, right: 5.0),
           child: Visibility(
             visible: questionCategories[index].trim().isEmpty ? false : true,
             child: Container(
@@ -1002,9 +944,9 @@ class _ViewAnswersState extends State<ViewAnswers> with SingleTickerProviderStat
                   border: Border.all(
                     color: InsColor(appBloc).appTextColor.withAlpha(0),
                   ),
-                  borderRadius: BorderRadius.all(Radius.circular(20))),
+                  borderRadius: const BorderRadius.all(const Radius.circular(20))),
               child: Padding(
-                padding: EdgeInsets.symmetric(horizontal: 8.0, vertical: 8.0),
+                padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 8.0),
                 child: Text(questionCategories[index],
                   style: TextStyle(
                     color: Color(int.parse("0xFF1D293F")),
@@ -1058,15 +1000,15 @@ class _ViewAnswersState extends State<ViewAnswers> with SingleTickerProviderStat
   showAlertDialog(BuildContext context, int index) {
     // Create button
     Widget deleteButton = FlatButton(
-      child: Text("No"),
+      child: const Text("No"),
       onPressed: () {
         Navigator.of(context).pop(true);
       },
     );
     Widget cancelButton = FlatButton(
-      child: Text(
+      child: const Text(
         "Yes, delete",
-        style: TextStyle(color: Colors.red),
+        style: const TextStyle(color: Colors.red),
       ),
       onPressed: () {
         Navigator.of(context).pop();

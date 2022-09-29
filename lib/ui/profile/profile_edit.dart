@@ -24,6 +24,10 @@ import 'package:flutter_admin_web/ui/common/common_toast.dart';
 import 'package:intl/intl.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 
+import '../../configs/constants.dart';
+import '../common/app_colors.dart';
+import '../common/bottomsheet_option_tile.dart';
+
 List<String> genderlist = ['Male', 'Female'];
 
 class ProfileEdit extends StatefulWidget {
@@ -351,10 +355,7 @@ class _ProfileEditState extends State<ProfileEdit> {
                 state.status == Status.LOADING
                     ? Center(
                         child: AbsorbPointer(
-                          child: SpinKitCircle(
-                            color: Colors.grey,
-                            size: 70.h,
-                          ),
+                          child: AppConstants().getLoaderWidget(iconSize: 70),
                         ),
                       )
                     : SizedBox(
@@ -389,6 +390,9 @@ class _ProfileEditState extends State<ProfileEdit> {
       print("......i am from bloc..val.....${item.valueName}");
       bool isRequired = item.isrequired;
 
+      print('item.table5-- ${item.table5?.toJson()}');
+
+
       fieldWidget = Row(
         children: <Widget>[
           Expanded(
@@ -415,12 +419,11 @@ class _ProfileEditState extends State<ProfileEdit> {
                       ? Container(
                         padding: EdgeInsets.symmetric(horizontal: 7,vertical: 3),
                         decoration: BoxDecoration(
-                          border: Border.all(color: Colors.black38),
+                          border: Border.all(color:item.table5?.choiceid == 2085 ? AppColors.getDisableBorderColor() : AppColors.getEnabledBorderColor(),width: 0.5),
                           borderRadius: BorderRadius.circular(5)
                         ),
                         child: DropdownButton<Table5>(
-                            dropdownColor: Color(int.parse(
-                                "0xFF${appBloc.uiSettingModel.appBGColor.substring(1, 7).toUpperCase()}")),
+                            dropdownColor: AppColors.getAppBGColor(),
                             value: item.table5,
                             isExpanded: true,
                             icon: Icon(
@@ -453,8 +456,7 @@ class _ProfileEditState extends State<ProfileEdit> {
                                 child: Text(
                                   value.choicetext,
                                   style: TextStyle(
-                                      color: Color(int.parse(
-                                          "0xFF${appBloc.uiSettingModel.appTextColor.substring(1, 7).toUpperCase()}"))),
+                                      color: AppColors.getAppTextColor()),
                                 ),
                               );
                             }).toList(),
@@ -495,15 +497,13 @@ class _ProfileEditState extends State<ProfileEdit> {
       if (uiControlTypeId != 7) {
         {
           if (uiControlTypeId == 19) {
-            String _selectedText;
+            String? _selectedText;
 
             print('itemvaluename ${item.valueName}');
             if (item.valueName.isNotEmpty &&
                 (item.valueName.toLowerCase().contains('male'))) {
               _selectedText =
                   item.valueName[0].toUpperCase() + item.valueName.substring(1);
-            } else {
-              _selectedText = 'Male';
             }
 
             fieldWidget = Row(
@@ -534,17 +534,17 @@ class _ProfileEditState extends State<ProfileEdit> {
                         Container(
                           padding: EdgeInsets.symmetric(horizontal: 7,vertical: 3),
                           decoration: BoxDecoration(
-                              border: Border.all(color: Colors.black38),
+                              border: Border.all(color: _selectedText == null? AppColors.getDisableBorderColor() : AppColors.getEnabledBorderColor(),width: 0.5),
                               borderRadius: BorderRadius.circular(5)
                           ),
                           child: new DropdownButton<String>(
                             dropdownColor: Color(int.parse(
                                 "0xFF${appBloc.uiSettingModel.appBGColor.substring(1, 7).toUpperCase()}")),
                             isExpanded: true,
-                            icon: Icon(
-                              Icons.arrow_drop_down,
-                              color: Colors.grey,
-                            ),
+                            // icon: Icon(
+                            //   Icons.arrow_drop_down,
+                            //   // color: Colors.grey,
+                            // ),
                             underline: Container(
                                 // height: 2,
                                 // color: Color(int.parse(
@@ -647,6 +647,7 @@ class _ProfileEditState extends State<ProfileEdit> {
                             controller.text = df.format(date).toString();
                             item.valueName = controller.text;
                             widget.profielDataField[i] = item;
+                            setState(() {});
                           },
                           child: IgnorePointer(
                             child: TextField(
@@ -661,9 +662,15 @@ class _ProfileEditState extends State<ProfileEdit> {
                               obscureText:
                                   attributeConfigId == 6 ? true : false,
                               decoration: InputDecoration(
-                                border: OutlineInputBorder(
-                                  borderSide: BorderSide(color: Colors.black)
-                                ),
+                                // border: OutlineInputBorder(
+                                //   borderSide: BorderSide(color: Colors.black)
+                                // ),
+                                  disabledBorder: OutlineInputBorder(
+                                      borderSide: BorderSide(color:  controller.text.isEmpty? Color(0xffDADCE0):Color(0xff202124),width: 0.5)
+                                  ),
+                                  enabledBorder: OutlineInputBorder(
+                                      borderSide: BorderSide(color: controller.text.isEmpty? Color(0xffDADCE0):Color(0xff202124),width: 0.5)
+                                  ),
                                   hintText: displayText,
                                   hintStyle: TextStyle(
                                       fontWeight: FontWeight.w300,

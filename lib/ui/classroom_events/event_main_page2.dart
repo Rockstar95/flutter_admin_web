@@ -1,15 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:flutter_admin_web/backend/classroom_events/classroom_events_controller.dart';
 import 'package:flutter_admin_web/framework/bloc/app/bloc/app_bloc.dart';
 import 'package:flutter_admin_web/framework/bloc/mylearning/bloc/mylearning_bloc.dart';
 import 'package:flutter_admin_web/framework/bloc/mylearning/events/mylearning_event.dart';
 import 'package:flutter_admin_web/framework/repository/event_module/model/people_listing_tab.dart';
 import 'package:flutter_admin_web/ui/classroom_events/event_list_screen.dart';
+import 'package:flutter_admin_web/ui/common/app_colors.dart';
 import 'package:flutter_admin_web/utils/my_print.dart';
 import 'package:provider/provider.dart';
+
+import '../../backend/classroom_events/classroom_events_controller.dart';
+import '../../configs/constants.dart';
 
 class EventMainPage2 extends StatefulWidget {
   final String searchString;
@@ -44,41 +46,15 @@ class _EventMainPage2State extends State<EventMainPage2> with SingleTickerProvid
 
   MyLearningBloc get myLearningBloc => BlocProvider.of<MyLearningBloc>(context);
 
-  String getTabValue(String tabId) {
-    String tabValue = 'upcoming';
-
-    switch (tabId) {
-      case "Upcoming-Courses":
-      case "Calendar-Schedule":
-        tabValue = "upcoming";
-
-        break;
-      case "Calendar-View":
-        tabValue = "calendar";
-
-        break;
-      case "Past-Courses":
-        tabValue = "past";
-        break;
-      case "My-Events":
-        tabValue = "myevents";
-        break;
-      case "Additional-Program-Details":
-        tabValue = "upcoming";
-        break;
-    }
-
-    return tabValue;
-  }
-
   Future<void> getTabsList() async {
-    await classroomEventsController.getPeopleListingTabEventHandler(isGetFromCache: true);
+    await classroomEventsController.getPeopleListingTab(isGetFromCache: true);
     tabController = TabController(length: classroomEventsController.tabList.length, vsync: this);
     tabScreensList = classroomEventsController.tabList.map((e) {
       return EventListScreen(
-        tabValue: getTabValue(e.tabId),
+        tabId: e.tabId,
+        tabValue: ClassroomEventsController.getTabValue(e.tabId),
         myLearningBloc: myLearningBloc,
-        enableSearching: widget.enableSearching,
+        enableSearching: ClassroomEventsController.getTabValue(e.tabId) != "calendar" ? widget.enableSearching : false,
         searchString: widget.searchString,
         classroomEventsController: classroomEventsController.childControllers[e.tabId],
       );
@@ -91,9 +67,9 @@ class _EventMainPage2State extends State<EventMainPage2> with SingleTickerProvid
     isMylearningDataGot = false;
     myLearningBloc.add(ResetFilterEvent());
     myLearningBloc.add(GetFilterMenus(
-        listNativeModel: appBloc.listNativeModel,
-        localStr: appBloc.localstr,
-        moduleName: "Training Events",
+      listNativeModel: appBloc.listNativeModel,
+      localStr: appBloc.localstr,
+      moduleName: "Training Events",
     ));
     myLearningBloc.add(GetSortMenus("153"));
 
@@ -101,7 +77,7 @@ class _EventMainPage2State extends State<EventMainPage2> with SingleTickerProvid
       classroomEventsController = widget.classroomEventsController!;
     }
     else {
-      classroomEventsController = ClassroomEventsController(searchString: widget.searchString);
+      classroomEventsController = ClassroomEventsController(searchString: widget.searchString, mainMapOfEvents: {});
     }
     getTabsFuture = getTabsList();
 
@@ -118,33 +94,24 @@ class _EventMainPage2State extends State<EventMainPage2> with SingleTickerProvid
   Widget build(BuildContext context) {
     super.build(context);
 
-    Widget getConsumer = Consumer<ClassroomEventsController>(
-      builder: (BuildContext context, ClassroomEventsController controller, Widget? child) {
-        return FutureBuilder<void>(
-          future: getTabsFuture,
-          builder: (BuildContext context, AsyncSnapshot<void> snapshot) {
-            if(snapshot.connectionState == ConnectionState.done) {
-              return getMainBody(classroomEventsController);
-            }
-            else {
-              return getLoadingWidget();
-            }
-          },
-        );
-      },
-    );
-
-    if(widget.classroomEventsController != null) {
-      return getConsumer;
-    }
-    else {
-      return ChangeNotifierProvider<ClassroomEventsController>(
-        create: (_) => classroomEventsController,
-        builder: (BuildContext context, Widget? child) {
-          return getConsumer;
+    return ChangeNotifierProvider.value(
+      value: classroomEventsController,
+      child: Consumer<ClassroomEventsController>(
+        builder: (BuildContext context, ClassroomEventsController controller, Widget? child) {
+          return FutureBuilder<void>(
+            future: getTabsFuture,
+            builder: (BuildContext context, AsyncSnapshot<void> snapshot) {
+              if(snapshot.connectionState == ConnectionState.done) {
+                return getMainBody(classroomEventsController);
+              }
+              else {
+                return getLoadingWidget();
+              }
+            },
+          );
         },
-      );
-    }
+      ),
+    );
   }
 
   Widget getMainBody(ClassroomEventsController classroomEventsController) {
@@ -174,10 +141,7 @@ class _EventMainPage2State extends State<EventMainPage2> with SingleTickerProvid
   Widget getLoadingWidget() {
     return Center(
       child: AbsorbPointer(
-        child: SpinKitCircle(
-          color: Colors.grey,
-          size: 70.h,
-        ),
+        child: AppConstants().getLoaderWidget(iconSize: 70)
       ),
     );
   }
@@ -189,6 +153,8 @@ class _EventMainPage2State extends State<EventMainPage2> with SingleTickerProvid
 
     return TabBar(
       controller: tabController,
+      indicatorColor: AppColors.getAppButtonBGColor(),
+      isScrollable: tabList.length > 3,
       tabs: tabList.map((e) {
         return Tab(
           text: e.mobileDisplayName,

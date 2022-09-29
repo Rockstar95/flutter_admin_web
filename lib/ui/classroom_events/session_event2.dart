@@ -2,149 +2,163 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:flutter_admin_web/backend/classroom_events/classroom_events_controller.dart';
 import 'package:flutter_admin_web/framework/bloc/app/bloc/app_bloc.dart';
-import 'package:flutter_admin_web/framework/bloc/event_module/bloc/event_module_bloc.dart';
-import 'package:flutter_admin_web/framework/bloc/event_module/event/event_module_event.dart';
-import 'package:flutter_admin_web/framework/bloc/event_module/state/event_module_state.dart';
 import 'package:flutter_admin_web/framework/common/constants.dart';
-import 'package:flutter_admin_web/framework/common/enums.dart';
 import 'package:flutter_admin_web/framework/helpers/ApiEndpoints.dart';
 import 'package:flutter_admin_web/framework/helpers/ResponsiveWidget.dart';
-import 'package:flutter_admin_web/framework/helpers/utils.dart';
 import 'package:flutter_admin_web/framework/repository/event_module/model/session_event_response.dart';
-import 'package:flutter_admin_web/framework/repository/event_module/provider/event_repository_builder.dart';
-import 'package:flutter_admin_web/ui/common/common_toast.dart';
+import 'package:flutter_admin_web/ui/common/common_widgets.dart';
 
-import '../../configs/constants.dart';
+import '../common/app_colors.dart';
 
-class SessionEvent extends StatefulWidget {
-  final EvntModuleBloc? evntModuleBloc;
+class SessionEvent2 extends StatefulWidget {
+  final ClassroomEventsController? classroomEventsController;
   final String contentId;
 
-  const SessionEvent({Key? key, this.evntModuleBloc, this.contentId = ""})
-      : super(key: key);
+  const SessionEvent2({Key? key, this.classroomEventsController, this.contentId = ""}) : super(key: key);
 
   @override
-  _SessionEventState createState() => _SessionEventState();
+  _SessionEvent2State createState() => _SessionEvent2State();
 }
 
-class _SessionEventState extends State<SessionEvent> {
-  late EvntModuleBloc evntModuleBloc;
+class _SessionEvent2State extends State<SessionEvent2> {
+  bool pageMounted = false;
+
+  late ClassroomEventsController classroomEventsController;
+  late Future<List<CourseList>> getCourseListFuture;
 
   AppBloc get appBloc => BlocProvider.of<AppBloc>(context);
   late FToast flutterToast;
 
+  void mySetState() {
+    if(!mounted) {
+      return;
+    }
+
+    if(pageMounted) {
+      setState(() {});
+    }
+    else {
+      WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+        setState(() {});
+      });
+    }
+  }
+
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
-    evntModuleBloc = EvntModuleBloc(
-        eventModuleRepository: EventRepositoryBuilder.repository());
-    evntModuleBloc.add(EventSession(contentid: widget.contentId));
+    if(widget.classroomEventsController != null) {
+      classroomEventsController = widget.classroomEventsController!;
+    }
+    else {
+      classroomEventsController = ClassroomEventsController(mainMapOfEvents: {});
+    }
+    getCourseListFuture = classroomEventsController.getEventSessionCoursesList(contentId: widget.contentId);
+  }
+
+  @override
+  void didUpdateWidget(covariant SessionEvent2 oldWidget) {
+    bool isUpdated = false;
+    if(oldWidget.classroomEventsController != widget.classroomEventsController) {
+      classroomEventsController = widget.classroomEventsController ?? ClassroomEventsController(mainMapOfEvents: {});
+      isUpdated = true;
+    }
+    if(widget.contentId != oldWidget.contentId) {
+      isUpdated = true;
+    }
+
+    if(isUpdated) {
+      getCourseListFuture = classroomEventsController.getEventSessionCoursesList(contentId: widget.contentId);
+      mySetState();
+    }
+    super.didUpdateWidget(oldWidget);
   }
 
   @override
   Widget build(BuildContext context) {
+    pageMounted = false;
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      pageMounted = true;
+    });
+
     flutterToast = FToast();
     flutterToast.init(context);
 
-    return BlocConsumer<EvntModuleBloc, EvntModuleState>(
-      bloc: evntModuleBloc,
-      listener: (context, state) {
-        if (state is GetSessionEventState) {
-          if (state.status == Status.ERROR) {
-            if (state.message == '401') {
-              AppDirectory.sessionTimeOut(context);
-            } else {
-              flutterToast.showToast(
-                child: CommonToast(
-                    displaymsg: appBloc
-                        .localstr.mylearningAlertsubtitleArchivedsuccesfully),
-                gravity: ToastGravity.BOTTOM,
-                toastDuration: Duration(seconds: 2),
-              );
-            }
+    return Scaffold(
+      appBar: getAppBar(),
+      body: FutureBuilder<List<CourseList>>(
+        future: getCourseListFuture,
+        builder: (BuildContext context, AsyncSnapshot<List<CourseList>> snapshot) {
+          if(snapshot.connectionState == ConnectionState.done) {
+            return getCoursesListWidget(snapshot.data ?? []);
           }
-        }
-      },
-      builder: (context, state) => Scaffold(
-        appBar: AppBar(
-          elevation: 0,
-          leading: InkWell(
-            onTap: () => Navigator.of(context).pop(),
-            child: Icon(Icons.arrow_back,
-                color: Color(int.parse(
-                    "0xFF${appBloc.uiSettingModel.appHeaderTextColor.substring(1, 7).toUpperCase()}"))),
-          ),
-          backgroundColor: Color(int.parse(
-              "0xFF${appBloc.uiSettingModel.appHeaderColor.substring(1, 7).toUpperCase()}")),
-          title: Text(
-            appBloc.localstr.detailsLabelSessionstitlelable,
-            style: TextStyle(
-                fontSize: 18,
-                color: Color(int.parse(
-                    "0xFF${appBloc.uiSettingModel.appHeaderTextColor.substring(1, 7).toUpperCase()}"))),
-          ),
-        ),
-        body: (state.status == Status.LOADING)
-            ? Container(
-                color: Color(int.parse(
-                    "0xFF${appBloc.uiSettingModel.appBGColor.substring(1, 7).toUpperCase()}")),
-                child: Center(
-                  child: AbsorbPointer(
-                    child: AppConstants().getLoaderWidget(iconSize: 70)
-                  ),
-                ),
-              )
-            : Container(
-                color: Color(int.parse(
-                    "0xFF${appBloc.uiSettingModel.appBGColor.substring(1, 7).toUpperCase()}")),
-                child: Container(
-                  margin: EdgeInsets.all(10.h),
-                  child: evntModuleBloc.sessionCourseList.isNotEmpty
-                      ? ResponsiveWidget(
-                          mobile: ListView.builder(
-                            itemBuilder: (context, i) {
-                              return widgetMyEventItems(
-                                  evntModuleBloc.sessionCourseList[i]);
-                            },
-                            itemCount: evntModuleBloc.sessionCourseList.length,
-                          ),
-                          tab: GridView.builder(
-                            gridDelegate:
-                                SliverGridDelegateWithFixedCrossAxisCount(
-                              crossAxisCount: 2,
-                              childAspectRatio:
-                                  MediaQuery.of(context).size.width / 800,
-                            ),
-                            itemBuilder: (context, i) {
-                              return widgetMyEventItems(
-                                  evntModuleBloc.sessionCourseList[i]);
-                            },
-                            itemCount: evntModuleBloc.sessionCourseList.length,
-                          ),
-                          web: GridView.builder(
-                            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                              crossAxisCount: 5,
-                              childAspectRatio: 1,
-                            ),
-                            itemBuilder: (context, i) {
-                              return widgetMyEventItems(
-                                  evntModuleBloc.sessionCourseList[i]);
-                            },
-                            itemCount: evntModuleBloc.sessionCourseList.length,
-                          ),
-                        )
-                      : Container(),
-                ),
-              ),
+          else {
+            return getCommonLoading();
+          }
+        },
       ),
     );
   }
 
-  Widget widgetMyEventItems(CourseList table2) {
+  AppBar getAppBar() {
+    return AppBar(
+      elevation: 0,
+      leading: InkWell(
+        onTap: () => Navigator.of(context).pop(),
+        child: Icon(Icons.arrow_back, color: AppColors.getAppHeaderTextColor()),
+      ),
+      backgroundColor: AppColors.getAppHeaderColor(),
+      title: Text(
+        appBloc.localstr.detailsLabelSessionstitlelable,
+        style: TextStyle(
+            fontSize: 18,
+            color: AppColors.getAppHeaderTextColor(),
+        ),
+      ),
+    );
+  }
+
+  Widget getCoursesListWidget(List<CourseList> courses) {
+    return Container(
+      color: AppColors.getAppBGColor(),
+      child: Container(
+        margin: EdgeInsets.all(10.h),
+        child: ResponsiveWidget(
+          mobile: ListView.builder(
+            itemCount: courses.length,
+            itemBuilder: (context, i) {
+              return getCourseCard(courses[i]);
+            },
+          ),
+          tab: GridView.builder(
+            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 2,
+              childAspectRatio: MediaQuery.of(context).size.width / 800,
+            ),
+            itemCount: courses.length,
+            itemBuilder: (context, i) {
+              return getCourseCard(courses[i]);
+            },
+          ),
+          web: GridView.builder(
+            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 5,
+              childAspectRatio: 1,
+            ),
+            itemCount: courses.length,
+            itemBuilder: (context, i) {
+              return getCourseCard(courses[i]);
+            },
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget getCourseCard(CourseList table2) {
     //https://stackoverflow.com/questions/49838021/how-do-i-stack-widgets-overlapping-each-other-in-flutter
     String imgUrl = "https://image.shutterstock.com/z/stock-photo-high-angle-view-of-video-conference-with-teacher-on-laptop-at-home-top-view-of-girl-in-video-call-1676998303.jpg";
 
@@ -153,8 +167,7 @@ class _SessionEventState extends State<SessionEvent> {
     return Padding(
       padding: EdgeInsets.only(top: ScreenUtil().setHeight(10)),
       child: Card(
-        color: Color(int.parse(
-            "0xFF${appBloc.uiSettingModel.appBGColor.substring(1, 7).toUpperCase()}")),
+        color: AppColors.getAppBGColor(),
         elevation: 4,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -168,16 +181,15 @@ class _SessionEventState extends State<SessionEvent> {
                     width: MediaQuery.of(context).size.width,
                     //placeholder: (context, url) => CircularProgressIndicator(),
                     placeholder: (context, url) => Container(
-                        color: Color(int.parse(
-                                "0xFF${appBloc.uiSettingModel.appTextColor.substring(1, 7).toUpperCase()}"))
-                            .withOpacity(0.5),
+                        color: AppColors.getAppTextColor().withOpacity(0.5),
                         child: Center(
                             heightFactor: ScreenUtil().setWidth(20),
                             widthFactor: ScreenUtil().setWidth(20),
                             child: CircularProgressIndicator(
-                              valueColor: new AlwaysStoppedAnimation<Color>(
-                                  Colors.orange),
-                            ))),
+                              valueColor: new AlwaysStoppedAnimation<Color>(Colors.orange),
+                            ),
+                        ),
+                    ),
                     errorWidget: (context, url, error) => Icon(Icons.error),
                     fit: BoxFit.cover,
                   ),
@@ -201,8 +213,7 @@ class _SessionEventState extends State<SessionEvent> {
                               table2.contentType,
                               style: TextStyle(
                                 fontSize: ScreenUtil().setSp(14),
-                                color: Color(int.parse(
-                                    "0xFF${appBloc.uiSettingModel.appTextColor.substring(1, 7).toUpperCase()}")),
+                                color: AppColors.getAppTextColor(),
                               ),
                             ),
                             SizedBox(
@@ -213,8 +224,8 @@ class _SessionEventState extends State<SessionEvent> {
                               style: TextStyle(
                                   fontWeight: FontWeight.bold,
                                   fontSize: ScreenUtil().setSp(15),
-                                  color: Color(int.parse(
-                                      "0xFF${appBloc.uiSettingModel.appTextColor.substring(1, 7).toUpperCase()}"))),
+                                  color: AppColors.getAppTextColor(),
+                              ),
                             ),
                           ],
                         ),
@@ -241,9 +252,8 @@ class _SessionEventState extends State<SessionEvent> {
                         table2.authorDisplayName,
                         style: TextStyle(
                             fontSize: ScreenUtil().setSp(13),
-                            color: Color(int.parse(
-                                    "0xFF${appBloc.uiSettingModel.appTextColor.substring(1, 7).toUpperCase()}"))
-                                .withOpacity(0.5)),
+                            color: AppColors.getAppTextColor().withOpacity(0.5),
+                        ),
                       ),
                     ],
                   ),
@@ -259,15 +269,15 @@ class _SessionEventState extends State<SessionEvent> {
                           style: TextStyle(
                               fontWeight: FontWeight.bold,
                               fontSize: ScreenUtil().setSp(12),
-                              color: Color(int.parse(
-                                  "0xFF${appBloc.uiSettingModel.appTextColor.substring(1, 7).toUpperCase()}"))),
+                              color: AppColors.getAppTextColor(),
+                          ),
                         ),
                         Text(
                           table2.eventStartDateTime.toUpperCase(),
                           style: TextStyle(
                               fontSize: ScreenUtil().setSp(12),
-                              color: Color(int.parse(
-                                  "0xFF${appBloc.uiSettingModel.appTextColor.substring(1, 7).toUpperCase()}"))),
+                              color: AppColors.getAppTextColor(),
+                          ),
                         )
                       ],
                     ),
@@ -281,15 +291,15 @@ class _SessionEventState extends State<SessionEvent> {
                           style: TextStyle(
                               fontWeight: FontWeight.bold,
                               fontSize: ScreenUtil().setSp(12),
-                              color: Color(int.parse(
-                                  "0xFF${appBloc.uiSettingModel.appTextColor.substring(1, 7).toUpperCase()}"))),
+                              color: AppColors.getAppTextColor(),
+                          ),
                         ),
                         Text(
                           table2.eventEndDateTime.toUpperCase(),
                           style: TextStyle(
                               fontSize: ScreenUtil().setSp(12),
-                              color: Color(int.parse(
-                                  "0xFF${appBloc.uiSettingModel.appTextColor.substring(1, 7).toUpperCase()}"))),
+                              color: AppColors.getAppTextColor(),
+                          ),
                         )
                       ],
                     ),
@@ -303,15 +313,15 @@ class _SessionEventState extends State<SessionEvent> {
                           style: TextStyle(
                               fontWeight: FontWeight.bold,
                               fontSize: ScreenUtil().setSp(12),
-                              color: Color(int.parse(
-                                  "0xFF${appBloc.uiSettingModel.appTextColor.substring(1, 7).toUpperCase()}"))),
+                              color: AppColors.getAppTextColor(),
+                          ),
                         ),
                         Text(
                           table2.timeZone,
                           style: TextStyle(
                               fontSize: ScreenUtil().setSp(12),
-                              color: Color(int.parse(
-                                  "0xFF${appBloc.uiSettingModel.appTextColor.substring(1, 7).toUpperCase()}"))),
+                              color: AppColors.getAppTextColor(),
+                          ),
                         )
                       ],
                     ),

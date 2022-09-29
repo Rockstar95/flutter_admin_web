@@ -23,6 +23,8 @@ import 'package:flutter_admin_web/ui/common/common_toast.dart';
 import 'package:flutter_admin_web/ui/profile/profile_edit.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 
+import '../../configs/constants.dart';
+
 class ProfileInfo extends StatefulWidget {
   final ProfileBloc bloc;
   final String profileImg;
@@ -709,10 +711,7 @@ class _ProfileInfoState extends State<ProfileInfo> {
             state.status == Status.LOADING
                 ? Center(
                     child: AbsorbPointer(
-                      child: SpinKitCircle(
-                        color: Colors.grey,
-                        size: 70.h,
-                      ),
+                      child: AppConstants().getLoaderWidget(iconSize: 70),
                     ),
                   )
                 : SizedBox(

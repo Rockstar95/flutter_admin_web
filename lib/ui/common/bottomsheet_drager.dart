@@ -8,17 +8,17 @@ class BottomSheetDragger extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    double height = 10;
+    double height = 8;
 
     return Container(
       height: height,
-      margin: EdgeInsets.only(bottom: 5, top: 17),
+      margin: EdgeInsets.only(bottom: 20, top: 17),
       //color: Colors.red,
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Container(
-            width: 70,
+            width: 50,
             height: height,
             decoration: BoxDecoration(
               color: color ?? AppColors.getAppTextColor().withOpacity(0.4),

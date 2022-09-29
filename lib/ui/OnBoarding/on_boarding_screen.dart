@@ -84,8 +84,8 @@ class _OnBoardingScreenState extends State<OnBoardingScreen> {
                                 controller: _controller,
                                 itemBuilder: (context, position) {
                                   return Center(
-                                    child: CachedNetworkImage(
-                                      imageUrl: widget.imageList[position],
+                                    child: Image.file(
+                                      File(widget.imageList[position].path),
                                       fit: BoxFit.cover,
                                     ),
                                   );

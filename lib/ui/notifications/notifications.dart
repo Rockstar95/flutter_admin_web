@@ -30,6 +30,10 @@ import 'package:flutter_admin_web/ui/home/ActBase.dart';
 import 'package:flutter_admin_web/utils/my_print.dart';
 import 'package:intl/intl.dart';
 
+import '../../configs/constants.dart';
+
+
+
 class Notifications extends StatefulWidget {
   final NativeMenuModel nativeMenuModel;
 
@@ -452,10 +456,7 @@ class _NotificationsState extends State<Notifications> with SingleTickerProvider
           if (notificationBloc.isFirstLoading == true) {
             return Center(
               child: AbsorbPointer(
-                child: SpinKitCircle(
-                  color: Colors.grey,
-                  size: 70.0,
-                ),
+                child: AppConstants().getLoaderWidget(iconSize: 70),
               ),
             );
           }

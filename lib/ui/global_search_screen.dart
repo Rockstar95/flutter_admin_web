@@ -49,6 +49,7 @@ import 'MyLearning/common_detail_screen.dart';
 import 'MyLearning/share_mainscreen.dart';
 import 'MyLearning/wait_list.dart';
 import 'askTheExpert/user_questions_list.dart';
+import 'classroom_events/event_main_page2.dart';
 import 'common/bottomsheet_drager.dart';
 import 'common/common_toast.dart';
 import 'common/outline_button.dart';
@@ -692,7 +693,9 @@ class _GlobalSearchScreenState extends State<GlobalSearchScreen> {
 
     switch (searchResult.searchComponent.menuId) {
       case 3219:
-        selectedWidget = EventMainPage(enableSearching: false, searchString: globalSearchBloc.searchString,);
+        // selectedWidget = EventMainPage(enableSearching: false, searchString: globalSearchBloc.searchString,);
+        selectedWidget = EventMainPage2(enableSearching: false, searchString: globalSearchBloc.searchString,);
+
         break;
       case 50014:
         appBloc.listNativeModel.forEach((element) async {

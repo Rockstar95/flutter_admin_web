@@ -19,6 +19,8 @@ import 'package:flutter_admin_web/framework/theme/ins_theme.dart';
 import 'package:flutter_admin_web/ui/common/app_colors.dart';
 import 'package:flutter_admin_web/ui/common/common_toast.dart';
 
+import '../../configs/constants.dart';
+
 class CreateDiscussion extends StatefulWidget {
   @override
   _CreateDiscussionState createState() => _CreateDiscussionState();
@@ -207,44 +209,46 @@ class _CreateDiscussionState extends State<CreateDiscussion> with SingleTickerPr
                           //   child:
                           getTextFormFieldTitle("Description"),
                           // ),
-                          ConstrainedBox(
-                            constraints: const BoxConstraints(
-                              maxHeight: 400.0,
-                            ),
-                            child: TextFormField(
-                              style: TextStyle(
-                                  color: InsColor(appBloc).appTextColor),
-                              focusNode: reqFocusDescription,
-                              controller: ctrDescription,
-                              textInputAction: TextInputAction.next,
-                              onSaved: (val) =>
-                                  ctrDescription.text = val ?? "",
-                              onChanged: (val) {
-                                setState(() {});
-                              },
-                              decoration: InputDecoration(
-                                hintStyle: TextStyle(color: AppColors.getTextFieldHintColor()),
-                                hintText: 'Enter your description here..',
-                                // enabledBorder: OutlineInputBorder(borderSide: BorderSide(color: InsColor(appBloc).appTextColor)),
-                                // focusedBorder: OutlineInputBorder(borderSide: BorderSide(color: InsColor(appBloc).appTextColor)),
-                                enabledBorder: const OutlineInputBorder(
-                                  borderRadius: BorderRadius.all(Radius.circular(10.0)),
-                                  borderSide: BorderSide(
-                                    color: Color(0xFFDADCE0),
-                                  ),
-                                ),
-                                focusedBorder: OutlineInputBorder(
-                                  borderRadius: const BorderRadius.all(Radius.circular(10.0)),
-                                  borderSide: BorderSide(
-                                    color: Color(int.parse("0xFF${appBloc.uiSettingModel.appTextColor.substring(1, 7).toUpperCase()}")),
-                                    width: 1,
-                                  ),
-                                ),
-                                border: OutlineInputBorder(borderRadius: BorderRadius.circular(10.0)),
-                                contentPadding: const EdgeInsets.symmetric(vertical: 20.0, horizontal: 15.0),
+                          Container(
+                            child: new ConstrainedBox(
+                              constraints: BoxConstraints(
+                                maxHeight: 400.0,
                               ),
-                              maxLines: 6,
-                              minLines: 6,
+                              child: TextFormField(
+                                style: TextStyle(
+                                    color: InsColor(appBloc).appTextColor),
+                                focusNode: reqFocusDescription,
+                                controller: ctrDescription,
+                                textInputAction: TextInputAction.next,
+                                onSaved: (val) =>
+                                    ctrDescription.text = val ?? "",
+                                onChanged: (val) {
+                                  setState(() {});
+                                },
+                                decoration: InputDecoration(
+                                  hintStyle: TextStyle(color: AppColors.getTextFieldHintColor()),
+                                  hintText: 'Enter your description here..',
+                                  // enabledBorder: OutlineInputBorder(borderSide: BorderSide(color: InsColor(appBloc).appTextColor)),
+                                  // focusedBorder: OutlineInputBorder(borderSide: BorderSide(color: InsColor(appBloc).appTextColor)),
+                                  enabledBorder: OutlineInputBorder(
+                                    borderRadius: BorderRadius.all(Radius.circular(10.0)),
+                                    borderSide: BorderSide(
+                                      color: Color(0xFFDADCE0),
+                                    ),
+                                  ),
+                                  focusedBorder: OutlineInputBorder(
+                                    borderRadius: BorderRadius.all(Radius.circular(10.0)),
+                                    borderSide: BorderSide(
+                                      color: Color(int.parse("0xFF${appBloc.uiSettingModel.appTextColor.substring(1, 7).toUpperCase()}")),
+                                      width: 1,
+                                    ),
+                                  ),
+                                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(10.0)),
+                                  contentPadding: new EdgeInsets.symmetric(vertical: 20.0, horizontal: 15.0),
+                                ),
+                                maxLines: 6,
+                                minLines: 6,
+                              ),
                             ),
                           ),
                         ],
@@ -298,7 +302,7 @@ class _CreateDiscussionState extends State<CreateDiscussion> with SingleTickerPr
                   Expanded(
                     child: Text.rich(
                       TextSpan(
-                        text: "Select moderators ",
+                        text: "Select Moderators ",
                         style: TextStyle(color: AppColors.getAppTextColor()),
                         children: [
                           TextSpan(
@@ -335,6 +339,7 @@ class _CreateDiscussionState extends State<CreateDiscussion> with SingleTickerPr
         return GetConnectionCard(
           response: createDiscussionBloc.filterTopicList[list[index]],
           userChecked: true,
+          isUserCheckedIconVisible: false,
           onCheck: (bool isChecked) {
             setState(() {
               createDiscussionBloc.userChecked[list[index]] = isChecked;
@@ -665,12 +670,9 @@ class _CreateDiscussionState extends State<CreateDiscussion> with SingleTickerPr
       builder: (context, state) {
         if (state.status == Status.LOADING &&
             createDiscussionBloc.isCreateLoading == true) {
-          return const Center(
+          return  Center(
             child: AbsorbPointer(
-              child: SpinKitCircle(
-                color: Colors.grey,
-                size: 70.0,
-              ),
+              child: AppConstants().getLoaderWidget(iconSize: 70)
             ),
           );
         } else {
@@ -741,7 +743,7 @@ class _CreateDiscussionState extends State<CreateDiscussion> with SingleTickerPr
     }*/
     else if (createDiscussionBloc.selectedEditUserId().isEmpty) {
       flutterToast.showToast(
-        child: CommonToast(displaymsg: 'Please select atleast one connection'),
+        child: CommonToast(displaymsg: 'Please select atleast one Moderator'),
         gravity: ToastGravity.BOTTOM,
         toastDuration: const Duration(seconds: 4),
       );
@@ -865,44 +867,81 @@ class _SelectModeratorsDialogState extends State<SelectModeratorsDialog> {
     return Dialog(
       backgroundColor: AppColors.getAppBGColor(),
       insetPadding: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
-      child: Container(
-        constraints: BoxConstraints(
-          maxHeight: MediaQuery.of(context).size.height * 0.7,
-        ),
-        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            getTitle(),
-            getSearchTextfield(),
-            Expanded(
-              child: getListView(),
+      child: Stack(
+        clipBehavior: Clip.none,
+        children: [
+          Container(
+            constraints: BoxConstraints(
+              maxHeight: MediaQuery.of(context).size.height * 0.7,
             ),
-            const SizedBox(height: 10,),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
+            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                getDoneButton(),
+                getTitle(),
+                getSearchTextfield(),
+                Expanded(
+                  child: getListView(),
+                ),
+                const SizedBox(height: 10,),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    getDoneButton(),
+                  ],
+                ),
               ],
             ),
-          ],
-        ),
+          ),
+          Positioned(
+            right: -12,
+            top: -12,
+            child: InkWell(
+              onTap: (){
+                Navigator.pop(context);
+              },
+              child: Container(
+                  decoration: const BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: Colors.black
+                  ),
+                  padding: const EdgeInsets.all(8.0),
+                  child: const Icon(Icons.close,color: Colors.white,),
+              ),
+            ),
+          )
+        ],
       ),
     );
   }
 
   Widget getTitle() {
     return Padding(
-              padding: const EdgeInsets.only(bottom: 10.0,left: 5,top: 20),
-              child: Text(
-                "Moderators*",
-                style: TextStyle(
-                    fontSize: 15.0,
-                    letterSpacing: 0.9,
-                    fontWeight: FontWeight.w500,
-                    color:Colors.black.withOpacity(0.54)),
-              ),
-            );
+      padding: const EdgeInsets.only(bottom: 10.0,left: 5,top: 20),
+      child: Text.rich(
+        TextSpan(
+            text: "Moderators ",
+            style: new TextStyle(
+                fontSize: 15.0,
+                letterSpacing: 0.9,
+                fontWeight: FontWeight.w500,
+                color:Colors.black.withOpacity(0.54)),
+
+        ),
+      ),
+    );
+
+      // Padding(
+      //         padding: const EdgeInsets.only(bottom: 10.0,left: 5,top: 20),
+      //         child: Text(
+      //           "Moderators*",
+      //           style: new TextStyle(
+      //               fontSize: 15.0,
+      //               letterSpacing: 0.9,
+      //               fontWeight: FontWeight.w500,
+      //               color:Colors.black.withOpacity(0.54)),
+      //         ),
+      //       );
   }
 
   Widget getSearchTextfield() {
@@ -949,12 +988,9 @@ class _SelectModeratorsDialogState extends State<SelectModeratorsDialog> {
       },
       builder: (context, state) {
         if (state.status == Status.LOADING && createDiscussionBloc.isFirstLoading == true) {
-          return const Center(
+          return  Center(
             child: AbsorbPointer(
-              child: SpinKitCircle(
-                color: Colors.grey,
-                size: 70.0,
-              ),
+              child: AppConstants().getLoaderWidget(iconSize: 70)
             ),
           );
         }
@@ -1053,12 +1089,13 @@ class _SelectModeratorsDialogState extends State<SelectModeratorsDialog> {
 
 class GetConnectionCard extends StatelessWidget {
   final DiscussionTopicUserListResponse response;
-  final bool userChecked;
+  final bool userChecked, isUserCheckedIconVisible;
   final void Function(bool) onCheck;
 
   const GetConnectionCard({
     Key? key,
     required this.response,
+    this.isUserCheckedIconVisible = true,
     required this.userChecked,
     required this.onCheck,
   }) : super(key: key);
@@ -1080,7 +1117,7 @@ class GetConnectionCard extends StatelessWidget {
                 image: response.userThumb.isNotEmpty
                     ? NetworkImage(response.userThumb.startsWith('http')
                         ? response.userThumb
-                        : '${ApiEndpoints.strSiteUrl + response.userThumb}')
+                        : ApiEndpoints.strSiteUrl + response.userThumb)
                     : const AssetImage('assets/user.gif',) as ImageProvider,
                 fit: BoxFit.fill,
               ),
@@ -1100,19 +1137,23 @@ class GetConnectionCard extends StatelessWidget {
             ),
           ),
           const Spacer(),
-          InkWell(
-            onTap: () {
-              onCheck(!userChecked);
-            },
-            child: Icon(
-              userChecked == false
-                  ? Icons.remove_circle_outlined
-                  : Icons.add_circle,
-              color: userChecked == false
-                  ? AppColors.getAppTextColor()
-                  : AppColors.getAppButtonBGColor(),
+          Visibility(
+            visible: true,
+            // visible: isUserCheckedIconVisible,
+            child: InkWell(
+              onTap: () {
+                onCheck(!userChecked);
+              },
+              child: Icon(
+                userChecked != false
+                    ? Icons.remove_circle_outlined
+                    : Icons.add_circle,
+                color: userChecked != false
+                    ? AppColors.getAppTextColor()
+                    : AppColors.getAppButtonBGColor(),
+              ),
             ),
-          )
+          ),
         ],
       ),
     );

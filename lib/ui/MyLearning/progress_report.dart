@@ -134,10 +134,7 @@ class _ProgressReportState extends State<ProgressReport> with SingleTickerProvid
                       "0xFF${appBloc.uiSettingModel.appBGColor.substring(1, 7).toUpperCase()}")),
                   child: Center(
                     child: AbsorbPointer(
-                      child: SpinKitCircle(
-                        color: Colors.grey,
-                        size: 70.h,
-                      ),
+                      child: AppConstants().getLoaderWidget(iconSize: 70)
                     ),
                   ),
                 );
@@ -546,8 +543,7 @@ class _ProgressReportState extends State<ProgressReport> with SingleTickerProvid
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: <Widget>[
                                   Text(
-                                    appBloc
-                                        .localstr.mylearningLabelTimespentlabel,
+                                    "Time Spent",
                                     style: TextStyle(
                                         fontSize: ScreenUtil().setSp(13),
                                         color: Color(int.parse(
@@ -717,10 +713,7 @@ class _ProgressReportState extends State<ProgressReport> with SingleTickerProvid
                                       })
                                   : isReviewLoading
                                       ? AbsorbPointer(
-                                          child: SpinKitCircle(
-                                            color: Colors.grey,
-                                            size: 70.h,
-                                          ),
+                                          child: AppConstants().getLoaderWidget(iconSize: 70)
                                         )
                                       : Container(
                                           child: Center(

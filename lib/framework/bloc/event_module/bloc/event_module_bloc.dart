@@ -15,7 +15,8 @@ import 'package:flutter_admin_web/framework/repository/event_module/model/people
 import 'package:flutter_admin_web/framework/repository/event_module/model/session_event_response.dart';
 import 'package:flutter_admin_web/framework/repository/event_module/model/waiting_list_response.dart';
 import 'package:flutter_admin_web/generated/json/dummy_my_catelog_response_entity_helper.dart';
-import 'package:flutter_admin_web/ui/common/log_util.dart';
+
+import '../../../../utils/my_print.dart';
 
 class EvntModuleBloc extends Bloc<EvntModuleEvent, EvntModuleState> {
   List<GetPeopleTabListResponse> tabList = [];
@@ -471,9 +472,9 @@ class EvntModuleBloc extends Bloc<EvntModuleEvent, EvntModuleState> {
           yield WaitingListState.error("Something went wrong");
         }
       }
-    } catch (e) {
-      LogUtil().printLog(message: 'Error is ===> $e');
-      print("Error in EvntModuleBloc.mapEventToState():$e");
+    } catch (e, s) {
+      MyPrint.printOnConsole("Error in EvntModuleBloc.mapEventToState():$e");
+      MyPrint.printOnConsole(s);
     }
   }
 

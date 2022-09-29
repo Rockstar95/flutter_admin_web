@@ -62,11 +62,19 @@ import 'package:flutter_admin_web/ui/progressReport/progress_report.dart';
 import 'package:flutter_admin_web/ui/splash/splash_screen.dart';
 import 'package:flutter_admin_web/utils/my_print.dart';
 import 'package:http/http.dart';
+import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../../backend/classroom_events/classroom_events_controller.dart';
 import '../../configs/app_menu_ids.dart';
+import '../../configs/app_strings.dart';
 import '../../framework/helpers/parsing_helper.dart';
+import '../../framework/helpers/providermodel.dart';
+import '../../providers/my_learning_download_provider.dart';
+import '../MyLearning/my_downloads_screen.dart';
+import '../classroom_events/event_main_page2.dart';
 import '../common/app_colors.dart';
+import '../common/bottomsheet_option_tile.dart';
 import '../instabot/instabot_screen.dart';
 
 //Function to handle Notification data in background.
@@ -599,7 +607,7 @@ class _ActBaseState extends State<ActBase> {
 
   void _addMessageMenu(List<Widget> drawerOptions, BuildContext context) async {
     //Divider();
-    drawerOptions.add(const SizedBox(height: 16));
+    // drawerOptions.add(const SizedBox(height: 16));
     drawerOptions.add(
       Container(
         //height: 6 * SizeConfig.heightMultiplier,
@@ -701,17 +709,23 @@ class _ActBaseState extends State<ActBase> {
             MyPrint.printOnConsole("isChanged:$isChanged");
             try {
               if (isChanged) {
-                return CatalogRefreshScreen(
-                  categaoryID: 0,
-                  categaoryName: "",
-                  nativeMenuModel: nativeMenuModel!,
-                );
-              } else {
-                return CatalogSubScreen(
+                return ChangeNotifierProvider(
+                  create: (context) => ProviderModel(),
+                  child: CatalogRefreshScreen(
                     categaoryID: 0,
                     categaoryName: "",
                     nativeMenuModel: nativeMenuModel!,
-                    contentId: contentID);
+                  ),
+                );
+              } else {
+                return ChangeNotifierProvider(
+                  create: (context) => ProviderModel(),
+                  child: CatalogSubScreen(
+                      categaoryID: 0,
+                      categaoryName: "",
+                      nativeMenuModel: nativeMenuModel!,
+                      contentId: contentID),
+                );
               }
             } catch (e) {
               print('error : $e');
@@ -806,7 +820,7 @@ class _ActBaseState extends State<ActBase> {
                   sharedPref_RepositoryId, element.repositoryId);
             }
           });
-          return const EventMainPage();
+          return EventMainPage2(classroomEventsController: Provider.of<ClassroomEventsController>(context, listen: false),);
         case AppMenuIds.COMMUNITIES:
           appBloc.listNativeModel.forEach((element) async {
             if (element.contextmenuId == AppMenuIds.COMMUNITIES) {
@@ -857,7 +871,13 @@ class _ActBaseState extends State<ActBase> {
           });
           return Notifications(
               nativeMenuModel: nativeMenuModel ?? NativeMenuModel(categoryStyle: "",componentId: "",conditions: "",contextTitle: "",contextmenuId: "",displayOrder: 0,displayname: "",image: "",isEnabled: "",isofflineMenu: "",landingpageType: "",menuid: "",parameterString: "",parentMenuId: "",repositoryId: "",siteId: "",siteUrl: "",webMenuId: 0));
-        case AppMenuIds.MY_CONNECTIONS:
+
+        case AppMenuIds.MY_DOWNLOADS: {
+          return MyDownloadsScreen(
+            myLearningBloc: myLearningBloc,
+            myLearningDownloadProvider: Provider.of<MyLearningDownloadProvider>(NavigationController().mainNavigatorKey.currentContext!, listen: false),
+          );
+        } case AppMenuIds.MY_CONNECTIONS:
           return ConnectionIndexScreen();
         default:
           return const Center(
@@ -919,7 +939,7 @@ class _ActBaseState extends State<ActBase> {
                   sharedPref_RepositoryId, element.repositoryId);
             }
           });
-          return const EventMainPage();
+          return EventMainPage2(classroomEventsController: Provider.of<ClassroomEventsController>(context, listen: false),);
         default:
           return getCominSoon(context);
       }
@@ -1597,8 +1617,8 @@ class _ActBaseState extends State<ActBase> {
           );
           drawerOptions.add(
             Container(
-              width: 40,
-              height: 40,
+              // width: 40,
+              // height: 40,
               //height: 6 * SizeConfig.heightMultiplier,
               child: ListTile(
                 leading: Icon(Icons.notifications,
@@ -1621,6 +1641,26 @@ class _ActBaseState extends State<ActBase> {
                     selectedmenu = "2002";
                     appBarTitle = 'Notifications';
                     documentReference.update({"selected_menu":selectedmenu});
+                  });
+                },
+              ),
+            ),
+          );
+          drawerOptions.add(
+            Container(
+              /*width: 40,
+              height: 40,*/
+              //color: Colors.red,
+              //height: 6 * SizeConfig.heightMultiplier,
+              child: BottomsheetOptionTile(
+                iconData: Icons.download,
+                text: AppStrings.my_downloads,
+                iconColor: AppColors.getMenuTextColor(),
+                onTap: () {
+                  Navigator.of(context).pop();
+                  setState(() {
+                    selectedmenu = AppMenuIds.MY_DOWNLOADS;
+                    appBarTitle = AppStrings.my_downloads;
                   });
                 },
               ),
@@ -1916,71 +1956,6 @@ class _ActBaseState extends State<ActBase> {
                 width: ScreenUtil().setWidth(20),
               )
             : Container(),
-        /* (selectedmenu == '4')? new DropdownButtonHideUnderline(
-                child:  DropdownButton(
-                  icon: Icon(Icons.filter_list),
-                  items: arrFilter.map((String value) {
-                    return new DropdownMenuItem<String>(
-                      value: value,
-                      child: new Text(value),
-                    );
-                  }).toList(),
-                  onChanged: (String value) {
-                     setState(() {
-                       FilterInterface().clickFilter(value);
-                     });
-                  },
-                )
-              ) : Container(),
-              selectedmenu == "4"
-                  ? SizedBox(
-                width: ScreenUtil().setWidth(20),
-              )
-                  : Container(),*/
-        /*selectedmenu == "5"
-            ? Container(
-                // color: Color(int.parse(
-                //     "0xFF${appBloc.uiSettingModel.appBGColor.substring(1, 7).toUpperCase()}")),
-                child: new Theme(
-                    data: Theme.of(context).copyWith(
-                      canvasColor: Color(int.parse(
-                          "0xFF${appBloc.uiSettingModel.appBGColor.substring(1, 7).toUpperCase()}")),
-                    ),
-                    child: PopupMenuButton(
-                      color: Color(int.parse(
-                          "0xFF${appBloc.uiSettingModel.appBGColor.substring(1, 7).toUpperCase()}")),
-                      child: Padding(
-                          padding: EdgeInsets.only(right: 8.0),
-                          child: Icon(
-                            Icons.filter_list,
-                            color: lableColor,
-                            // Color(int.parse(
-                            //     "0xFF${appBloc.uiSettingModel.appHeaderTextColor.substring(1, 7).toUpperCase()}")),
-
-                            // color: Color(int.parse(
-                            //     "0xFF${appBloc.uiSettingModel.appTextColor.substring(1, 7).toUpperCase()}")),
-                          )),
-                      elevation: 3.2,
-                      onSelected: (String value) {
-                        setState(() {
-                          appBloc.filterValue = value;
-                        });
-                      },
-                      itemBuilder: (BuildContext context) {
-                        return arrFilter.map((String choice) {
-                          return PopupMenuItem<String>(
-                            value: choice,
-                            child: Text(
-                              choice,
-                              style: TextStyle(
-                                  color: Color(int.parse(
-                                      "0xFF${appBloc.uiSettingModel.appTextColor.substring(1, 7).toUpperCase()}"))),
-                            ),
-                          );
-                        }).toList();
-                      },
-                    )))
-            : Container(),*/
         selectedmenu == "4"
             ? SizedBox(
                 width: ScreenUtil().setWidth(20),
@@ -1992,131 +1967,102 @@ class _ActBaseState extends State<ActBase> {
                   InkWell(
                     onTap: (){
                       Navigator.of(context).push(MaterialPageRoute(
-                          builder: (context) => WishList(
-                            categaoryID: 0,
-                            categaoryName: "",
-                            detailsBloc: detailsBloc,
-                            filterMenus: filterMenus,
+                          builder: (context) => ChangeNotifierProvider(
+                            create: (context) => ProviderModel(),
+                            child: WishList(
+                              categaoryID: 0,
+                              categaoryName: "",
+                              detailsBloc: detailsBloc,
+                              filterMenus: filterMenus,
+                            ),
                           )));
                     },
-                    child: Icon(Icons.favorite,size: 25.h,color: InsColor(appBloc).appIconColor,),
+                    child: Center(
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 11.0),
+                          child: Icon(Icons.favorite,size: 25.h,color: lableColor,),
+                        )),
 
                   ),
-                  // new IconButton(
-                  //     icon: Icon(Icons.favorite),
-                  //     color: InsColor(appBloc).appIconColor,
-                  //     onPressed: () {
-                  //       Navigator.of(context).push(MaterialPageRoute(
-                  //           builder: (context) => ChangeNotifierProvider(
-                  //                 create: (context) => ProviderModel(),
-                  //                 child: WishList(
-                  //                   categaoryID: 0,
-                  //                   categaoryName: "",
-                  //                   detailsBloc: detailsBloc,
-                  //                   filterMenus: filterMenus,
-                  //                 ),
-                  //               )));
-                  //     }),
-                  Positioned(
-                    right: 6,
-                    top: 6,
-                    child: Container(
-                      padding: const EdgeInsets.all(2),
-                      decoration: BoxDecoration(
-                        // color: Color(int.parse(
-                        //     "0xFF${appBloc.uiSettingModel.appButtonBgColor.substring(1, 7).toUpperCase()}")),
-                        // borderRadius: BorderRadius.circular(6),
-                        shape: BoxShape.circle,
-                        border: Border.all(color: backgroundColor),
-                      ),
-                      constraints: const BoxConstraints(
-                        minWidth: 14,
-                        minHeight: 14,
-                      ),
-                      child: Text(
-                        appBloc.wishlistcount,
-                        style: const TextStyle(
-                          color: Colors.white,
-                          fontSize: 8,
+                  Visibility(
+                    visible: (int.tryParse(appBloc.wishlistcount) ?? 0) > 0,
+                    child: new Positioned(
+                      right: 6,
+                      top: 14,
+                      child: new Container(
+                        padding: EdgeInsets.all(2),
+                        decoration: new BoxDecoration(
+                          color: lableColor,
+                          // color: Color(int.parse(
+                          //     "0xFF${appBloc.uiSettingModel.appButtonBgColor.substring(1, 7).toUpperCase()}")),
+                          // borderRadius: BorderRadius.circular(6),
+                          shape: BoxShape.circle,
+                          border: Border.all(color: backgroundColor),
                         ),
-                        textAlign: TextAlign.center,
+                        constraints: BoxConstraints(
+                          minWidth: 14,
+                          minHeight: 14,
+                        ),
+                        child: Text(
+                          appBloc.wishlistcount,
+                          style: TextStyle(
+                            color: backgroundColor,
+                            fontSize: 8,
+                          ),
+                          textAlign: TextAlign.center,
+                        ),
                       ),
                     ),
                   )
                 ],
               )
-            // GestureDetector(
-            //         onTap: () {
-            //           Navigator.of(context).push(MaterialPageRoute(
-            //               builder: (context) => ChangeNotifierProvider(
-            //                     create: (context) => ProviderModel(),
-            //                     child: WishList(
-            //                       categaoryID: 0,
-            //                       categaoryName: "",
-            //                       detailsBloc: detailsBloc,
-            //                       filterMenus: filterMenus,
-            //                     ),
-            //                   )));
-            //         },
-            //         child: Icon(
-            //           Icons.favorite,
-            //           color: Color(int.parse(
-            //               "0xFF${appBloc.uiSettingModel.appHeaderTextColor.substring(1, 7).toUpperCase()}")),
-            //         )),
-
-            : Container(),
-        (selectedmenu == "8")
+       : Container(),
+       (selectedmenu == "8")
             ? Stack(
-              children: [
-                InkWell(
-                  onTap: (){
-                    Navigator.of(context).push(MaterialPageRoute(
-                        builder: (context) => EventWishListScreen()));
-                  },
-                  child: Center(child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 11.0),
-                    child: Icon(Icons.favorite, color: lableColor,size: 25.h),
-                  )),
-                ),
-                // IconButton(
-                //     icon: Icon(Icons.favorite),
-                //     color: InsColor(appBloc).appHeaderTxtColor,
-                //     onPressed: () {
-                //       Navigator.of(context).push(MaterialPageRoute(
-                //           builder: (context) => EventWishListScreen()));
-                //     }),
-                Visibility(
-                  visible: (int.tryParse(appBloc.wishlistcount) ?? 0) > 0,
-                  child: Positioned(
-                    right: 6,
-                    top: 14,
-                    child: Container(
-                      padding: const EdgeInsets.all(1),
-                      decoration: BoxDecoration(
-                        color: lableColor,
-                        shape: BoxShape.circle,
-                        border: Border.all(color: backgroundColor),
-                        // color: Color(int.parse(
-                        //     "0xFF${appBloc.uiSettingModel.appButtonBgColor.substring(1, 7).toUpperCase()}")),
-                        // borderRadius: BorderRadius.circular(6),
-                      ),
-                      constraints: const BoxConstraints(
-                        minWidth: 14,
-                        minHeight: 14,
-                      ),
-                      child: Text(
-                        appBloc.wishlistcount,
-                        style: TextStyle(
-                          color: AppColors.getAppButtonBGColor(),
-                          fontSize: 8,
+                children: [
+                  InkWell(
+                    onTap: (){
+                      Navigator.of(context).push(MaterialPageRoute(
+                          builder: (context) => EventWishListScreen()));
+                    },
+                    child: Center(child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 11.0),
+                      child: Icon(Icons.favorite, color: lableColor,size: 25.h),
+                    )),
+                  ),
+                  Visibility(
+                    visible: (int.tryParse(appBloc.wishlistcount) ?? 0) > 0,
+                    // visible: true,
+                    child: Positioned(
+                      right: 6,
+                      top: 14,
+                      child: new Container(
+                        padding: EdgeInsets.all(1),
+                        decoration: new BoxDecoration(
+                          color: lableColor,
+                          shape: BoxShape.circle,
+                          border: Border.all(color: backgroundColor),
+                          // color: Color(int.parse(
+                          //     "0xFF${appBloc.uiSettingModel.appButtonBgColor.substring(1, 7).toUpperCase()}")),
+                          // borderRadius: BorderRadius.circular(6),
                         ),
-                        textAlign: TextAlign.center,
+                        constraints: BoxConstraints(
+                          minWidth: 14,
+                          minHeight: 14,
+                        ),
+                        child: Text(
+                          appBloc.wishlistcount,
+                          style: TextStyle(
+                            color: backgroundColor,
+                            fontSize: 8,
+                          ),
+                          textAlign: TextAlign.center,
+                        ),
                       ),
                     ),
                   ),
-                ),
-              ],
-            )
+                ],
+              )
             : Container(),
         (selectedmenu == "2" && landingpageType == "0") || selectedmenu == "8"
             ? SizedBox(
@@ -2193,55 +2139,7 @@ class _ActBaseState extends State<ActBase> {
   }
 
   Widget getDrawer(bool useMobileLayout, List<Widget> drawerOptions) {
-    return Stack(
-      children: [
-        Builder(
-          builder: (context) => Container(
-            width: MediaQuery.of(context).size.width * (useMobileLayout ? 0.7 : 0.4),
-            color: Colors.white,
-            child: SafeArea(
-              child: Stack(children: <Widget>[
-              isLoading ? const SpinKitFadingCircle(color: Colors.green,) : Column(
-                  children: <Widget>[
-                    DrawerHeaderWidget(
-                      signOutFunc: signOutFunc,
-                    ),
-                    SizedBox(
-                      height: ScreenUtil().setWidth(10),
-                    ),
-                    Expanded(
-                      child: BlocConsumer<ProfileBloc, ProfileState>(
-                          bloc: profileBloc,
-                          listener: (context, state) {},
-                          builder: (context, state) {
-                            if (state.status == Status.COMPLETED) {
-                              if (isMenuExists()) {
-                                _addMessageMenu(drawerOptions, context);
-                                appBloc.uiSettingModel.setIsMsgMenuExist(true);
-                              }
-                            }
-                            return Container(
-                              color: Color(int.parse(
-                                  "0xFF${appBloc.uiSettingModel.menuBGColor.substring(1, 7).toUpperCase()}")),
-                              child: ListView.builder(
-                                itemCount: drawerOptions.length,
-                                itemBuilder: (context, pos) {
-                                  return drawerOptions[pos];
-                                },
-                              ),
-                            );
-                          }),
-                    ),
-                  ],
-                ),
-                // ? SpinKitFadingCircle(color: Colors.blue,):Container()
-              ]),
-            ),
-          ),
-        ),
-      ],
-    );
-    /*return Builder(
+    return Builder(
       builder: (context) => Container(
         width: MediaQuery.of(context).size.width * (useMobileLayout ? 0.7 : 0.4),
         color: Colors.white,
@@ -2284,7 +2182,7 @@ class _ActBaseState extends State<ActBase> {
           ),
         ),
       ),
-    );*/
+    );
   }
 
   Widget? getBottomNavigationBar(List<BottomNavigationBarItem> bottomOptions) {

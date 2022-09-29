@@ -126,10 +126,7 @@ class _ReviewScreenState extends State<ReviewScreen> {
                   state is GetCurrentUserReviewState) {
                 return Center(
                   child: AbsorbPointer(
-                    child: SpinKitCircle(
-                      color: Colors.grey,
-                      size: 70,
-                    ),
+                    child: AppConstants().getLoaderWidget(iconSize: 70)
                   ),
                 );
               } else {
@@ -269,10 +266,7 @@ class _ReviewScreenState extends State<ReviewScreen> {
                     state.status == Status.LOADING && state is AddReviewState
                         ? Center(
                             child: AbsorbPointer(
-                              child: SpinKitCircle(
-                                color: Colors.grey,
-                                size: 70,
-                              ),
+                              child: AppConstants().getLoaderWidget(iconSize: 70)
                             ),
                           )
                         : Container(),

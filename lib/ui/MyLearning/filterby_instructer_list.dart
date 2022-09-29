@@ -87,10 +87,7 @@ class _FilterByInstructerListState extends State<FilterByInstructerList> {
                             return Container(
                               child: Center(
                                 child: AbsorbPointer(
-                                  child: SpinKitCircle(
-                                    color: Colors.grey,
-                                    size: 70,
-                                  ),
+                                  child: AppConstants().getLoaderWidget(iconSize: 70)
                                 ),
                               ),
                             );

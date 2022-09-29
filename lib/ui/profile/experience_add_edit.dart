@@ -18,6 +18,8 @@ import 'package:flutter_admin_web/framework/theme/ins_theme.dart';
 import 'package:flutter_admin_web/ui/common/common_toast.dart';
 import 'package:intl/intl.dart';
 
+import '../../configs/constants.dart';
+
 class ExperienceAdd extends StatefulWidget {
   final ProfileBloc profileBloc;
   final Userexperiencedatum? data;
@@ -98,8 +100,8 @@ class _ExperienceAddState extends State<ExperienceAdd> {
     } else {
       final df = new DateFormat('MMM yyyy');
       setState(() {
-        startDate.text = df.format(new DateTime(2020, 1)).toString();
-        endDate.text = df.format(DateTime(2020, 12)).toString();
+        // startDate.text = df.format(new DateTime(2020, 1)).toString();
+        // endDate.text = df.format(DateTime(2020, 12)).toString();
 
         date1 = DateTime(2020, 1);
         date2 = DateTime(2020, 12);
@@ -552,6 +554,7 @@ class _ExperienceAddState extends State<ExperienceAdd> {
                                                   startDate.text = df
                                                       .format(date)
                                                       .toString();
+                                                  setState(() {});
                                                 },
                                                 child: IgnorePointer(
                                                   child: TextFormField(
@@ -572,11 +575,9 @@ class _ExperienceAddState extends State<ExperienceAdd> {
                                                                 borderSide: BorderSide(color: startDate.text.isEmpty? Color(0xffDADCE0):Color(0xff202124),width: 0.5)
                                                               ),
                                                               hintText:
-                                                                  'Pick date',
+                                                                  'Ex: Aug 2022',
                                                               hintStyle: TextStyle(
-                                                                  color: Color(
-                                                                      int.parse(
-                                                                          "0xFF${appBloc.uiSettingModel.appTextColor.substring(1, 7).toUpperCase()}"))),
+                                                                  color: Colors.black38),
                                                               suffixIcon: Icon(
                                                                 Icons
                                                                     .arrow_drop_down,
@@ -669,6 +670,8 @@ class _ExperienceAddState extends State<ExperienceAdd> {
 
                                                         FocusScope.of(context)
                                                             .unfocus();
+                                                        setState(() {});
+
                                                       },
                                                       child: IgnorePointer(
                                                         child: TextFormField(
@@ -687,10 +690,9 @@ class _ExperienceAddState extends State<ExperienceAdd> {
                                                                         borderSide: BorderSide(color: endDate.text.isEmpty? Color(0xffDADCE0):Color(0xff202124),width: 0.5)
                                                                     ),
                                                                     hintText:
-                                                                        'Pick date',
+                                                                        'Ex: Aug 2022',
                                                                     hintStyle: TextStyle(
-                                                                        color: Color(int.parse(
-                                                                            "0xFF${appBloc.uiSettingModel.appTextColor.substring(1, 7).toUpperCase()}"))),
+                                                                        color: Colors.black38),
                                                                     suffixIcon:
                                                                         Icon(
                                                                       Icons
@@ -794,10 +796,7 @@ class _ExperienceAddState extends State<ExperienceAdd> {
                     ? (state.status == Status.LOADING)
                         ? Center(
                             child: AbsorbPointer(
-                                child: SpinKitCircle(
-                            color: Colors.grey,
-                            size: 70.h,
-                          )))
+                                child:AppConstants().getLoaderWidget(iconSize: 70),))
                         : Container()
                     : Container()
               ],

@@ -18,6 +18,8 @@ import 'package:flutter_admin_web/framework/theme/ins_theme.dart';
 import 'package:flutter_admin_web/ui/common/app_colors.dart';
 import 'package:flutter_admin_web/ui/common/common_toast.dart';
 
+import '../../configs/constants.dart';
+
 class AddTopic extends StatefulWidget {
   final ForumList forumList;
 
@@ -389,10 +391,7 @@ class _AddTopicState extends State<AddTopic> with SingleTickerProviderStateMixin
         if (state.status == Status.LOADING) {
           return Align(
             child: AbsorbPointer(
-              child: SpinKitCircle(
-                color: Colors.grey,
-                size: 70.h,
-              ),
+              child: AppConstants().getLoaderWidget(iconSize: 70)
             ),
           );
         }

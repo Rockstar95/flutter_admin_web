@@ -23,6 +23,8 @@ import 'package:flutter_admin_web/framework/repository/mylearning/mylearning_rep
 import 'package:flutter_admin_web/ui/Catalog/prerequisite_detail_screen.dart';
 import 'package:flutter_admin_web/ui/common/common_toast.dart';
 
+import '../../configs/constants.dart';
+
 class PrerequisiteScreen extends StatefulWidget {
   final PrequisitePopupresponse prequisitePopupresponse;
   final NativeMenuModel nativeMenuModel;
@@ -108,9 +110,9 @@ class _PrerequisiteScreenState extends State<PrerequisiteScreen> {
             }
           },
           builder: (context, state) {
-            return new Container(
+            return Container(
               child: Padding(
-                padding: EdgeInsets.only(bottom: 0.0),
+                padding: const EdgeInsets.only(bottom: 0.0),
                 child: MaterialButton(
                   disabledColor: Color(int.parse(
                           "0xFF${appBloc.uiSettingModel.appButtonBgColor.substring(1, 7).toUpperCase()}"))
@@ -146,7 +148,7 @@ class _PrerequisiteScreenState extends State<PrerequisiteScreen> {
                       flutterToast.showToast(
                           child: CommonToast(displaymsg: 'Please select content item(s) to add'),
                           gravity: ToastGravity.BOTTOM,
-                          toastDuration: Duration(seconds: 2))
+                          toastDuration: const Duration(seconds: 2))
                     }
                   },
                 ),
@@ -173,7 +175,7 @@ class _PrerequisiteScreenState extends State<PrerequisiteScreen> {
                       displaymsg:
                           'The subscribed item has been added to your My Learning. Please click on My Learning, and then click on View to launch the content.'),
                   gravity: ToastGravity.BOTTOM,
-                  toastDuration: Duration(seconds: 2));
+                  toastDuration: const Duration(seconds: 2));
               getAssociatedResponse();
             }
           }
@@ -187,17 +189,14 @@ class _PrerequisiteScreenState extends State<PrerequisiteScreen> {
           if (state.status == Status.LOADING) {
             return Center(
               child: AbsorbPointer(
-                child: SpinKitCircle(
-                  color: Colors.grey,
-                  size: 70.0,
-                ),
+                child: AppConstants().getLoaderWidget(iconSize: 70)
               ),
             );
           }
           else {
             return Column(
               children: [
-                new Container(
+                Container(
                     width: double.infinity,
                     margin: const EdgeInsets.only(left: 15.0, right: 15.0),
                     padding: const EdgeInsets.all(8.0),
@@ -205,16 +204,15 @@ class _PrerequisiteScreenState extends State<PrerequisiteScreen> {
                         color: Colors.grey.shade400,
                         border: Border.all(color: Colors.grey.shade400)),
                     child: Text(
-                      'Pre-requisite Sequence -' +
-                          widget.prequisitePopupresponse.prerequisteData
-                              .table[0].pathName,
+                      'Pre-requisite Sequence -${widget.prequisitePopupresponse.prerequisteData
+                              .table[0].pathName}',
                       style: TextStyle(
                           fontWeight: FontWeight.bold,
                           color: Color(int.parse(
                               "0xFF${appBloc.uiSettingModel.appTextColor.substring(1, 7).toUpperCase()}"))),
                     )),
                 Padding(
-                    padding: EdgeInsets.all(10.0),
+                    padding: const EdgeInsets.all(10.0),
                     child: Card(
                       color: Color(int.parse(
                           "0xFF${appBloc.uiSettingModel.appBGColor.substring(1, 7).toUpperCase()}")),
@@ -271,7 +269,7 @@ class _PrerequisiteScreenState extends State<PrerequisiteScreen> {
                               )),
                             ]),
                             Padding(
-                                padding: EdgeInsets.only(left: 10.0, top: 10.0),
+                                padding: const EdgeInsets.only(left: 10.0, top: 10.0),
                                 child: Text(
                                   catalogBloc.associatedContentResponse.parentcontent.title,
                                   //catalogBloc.associatedContentResponse.parentcontent.title,
@@ -282,7 +280,7 @@ class _PrerequisiteScreenState extends State<PrerequisiteScreen> {
                                       fontSize: 16.0),
                                 )),
                             Padding(
-                                padding: EdgeInsets.only(left: 10.0, top: 10.0),
+                                padding: const EdgeInsets.only(left: 10.0, top: 10.0),
                                 child: Row(
                                   children: [
                                     Text(
@@ -301,7 +299,7 @@ class _PrerequisiteScreenState extends State<PrerequisiteScreen> {
                                   ],
                                 )),
                             Padding(
-                              padding: EdgeInsets.only(left: 10.0),
+                              padding: const EdgeInsets.only(left: 10.0),
                               child: Row(
                                 children: [
                                   Text(
@@ -322,7 +320,7 @@ class _PrerequisiteScreenState extends State<PrerequisiteScreen> {
                               ),
                             ),
                             Padding(
-                                padding: EdgeInsets.only(left: 10.0),
+                                padding: const EdgeInsets.only(left: 10.0),
                                 child: Row(
                                   children: [
                                     Text(
@@ -343,7 +341,7 @@ class _PrerequisiteScreenState extends State<PrerequisiteScreen> {
                                 )),
                             catalogBloc.associatedContentResponse.parentcontent.isLearnerContent
                                 ? Padding(
-                                    padding: EdgeInsets.only(left: 10.0),
+                                    padding: const EdgeInsets.only(left: 10.0),
                                     child: Text(
                                       "Already in your 'My Learning' ",
                                       style: TextStyle(
@@ -354,12 +352,12 @@ class _PrerequisiteScreenState extends State<PrerequisiteScreen> {
                                   )
                                 : Container(),
                             Padding(
-                              padding: EdgeInsets.all(10.0),
+                              padding: const EdgeInsets.all(10.0),
                               child: Row(
                                 children: [
                                   Expanded(
                                     child: Padding(
-                                      padding: EdgeInsets.all(5.0),
+                                      padding: const EdgeInsets.all(5.0),
                                       child: MaterialButton(
                                         onPressed: () => {
                                           Navigator.of(context).push(
@@ -387,6 +385,8 @@ class _PrerequisiteScreenState extends State<PrerequisiteScreen> {
                                             .withOpacity(0.5),
                                         color: Color(int.parse(
                                             "0xFF${appBloc.uiSettingModel.appButtonBgColor.substring(1, 7).toUpperCase()}")),
+                                        textColor: Color(int.parse(
+                                            "0xFF${appBloc.uiSettingModel.appButtonTextColor.substring(1, 7).toUpperCase()}")),
                                         child: Row(
                                           mainAxisAlignment:
                                               MainAxisAlignment.center,
@@ -400,8 +400,6 @@ class _PrerequisiteScreenState extends State<PrerequisiteScreen> {
                                             ),
                                           ],
                                         ),
-                                        textColor: Color(int.parse(
-                                            "0xFF${appBloc.uiSettingModel.appButtonTextColor.substring(1, 7).toUpperCase()}")),
                                       ),
                                     ),
                                   ),
@@ -414,7 +412,7 @@ class _PrerequisiteScreenState extends State<PrerequisiteScreen> {
                                           : true,
                                       child: Expanded(
                                           child: Padding(
-                                        padding: EdgeInsets.all(5.0),
+                                        padding: const EdgeInsets.all(5.0),
                                         child: MaterialButton(
                                           onPressed: () => {
                                             if (catalogBloc
@@ -482,7 +480,7 @@ class _PrerequisiteScreenState extends State<PrerequisiteScreen> {
                                                     gravity:
                                                         ToastGravity.BOTTOM,
                                                     toastDuration:
-                                                        Duration(seconds: 2))
+                                                        const Duration(seconds: 2))
                                               }
                                           },
                                           minWidth:
@@ -492,6 +490,8 @@ class _PrerequisiteScreenState extends State<PrerequisiteScreen> {
                                               .withOpacity(0.5),
                                           color: Color(int.parse(
                                               "0xFF${appBloc.uiSettingModel.appButtonBgColor.substring(1, 7).toUpperCase()}")),
+                                          textColor: Color(int.parse(
+                                              "0xFF${appBloc.uiSettingModel.appButtonTextColor.substring(1, 7).toUpperCase()}")),
                                           child: Row(
                                             mainAxisAlignment:
                                                 MainAxisAlignment.center,
@@ -505,8 +505,6 @@ class _PrerequisiteScreenState extends State<PrerequisiteScreen> {
                                               ),
                                             ],
                                           ),
-                                          textColor: Color(int.parse(
-                                              "0xFF${appBloc.uiSettingModel.appButtonTextColor.substring(1, 7).toUpperCase()}")),
                                         ),
                                       )))
                                 ],
@@ -515,7 +513,7 @@ class _PrerequisiteScreenState extends State<PrerequisiteScreen> {
                           ]),
                     ),
                 ),
-                new Container(
+                Container(
                     width: double.infinity,
                     margin: const EdgeInsets.only(left: 15.0, right: 15.0),
                     padding: const EdgeInsets.all(8.0),
@@ -537,7 +535,7 @@ class _PrerequisiteScreenState extends State<PrerequisiteScreen> {
                             .prerequisiteModelArrayListRecommended.length,
                         itemBuilder: (context, index) {
                           return Padding(
-                              padding: EdgeInsets.all(10.0),
+                              padding: const EdgeInsets.all(10.0),
                               child: Card(
                                 color: Color(int.parse(
                                     "0xFF${appBloc.uiSettingModel.appBGColor.substring(1, 7).toUpperCase()}")),
@@ -619,7 +617,7 @@ class _PrerequisiteScreenState extends State<PrerequisiteScreen> {
                                         )),
                                       ]),
                                       Padding(
-                                          padding: EdgeInsets.only(
+                                          padding: const EdgeInsets.only(
                                               left: 10.0, top: 10.0),
                                           child: Text(
                                             catalogBloc
@@ -633,7 +631,7 @@ class _PrerequisiteScreenState extends State<PrerequisiteScreen> {
                                                 fontSize: 16.0),
                                           )),
                                       Padding(
-                                          padding: EdgeInsets.only(
+                                          padding: const EdgeInsets.only(
                                               left: 10.0, top: 10.0),
                                           child: Row(
                                             children: [
@@ -654,7 +652,7 @@ class _PrerequisiteScreenState extends State<PrerequisiteScreen> {
                                             ],
                                           )),
                                       Padding(
-                                          padding: EdgeInsets.only(left: 10.0),
+                                          padding: const EdgeInsets.only(left: 10.0),
                                           child: Row(
                                             children: [
                                               Text('Created on: ',
@@ -674,7 +672,7 @@ class _PrerequisiteScreenState extends State<PrerequisiteScreen> {
                                             ],
                                           )),
                                       Padding(
-                                          padding: EdgeInsets.only(left: 10.0),
+                                          padding: const EdgeInsets.only(left: 10.0),
                                           child: Row(
                                             children: [
                                               Text('Content Type: ',
@@ -699,7 +697,7 @@ class _PrerequisiteScreenState extends State<PrerequisiteScreen> {
                                               .isLearnerContent
                                           ? Padding(
                                               padding:
-                                                  EdgeInsets.only(left: 10.0),
+                                                  const EdgeInsets.only(left: 10.0),
                                               child: Text(
                                                 "Already in your 'My Learning' ",
                                                 style: TextStyle(
@@ -710,12 +708,12 @@ class _PrerequisiteScreenState extends State<PrerequisiteScreen> {
                                             )
                                           : Container(),
                                       Padding(
-                                        padding: EdgeInsets.all(10.0),
+                                        padding: const EdgeInsets.all(10.0),
                                         child: Row(
                                           children: [
                                             Expanded(
                                               child: Padding(
-                                                padding: EdgeInsets.all(5.0),
+                                                padding: const EdgeInsets.all(5.0),
                                                 child: MaterialButton(
                                                   onPressed: () => {
                                                     Navigator.of(context).push(
@@ -746,6 +744,8 @@ class _PrerequisiteScreenState extends State<PrerequisiteScreen> {
                                                       .withOpacity(0.5),
                                                   color: Color(int.parse(
                                                       "0xFF${appBloc.uiSettingModel.appButtonBgColor.substring(1, 7).toUpperCase()}")),
+                                                  textColor: Color(int.parse(
+                                                      "0xFF${appBloc.uiSettingModel.appButtonTextColor.substring(1, 7).toUpperCase()}")),
                                                   child: Row(
                                                     mainAxisAlignment:
                                                         MainAxisAlignment
@@ -760,8 +760,6 @@ class _PrerequisiteScreenState extends State<PrerequisiteScreen> {
                                                       ),
                                                     ],
                                                   ),
-                                                  textColor: Color(int.parse(
-                                                      "0xFF${appBloc.uiSettingModel.appButtonTextColor.substring(1, 7).toUpperCase()}")),
                                                 ),
                                               ),
                                             ),
@@ -774,7 +772,7 @@ class _PrerequisiteScreenState extends State<PrerequisiteScreen> {
                                                     : true,
                                                 child: Expanded(
                                                     child: Padding(
-                                                  padding: EdgeInsets.all(5.0),
+                                                  padding: const EdgeInsets.all(5.0),
                                                   child: MaterialButton(
                                                     onPressed: () => {
                                                       isPopScreen = false,
@@ -804,6 +802,8 @@ class _PrerequisiteScreenState extends State<PrerequisiteScreen> {
                                                         .withOpacity(0.5),
                                                     color: Color(int.parse(
                                                         "0xFF${appBloc.uiSettingModel.appButtonBgColor.substring(1, 7).toUpperCase()}")),
+                                                    textColor: Color(int.parse(
+                                                        "0xFF${appBloc.uiSettingModel.appButtonTextColor.substring(1, 7).toUpperCase()}")),
                                                     child: Row(
                                                       mainAxisAlignment:
                                                           MainAxisAlignment
@@ -819,8 +819,6 @@ class _PrerequisiteScreenState extends State<PrerequisiteScreen> {
                                                         ),
                                                       ],
                                                     ),
-                                                    textColor: Color(int.parse(
-                                                        "0xFF${appBloc.uiSettingModel.appButtonTextColor.substring(1, 7).toUpperCase()}")),
                                                   ),
                                                 )))
                                           ],
@@ -830,7 +828,7 @@ class _PrerequisiteScreenState extends State<PrerequisiteScreen> {
                               ));
                         })
                     : Container(),
-                new Container(
+                Container(
                     width: double.infinity,
                     margin: const EdgeInsets.only(left: 15.0, right: 15.0),
                     padding: const EdgeInsets.all(8.0),
@@ -852,7 +850,7 @@ class _PrerequisiteScreenState extends State<PrerequisiteScreen> {
                             .prerequisiteModelArrayListRequired.length,
                         itemBuilder: (context, index) {
                           return Padding(
-                              padding: EdgeInsets.all(10.0),
+                              padding: const EdgeInsets.all(10.0),
                               child: Card(
                                 color: Color(int.parse(
                                     "0xFF${appBloc.uiSettingModel.appBGColor.substring(1, 7).toUpperCase()}")),
@@ -934,7 +932,7 @@ class _PrerequisiteScreenState extends State<PrerequisiteScreen> {
                                         )),
                                       ]),
                                       Padding(
-                                          padding: EdgeInsets.only(
+                                          padding: const EdgeInsets.only(
                                               left: 10.0, top: 10.0),
                                           child: Text(
                                             catalogBloc
@@ -948,7 +946,7 @@ class _PrerequisiteScreenState extends State<PrerequisiteScreen> {
                                                 fontSize: 16.0),
                                           )),
                                       Padding(
-                                          padding: EdgeInsets.only(
+                                          padding: const EdgeInsets.only(
                                               left: 10.0, top: 10.0),
                                           child: Row(
                                             children: [
@@ -969,7 +967,7 @@ class _PrerequisiteScreenState extends State<PrerequisiteScreen> {
                                             ],
                                           )),
                                       Padding(
-                                          padding: EdgeInsets.only(left: 10.0),
+                                          padding: const EdgeInsets.only(left: 10.0),
                                           child: Row(
                                             children: [
                                               Text('Created on: ',
@@ -989,7 +987,7 @@ class _PrerequisiteScreenState extends State<PrerequisiteScreen> {
                                             ],
                                           )),
                                       Padding(
-                                          padding: EdgeInsets.only(left: 10.0),
+                                          padding: const EdgeInsets.only(left: 10.0),
                                           child: Row(
                                             children: [
                                               Text('Content Type: ',
@@ -1014,7 +1012,7 @@ class _PrerequisiteScreenState extends State<PrerequisiteScreen> {
                                               .isLearnerContent
                                           ? Padding(
                                               padding:
-                                                  EdgeInsets.only(left: 10.0),
+                                                  const EdgeInsets.only(left: 10.0),
                                               child: Text(
                                                 "Already in your 'My Learning' ",
                                                 style: TextStyle(
@@ -1025,12 +1023,12 @@ class _PrerequisiteScreenState extends State<PrerequisiteScreen> {
                                             )
                                           : Container(),
                                       Padding(
-                                        padding: EdgeInsets.all(10.0),
+                                        padding: const EdgeInsets.all(10.0),
                                         child: Row(
                                           children: [
                                             Expanded(
                                               child: Padding(
-                                                padding: EdgeInsets.all(5.0),
+                                                padding: const EdgeInsets.all(5.0),
                                                 child: MaterialButton(
                                                   onPressed: () => {
                                                     Navigator.of(context).push(
@@ -1061,6 +1059,8 @@ class _PrerequisiteScreenState extends State<PrerequisiteScreen> {
                                                       .withOpacity(0.5),
                                                   color: Color(int.parse(
                                                       "0xFF${appBloc.uiSettingModel.appButtonBgColor.substring(1, 7).toUpperCase()}")),
+                                                  textColor: Color(int.parse(
+                                                      "0xFF${appBloc.uiSettingModel.appButtonTextColor.substring(1, 7).toUpperCase()}")),
                                                   child: Row(
                                                     mainAxisAlignment:
                                                         MainAxisAlignment
@@ -1075,8 +1075,6 @@ class _PrerequisiteScreenState extends State<PrerequisiteScreen> {
                                                       ),
                                                     ],
                                                   ),
-                                                  textColor: Color(int.parse(
-                                                      "0xFF${appBloc.uiSettingModel.appButtonTextColor.substring(1, 7).toUpperCase()}")),
                                                 ),
                                               ),
                                             ),
@@ -1089,7 +1087,7 @@ class _PrerequisiteScreenState extends State<PrerequisiteScreen> {
                                                     : true,
                                                 child: Expanded(
                                                     child: Padding(
-                                                  padding: EdgeInsets.all(5.0),
+                                                  padding: const EdgeInsets.all(5.0),
                                                   child: MaterialButton(
                                                     onPressed: () => {
                                                       isPopScreen = false,
@@ -1119,6 +1117,8 @@ class _PrerequisiteScreenState extends State<PrerequisiteScreen> {
                                                         .withOpacity(0.5),
                                                     color: Color(int.parse(
                                                         "0xFF${appBloc.uiSettingModel.appButtonBgColor.substring(1, 7).toUpperCase()}")),
+                                                    textColor: Color(int.parse(
+                                                        "0xFF${appBloc.uiSettingModel.appButtonTextColor.substring(1, 7).toUpperCase()}")),
                                                     child: Row(
                                                       mainAxisAlignment:
                                                           MainAxisAlignment
@@ -1134,8 +1134,6 @@ class _PrerequisiteScreenState extends State<PrerequisiteScreen> {
                                                         ),
                                                       ],
                                                     ),
-                                                    textColor: Color(int.parse(
-                                                        "0xFF${appBloc.uiSettingModel.appButtonTextColor.substring(1, 7).toUpperCase()}")),
                                                   ),
                                                 )))
                                           ],
@@ -1145,7 +1143,7 @@ class _PrerequisiteScreenState extends State<PrerequisiteScreen> {
                               ));
                         })
                     : Container(),
-                new Container(
+                Container(
                     width: double.infinity,
                     margin: const EdgeInsets.only(left: 15.0, right: 15.0),
                     padding: const EdgeInsets.all(8.0),
@@ -1167,7 +1165,7 @@ class _PrerequisiteScreenState extends State<PrerequisiteScreen> {
                             .prerequisiteModelArrayListCompletion.length,
                         itemBuilder: (context, index) {
                           return Padding(
-                              padding: EdgeInsets.all(10.0),
+                              padding: const EdgeInsets.all(10.0),
                               child: Card(
                                 color: Color(int.parse(
                                     "0xFF${appBloc.uiSettingModel.appBGColor.substring(1, 7).toUpperCase()}")),
@@ -1249,7 +1247,7 @@ class _PrerequisiteScreenState extends State<PrerequisiteScreen> {
                                         )),
                                       ]),
                                       Padding(
-                                          padding: EdgeInsets.only(
+                                          padding: const EdgeInsets.only(
                                               left: 10.0, top: 10.0),
                                           child: Text(
                                             catalogBloc
@@ -1263,7 +1261,7 @@ class _PrerequisiteScreenState extends State<PrerequisiteScreen> {
                                                 fontSize: 16.0),
                                           )),
                                       Padding(
-                                          padding: EdgeInsets.only(
+                                          padding: const EdgeInsets.only(
                                               left: 10.0, top: 10.0),
                                           child: Row(
                                             children: [
@@ -1284,7 +1282,7 @@ class _PrerequisiteScreenState extends State<PrerequisiteScreen> {
                                             ],
                                           )),
                                       Padding(
-                                          padding: EdgeInsets.only(left: 10.0),
+                                          padding: const EdgeInsets.only(left: 10.0),
                                           child: Row(
                                             children: [
                                               Text('Created on: ',
@@ -1304,7 +1302,7 @@ class _PrerequisiteScreenState extends State<PrerequisiteScreen> {
                                             ],
                                           )),
                                       Padding(
-                                          padding: EdgeInsets.only(left: 10.0),
+                                          padding: const EdgeInsets.only(left: 10.0),
                                           child: Row(
                                             children: [
                                               Text('Content Type: ',
@@ -1329,7 +1327,7 @@ class _PrerequisiteScreenState extends State<PrerequisiteScreen> {
                                               .isLearnerContent
                                           ? Padding(
                                               padding:
-                                                  EdgeInsets.only(left: 10.0),
+                                                  const EdgeInsets.only(left: 10.0),
                                               child: Text(
                                                 "Already in your 'My Learning' ",
                                                 style: TextStyle(
@@ -1340,12 +1338,12 @@ class _PrerequisiteScreenState extends State<PrerequisiteScreen> {
                                             )
                                           : Container(),
                                       Padding(
-                                        padding: EdgeInsets.all(10.0),
+                                        padding: const EdgeInsets.all(10.0),
                                         child: Row(
                                           children: [
                                             Expanded(
                                               child: Padding(
-                                                padding: EdgeInsets.all(5.0),
+                                                padding: const EdgeInsets.all(5.0),
                                                 child: MaterialButton(
                                                   onPressed: () => {
                                                     Navigator.of(context).push(
@@ -1376,6 +1374,8 @@ class _PrerequisiteScreenState extends State<PrerequisiteScreen> {
                                                       .withOpacity(0.5),
                                                   color: Color(int.parse(
                                                       "0xFF${appBloc.uiSettingModel.appButtonBgColor.substring(1, 7).toUpperCase()}")),
+                                                  textColor: Color(int.parse(
+                                                      "0xFF${appBloc.uiSettingModel.appButtonTextColor.substring(1, 7).toUpperCase()}")),
                                                   child: Row(
                                                     mainAxisAlignment:
                                                         MainAxisAlignment
@@ -1390,8 +1390,6 @@ class _PrerequisiteScreenState extends State<PrerequisiteScreen> {
                                                       ),
                                                     ],
                                                   ),
-                                                  textColor: Color(int.parse(
-                                                      "0xFF${appBloc.uiSettingModel.appButtonTextColor.substring(1, 7).toUpperCase()}")),
                                                 ),
                                               ),
                                             ),
@@ -1404,7 +1402,7 @@ class _PrerequisiteScreenState extends State<PrerequisiteScreen> {
                                                     : true,
                                                 child: Expanded(
                                                     child: Padding(
-                                                  padding: EdgeInsets.all(5.0),
+                                                  padding: const EdgeInsets.all(5.0),
                                                   child: MaterialButton(
                                                     onPressed: () => {
                                                       isPopScreen = false,
@@ -1434,6 +1432,8 @@ class _PrerequisiteScreenState extends State<PrerequisiteScreen> {
                                                         .withOpacity(0.5),
                                                     color: Color(int.parse(
                                                         "0xFF${appBloc.uiSettingModel.appButtonBgColor.substring(1, 7).toUpperCase()}")),
+                                                    textColor: Color(int.parse(
+                                                        "0xFF${appBloc.uiSettingModel.appButtonTextColor.substring(1, 7).toUpperCase()}")),
                                                     child: Row(
                                                       mainAxisAlignment:
                                                           MainAxisAlignment
@@ -1449,8 +1449,6 @@ class _PrerequisiteScreenState extends State<PrerequisiteScreen> {
                                                         ),
                                                       ],
                                                     ),
-                                                    textColor: Color(int.parse(
-                                                        "0xFF${appBloc.uiSettingModel.appButtonTextColor.substring(1, 7).toUpperCase()}")),
                                                   ),
                                                 )))
                                           ],

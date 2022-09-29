@@ -1416,16 +1416,13 @@ class DashboardCalendar extends State<DashboardCalendarScreen> with TickerProvid
 //    print('bottomsheetobjit ${table2.objecttypeid}');
     showModalBottomSheet(
         context: context,
+        shape: AppConstants().bottomSheetShapeBorder(),
         builder: (BuildContext bc) {
-          return Container(
-            color: Color(
-              int.parse(
-                  "0xFF${appBloc.uiSettingModel.appBGColor.substring(1, 7).toUpperCase()}"),
-            ),
+          return AppConstants().bottomSheetContainer(
             child: SingleChildScrollView(
-              child: Column(
+              child: new Column(
                 children: <Widget>[
-                  const BottomSheetDragger(),
+                  BottomSheetDragger(),
                   //displayPlay(table2),
                   displayView(table2),
                   displayDetails(table2, i),
@@ -1471,17 +1468,9 @@ class DashboardCalendar extends State<DashboardCalendarScreen> with TickerProvid
           (table2.mediatypeid == 3 || table2.mediatypeid == 4)) {
         return Container();
       } else {
-        return ListTile(
-          leading: Icon(
-            IconDataSolid(int.parse('0xf06e')),
-            color: InsColor(appBloc).appIconColor,
-          ),
-          title: Text(appBloc.localstr.mylearningActionsheetViewoption,
-              style: TextStyle(
-                  color: Color(
-                int.parse(
-                    "0xFF${appBloc.uiSettingModel.appTextColor.substring(1, 7).toUpperCase()}"),
-              ))),
+        return new BottomsheetOptionTile(
+          iconData: IconDataSolid(int.parse('0xf06e')),
+          text: appBloc.localstr.mylearningActionsheetViewoption,
           onTap: () {
             Navigator.of(context).pop();
 
@@ -1489,11 +1478,15 @@ class DashboardCalendar extends State<DashboardCalendarScreen> with TickerProvid
 //              print('ifdataaaaa');
               String alertMessage =
                   appBloc.localstr.prerequistesalerttitle6Alerttitle6;
-              alertMessage = "$alertMessage  \"${appBloc.localstr.prerequisLabelContenttypelabel}\" ${appBloc.localstr.prerequistesalerttitle5Alerttitle7}";
+              alertMessage = alertMessage +
+                  "  \"" +
+                  appBloc.localstr.prerequisLabelContenttypelabel +
+                  "\" " +
+                  appBloc.localstr.prerequistesalerttitle5Alerttitle7;
 
               showDialog(
                   context: context,
-                  builder: (BuildContext context) => AlertDialog(
+                  builder: (BuildContext context) => new AlertDialog(
                         title: Text(
                           appBloc.localstr.detailsAlerttitleStringalert,
                           style: TextStyle(
@@ -1557,17 +1550,9 @@ class DashboardCalendar extends State<DashboardCalendarScreen> with TickerProvid
     } else if (table2.objecttypeid == 688 || table2.objecttypeid == 70) {
       return Container();
     } else {
-      return ListTile(
-        leading: Icon(
-          IconDataSolid(int.parse('0xf06e')),
-          color: InsColor(appBloc).appIconColor,
-        ),
-        title: Text(appBloc.localstr.mylearningActionsheetViewoption,
-            style: TextStyle(
-                color: Color(
-              int.parse(
-                  "0xFF${appBloc.uiSettingModel.appTextColor.substring(1, 7).toUpperCase()}"),
-            ))),
+      return new BottomsheetOptionTile(
+        iconData: IconDataSolid(int.parse('0xf06e')),
+        text: appBloc.localstr.mylearningActionsheetViewoption,
         onTap: () {
           Navigator.of(context).pop();
 
@@ -1716,17 +1701,9 @@ class DashboardCalendar extends State<DashboardCalendarScreen> with TickerProvid
     if (table2.objecttypeid == 70 && (table2.bit4 != null && table2.bit4)) {
       return Container();
     }
-    return ListTile(
-        leading: Icon(
-          IconDataSolid(int.parse('0xf570')),
-          color: InsColor(appBloc).appIconColor,
-        ),
-        title: Text(appBloc.localstr.mylearningActionsheetDetailsoption,
-            style: TextStyle(
-                color: Color(
-              int.parse(
-                  "0xFF${appBloc.uiSettingModel.appTextColor.substring(1, 7).toUpperCase()}"),
-            ))),
+    return new BottomsheetOptionTile(
+        iconData: IconDataSolid(int.parse('0xf570')),
+        text: appBloc.localstr.mylearningActionsheetDetailsoption,
         onTap: () {
           Navigator.pop(context);
           if (table2.objecttypeid == 70 && table2.eventscheduletype == 2
@@ -1735,16 +1712,19 @@ class DashboardCalendar extends State<DashboardCalendarScreen> with TickerProvid
               ) {
             Navigator.of(context)
                 .push(MaterialPageRoute(
-                    builder: (context) => CommonDetailScreen(
-                      screenType: ScreenType.MyLearning,
-                      contentid: table2.contentid,
-                      objtypeId: table2.objecttypeid,
-                      detailsBloc: detailsBloc,
-                      table2: table2,
-                      //     nativeModel: widget.nativeModel,
-                      isFromReschedule: false,
-                      //isFromMyLearning: false
-                    )))
+                    builder: (context) => ChangeNotifierProvider(
+                          create: (context) => ProviderModel(),
+                          child: CommonDetailScreen(
+                            screenType: ScreenType.MyLearning,
+                            contentid: table2.contentid,
+                            objtypeId: table2.objecttypeid,
+                            detailsBloc: detailsBloc,
+                            table2: table2,
+                            //     nativeModel: widget.nativeModel,
+                            isFromReschedule: false,
+                            //isFromMyLearning: false
+                          ),
+                        )))
                 .then((value) => {
                       if (value == true)
                         { Container(),
@@ -1760,13 +1740,16 @@ class DashboardCalendar extends State<DashboardCalendarScreen> with TickerProvid
                 'isaddedtomylearning${table2.isaddedtomylearning}');
             Navigator.of(context)
                 .push(MaterialPageRoute(
-                    builder: (context) => CommonDetailScreen(
-                        screenType: ScreenType.MyLearning,
-                        contentid: table2.contentid,
-                        objtypeId: table2.objecttypeid,
-                        detailsBloc: detailsBloc,
-                        table2: table2,
-                        isFromReschedule: false)))
+                    builder: (context) => ChangeNotifierProvider(
+                          create: (context) => ProviderModel(),
+                          child: CommonDetailScreen(
+                              screenType: ScreenType.MyLearning,
+                              contentid: table2.contentid,
+                              objtypeId: table2.objecttypeid,
+                              detailsBloc: detailsBloc,
+                              table2: table2,
+                              isFromReschedule: false),
+                        )))
                 .then((value) => {
                       if (value == true)
                         {
@@ -1781,16 +1764,19 @@ class DashboardCalendar extends State<DashboardCalendarScreen> with TickerProvid
                 'isaddedtomylearning${table2.isaddedtomylearning}');
             Navigator.of(context)
                 .push(MaterialPageRoute(
-                    builder: (context) => CommonDetailScreen(
-                        screenType: ScreenType.MyLearning,
-                        contentid: table2.contentid,
-                        objtypeId: table2.objecttypeid,
-                        detailsBloc: detailsBloc,
-                        table2: table2,
-                        pos: i,
-                        mylearninglist: myLearningBloc.list,
-                        isFromReschedule: false
-                        //isFromMyLearning: true
+                    builder: (context) => ChangeNotifierProvider(
+                          create: (context) => ProviderModel(),
+                          child: CommonDetailScreen(
+                              screenType: ScreenType.MyLearning,
+                              contentid: table2.contentid,
+                              objtypeId: table2.objecttypeid,
+                              detailsBloc: detailsBloc,
+                              table2: table2,
+                              pos: i,
+                              mylearninglist: myLearningBloc.list,
+                              isFromReschedule: false
+                              //isFromMyLearning: true
+                              ),
                         )))
                 .then((value) => {
                       if (value == true)
@@ -1977,17 +1963,9 @@ class DashboardCalendar extends State<DashboardCalendarScreen> with TickerProvid
       if ((table2.eventenddatetime != null) && isValidString(table2.eventenddatetime)) if (!returnEventCompleted(
           table2.eventenddatetime)) {
         if (table2.typeofevent == 2) {
-          return ListTile(
-            leading: Icon(
-              IconDataSolid(int.parse('0xf234')),
-              color: InsColor(appBloc).appIconColor,
-            ),
-            title: Text(appBloc.localstr.mylearningActionsheetJoinoption,
-                style: TextStyle(
-                    color: Color(
-                  int.parse(
-                      "0xFF${appBloc.uiSettingModel.appTextColor.substring(1, 7).toUpperCase()}"),
-                ))),
+          return new BottomsheetOptionTile(
+            iconData: IconDataSolid(int.parse('0xf234')),
+            text: appBloc.localstr.mylearningActionsheetJoinoption,
             onTap: () {
               Navigator.pop(context);
               String joinUrl = table2.joinurl;
@@ -2000,7 +1978,7 @@ class DashboardCalendar extends State<DashboardCalendarScreen> with TickerProvid
                 flutterToast.showToast(
                   child: CommonToast(displaymsg: 'No url found'),
                   gravity: ToastGravity.BOTTOM,
-                  toastDuration: const Duration(seconds: 2),
+                  toastDuration: Duration(seconds: 2),
                 );
 //              Toast.makeText(v.getContext(), "No Url Found", Toast.LENGTH_SHORT).show();
               }
@@ -2063,18 +2041,9 @@ class DashboardCalendar extends State<DashboardCalendarScreen> with TickerProvid
 
       if ((table2.eventenddatetime != null) && isValidString(table2.eventenddatetime)) if (!returnEventCompleted(
           table2.eventenddatetime)) {
-        return ListTile(
-          leading: Icon(
-            IconDataSolid(int.parse('0xf271')),
-            color: InsColor(appBloc).appIconColor,
-          ),
-          title: Text(
-              appBloc.localstr.mylearningActionsheetAddtocalendaroption,
-              style: TextStyle(
-                  color: Color(
-                int.parse(
-                    "0xFF${appBloc.uiSettingModel.appTextColor.substring(1, 7).toUpperCase()}"),
-              ))),
+        return new BottomsheetOptionTile(
+          iconData: IconDataSolid(int.parse('0xf271')),
+          text: appBloc.localstr.mylearningActionsheetAddtocalendaroption,
           onTap: () {
             DateTime startDate = DateFormat("yyyy-MM-ddTHH:mm:ss")
                 .parse(table2.eventstartdatetime);

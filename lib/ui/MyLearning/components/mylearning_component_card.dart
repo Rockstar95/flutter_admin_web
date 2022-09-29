@@ -1,5 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_admin_web/configs/extensions.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_admin_web/framework/bloc/app/bloc/app_bloc.dart';
@@ -16,20 +17,28 @@ import 'package:flutter_admin_web/utils/my_utils.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
+import '../../../configs/constants.dart';
+import '../../common/app_colors.dart';
+
 class MyLearningComponentCard extends StatefulWidget {
   final DummyMyCatelogResponseTable2 table2;
+  final DummyMyCatelogResponseTable2? trackModel;
   final String trackContentId, trackContentName;
-  final bool isArchive, isDownloadCard, isTrackContent;
+  final bool isArchive, isDownloadCard, isTrackContent, isShowTrackName, isShowLock, isShowMoreOption;
   final void Function()? onArchievedTap, onMoreTap, onReviewTap, onViewTap, onDownloadPaused, onDownloading, onDownloaded, onNotDownloaded;
 
   const MyLearningComponentCard({
     Key? key,
     required this.table2,
+    this.trackModel,
     this.trackContentId = "",
     this.trackContentName = "",
     this.isArchive = false,
     this.isDownloadCard = false,
     this.isTrackContent = false,
+    this.isShowTrackName = false,
+    this.isShowLock = false,
+    this.isShowMoreOption = true,
     this.onArchievedTap,
     this.onMoreTap,
     this.onReviewTap,
@@ -45,6 +54,7 @@ class MyLearningComponentCard extends StatefulWidget {
 }
 
 class _MyLearningComponentCardState extends State<MyLearningComponentCard> {
+  bool isFirst = true;
   late AppBloc appBloc;
 
   bool isDownloaded = false;
@@ -53,6 +63,33 @@ class _MyLearningComponentCardState extends State<MyLearningComponentCard> {
   bool isZipFile = false;
   bool isDownloadFileExtracted = false;
   double downloadprogress = 1;
+
+  GlobalKey widgetKey = GlobalKey();
+  Size? oldSize;
+
+  void postFrameCallback(_) {
+    var context = widgetKey.currentContext;
+    if (context == null) return;
+
+    var newSize = context.size;
+    //MyPrint.printOnConsole("New Size in Callback:${newSize}");
+    //if(newSize != null) MyPrint.printOnConsole("New Size in Callback:{Width:${newSize.width}, Height:${newSize.height}}");
+    //if(newSize != null) MyPrint.printOnConsole("Old Size in Callback:{Width:${oldSize?.width}, Height:${oldSize?.height}}");
+    /*if(widget.userModel.id == "XQFFkZlFQRGYrgjl7sRl") {
+      MyPrint.printOnConsole("New Size in Callback:${newSize}");
+      if(newSize != null) MyPrint.printOnConsole("New Size in Callback:{Width:${newSize.width}, Height:${newSize.height}");
+    }*/
+
+    if(newSize == null) {
+      return;
+    }
+
+    if (oldSize != null && oldSize!.height == newSize.height && oldSize!.width == newSize.width) return;
+
+    MyPrint.printOnConsole("Going To Resize");
+    oldSize = Size(newSize.width, newSize.height);
+    setState(() {});
+  }
 
   bool isValidString(String val) {
 //    print('validstrinh $val');
@@ -145,6 +182,13 @@ class _MyLearningComponentCardState extends State<MyLearningComponentCard> {
         }
       });
     }*/
+
+    if(isFirst) {
+      isFirst = false;
+      WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+        postFrameCallback(null);
+      });
+    }
 
     return Consumer<MyLearningDownloadProvider>(
       builder: (BuildContext context, MyLearningDownloadProvider myLearningDownloadProvider, Widget? child) {
@@ -268,8 +312,12 @@ class _MyLearningComponentCardState extends State<MyLearningComponentCard> {
           MyPrint.printOnConsole("isDownloaded:${isDownloaded}");
         }*/
 
+        // MyPrint.printOnConsole("isFileDownloaded for contentId:${widget.table2.contentid}, ${widget.table2.name}, objectType:${widget.table2.objecttypeid}");
         if(downloadsList.isNotEmpty) {
           MyLearningDownloadModel myLearningDownloadModel = downloadsList.first;
+
+          // MyPrint.printOnConsole("isFileDownloaded for contentId:${myLearningDownloadModel.contentId}, ${myLearningDownloadModel.table2.name}, objectType:${myLearningDownloadModel.table2.objecttypeid}:${myLearningDownloadModel.isFileDownloaded}");
+
           isDownloaded = myLearningDownloadModel.isFileDownloaded;
           isZipFile = myLearningDownloadModel.isZip && myLearningDownloadModel.taskId.isNotEmpty;
           isDownloadFileExtracted = isZipFile && myLearningDownloadModel.isFileExtracted;
@@ -295,8 +343,8 @@ class _MyLearningComponentCardState extends State<MyLearningComponentCard> {
             MyPrint.printOnConsole("myLearningDownloadModel.isFileDownloadingPaused:${myLearningDownloadModel.isFileDownloadingPaused}\n-----");
           }*/
 
-          print("Download Status:${myLearningDownloadModel.downloadStatus}");
-          print("isDownloaded:$isDownloaded, Name:${widget.table2.name}");
+          // print("Download Status:${myLearningDownloadModel.downloadStatus}");
+          // print("isDownloaded:$isDownloaded, Name:${widget.table2.name}");
 
           //table2.isdownloaded = isDownloaded;
           //table2.isDownloading = isDownloading;
@@ -318,31 +366,7 @@ class _MyLearningComponentCardState extends State<MyLearningComponentCard> {
                 ),
                 child: Column(
                   children: [
-                    Visibility(
-                      visible: widget.trackContentName.isNotEmpty,
-                      child: Container(
-                        padding: EdgeInsets.symmetric(vertical: 2),
-                        decoration: BoxDecoration(
-                          color: Color(int.parse('0xFF${appBloc.uiSettingModel.appButtonBgColor.substring(1, 7).toUpperCase()}')),
-                          borderRadius: BorderRadius.only(topLeft: Radius.circular(10), topRight: Radius.circular(10)),
-                        ),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Text(
-                              widget.trackContentName,
-                              style: TextStyle(
-                                fontSize: ScreenUtil().setSp(11.h),
-                                color: Color(int.parse('0xFF${appBloc.uiSettingModel.appButtonTextColor.substring(1, 7).toUpperCase()}')),
-                                fontWeight: FontWeight.w500,
-                              ),
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
+                    getTrackName(),
                     Expanded(
                       child: Container(
                         padding: EdgeInsets.symmetric(horizontal: 10.h, vertical: 10.h),
@@ -410,85 +434,109 @@ class _MyLearningComponentCardState extends State<MyLearningComponentCard> {
             child: Card(
               color: InsColor(appBloc).appBGColor,
               elevation: 4,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: <Widget>[
-                  getHeaderWidget(),
-                  Stack(
-                    children: [
-                      Container(
-                        //color: Colors.red,
-                        child: Column(
-                          children: [
-                            getCourseProgressIndicatorWidget(statuscolor),
-                            Stack(
+              child: Container(
+                child: Stack(
+                  // fit: StackFit.expand,
+                  fit: StackFit.loose,
+                  children: [
+                    Container(
+                      key: widgetKey,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisSize: MainAxisSize.min,
+                        children: <Widget>[
+                          getTrackName(),
+                          getHeaderWidget(),
+                          Stack(
+                            children: [
+                              Container(
+                                //color: Colors.red,
+                                child: Column(
+                                  children: [
+                                    getCourseProgressIndicatorWidget(statuscolor),
+                                    Stack(
+                                      children: <Widget>[
+                                        getContentThumbnailImageWidget(isExpired),
+                                        Positioned.fill(
+                                          child: getContentTypeIcon(contentIconPath),
+                                        ),
+                                        Positioned(
+                                          top: 15,
+                                          left: 15,
+                                          child: getContentStatusWidget(statuscolor, isExpired),
+                                        ),
+                                      ],
+                                    ),
+                                    SizedBox(height: 30.w,),
+                                  ],
+                                ),
+                              ),
+                              Positioned(
+                                bottom: 4,
+                                right: 10,
+                                child: displayDownloadButton(widget.table2),
+                              ),
+                            ],
+                          ),
+                          Container(
+                            color: isExpired
+                                ? Color(int.parse('0xFF${appBloc.uiSettingModel.expiredBGColor.substring(1, 7).toUpperCase()}')).withOpacity(0.8)
+                                : Color(int.parse('0xFF${appBloc.uiSettingModel.appBGColor.substring(1, 7).toUpperCase()}')),
+                            padding: EdgeInsets.all(ScreenUtil().setWidth(15)),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
                               children: <Widget>[
-                                getContentThumbnailImageWidget(isExpired),
-                                Positioned.fill(
-                                  child: getContentTypeIcon(contentIconPath),
+                                getContentNameAndMoreActionWidget(isExpired),
+                                SizedBox(height: ScreenUtil().setHeight(10),),
+                                getContentAuthorDetailsWidget(
+                                  authorImageUrl: authorImageUrl,
+                                  authorName: widget.table2.objecttypeid == 70
+                                      ? (widget.table2.presenter?.toString() ?? "")
+                                      : (widget.table2.author.isNotEmpty
+                                          ? widget.table2.author
+                                          : (widget.table2.authordisplayname.isNotEmpty ? widget.table2.authordisplayname : widget.table2.contentauthordisplayname)
+                                        ),
                                 ),
-                                Positioned(
-                                  top: 15,
-                                  left: 15,
-                                  child: getContentStatusWidget(statuscolor, isExpired),
+                                SizedBox(height: ScreenUtil().setHeight(3),),
+                                getContentReviewAndRatingWidget(
+                                  isExpired: isExpired,
+                                  isratingbarVissble: isratingbarVissble,
+                                  isReviewVissble: isReviewVissble,
                                 ),
+                                SizedBox(height: ScreenUtil().setHeight(2),),
+                                getContentSiteNameWidget(),
+                                SizedBox(height: ScreenUtil().setHeight(2),),
+                                getContentShortDescriptionWidget(),
+                                SizedBox(height: ScreenUtil().setHeight(10),),
+                                isExpired ? Container() : getContentActionPanel(),
                               ],
                             ),
-                            SizedBox(height: 30.w,),
-                          ],
-                        ),
+                          ),
+                        ],
                       ),
-                      /*Align(
-                  alignment: Alignment.bottomRight,
-                  child: displayDownloadButton(widget.table2),
-                ),*/
-                      Positioned(
-                        bottom: 4,
-                        right: 10,
-                        child: displayDownloadButton(widget.table2),
-                      ),
-                    ],
-                  ),
-                  Container(
-                    color: isExpired
-                        ? Color(int.parse('0xFF${appBloc.uiSettingModel.expiredBGColor.substring(1, 7).toUpperCase()}')).withOpacity(0.8)
-                        : Color(int.parse('0xFF${appBloc.uiSettingModel.appBGColor.substring(1, 7).toUpperCase()}')),
-                    padding: EdgeInsets.all(ScreenUtil().setWidth(15)),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: <Widget>[
-                        getContentNameAndMoreActionWidget(isExpired),
-                        SizedBox(height: ScreenUtil().setHeight(10),),
-                        getContentAuthorDetailsWidget(
-                          authorImageUrl: authorImageUrl,
-                          authorName: widget.table2.objecttypeid == 70
-                              ? (widget.table2.presenter?.toString() ?? "")
-                              : (widget.table2.author.isNotEmpty
-                                  ? widget.table2.author
-                                  : (widget.table2.authordisplayname.isNotEmpty ? widget.table2.authordisplayname : widget.table2.contentauthordisplayname)
-                                ),
-                        ),
-                        SizedBox(height: ScreenUtil().setHeight(3),),
-                        getContentReviewAndRatingWidget(
-                          isExpired: isExpired,
-                          isratingbarVissble: isratingbarVissble,
-                          isReviewVissble: isReviewVissble,
-                        ),
-                        SizedBox(height: ScreenUtil().setHeight(2),),
-                        getContentSiteNameWidget(),
-                        SizedBox(height: ScreenUtil().setHeight(2),),
-                        getContentShortDescriptionWidget(),
-                        SizedBox(height: ScreenUtil().setHeight(10),),
-                        isExpired ? Container() : getContentActionPanel(),
-                      ],
                     ),
-                  ),
-                ],
+                    if(widget.isShowLock && widget.table2.wstatus == "disabled") getLockWidget(),
+                  ],
+                ),
               ),
             ),
           );
         }
       },
+    );
+  }
+
+  Widget getLockWidget() {
+    double margin = 20;
+
+    Size size = Size(0, 430);
+
+    return Container(
+      color: Colors.white24.withOpacity(0.4),
+      alignment: Alignment.topRight,
+      height: (oldSize ?? size).height,
+      padding: EdgeInsets.only(top: margin, right: margin,),
+      child: Icon(Icons.lock_outline, size: 30,),
     );
   }
 
@@ -690,9 +738,8 @@ class _MyLearningComponentCardState extends State<MyLearningComponentCard> {
               Text(
                 widget.table2.medianame,
                 style: TextStyle(
-                    fontSize: ScreenUtil().setSp(14),
-                    color: Color(int.parse(
-                        '0xFF${appBloc.uiSettingModel.appTextColor.substring(1, 7).toUpperCase()}'))),
+                    fontSize: ScreenUtil().setSp(13),
+                    color: AppColors.getAppTextColor().withOpacity(0.5) ),
               ),
               SizedBox(
                 height: ScreenUtil().setHeight(10),
@@ -758,7 +805,7 @@ class _MyLearningComponentCardState extends State<MyLearningComponentCard> {
           authorName,
           style: TextStyle(
             fontSize: ScreenUtil().setSp(13),
-            color: Color(int.parse('0xFF${appBloc.uiSettingModel.appTextColor.substring(1, 7).toUpperCase()}')).withOpacity(0.5),
+            color: AppColors.getAppTextColor().withOpacity(0.5),
           ),
         ),
       ],
@@ -946,6 +993,9 @@ class _MyLearningComponentCardState extends State<MyLearningComponentCard> {
   }
 
   Widget getMoreButton(bool isExpired) {
+    if(!widget.isShowMoreOption) {
+      return SizedBox();
+    }
     return GestureDetector(
       onTap: isExpired
           ? null
@@ -966,6 +1016,37 @@ class _MyLearningComponentCardState extends State<MyLearningComponentCard> {
   //endregion My Learning Download Card
 
 
+  Widget getTrackName() {
+    if(widget.isShowTrackName && widget.trackContentName.isNotEmpty) {
+      return Container(
+        // margin: EdgeInsets.only(bottom: 5),
+        padding: EdgeInsets.symmetric(vertical: 2),
+        decoration: BoxDecoration(
+          color: Color(int.parse('0xFF${appBloc.uiSettingModel.appButtonBgColor.substring(1, 7).toUpperCase()}')),
+          borderRadius: BorderRadius.only(topLeft: Radius.circular(10), topRight: Radius.circular(10)),
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text(
+              widget.trackContentName,
+              style: TextStyle(
+                fontSize: ScreenUtil().setSp(11.h),
+                color: Color(int.parse('0xFF${appBloc.uiSettingModel.appButtonTextColor.substring(1, 7).toUpperCase()}')),
+                fontWeight: FontWeight.w500,
+              ),
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+            ),
+          ],
+        ),
+      );
+    }
+    else {
+      return SizedBox();
+    }
+  }
+
   //region Action Panel
   Widget displayDownloadButton(DummyMyCatelogResponseTable2 table2) {
     //table2.isdownloaded = false;
@@ -982,7 +1063,7 @@ class _MyLearningComponentCardState extends State<MyLearningComponentCard> {
     // }
 
     //if ([8, 9, 10, 26, 52, 102].contains(table2.objecttypeid) || (table2.objecttypeid == 11)) {
-    if ([8, 9, 11, 14, 20, 21, 36, 52].contains(table2.objecttypeid)) {
+    if (AppConstants.downloadableContentIds.contains(table2.objecttypeid)) {
       IconData iconData;
       Function? callback;
       Color color;
@@ -1260,9 +1341,9 @@ class _MyLearningComponentCardState extends State<MyLearningComponentCard> {
               ),
               SizedBox(width: 8.0.w),
               Text(
-                mylearningActionsheetViewoption.toUpperCase(),
+                mylearningActionsheetViewoption,
                 style: TextStyle(
-                  fontSize: ScreenUtil().setSp(14),
+                  fontSize: ScreenUtil().setSp(17.5),
                   color: Color(int.parse(
                       '0xFF${appBloc.uiSettingModel.appButtonTextColor.substring(1, 7).toUpperCase()}')),
                 ),

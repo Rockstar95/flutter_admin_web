@@ -31,7 +31,9 @@ import 'package:flutter_admin_web/ui/common/Viewimagenew.dart';
 import 'package:flutter_admin_web/ui/common/common_toast.dart';
 import 'package:intl/intl.dart';
 
+import '../../configs/constants.dart';
 import '../common/bottomsheet_drager.dart';
+import '../common/bottomsheet_option_tile.dart';
 import 'add_topic.dart';
 import 'discussion_forum_likes.dart';
 
@@ -50,7 +52,7 @@ class DiscussionForumTopic extends StatefulWidget {
 }
 
 class _DiscussionForumTopicState extends State<DiscussionForumTopic> with SingleTickerProviderStateMixin {
-  GlobalKey<ScaffoldState> _scaffoldkey = new GlobalKey<ScaffoldState>();
+  GlobalKey<ScaffoldState> _scaffoldkey = GlobalKey<ScaffoldState>();
 
   late DiscussionTopicBloc discussionTopicBloc;
   late DiscussionMainHomeBloc discussionMainHomeBloc;
@@ -66,7 +68,7 @@ class _DiscussionForumTopicState extends State<DiscussionForumTopic> with Single
     super.initState();
     // final unique = widget.forumList.totalLikes.where((str) => seen.add(str)).toList();
 
-    discussionTopicBloc = new DiscussionTopicBloc(
+    discussionTopicBloc = DiscussionTopicBloc(
         discussionTopicRepositry:
             DiscussionTopicRepositoryBuilder.repository());
     discussionMainHomeBloc = DiscussionMainHomeBloc(
@@ -156,9 +158,9 @@ class _DiscussionForumTopicState extends State<DiscussionForumTopic> with Single
               height: 2,
               color: InsColor(appBloc).appTextColor,
             ),
-            new Column(
+            Column(
               children: [
-                new Expanded(
+                Expanded(
                   child: RefreshIndicator(
                     onRefresh: () async {
                       refresh();
@@ -166,17 +168,17 @@ class _DiscussionForumTopicState extends State<DiscussionForumTopic> with Single
                     color: Color(int.parse(
                         "0xFF${appBloc.uiSettingModel.appButtonBgColor.substring(1, 7).toUpperCase()}")),
                     child: SingleChildScrollView(
-                      physics: AlwaysScrollableScrollPhysics(),
-                      child: new Column(
+                      physics: const AlwaysScrollableScrollPhysics(),
+                      child: Column(
                         children: [
                           mainTopicWidget(),
-                          new Divider(
+                          Divider(
                             height: 2,
                             color: InsColor(appBloc).appTextColor,
                           ),
                           lastUpdatedBy(),
                           // moderateBy(),
-                          new Divider(
+                          Divider(
                             height: 2,
                             color: InsColor(appBloc).appTextColor,
                           ),
@@ -195,56 +197,56 @@ class _DiscussionForumTopicState extends State<DiscussionForumTopic> with Single
   }
 
   Widget mainTopicWidget() {
-    return new Column(
+    return Column(
       children: [
-        new Padding(
-          padding: EdgeInsets.all(10.0),
-          child: new Container(
+        Padding(
+          padding: const EdgeInsets.all(10.0),
+          child: Container(
             color: Color(int.parse(
                 "0xFF${appBloc.uiSettingModel.appBGColor.substring(1, 7).toUpperCase()}")),
-            child: new Column(
+            child: Column(
               children: [
-                new Row(
+                Row(
                   children: [
-                    new Container(
+                    Container(
                       width: 50.0,
                       height: 50.0,
-                      padding: EdgeInsets.all(10.0),
-                      decoration: new BoxDecoration(
+                      padding: const EdgeInsets.all(10.0),
+                      decoration: BoxDecoration(
                         color: const Color(0xff7c94b6),
-                        image: new DecorationImage(
+                        image: DecorationImage(
                           image: widget.forumList.forumThumbnailPath != ""
                               ? NetworkImage(widget.forumList.forumThumbnailPath
                                       .startsWith('http')
                                   ? widget.forumList.forumThumbnailPath
                                   : '${ApiEndpoints.strSiteUrl + widget.forumList.forumThumbnailPath}')
-                              : AssetImage(
+                              : const AssetImage(
                                   'assets/user.gif',
                                 ) as ImageProvider,
                           fit: BoxFit.fill,
                         ),
                         borderRadius:
-                            new BorderRadius.all(new Radius.circular(50.0)),
+                            const BorderRadius.all(const Radius.circular(50.0)),
                       ),
                     ),
-                    new Expanded(
-                        child: new Column(
+                    Expanded(
+                        child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Padding(
-                            padding: EdgeInsets.only(
+                            padding: const EdgeInsets.only(
                               left: 10,
                             ),
-                            child: new Text(
+                            child: Text(
                               widget.forumList.name,
                               style: Theme.of(context).textTheme.caption?.apply(
                                   color: InsColor(appBloc).appTextColor),
                             )),
                         Padding(
-                            padding: EdgeInsets.only(
+                            padding: const EdgeInsets.only(
                               left: 10,
                             ),
-                            child: new Text(
+                            child: Text(
                               // DateTime
                               //     .now()
                               //     .difference(
@@ -272,12 +274,12 @@ class _DiscussionForumTopicState extends State<DiscussionForumTopic> with Single
                 ),*/
                   ],
                 ),
-                new Column(
+                Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Padding(
                       padding:
-                          EdgeInsets.only(top: 20, left: 10.0, right: 10.0),
+                          const EdgeInsets.only(top: 20, left: 10.0, right: 10.0),
                       child: Html(
                           shrinkWrap: true,
                           data: widget.forumList.description,
@@ -320,12 +322,12 @@ class _DiscussionForumTopicState extends State<DiscussionForumTopic> with Single
                     //   ),
                     // ),
                     Padding(
-                        padding: EdgeInsets.only(top: 10, left: 10),
+                        padding: const EdgeInsets.only(top: 10, left: 10),
                         child: Row(
                           crossAxisAlignment: CrossAxisAlignment.center,
                           mainAxisAlignment: MainAxisAlignment.start,
                           children: [
-                            new Container(
+                            Container(
                               width: 70.0,
                               height: 25.0,
                               decoration: BoxDecoration(
@@ -336,8 +338,8 @@ class _DiscussionForumTopicState extends State<DiscussionForumTopic> with Single
                                         .withAlpha(0),
                                   ),
                                   borderRadius:
-                                      BorderRadius.all(Radius.circular(20))),
-                              child: new Row(
+                                      const BorderRadius.all(Radius.circular(20))),
+                              child: Row(
                                 children: [
                                   IconButton(
                                     onPressed: () {
@@ -348,7 +350,7 @@ class _DiscussionForumTopicState extends State<DiscussionForumTopic> with Single
                                                       forumList:
                                                           widget.forumList)));
                                     },
-                                    padding: new EdgeInsets.only(bottom: 1.0),
+                                    padding: const EdgeInsets.only(bottom: 1.0),
                                     icon: Icon(
                                       Icons.thumb_up,
                                       color: Color(int.parse("0xFF1D293F")),
@@ -364,9 +366,9 @@ class _DiscussionForumTopicState extends State<DiscussionForumTopic> with Single
                                 ],
                               ),
                             ),
-                            new Padding(
-                              padding: EdgeInsets.only(left: 5.0),
-                              child: new Container(
+                            Padding(
+                              padding: const EdgeInsets.only(left: 5.0),
+                              child: Container(
                                   width: 70.0,
                                   height: 25.0,
                                   decoration: BoxDecoration(
@@ -376,12 +378,12 @@ class _DiscussionForumTopicState extends State<DiscussionForumTopic> with Single
                                             .appTextColor
                                             .withAlpha(0),
                                       ),
-                                      borderRadius: BorderRadius.all(
-                                          Radius.circular(20))),
-                                  child: new Row(children: [
+                                      borderRadius: const BorderRadius.all(
+                                          const Radius.circular(20))),
+                                  child: Row(children: [
                                     IconButton(
                                       onPressed: () {},
-                                      padding: new EdgeInsets.only(bottom: 1.0),
+                                      padding: const EdgeInsets.only(bottom: 1.0),
                                       icon: Icon(
                                         Icons.comment,
                                         color: Color(int.parse("0xFF1D293F")),
@@ -399,8 +401,8 @@ class _DiscussionForumTopicState extends State<DiscussionForumTopic> with Single
                             Visibility(
                                 visible: widget.forumList.createNewTopic,
                                 child: Padding(
-                                    padding: EdgeInsets.only(left: 10.0),
-                                    child: new GestureDetector(
+                                    padding: const EdgeInsets.only(left: 10.0),
+                                    child: GestureDetector(
                                       onTap: () {
                                         Navigator.of(context)
                                             .push(MaterialPageRoute(
@@ -446,63 +448,63 @@ class _DiscussionForumTopicState extends State<DiscussionForumTopic> with Single
       print(s);
     }
 
-    return new Padding(
+    return Padding(
       padding:
-          EdgeInsets.only(left: 30.0, top: 10.0, bottom: 10.0, right: 20.0),
-      child: new Container(
+          const EdgeInsets.only(left: 30.0, top: 10.0, bottom: 10.0, right: 20.0),
+      child: Container(
         color: Color(int.parse(
             "0xFF${appBloc.uiSettingModel.appBGColor.substring(1, 7).toUpperCase()}")),
-        child: new Column(
+        child: Column(
           children: [
-            new Row(
+            Row(
               children: [
-                new Text(
+                Text(
                   'Last Updated by',
                   style: TextStyle(
                       color: Color(int.parse(
                           "0xFF${appBloc.uiSettingModel.appTextColor.substring(1, 7).toUpperCase()}")),
                       fontWeight: FontWeight.bold),
                 ),
-                new Spacer(),
-                new Icon(
+                const Spacer(),
+                Icon(
                   Icons.arrow_drop_up,
                   color: Color(int.parse(
                       "0xFF${appBloc.uiSettingModel.appTextColor.substring(1, 7).toUpperCase()}")),
                 )
               ],
             ),
-            new Row(
+            Row(
               children: [
-                new Container(
+                Container(
                   width: 40.0,
                   height: 40.0,
-                  padding: EdgeInsets.all(20.0),
-                  decoration: new BoxDecoration(
+                  padding: const EdgeInsets.all(20.0),
+                  decoration: BoxDecoration(
                     color: const Color(0xff7c94b6),
-                    image: new DecorationImage(
+                    image: DecorationImage(
                       image: widget.forumList.dFProfileImage != ""
                           ? NetworkImage(widget.forumList.dFProfileImage
                                   .startsWith('http')
                               ? widget.forumList.dFProfileImage
                               : '${ApiEndpoints.strSiteUrl + widget.forumList.dFProfileImage}')
-                          : AssetImage(
+                          : const AssetImage(
                               'assets/user.gif',
                             ) as ImageProvider,
                       fit: BoxFit.fill,
                     ),
                     borderRadius:
-                        new BorderRadius.all(new Radius.circular(50.0)),
+                        const BorderRadius.all(const Radius.circular(50.0)),
                   ),
                 ),
-                new Expanded(
-                    child: new Column(
+                Expanded(
+                    child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Padding(
-                        padding: EdgeInsets.only(
+                        padding: const EdgeInsets.only(
                           left: 20,
                         ),
-                        child: new Text(
+                        child: Text(
                           widget.forumList.updatedAuthor,
                           style: Theme.of(context)
                               .textTheme
@@ -510,14 +512,14 @@ class _DiscussionForumTopicState extends State<DiscussionForumTopic> with Single
                               ?.apply(color: InsColor(appBloc).appTextColor),
                         )),
                     Padding(
-                        padding: EdgeInsets.only(
+                        padding: const EdgeInsets.only(
                           left: 20,
                         ),
-                        child: new Text(
+                        child: Text(
                           widget.forumList.createdDate.isEmpty
                               ? ''
                               : DateTime.now().difference(createdDate).inDays.toString() + ' Days',
-                          style: new TextStyle(
+                          style: TextStyle(
                               color: Color(int.parse("0xFF${appBloc.uiSettingModel.appTextColor.substring(1, 7).toUpperCase()}")),
                               fontSize: 10.0),
                         ))
@@ -532,49 +534,49 @@ class _DiscussionForumTopicState extends State<DiscussionForumTopic> with Single
   }
 
   Widget moderateBy() {
-    return new Padding(
-      padding: EdgeInsets.all(10.0),
-      child: new Container(
+    return Padding(
+      padding: const EdgeInsets.all(10.0),
+      child: Container(
         height: 200.0,
-        child: new Column(children: [
-          new Row(
+        child: Column(children: [
+          Row(
             children: [
-              new Text('Last Updated by'),
-              new Spacer(),
-              new Icon(
+              const Text('Last Updated by'),
+              const Spacer(),
+              Icon(
                 Icons.arrow_drop_up,
                 color: Color(int.parse(
                     "0xFF${appBloc.uiSettingModel.appTextColor.substring(1, 7).toUpperCase()}")),
               )
             ],
           ),
-          new Expanded(
-              child: new ListView.builder(
+          Expanded(
+              child: ListView.builder(
                   shrinkWrap: true,
                   itemCount: 8,
                   itemBuilder: (context, index) {
-                    return new Container(
-                      margin: EdgeInsets.all(8.0),
-                      child: new Row(
+                    return Container(
+                      margin: const EdgeInsets.all(8.0),
+                      child: Row(
                         children: [
-                          CircleAvatar(
+                          const CircleAvatar(
                               radius: 18,
-                              backgroundImage: NetworkImage(
+                              backgroundImage: const NetworkImage(
                                   'https://picsum.photos/250?image=9')),
-                          Padding(
-                            padding: EdgeInsets.only(
+                          const Padding(
+                            padding: const EdgeInsets.only(
                               left: 20.0,
                             ),
-                            child: new Text(
+                            child: const Text(
                               'Aman Gangwar',
-                              style: new TextStyle(
+                              style: TextStyle(
                                   fontSize: 18.0,
                                   color: Colors.black87,
                                   fontWeight: FontWeight.bold),
                             ),
                           ),
-                          new Spacer(),
-                          new Icon(Icons.remove_circle_outlined),
+                          const Spacer(),
+                          const Icon(Icons.remove_circle_outlined),
                         ],
                       ),
                     );
@@ -604,7 +606,7 @@ class _DiscussionForumTopicState extends State<DiscussionForumTopic> with Single
                 .add(GetDiscussionMainHomeDetails(false, '', ''));
 
             while (discussionMainHomeBloc.isFirstLoading) {
-              await Future.delayed(Duration(milliseconds: 10));
+              await Future.delayed(const Duration(milliseconds: 10));
             }
 
             List<ForumList> list = discussionMainHomeBloc.list
@@ -628,7 +630,7 @@ class _DiscussionForumTopicState extends State<DiscussionForumTopic> with Single
                 .add(GetDiscussionMainHomeDetails(false, '', ''));
 
             while (discussionMainHomeBloc.isFirstLoading) {
-              await Future.delayed(Duration(milliseconds: 10));
+              await Future.delayed(const Duration(milliseconds: 10));
             }
 
             List<ForumList> list = discussionMainHomeBloc.list
@@ -651,13 +653,13 @@ class _DiscussionForumTopicState extends State<DiscussionForumTopic> with Single
                 child: CommonToast(
                     displaymsg: '${state.isPinned ? "Pinned" : "Unpinned"} topic successfully'),
                 gravity: ToastGravity.BOTTOM,
-                toastDuration: Duration(seconds: 4));
+                toastDuration: const Duration(seconds: 4));
           }
           if (state is DeleteForumTopicState) {
             flutterToast.showToast(
                 child: CommonToast(displaymsg: 'Topic deleted successfully'),
                 gravity: ToastGravity.BOTTOM,
-                toastDuration: Duration(seconds: 4));
+                toastDuration: const Duration(seconds: 4));
           }
 
           discussionTopicBloc.pinTopicList.clear();
@@ -670,10 +672,7 @@ class _DiscussionForumTopicState extends State<DiscussionForumTopic> with Single
         if (state.status == Status.LOADING && discussionTopicBloc.isFirstLoading == true) {
           return Center(
             child: AbsorbPointer(
-              child: SpinKitCircle(
-                color: Colors.black54,
-                size: 70.0,
-              ),
+              child: AppConstants().getLoaderWidget(iconSize: 70)
             ),
           );
         }
@@ -681,15 +680,15 @@ class _DiscussionForumTopicState extends State<DiscussionForumTopic> with Single
           return noDataFound(true);
         }
         else {
-          return new Padding(
-            padding: EdgeInsets.only(left: 10.0, right: 10.0),
-            child: new Container(
+          return Padding(
+            padding: const EdgeInsets.only(left: 10.0, right: 10.0),
+            child: Container(
               color: Color(int.parse(
                   "0xFF${appBloc.uiSettingModel.appBGColor.substring(1, 7).toUpperCase()}")),
-              child: new Column(
+              child: Column(
                 children: [
-                  new Card(
-                    child: new Row(
+                  Card(
+                    child: Row(
                       children: [
                         GestureDetector(
                           onTap: () {
@@ -701,7 +700,7 @@ class _DiscussionForumTopicState extends State<DiscussionForumTopic> with Single
                             });
                           },
                           child: Padding(
-                              padding: EdgeInsets.all(10.0),
+                              padding: const EdgeInsets.all(10.0),
                               child: Text('Oldest on Top',
                                   style: TextStyle(
                                       fontWeight: FontWeight.w500,
@@ -710,7 +709,7 @@ class _DiscussionForumTopicState extends State<DiscussionForumTopic> with Single
                                               "0xFF${appBloc.uiSettingModel.appButtonBgColor.substring(1, 7).toUpperCase()}"))
                                           : Color(int.parse("0xFF1D293F"))))),
                         ),
-                        Spacer(),
+                        const Spacer(),
                         GestureDetector(
                             onTap: () {
                               setState(() {
@@ -721,7 +720,7 @@ class _DiscussionForumTopicState extends State<DiscussionForumTopic> with Single
                               });
                             },
                             child: Padding(
-                                padding: EdgeInsets.all(10.0),
+                                padding: const EdgeInsets.all(10.0),
                                 child: Text('Newest on Top',
                                     style: TextStyle(
                                       fontWeight: FontWeight.w500,
@@ -733,25 +732,25 @@ class _DiscussionForumTopicState extends State<DiscussionForumTopic> with Single
                       ],
                     ),
                   ),
-                  new Row(
+                  Row(
                     children: [
                       Padding(
-                          padding: EdgeInsets.only(
+                          padding: const EdgeInsets.only(
                               left: 20.0, top: 10.0, right: 10.0),
-                          child: new Text(
+                          child: Text(
                             'Topics',
                             style: Theme.of(context)
                                 .textTheme
                                 .caption
                                 ?.apply(color: InsColor(appBloc).appTextColor),
                           )),
-                      new Spacer(),
+                      const Spacer(),
                       // new Icon(Icons.filter_list)
                     ],
                   ),
                   Stack(
                     children: [
-                      new ListView.builder(
+                      ListView.builder(
                           shrinkWrap: true,
                           primary: false,
                           scrollDirection: Axis.vertical,
@@ -778,21 +777,21 @@ class _DiscussionForumTopicState extends State<DiscussionForumTopic> with Single
                                       : true,
                               child: InkWell(
                                 onTap: () {},
-                                child: new Container(
+                                child: Container(
                                   color: Color(int.parse(
                                       "0xFF${appBloc.uiSettingModel.appBGColor.substring(1, 7).toUpperCase()}")),
-                                  padding: EdgeInsets.all(15.0),
-                                  child: new Column(
+                                  padding: const EdgeInsets.all(15.0),
+                                  child: Column(
                                     children: [
-                                      new Row(
+                                      Row(
                                         children: [
-                                          new Container(
+                                          Container(
                                             width: 50.0,
                                             height: 50.0,
-                                            padding: EdgeInsets.all(10.0),
-                                            decoration: new BoxDecoration(
+                                            padding: const EdgeInsets.all(10.0),
+                                            decoration: BoxDecoration(
                                               color: const Color(0xff7c94b6),
-                                              image: new DecorationImage(
+                                              image: DecorationImage(
                                                 image: discussionTopicBloc
                                                             .list[index]
                                                             .topicUserProfile !=
@@ -805,22 +804,22 @@ class _DiscussionForumTopicState extends State<DiscussionForumTopic> with Single
                                                             .list[index]
                                                             .topicUserProfile
                                                         : '${ApiEndpoints.strSiteUrl + discussionTopicBloc.list[index].topicUserProfile}')
-                                                    : AssetImage(
+                                                    : const AssetImage(
                                                         'assets/user.gif',
                                                       ) as ImageProvider,
                                                 fit: BoxFit.fill,
                                               ),
-                                              borderRadius: new BorderRadius
+                                              borderRadius: const BorderRadius
                                                       .all(
-                                                  new Radius.circular(50.0)),
+                                                  const Radius.circular(50.0)),
                                             ),
                                           ),
                                           Expanded(
                                             child: Padding(
-                                                padding: EdgeInsets.only(
+                                                padding: const EdgeInsets.only(
                                                   left: 20.0,
                                                 ),
-                                                child: new Text(
+                                                child: Text(
                                                   discussionTopicBloc
                                                       .list[index].name,
                                                   style: Theme.of(context)
@@ -832,7 +831,7 @@ class _DiscussionForumTopicState extends State<DiscussionForumTopic> with Single
                                                               .appTextColor),
                                                 )),
                                           ),
-                                          new IconButton(
+                                          IconButton(
                                             icon: Icon(
                                               Icons.more_vert,
                                               color: InsColor(appBloc)
@@ -849,16 +848,16 @@ class _DiscussionForumTopicState extends State<DiscussionForumTopic> with Single
                                           ),
                                         ],
                                       ),
-                                      new Column(
+                                      Column(
                                         crossAxisAlignment:
                                             CrossAxisAlignment.start,
                                         children: [
                                           Padding(
-                                              padding: EdgeInsets.only(
+                                              padding: const EdgeInsets.only(
                                                   top: 20,
                                                   left: 10.0,
                                                   right: 10.0),
-                                              child: new Text(
+                                              child: Text(
                                                 removeAllHtmlTags(
                                                     discussionTopicBloc
                                                             .list[index]
@@ -880,19 +879,19 @@ class _DiscussionForumTopicState extends State<DiscussionForumTopic> with Single
                                                   ""
                                               ? InkWell(
                                                   child: Padding(
-                                                    padding: EdgeInsets.only(
+                                                    padding: const EdgeInsets.only(
                                                         top: 10.0, left: 10.0),
-                                                    child: new Container(
+                                                    child: Container(
                                                       width: 20.0,
                                                       height: 20.0,
                                                       padding:
-                                                          EdgeInsets.all(20.0),
+                                                          const EdgeInsets.all(20.0),
                                                       decoration:
-                                                          new BoxDecoration(
+                                                          BoxDecoration(
                                                         color: const Color(
                                                             0xff7c94b6),
                                                         image:
-                                                            new DecorationImage(
+                                                            DecorationImage(
                                                           image: discussionTopicBloc
                                                                       .list[
                                                                           index]
@@ -909,14 +908,14 @@ class _DiscussionForumTopicState extends State<DiscussionForumTopic> with Single
                                                                           index]
                                                                       .uploadFileName
                                                                   : '${ApiEndpoints.strSiteUrl + discussionTopicBloc.list[index].uploadFileName}')
-                                                              : AssetImage(
+                                                              : const AssetImage(
                                                                   '',
                                                                 ) as ImageProvider,
                                                           fit: BoxFit.fill,
                                                         ),
                                                         borderRadius:
-                                                            new BorderRadius
-                                                                .all(new Radius
+                                                            const BorderRadius
+                                                                .all(Radius
                                                                     .circular(
                                                                 30.0)),
                                                       ),
@@ -938,7 +937,7 @@ class _DiscussionForumTopicState extends State<DiscussionForumTopic> with Single
                                                 )
                                               : Container(),
                                           Padding(
-                                              padding: EdgeInsets.only(
+                                              padding: const EdgeInsets.only(
                                                   top: 10, left: 5.0),
                                               child: Row(
                                                 crossAxisAlignment:
@@ -949,7 +948,7 @@ class _DiscussionForumTopicState extends State<DiscussionForumTopic> with Single
                                                   Visibility(
                                                       visible: widget
                                                           .forumList.likePosts,
-                                                      child: new Container(
+                                                      child: Container(
                                                         width: 70.0,
                                                         height: 25.0,
                                                         decoration:
@@ -965,11 +964,11 @@ class _DiscussionForumTopicState extends State<DiscussionForumTopic> with Single
                                                                       .withAlpha(
                                                                           0),
                                                                 ),
-                                                                borderRadius: BorderRadius
-                                                                    .all(Radius
+                                                                borderRadius: const BorderRadius
+                                                                    .all(const Radius
                                                                         .circular(
                                                                             20))),
-                                                        child: new Row(
+                                                        child: Row(
                                                           children: [
                                                             IconButton(
                                                               color: Color(
@@ -1005,7 +1004,7 @@ class _DiscussionForumTopicState extends State<DiscussionForumTopic> with Single
                                                                       ));
                                                               },
                                                               padding:
-                                                                  new EdgeInsets
+                                                                  const EdgeInsets
                                                                           .only(
                                                                       bottom:
                                                                           1.0),
@@ -1043,10 +1042,10 @@ class _DiscussionForumTopicState extends State<DiscussionForumTopic> with Single
                                                           ],
                                                         ),
                                                       )),
-                                                  new Padding(
-                                                    padding: EdgeInsets.only(
+                                                  Padding(
+                                                    padding: const EdgeInsets.only(
                                                         left: 5.0),
-                                                    child: new Container(
+                                                    child: Container(
                                                         width: 70.0,
                                                         height: 25.0,
                                                         decoration:
@@ -1062,11 +1061,11 @@ class _DiscussionForumTopicState extends State<DiscussionForumTopic> with Single
                                                                       .withAlpha(
                                                                           0),
                                                                 ),
-                                                                borderRadius: BorderRadius
+                                                                borderRadius: const BorderRadius
                                                                     .all(Radius
                                                                         .circular(
                                                                             20))),
-                                                        child: new Row(
+                                                        child: Row(
                                                             children: [
                                                               IconButton(
                                                                 onPressed: () {
@@ -1085,7 +1084,7 @@ class _DiscussionForumTopicState extends State<DiscussionForumTopic> with Single
                                                                           });
                                                                 },
                                                                 padding:
-                                                                    new EdgeInsets
+                                                                    const EdgeInsets
                                                                             .only(
                                                                         bottom:
                                                                             1.0),
@@ -1112,10 +1111,10 @@ class _DiscussionForumTopicState extends State<DiscussionForumTopic> with Single
                                                             ])),
                                                   ),
                                                   Padding(
-                                                      padding: EdgeInsets.only(
+                                                      padding: const EdgeInsets.only(
                                                           left: 10.0),
                                                       child:
-                                                          new GestureDetector(
+                                                          GestureDetector(
                                                         onTap: () {
                                                           Navigator.of(context)
                                                               .push(MaterialPageRoute(
@@ -1154,10 +1153,7 @@ class _DiscussionForumTopicState extends State<DiscussionForumTopic> with Single
                       (state.status == Status.LOADING)
                           ? Center(
                               child: AbsorbPointer(
-                                child: SpinKitCircle(
-                                  color: Colors.black54,
-                                  size: 70.h,
-                                ),
+                                child: AppConstants().getLoaderWidget(iconSize: 70)
                               ),
                             )
                           : Container()
@@ -1173,24 +1169,24 @@ class _DiscussionForumTopicState extends State<DiscussionForumTopic> with Single
   }
 
   Widget pinTopicListWidget() {
-    return new Column(
+    return Column(
       children: [
         Visibility(
             visible:
                 discussionTopicBloc.pinTopicList.length == 0 ? false : true,
-            child: new Divider(
+            child: const Divider(
               height: 2,
               color: Colors.black87,
             )),
-        new Padding(
-          padding: EdgeInsets.all(10.0),
-          child: new Container(
+        Padding(
+          padding: const EdgeInsets.all(10.0),
+          child: Container(
             color: discussionTopicBloc.pinTopicList.length == 0
                 ? Colors.white38
                 : Colors.black12,
-            child: new Column(
+            child: Column(
               children: [
-                new ListView.builder(
+                ListView.builder(
                     shrinkWrap: true,
                     itemCount: discussionTopicBloc.pinTopicList.length,
                     itemBuilder: (context, index) {
@@ -1198,15 +1194,15 @@ class _DiscussionForumTopicState extends State<DiscussionForumTopic> with Single
                           visible: discussionTopicBloc.pinTopicList.length == 0
                               ? false
                               : true,
-                          child: new Container(
-                              margin: EdgeInsets.all(8.0),
-                              child: new Column(
+                          child: Container(
+                              margin: const EdgeInsets.all(8.0),
+                              child: Column(
                                 children: [
-                                  new Row(
+                                  Row(
                                     children: [
                                       CircleAvatar(
                                           radius: 25,
-                                          backgroundColor: Color(0xffFDCF09),
+                                          backgroundColor: const Color(0xffFDCF09),
                                           child: CircleAvatar(
                                             radius: 25,
                                             backgroundImage: NetworkImage(
@@ -1223,13 +1219,13 @@ class _DiscussionForumTopicState extends State<DiscussionForumTopic> with Single
                                           )),
                                       Expanded(
                                         child: Padding(
-                                          padding: EdgeInsets.only(
+                                          padding: const EdgeInsets.only(
                                             left: 20.0,
                                           ),
-                                          child: new Text(
+                                          child: Text(
                                             discussionTopicBloc
                                                 .pinTopicList[index].name,
-                                            style: new TextStyle(
+                                            style: TextStyle(
                                                 fontSize: 16.0,
                                                 color: Color(int.parse(
                                                     "0xFF${appBloc.uiSettingModel.appTextColor.substring(1, 7).toUpperCase()}")),
@@ -1237,7 +1233,7 @@ class _DiscussionForumTopicState extends State<DiscussionForumTopic> with Single
                                           ),
                                         ),
                                       ),
-                                      new IconButton(
+                                      IconButton(
                                         icon: Icon(
                                           Icons.more_vert,
                                           color: InsColor(appBloc).appIconColor,
@@ -1253,14 +1249,14 @@ class _DiscussionForumTopicState extends State<DiscussionForumTopic> with Single
                                       ),
                                     ],
                                   ),
-                                  new Column(
+                                  Column(
                                     crossAxisAlignment:
                                         CrossAxisAlignment.start,
                                     children: [
                                       Padding(
-                                        padding: EdgeInsets.only(
+                                        padding: const EdgeInsets.only(
                                             top: 20, left: 10.0, right: 10.0),
-                                        child: new Text(
+                                        child: Text(
                                           discussionTopicBloc
                                               .pinTopicList[index]
                                               .longDescription,
@@ -1272,7 +1268,7 @@ class _DiscussionForumTopicState extends State<DiscussionForumTopic> with Single
                                         ),
                                       ),
                                       Padding(
-                                        padding: EdgeInsets.only(
+                                        padding: const EdgeInsets.only(
                                             top: 10, left: 10.0),
                                         child: discussionTopicBloc
                                                 .pinTopicList[index]
@@ -1293,7 +1289,7 @@ class _DiscussionForumTopicState extends State<DiscussionForumTopic> with Single
                                                 child: CircleAvatar(
                                                   radius: 10,
                                                   backgroundColor:
-                                                      Color(0xffFDCF09),
+                                                      const Color(0xffFDCF09),
                                                   child: CircleAvatar(
                                                     radius: 10,
                                                     backgroundImage: NetworkImage(
@@ -1316,7 +1312,7 @@ class _DiscussionForumTopicState extends State<DiscussionForumTopic> with Single
                                             : Container(),
                                       ),
                                       Padding(
-                                          padding: EdgeInsets.only(
+                                          padding: const EdgeInsets.only(
                                               top: 10, left: 10),
                                           child: Row(
                                             crossAxisAlignment:
@@ -1327,7 +1323,7 @@ class _DiscussionForumTopicState extends State<DiscussionForumTopic> with Single
                                               Visibility(
                                                   visible: widget
                                                       .forumList.likePosts,
-                                                  child: new Container(
+                                                  child: Container(
                                                     width: 70.0,
                                                     height: 25.0,
                                                     decoration: BoxDecoration(
@@ -1340,14 +1336,14 @@ class _DiscussionForumTopicState extends State<DiscussionForumTopic> with Single
                                                                   .withAlpha(0),
                                                         ),
                                                         borderRadius:
-                                                            BorderRadius.all(
+                                                            const BorderRadius.all(
                                                                 Radius.circular(
                                                                     20))),
-                                                    child: new Row(
+                                                    child: Row(
                                                       children: [
                                                         IconButton(
                                                           padding:
-                                                              new EdgeInsets
+                                                              const EdgeInsets
                                                                       .only(
                                                                   bottom: 1.0),
                                                           icon: Icon(
@@ -1413,10 +1409,10 @@ class _DiscussionForumTopicState extends State<DiscussionForumTopic> with Single
                                                       ],
                                                     ),
                                                   )),
-                                              new Padding(
+                                              Padding(
                                                 padding:
-                                                    EdgeInsets.only(left: 5.0),
-                                                child: new Container(
+                                                    const EdgeInsets.only(left: 5.0),
+                                                child: Container(
                                                     width: 70.0,
                                                     height: 25.0,
                                                     decoration: BoxDecoration(
@@ -1429,10 +1425,10 @@ class _DiscussionForumTopicState extends State<DiscussionForumTopic> with Single
                                                                   .withAlpha(0),
                                                         ),
                                                         borderRadius:
-                                                            BorderRadius.all(
+                                                            const BorderRadius.all(
                                                                 Radius.circular(
                                                                     20))),
-                                                    child: new Row(children: [
+                                                    child: Row(children: [
                                                       IconButton(
                                                         onPressed: () {
                                                           Navigator.push(
@@ -1454,7 +1450,7 @@ class _DiscussionForumTopicState extends State<DiscussionForumTopic> with Single
                                                                   });
                                                         },
                                                         padding:
-                                                            new EdgeInsets.only(
+                                                            const EdgeInsets.only(
                                                                 bottom: 1.0),
                                                         icon: Icon(
                                                           Icons.comment,
@@ -1476,9 +1472,9 @@ class _DiscussionForumTopicState extends State<DiscussionForumTopic> with Single
                                                     ])),
                                               ),
                                               Padding(
-                                                  padding: EdgeInsets.only(
+                                                  padding: const EdgeInsets.only(
                                                       left: 10.0),
-                                                  child: new GestureDetector(
+                                                  child: GestureDetector(
                                                     onTap: () {
                                                       Navigator.of(context)
                                                           .push(MaterialPageRoute(
@@ -1520,39 +1516,18 @@ class _DiscussionForumTopicState extends State<DiscussionForumTopic> with Single
     print("Created User id:${topicList.createdUserID}");
 
     showModalBottomSheet(
-        backgroundColor: Color(int.parse(
-            "0xFF${appBloc.uiSettingModel.appBGColor.substring(1, 7).toUpperCase()}")),
+        shape: AppConstants().bottomSheetShapeBorder(),
         context: context,
         builder: (BuildContext bc) {
-          return Container(
-            color: InsColor(appBloc).appBGColor,
-            child: new Wrap(
+          return AppConstants().bottomSheetContainer(
+            child: Wrap(
               children: <Widget>[
-                BottomSheetDragger(),
+                const BottomSheetDragger(),
                 Visibility(
                   visible: topicList.createdUserID.toString() == appBloc.userid,
-                  child: ListTile(
-                      leading: new Icon(
-                        Icons.edit,
-                        color: Color(int.parse(
-                            "0xFF${appBloc.uiSettingModel.appTextColor.substring(1, 7).toUpperCase()}")),
-                      ),
-                      title: new Row(
-                        children: [
-                          new Text(
-                            'Edit',
-                            style: TextStyle(
-                                color: Color(int.parse(
-                                    "0xFF${appBloc.uiSettingModel.appTextColor.substring(1, 7).toUpperCase()}"))),
-                          ),
-                          new Spacer(),
-                          new Icon(
-                            Icons.arrow_forward_ios_outlined,
-                            color: Color(int.parse(
-                                "0xFF${appBloc.uiSettingModel.appTextColor.substring(1, 7).toUpperCase()}")),
-                          )
-                        ],
-                      ),
+                  child: BottomsheetOptionTile(
+                      iconData: Icons.edit,
+                      text: 'Edit',
                       onTap: () => {
                             Navigator.of(context).pop(true),
                             Navigator.of(context)
@@ -1570,28 +1545,9 @@ class _DiscussionForumTopicState extends State<DiscussionForumTopic> with Single
                 ),
                 Visibility(
                     visible: widget.forumList.allowPin ? true : false,
-                    child: new ListTile(
-                      leading: new Icon(
-                        Icons.push_pin,
-                        color: Color(int.parse(
-                            "0xFF${appBloc.uiSettingModel.appTextColor.substring(1, 7).toUpperCase()}")),
-                      ),
-                      title: new Row(
-                        children: [
-                          new Text(
-                            'Pin',
-                            style: TextStyle(
-                                color: Color(int.parse(
-                                    "0xFF${appBloc.uiSettingModel.appTextColor.substring(1, 7).toUpperCase()}"))),
-                          ),
-                          new Spacer(),
-                          new Icon(
-                            Icons.arrow_forward_ios_outlined,
-                            color: Color(int.parse(
-                                "0xFF${appBloc.uiSettingModel.appTextColor.substring(1, 7).toUpperCase()}")),
-                          )
-                        ],
-                      ),
+                    child: BottomsheetOptionTile(
+                      iconData: Icons.push_pin,
+                      text: 'Pin',
                       onTap: () => {
                         Navigator.of(context).pop(true),
                         if (index < discussionTopicBloc.pinTopicList.length)
@@ -1604,28 +1560,9 @@ class _DiscussionForumTopicState extends State<DiscussionForumTopic> with Single
                             isPin: true)),
                       },
                     )),
-                ListTile(
-                  leading: new Icon(
-                    Icons.message,
-                    color: Color(int.parse(
-                        "0xFF${appBloc.uiSettingModel.appTextColor.substring(1, 7).toUpperCase()}")),
-                  ),
-                  title: new Row(
-                    children: [
-                      new Text(
-                        'Add Comment',
-                        style: TextStyle(
-                            color: Color(int.parse(
-                                "0xFF${appBloc.uiSettingModel.appTextColor.substring(1, 7).toUpperCase()}"))),
-                      ),
-                      new Spacer(),
-                      new Icon(
-                        Icons.arrow_forward_ios_outlined,
-                        color: Color(int.parse(
-                            "0xFF${appBloc.uiSettingModel.appTextColor.substring(1, 7).toUpperCase()}")),
-                      )
-                    ],
-                  ),
+                BottomsheetOptionTile(
+                  iconData: Icons.message,
+                  text: 'Add Comment',
                   onTap: () => {
                     Navigator.of(context).pop(true),
                     Navigator.of(context)
@@ -1641,20 +1578,11 @@ class _DiscussionForumTopicState extends State<DiscussionForumTopic> with Single
                 ),
                 Visibility(
                     visible: widget.forumList.allowShare ? true : false,
-                    child: new ListTile(
-                      leading: new Icon(
-                        IconDataSolid(
+                    child: BottomsheetOptionTile(
+                      iconData: IconDataSolid(
                           int.parse('0xf079'),
                         ),
-                        color: Color(int.parse(
-                            "0xFF${appBloc.uiSettingModel.appTextColor.substring(1, 7).toUpperCase()}")),
-                      ),
-                      title: new Text(
-                        'Share with People',
-                        style: TextStyle(
-                            color: Color(int.parse(
-                                "0xFF${appBloc.uiSettingModel.appTextColor.substring(1, 7).toUpperCase()}"))),
-                      ),
+                      text: 'Share with People',
                       onTap: () => {
                         Navigator.pop(context),
                         Navigator.of(context).push(MaterialPageRoute(
@@ -1668,18 +1596,9 @@ class _DiscussionForumTopicState extends State<DiscussionForumTopic> with Single
                     )),
                 Visibility(
                     visible: widget.forumList.allowShare ? true : false,
-                    child: new ListTile(
-                      leading: Icon(
-                        IconDataSolid(int.parse('0xf1e0')),
-                        color: Color(int.parse(
-                            "0xFF${appBloc.uiSettingModel.appTextColor.substring(1, 7).toUpperCase()}")),
-                      ),
-                      title: new Text(
-                        'Share with Connection',
-                        style: TextStyle(
-                            color: Color(int.parse(
-                                "0xFF${appBloc.uiSettingModel.appTextColor.substring(1, 7).toUpperCase()}"))),
-                      ),
+                    child: BottomsheetOptionTile(
+                      iconData: IconDataSolid(int.parse('0xf1e0')),
+                      text: 'Share with Connection',
                       onTap: () {
                         Navigator.pop(context);
 
@@ -1693,19 +1612,9 @@ class _DiscussionForumTopicState extends State<DiscussionForumTopic> with Single
                     )),
                 Visibility(
                   visible: topicList.createdUserID.toString() == appBloc.userid,
-                  child: ListTile(
-                    leading: new Icon(
-                      Icons.delete,
-                      color: Colors.red,
-                    ),
-                    title: new Row(
-                      children: [
-                        new Text(
-                          'Delete',
-                          style: new TextStyle(color: Colors.red),
-                        ),
-                      ],
-                    ),
+                  child: BottomsheetOptionTile(
+                    iconData:  Icons.delete,
+                    text: 'Delete',
                     onTap: () => {
                       // AlertDialog
                       Navigator.of(context).pop(true),
@@ -1723,50 +1632,31 @@ class _DiscussionForumTopicState extends State<DiscussionForumTopic> with Single
   void _settingUnPinTopinBottomSheet(context, ForumList forumList, TopicList topicList, int index) {
     showModalBottomSheet(
         context: context,
+        shape: AppConstants().bottomSheetShapeBorder(),
         builder: (BuildContext bc) {
-          return BlocConsumer<DiscussionTopicBloc, DiscussionTopicState>(
-            bloc: discussionTopicBloc,
-            listener: (context, state) {
-              if (state.status == Status.COMPLETED) {}
-            },
-            builder: (context, state) {
-              if (state.status == Status.LOADING && discussionTopicBloc.isFirstLoading == true) {
-                return Center(
-                  child: AbsorbPointer(
-                    child: SpinKitCircle(
-                      color: Colors.black54,
-                      size: 70.0,
+          return AppConstants().bottomSheetContainer(
+            child: BlocConsumer<DiscussionTopicBloc, DiscussionTopicState>(
+              bloc: discussionTopicBloc,
+              listener: (context, state) {
+                if (state.status == Status.COMPLETED) {}
+              },
+              builder: (context, state) {
+                if (state.status == Status.LOADING && discussionTopicBloc.isFirstLoading == true) {
+                  return Center(
+                    child: AbsorbPointer(
+                      child: AppConstants().getLoaderWidget(iconSize: 70)
                     ),
-                  ),
-                );
-              }
-              else {
-                return Container(
-                  color: InsColor(appBloc).appBGColor,
-                  child: new Wrap(
+                  );
+                }
+                else {
+                  return Wrap(
                     children: <Widget>[
-                      BottomSheetDragger(),
+                      const BottomSheetDragger(),
                       Visibility(
                         visible: topicList.createdUserID.toString() == appBloc.userid,
-                        child: new ListTile(
-                            leading: new Icon(
-                              Icons.edit,
-                              color: InsColor(appBloc).appIconColor,
-                            ),
-                            title: new Row(
-                              children: [
-                                new Text(
-                                  'Edit',
-                                  style: TextStyle(
-                                      color: InsColor(appBloc).appTextColor),
-                                ),
-                                new Spacer(),
-                                new Icon(
-                                  Icons.arrow_forward_ios_outlined,
-                                  color: InsColor(appBloc).appIconColor,
-                                ),
-                              ],
-                            ),
+                        child: BottomsheetOptionTile(
+                            iconData: Icons.edit,
+                            text: 'Edit',
                             onTap: () => {
                                   Navigator.of(context).pop(true),
                                   Navigator.of(context)
@@ -1782,28 +1672,9 @@ class _DiscussionForumTopicState extends State<DiscussionForumTopic> with Single
                                   })
                                 }),
                       ),
-                      ListTile(
-                        leading: Transform.rotate(
-                          angle: 180 * math.pi / 180,
-                          child: new Icon(
-                            Icons.push_pin,
-                            color: InsColor(appBloc).appIconColor,
-                          ),
-                        ),
-                        title: new Row(
-                          children: [
-                            new Text(
-                              'UnPin',
-                              style: TextStyle(
-                                  color: InsColor(appBloc).appTextColor),
-                            ),
-                            new Spacer(),
-                            new Icon(
-                              Icons.arrow_forward_ios_outlined,
-                              color: InsColor(appBloc).appIconColor,
-                            )
-                          ],
-                        ),
+                      BottomsheetOptionTile(
+                        iconData: Icons.push_pin,
+                        text: 'UnPin',
                         onTap: () => {
                           Navigator.of(context).pop(true),
                           discussionTopicBloc.add(PinTopicEvent(
@@ -1815,25 +1686,9 @@ class _DiscussionForumTopicState extends State<DiscussionForumTopic> with Single
                           // }
                         },
                       ),
-                      ListTile(
-                        leading: new Icon(
-                          Icons.message,
-                          color: InsColor(appBloc).appIconColor,
-                        ),
-                        title: new Row(
-                          children: [
-                            new Text(
-                              'Add Comment',
-                              style: TextStyle(
-                                  color: InsColor(appBloc).appTextColor),
-                            ),
-                            new Spacer(),
-                            new Icon(
-                              Icons.arrow_forward_ios_outlined,
-                              color: InsColor(appBloc).appIconColor,
-                            )
-                          ],
-                        ),
+                      BottomsheetOptionTile(
+                        iconData: Icons.message,
+                        text: 'Add Comment',
                         onTap: () => {
                           Navigator.of(context).pop(true),
                           Navigator.of(context)
@@ -1848,17 +1703,11 @@ class _DiscussionForumTopicState extends State<DiscussionForumTopic> with Single
                           })
                         },
                       ),
-                      ListTile(
-                        leading: new Icon(
-                            IconDataSolid(
+                      BottomsheetOptionTile(
+                        iconData: IconDataSolid(
                               int.parse('0xf079'),
                             ),
-                            color: InsColor(appBloc).appIconColor),
-                        title: new Text(
-                          'Share with People',
-                          style:
-                              TextStyle(color: InsColor(appBloc).appTextColor),
-                        ),
+                        text: 'Share with People',
                         onTap: () => {
                           Navigator.pop(context),
                           Navigator.of(context).push(MaterialPageRoute(
@@ -1870,16 +1719,9 @@ class _DiscussionForumTopicState extends State<DiscussionForumTopic> with Single
                                   topicList.contentID)))
                         },
                       ),
-                      ListTile(
-                        leading: Icon(
-                          IconDataSolid(int.parse('0xf1e0')),
-                          color: InsColor(appBloc).appIconColor,
-                        ),
-                        title: new Text(
-                          'Share with Connection',
-                          style:
-                              TextStyle(color: InsColor(appBloc).appTextColor),
-                        ),
+                      BottomsheetOptionTile(
+                        iconData: IconDataSolid(int.parse('0xf1e0')),
+                        text: 'Share with Connection',
                         onTap: () {
                           Navigator.pop(context);
 
@@ -1893,19 +1735,9 @@ class _DiscussionForumTopicState extends State<DiscussionForumTopic> with Single
                       ),
                       Visibility(
                         visible: topicList.createdUserID.toString() == appBloc.userid,
-                        child: ListTile(
-                          leading: new Icon(
-                            Icons.delete,
-                            color: Colors.red,
-                          ),
-                          title: new Row(
-                            children: [
-                              new Text(
-                                'Delete',
-                                style: new TextStyle(color: Colors.red),
-                              ),
-                            ],
-                          ),
+                        child: BottomsheetOptionTile(
+                          iconData: Icons.delete,
+                          text: 'Delete',
                           onTap: () => {
                             // AlertDialog
                             Navigator.of(context).pop(true),
@@ -1919,10 +1751,10 @@ class _DiscussionForumTopicState extends State<DiscussionForumTopic> with Single
                         ),
                       ),
                     ],
-                  ),
-                );
-              }
-            },
+                  );
+                }
+              },
+            ),
           );
         });
   }
@@ -1930,30 +1762,19 @@ class _DiscussionForumTopicState extends State<DiscussionForumTopic> with Single
   void _settingModalBottomSheet(context, ForumList forumList) {
     showModalBottomSheet(
         context: context,
+        shape: AppConstants().bottomSheetShapeBorder(),
         builder: (BuildContext bc) {
-          return Container(
-            child: new Wrap(
+          return AppConstants().bottomSheetContainer(
+            child: Wrap(
               children: <Widget>[
-                BottomSheetDragger(),
-                new ListTile(
-                    leading: new Icon(Icons.edit),
-                    title: new Row(
-                      children: [
-                        new Text('Edit'),
-                        new Spacer(),
-                        new Icon(Icons.arrow_forward_ios_outlined)
-                      ],
-                    ),
+                const BottomSheetDragger(),
+                BottomsheetOptionTile(
+                    iconData: Icons.edit,
+                    text: 'Edit',
                     onTap: () => {}),
-                new ListTile(
-                  leading: new Icon(Icons.message),
-                  title: new Row(
-                    children: [
-                      new Text('Add Topic'),
-                      new Spacer(),
-                      new Icon(Icons.arrow_forward_ios_outlined)
-                    ],
-                  ),
+                BottomsheetOptionTile(
+                  iconData: Icons.message,
+                  text: 'Add Topic',
                   onTap: () => {
                     Navigator.of(context).push(MaterialPageRoute(
                         builder: (context) => AddTopic(
@@ -1961,30 +1782,14 @@ class _DiscussionForumTopicState extends State<DiscussionForumTopic> with Single
                             )))
                   },
                 ),
-                new ListTile(
-                  leading: new Icon(Icons.share),
-                  title: new Row(
-                    children: [
-                      new Text('Share'),
-                      new Spacer(),
-                      new Icon(Icons.arrow_forward_ios_outlined)
-                    ],
-                  ),
+                BottomsheetOptionTile(
+                  iconData: Icons.share,
+                  text: 'Share',
                   onTap: () => {},
                 ),
-                new ListTile(
-                  leading: new Icon(
-                    Icons.delete,
-                    color: Colors.red,
-                  ),
-                  title: new Row(
-                    children: [
-                      new Text(
-                        'Delete',
-                        style: new TextStyle(color: Colors.red),
-                      ),
-                    ],
-                  ),
+                BottomsheetOptionTile(
+                  iconData: Icons.delete,
+                  text: 'Delete',
                   onTap: () => {},
                 ),
               ],
@@ -2012,13 +1817,13 @@ class _DiscussionForumTopicState extends State<DiscussionForumTopic> with Single
               )
             ],
           )
-        : new Container();
+        : Container();
   }
 
   Widget customFloatingAction() {
-    return new FloatingActionButton(
+    return FloatingActionButton(
         elevation: 0.0,
-        child: new Icon(Icons.add_circle),
+        child: const Icon(Icons.add_circle),
         backgroundColor: Colors.lightGreen,
         onPressed: () {
           // Navigator.of(context).push(MaterialPageRoute(
@@ -2030,14 +1835,14 @@ class _DiscussionForumTopicState extends State<DiscussionForumTopic> with Single
       TopicList topicList, int index, List<TopicList> list) {
     // Create button
     Widget cancelButton = FlatButton(
-      child: Text("No"),
+      child: const Text("No"),
       onPressed: () {
         Navigator.of(context).pop(true);
       },
     );
 
     Widget deleteButton = FlatButton(
-      child: Text(
+      child: const Text(
         "Yes, delete",
         style: TextStyle(color: Colors.red),
       ),

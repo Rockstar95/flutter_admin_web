@@ -2331,6 +2331,7 @@ class _EventTrackListState extends State<EventTrackList> with TickerProviderStat
       isArchive: false,
       trackContentId: widget.myLearningModel.contentid,
       trackContentName: widget.myLearningModel.name,
+      isShowLock: true,
       isTrackContent: true,
       onMoreTap: () => _onMoreTap(data, i),
       onArchievedTap: () => _onArchivedTap(data),

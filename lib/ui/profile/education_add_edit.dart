@@ -18,6 +18,9 @@ import 'package:flutter_admin_web/framework/repository/profile/model/remove_expe
 import 'package:flutter_admin_web/framework/theme/ins_theme.dart';
 import 'package:flutter_admin_web/ui/common/common_toast.dart';
 
+import '../../configs/constants.dart';
+import '../../utils/my_print.dart';
+
 class EducationAdd extends StatefulWidget {
   final ProfileBloc profileBloc;
   final Usereducationdatum? data;
@@ -56,14 +59,14 @@ class _EducationAddState extends State<EducationAdd> {
   bool isValidate = false;
   final _formKey = GlobalKey<FormState>();
 
-  int titleId = 0;
-  int titlePos = 0;
-  int selectindex = 0;
+  int titleId = -1;
+  int titlePos = -1;
+  int selectindex = -1;
 
   String verifyDegreeBorderView = "", aboutDescriptionBorder = "" ;
 
-  String _selectedLocation = '2022'; // Optio
-  String _selectedendDate = '2018'; // Optio
+  String? _selectedLocation; // Optio
+  String? _selectedendDate; // Optio
 
   List<EducationTitleList> educationalTitleList = [];
   // final FixedExtentScrollController _controller = FixedExtentScrollController();
@@ -154,14 +157,21 @@ class _EducationAddState extends State<EducationAdd> {
         titleId = widget.data!.titleid;
         selectindex = widget.data!.titleid - 1;
         titlePos = widget.data!.titleid > 0 ? widget.data!.titleid - 1 : 0;
-        startDate.text = _selectedendDate;
-        endDate.text = _selectedLocation;
+        startDate.text = _selectedendDate!;
+        endDate.text = _selectedLocation!;
       });
 
       print('selectedyear $titleId  $titlePos');
-    } else {
-      startDate.text = _selectedendDate;
-      endDate.text = _selectedLocation;
+    }
+    else {
+      startDate.text = _selectedendDate ?? "";
+      endDate.text = _selectedLocation ?? "";
+
+      levelController.text = "";
+      titleId = -1;
+      titlePos = -1;
+      selectindex = -1;
+
     }
 
     widget.profileBloc.add(GetEducationTitle());
@@ -181,6 +191,8 @@ class _EducationAddState extends State<EducationAdd> {
     return BlocConsumer<ProfileBloc, ProfileState>(
         bloc: widget.profileBloc,
         listener: (_, state) {
+          print("----status----:${state.status}");
+
           if (state is GetProfileInfoState) {
             switch (state.status) {
               case Status.COMPLETED:
@@ -200,26 +212,48 @@ class _EducationAddState extends State<EducationAdd> {
               default:
                 break;
             }
-          } else if (state is GetEducationTitleState) {
+          }
+          else if (state is GetEducationTitleState) {
             if (state.status == Status.COMPLETED) {
               educationalTitleList = state.educationTitleList;
+              print("----educationalTitleList----:${educationalTitleList.isNotEmpty}");
+              MyPrint.printOnConsole("levelController before:${levelController.text}");
+              MyPrint.printOnConsole("titleId before:${titleId}");
+              MyPrint.printOnConsole("selectindex before:${selectindex}");
 
               if (educationalTitleList.isNotEmpty) {
-                if (titlePos == null) {
-                  levelController.text = state.educationTitleList[0].name;
-                  titleId = 1;
-                } else {
-                  levelController.text =
-                      state.educationTitleList[titlePos].name;
+                if (titlePos == -1) {
+                  //levelController.text = state.educationTitleList[0].name;
+                  //titleId = state.educationTitleList[0].id;
+                  //titleId = 1;
+                  //selectindex = 0;
+                }
+                else {
+                  print("----educationalTitleList----:${educationalTitleList.isNotEmpty}");
+
+                  levelController.text = state.educationTitleList[titlePos].name;
+                  //levelController.text = "";
+                  titleId = state.educationTitleList[titlePos].id;
+                  selectindex = titlePos;
                 }
               }
-            } else if (state.status == Status.ERROR && state.message == '401') {
+              else {
+                levelController.text = "";
+                titleId = -1;
+                titlePos = -1;
+                selectindex = -1;
+              }
+
+              MyPrint.printOnConsole("levelController after:${levelController.text}");
+              MyPrint.printOnConsole("titleId after:${titleId}");
+              MyPrint.printOnConsole("selectindex after:${selectindex}");
+            }
+            else if (state.status == Status.ERROR && state.message == '401') {
               AppDirectory.sessionTimeOut(context);
             }
             print('educationtitle $educationalTitleList $titleId');
-          } else if (state is CreateEducationState ||
-              state is UpdateEducationState ||
-              state is RemoveEducationState) {
+          }
+          else if (state is CreateEducationState || state is UpdateEducationState || state is RemoveEducationState) {
             switch (state.status) {
               case Status.COMPLETED:
                 break;
@@ -540,13 +574,13 @@ class _EducationAddState extends State<EducationAdd> {
                                           },
                                           textInputAction: TextInputAction.next,
                                           autofocus: false,
-                                          textCapitalization:
-                                              TextCapitalization.words,
+                                          textCapitalization: TextCapitalization.words,
                                           keyboardType: TextInputType.text,
                                           decoration: InputDecoration(
-
-                                            border: OutlineInputBorder(),
-                                            disabledBorder: OutlineInputBorder(borderSide: BorderSide(color: Colors.black45))
+                                            hintText: "Title",
+                                            disabledBorder: OutlineInputBorder(borderSide: BorderSide(color: levelController.text.isEmpty? Color(0xffDADCE0):Color(0xff202124),width: 0.5)),
+                                            enabledBorder: OutlineInputBorder(borderSide: BorderSide(color: levelController.text.isEmpty? Color(0xffDADCE0):Color(0xff202124),width: 0.5)),
+                                            focusedBorder: OutlineInputBorder(borderSide: BorderSide(color: levelController.text.isEmpty? Color(0xffDADCE0):Color(0xff202124),width: 0.5)),
                                           ),
                                           // describes the field number
                                           style: TextStyle(
@@ -650,8 +684,7 @@ class _EducationAddState extends State<EducationAdd> {
                                           RichText(
                                             textAlign: TextAlign.start,
                                             text: TextSpan(
-                                                text: appBloc.localstr
-                                                    .profileLabelEducationfromlabel,
+                                                text: appBloc.localstr.profileLabelEducationfromlabel,
                                                 style: Theme.of(context).textTheme.headline2?.apply(color: InsColor(appBloc).appTextColor),
                                                 children: <TextSpan>[
                                                   TextSpan(
@@ -665,7 +698,14 @@ class _EducationAddState extends State<EducationAdd> {
                                           InputDecorator(
 
                                             decoration: InputDecoration(
-                                                hintText: 'Pick year',
+                                                hintText: 'Ex:2022',
+                                                disabledBorder: OutlineInputBorder(
+                                                    borderSide: BorderSide(color:  startDate.text.isEmpty? Color(0xffDADCE0):Color(0xff202124),width: 0.5)
+                                                ),
+                                                enabledBorder: OutlineInputBorder(
+                                                    borderSide: BorderSide(color: startDate.text.isEmpty? Color(0xffDADCE0):Color(0xff202124),width: 0.5)
+                                                ),
+
                                                 border:
                                                 OutlineInputBorder(
                                                     borderRadius:
@@ -678,7 +718,7 @@ class _EducationAddState extends State<EducationAdd> {
                                                 child: DropdownButton<String>(
                                                   dropdownColor: Color(
                                                       int.parse("0xFF${appBloc.uiSettingModel.appBGColor.substring(1, 7).toUpperCase()}")),
-                                                  hint: Text('Pick Year'),
+                                                  hint: Text('Year'),
                                                   value: _selectedendDate,
                                                   // isDense: true,
                                                   underline: Container(),
@@ -688,7 +728,7 @@ class _EducationAddState extends State<EducationAdd> {
                                                     setState(() {
                                                       _selectedendDate = newValue ?? "2022";
                                                       startDate.text = newValue ?? "2022";
-                                                      _selectedLocation = "2022";
+                                                      // _selectedLocation = "2022";
                                                     });
                                                     FocusScope.of(context).unfocus();
                                                   },
@@ -724,8 +764,7 @@ class _EducationAddState extends State<EducationAdd> {
                                           RichText(
                                             textAlign: TextAlign.start,
                                             text: TextSpan(
-                                                text: appBloc.localstr
-                                                    .profileLabelEducationtolabel,
+                                                text: appBloc.localstr.profileLabelEducationtolabel,
                                                 style: Theme.of(context).textTheme.headline2?.apply(color: InsColor(appBloc).appTextColor),
                                                 children: <TextSpan>[
                                                   TextSpan(
@@ -740,36 +779,32 @@ class _EducationAddState extends State<EducationAdd> {
                                           ),
                                           InputDecorator(
                                             decoration: InputDecoration(
-                                                hintText: 'Pick year',
-                                                border:
-                                                OutlineInputBorder(
-                                                    borderRadius:
-                                                    BorderRadius
-                                                        .circular(
-                                                        5.0))),
+                                                hintText: 'Ex:2022',
+                                                border: OutlineInputBorder(
+                                                borderRadius: BorderRadius.circular(5.0)),
+                                              disabledBorder: OutlineInputBorder(
+                                                  borderSide: BorderSide(color:  endDate.text.isEmpty? Color(0xffDADCE0):Color(0xff202124),width: 0.5)
+                                              ),
+                                              enabledBorder: OutlineInputBorder(
+                                                  borderSide: BorderSide(color: endDate.text.isEmpty? Color(0xffDADCE0):Color(0xff202124),width: 0.5)
+                                              ),),
                                             child:
                                             Container(
                                               height: 25.h,
                                               child: DropdownButtonHideUnderline(
-                                                child:
-                                                DropdownButton<String>(
+                                                child: DropdownButton<String>(
                                                   dropdownColor: Color(
                                                       int.parse(
                                                           "0xFF${appBloc.uiSettingModel.appBGColor.substring(1, 7).toUpperCase()}")),
-                                                  hint: Text('Pick Year'),
+                                                  hint: Text('Year'),
                                                   value: _selectedLocation,
                                                   // isDense: true,
-                                                  onChanged:
-                                                      (String? newValue) {
+                                                  onChanged: (String? newValue) {
                                                     print(
                                                         "New Value:$newValue");
-                                                    if (int.parse(
-                                                        newValue ??
-                                                            "0") <=
-                                                        int.parse(
-                                                            _selectedendDate)) {
-                                                      flutterToast
-                                                          .showToast(
+                                                    if (int.parse(newValue ?? "0") <=
+                                                        int.parse(_selectedendDate!)) {
+                                                      flutterToast.showToast(
                                                         child: CommonToast(
                                                             displaymsg: appBloc
                                                                 .localstr
@@ -783,17 +818,12 @@ class _EducationAddState extends State<EducationAdd> {
                                                       );
                                                     } else {
                                                       setState(() {
-                                                        _selectedLocation =
-                                                            newValue ??
-                                                                "2022";
-                                                        endDate.text =
-                                                            newValue ??
-                                                                "2022";
+                                                        _selectedLocation = newValue ?? "2022";
+                                                        endDate.text = newValue ?? "2022";
                                                       });
                                                     }
 
-                                                    FocusScope.of(context)
-                                                        .unfocus();
+                                                    FocusScope.of(context).unfocus();
                                                   },
                                                   items: _duration.reversed
                                                       .map((String value) {
@@ -921,10 +951,7 @@ class _EducationAddState extends State<EducationAdd> {
                       ? (state.status == Status.LOADING)
                           ? Center(
                               child: AbsorbPointer(
-                                  child: SpinKitCircle(
-                              color: Colors.grey,
-                              size: 70.h,
-                            )))
+                                  child: AppConstants().getLoaderWidget(iconSize: 70),))
                           : Container()
                       : Container()
                 ],
@@ -1000,7 +1027,7 @@ class _EducationAddState extends State<EducationAdd> {
   void validate() {
     if (_formKey.currentState?.validate() ?? false) {
       _formKey.currentState?.save();
-      if (int.parse(_selectedLocation) <= int.parse(_selectedendDate)) {
+      if (int.parse(_selectedLocation!) <= int.parse(_selectedendDate!)) {
         flutterToast.showToast(
           child: CommonToast(
               displaymsg: appBloc.localstr
@@ -1019,7 +1046,7 @@ class _EducationAddState extends State<EducationAdd> {
   }
 
   void callCreateApi() async {
-    var diff = int.parse(_selectedLocation) - int.parse(_selectedendDate);
+    var diff = int.parse(_selectedLocation!) - int.parse(_selectedendDate!);
     CreateEducationRequest req = CreateEducationRequest();
     req.school = schoolController.text;
     req.country = countryController.text;
@@ -1086,8 +1113,7 @@ class _EducationAddState extends State<EducationAdd> {
                         String newValue = educationalTitleList[titlePos].name;
                         if (newValue != selectedValue) {
                           selectedValue = newValue;
-                          levelController.text =
-                              educationalTitleList[titlePos].name;
+                          levelController.text = educationalTitleList[titlePos].name;
                           titleId = educationalTitleList[titlePos].id;
                         }
                       });

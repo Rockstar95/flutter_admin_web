@@ -122,10 +122,7 @@ class _WaitListScreenState extends State<WaitListScreen> {
                 myLearningBloc.isWaitFirstLoading == true) {
               return Center(
                 child: AbsorbPointer(
-                  child: SpinKitCircle(
-                    color: Colors.grey,
-                    size: 70.h,
-                  ),
+                  child: AppConstants().getLoaderWidget(iconSize: 70)
                 ),
               );
             } else if (state.status == Status.ERROR) {

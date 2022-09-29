@@ -20,6 +20,8 @@ import 'package:flutter_admin_web/ui/common/ins_search_textfield.dart';
 import 'package:flutter_admin_web/ui/messages/messages_list.dart';
 import 'package:flutter_admin_web/ui/profile/profile_page.dart';
 
+import '../../configs/constants.dart';
+import '../common/bottomsheet_option_tile.dart';
 import '../global_search_screen.dart';
 
 class LoadingDialog {
@@ -226,10 +228,7 @@ class _ConnectionScreenState extends State<ConnectionScreen> {
               color: InsColor(appBloc).appBGColor,
               child: Center(
                 child: AbsorbPointer(
-                  child: SpinKitCircle(
-                    color: Colors.grey,
-                    size: 70,
-                  ),
+                  child: AppConstants().getLoaderWidget(iconSize: 70),
                 ),
               ),
             );
@@ -535,10 +534,7 @@ class _ConnectionScreenState extends State<ConnectionScreen> {
                             if((index == 0 && connectionsBloc.allConnectionList.isEmpty) || index == connectionsBloc.allConnectionList.length) {
                               if(connectionsBloc.isLoadingUsers) {
                                 return AbsorbPointer(
-                                  child: SpinKitCircle(
-                                    color: Colors.grey,
-                                    size: 70,
-                                  ),
+                                  child: AppConstants().getLoaderWidget(iconSize: 70),
                                 );
                               }
                               else return SizedBox();
@@ -755,30 +751,36 @@ class _ConnectionScreenState extends State<ConnectionScreen> {
   }
 
   Widget customListTile(IconData icon, String title,{Function()? onTap} ){
-    return Container(
-      child: InkWell(
-        onTap: onTap,
-        child: Padding(
-          padding:  EdgeInsets.fromLTRB(16,0,16,16),
-          child: Row(
-            children: [
-              Icon(
-                icon,
-                color: InsColor(appBloc).appIconColor,
-              ),
-              SizedBox(width: 13,),
-              Text(title,
-                style: Theme.of(context)
-                    .textTheme
-                    .headline2
-                    ?.apply(
-                    color: InsColor(appBloc).appTextColor),
-              ),
-            ],
-          ),
-        ),
-      ),
+    return BottomsheetOptionTile(
+      iconData: icon,
+      text: title,
+      onTap: onTap,
     );
+
+    //   Container(
+    //   child: InkWell(
+    //     onTap: onTap,
+    //     child: Padding(
+    //       padding: EdgeInsets.symmetric(horizontal:16).copyWith(bottom: 30),
+    //       child: Row(
+    //         children: [
+    //           Icon(
+    //             icon,
+    //             color: InsColor(appBloc).appIconColor,
+    //           ),
+    //           SizedBox(width: 13,),
+    //           Text(title,
+    //             style: Theme.of(context)
+    //                 .textTheme
+    //                 .headline2
+    //                 ?.apply(
+    //                 color: InsColor(appBloc).appTextColor),
+    //           ),
+    //         ],
+    //       ),
+    //     ),
+    //   ),
+    // );
   }
 
   void commonShowDialog(PeopleModel people){
@@ -871,11 +873,12 @@ class _ConnectionScreenState extends State<ConnectionScreen> {
 
     print(people.toJson().toString());
 
-    return (showModalBottomSheet<void>(
+    return (
+      showModalBottomSheet<void>(
       context: context,
+      shape: AppConstants().bottomSheetShapeBorder(),
       builder: (BuildContext context) {
-        return Container(
-          color: InsColor(appBloc).appBGColor,
+        return AppConstants().bottomSheetContainer(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             crossAxisAlignment: CrossAxisAlignment.center,

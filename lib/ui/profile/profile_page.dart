@@ -28,6 +28,9 @@ import '../common/outline_button.dart';
 import 'education_info.dart';
 import 'experience_info.dart';
 
+import '../../configs/constants.dart';
+
+
 class Profile extends StatefulWidget {
   final bool isFromProfile, isMyProfile;
   final String connectionUserId;
@@ -208,10 +211,7 @@ class _ProfileState extends State<Profile> {
                   "0xFF${appBloc.uiSettingModel.appBGColor.substring(1, 7).toUpperCase()}")),
               child: Center(
                   child: AbsorbPointer(
-                      child: SpinKitCircle(
-                color: Colors.grey,
-                size: 70.h,
-              ))),
+                      child: AppConstants().getLoaderWidget(iconSize: 70),)),
             );
           } else if (profileBloc.profileResponse != null) {
             Userprofiledetail? userProfileDetail =
@@ -523,10 +523,7 @@ class _ProfileState extends State<Profile> {
                                           "0xFF${appBloc.uiSettingModel.appBGColor.substring(1, 7).toUpperCase()}")),
                                       child: Center(
                                           child: AbsorbPointer(
-                                              child: SpinKitCircle(
-                                        color: Colors.grey,
-                                        size: 50.h,
-                                      ))),
+                                              child: AppConstants().getLoaderWidget(iconSize: 50),)),
                                     );
                                   }
 

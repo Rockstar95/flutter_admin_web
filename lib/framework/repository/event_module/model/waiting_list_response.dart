@@ -4,6 +4,8 @@
 
 import 'dart:convert';
 
+import '../../../helpers/parsing_helper.dart';
+
 WaitingListResponse waitingListResponseFromJson(String str) =>
     WaitingListResponse.fromJson(json.decode(str));
 
@@ -33,8 +35,8 @@ class WaitingListResponse {
 
   factory WaitingListResponse.fromJson(Map<String, dynamic> json) =>
       WaitingListResponse(
-        isSuccess: json["IsSuccess"],
-        message: json["Message"],
+        isSuccess: ParsingHelper.parseBoolMethod(json["IsSuccess"]),
+        message: ParsingHelper.parseStringMethod(json["Message"]),
         autoLaunchUrl: json["AutoLaunchURL"],
         selfScheduleEventId: json["SelfScheduleEventID"],
         courseObject: json["CourseObject"],

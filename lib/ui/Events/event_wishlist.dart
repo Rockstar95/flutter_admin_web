@@ -25,6 +25,7 @@ import 'package:flutter_admin_web/ui/MyLearning/review_screen.dart';
 import 'package:flutter_admin_web/ui/common/common_toast.dart';
 import 'package:intl/intl.dart';
 
+import '../../configs/constants.dart';
 import '../common/bottomsheet_drager.dart';
 
 class EventWishListScreen extends StatefulWidget {
@@ -112,7 +113,7 @@ class _EventWishListScreenState extends State<EventWishListScreen> {
                         displaymsg: appBloc.localstr
                             .catalogAlertsubtitleItemaddedtowishlistsuccesfully),
                     gravity: ToastGravity.BOTTOM,
-                    toastDuration: Duration(seconds: 2),
+                    toastDuration: const Duration(seconds: 2),
                   );
                 }
                 if (state is RemoveFromWishListState) {
@@ -121,7 +122,7 @@ class _EventWishListScreenState extends State<EventWishListScreen> {
                         displaymsg: appBloc.localstr
                             .catalogActionsheetRemovefromwishlistoption),
                     gravity: ToastGravity.BOTTOM,
-                    toastDuration: Duration(seconds: 2),
+                    toastDuration: const Duration(seconds: 2),
                   );
                 }
                 if (state is AddToMyLearningState) {
@@ -130,7 +131,7 @@ class _EventWishListScreenState extends State<EventWishListScreen> {
                         displaymsg: appBloc.localstr
                             .catalogAlertsubtitleThiscontentitemhasbeenaddedto),
                     gravity: ToastGravity.BOTTOM,
-                    toastDuration: Duration(seconds: 2),
+                    toastDuration: const Duration(seconds: 2),
                   );
                 }
               }
@@ -142,14 +143,14 @@ class _EventWishListScreenState extends State<EventWishListScreen> {
             } else if (state is AddToMyLearningState) {
               print('addtoenrolllllllll');
               if (state.status == Status.COMPLETED) {
-                Future.delayed(Duration(seconds: 1), () {
+                Future.delayed(const Duration(seconds: 1), () {
                   // 5s over, navigate to a new page
                   flutterToast.showToast(
                     child: CommonToast(
                         displaymsg: appBloc.localstr
                             .catalogAlertsubtitleThiscontentitemhasbeenaddedto),
                     gravity: ToastGravity.BOTTOM,
-                    toastDuration: Duration(seconds: 1),
+                    toastDuration: const Duration(seconds: 1),
                   );
                 });
 
@@ -164,7 +165,7 @@ class _EventWishListScreenState extends State<EventWishListScreen> {
                 } else {
                   flutterToast.showToast(
                       gravity: ToastGravity.BOTTOM,
-                      toastDuration: Duration(seconds: 2),
+                      toastDuration: const Duration(seconds: 2),
                       child: CommonToast(displaymsg: 'Something went wrong'));
                 }
               }
@@ -186,14 +187,14 @@ class _EventWishListScreenState extends State<EventWishListScreen> {
                     } else if (state is CancelEnrollmentState) {
                       if (state.status == Status.COMPLETED) {
                         if (state.isSucces == 'true') {
-                          Future.delayed(Duration(seconds: 1), () {
+                          Future.delayed(const Duration(seconds: 1), () {
                             // 5s over, navigate to a new page
                             flutterToast.showToast(
                               child: CommonToast(
                                   displaymsg:
                                       'Your enrollment for the course has been successfully canceled'),
                               gravity: ToastGravity.BOTTOM,
-                              toastDuration: Duration(seconds: 1),
+                              toastDuration: const Duration(seconds: 1),
                             );
                           });
 
@@ -205,7 +206,7 @@ class _EventWishListScreenState extends State<EventWishListScreen> {
                             child:
                                 CommonToast(displaymsg: 'Something went wrong'),
                             gravity: ToastGravity.BOTTOM,
-                            toastDuration: Duration(seconds: 2),
+                            toastDuration: const Duration(seconds: 2),
                           );
                         }
                       } else if (state.status == Status.ERROR) {
@@ -232,7 +233,7 @@ class _EventWishListScreenState extends State<EventWishListScreen> {
                                     appBloc.localstr
                                         .mylearningHeaderMylearningtitlelabel),
                             gravity: ToastGravity.BOTTOM,
-                            toastDuration: Duration(seconds: 2),
+                            toastDuration: const Duration(seconds: 2),
                           );
 
                           setState(() {
@@ -243,7 +244,7 @@ class _EventWishListScreenState extends State<EventWishListScreen> {
                             child:
                                 CommonToast(displaymsg: 'Something went wrong'),
                             gravity: ToastGravity.BOTTOM,
-                            toastDuration: Duration(seconds: 2),
+                            toastDuration: const Duration(seconds: 2),
                           );
                         }
                       } else if (state.status == Status.ERROR) {
@@ -254,14 +255,14 @@ class _EventWishListScreenState extends State<EventWishListScreen> {
                     } else if (state is WaitingListState) {
                       if (state.status == Status.COMPLETED) {
                         if (state.waitingListResponse.isSuccess) {
-                          Future.delayed(Duration(seconds: 1), () {
+                          Future.delayed(const Duration(seconds: 1), () {
                             // 5s over, navigate to a new page
                             flutterToast.showToast(
                               child: CommonToast(
                                   displaymsg:
                                       state.waitingListResponse.message),
                               gravity: ToastGravity.BOTTOM,
-                              toastDuration: Duration(seconds: 2),
+                              toastDuration: const Duration(seconds: 2),
                             );
                           });
 
@@ -278,7 +279,7 @@ class _EventWishListScreenState extends State<EventWishListScreen> {
                             child:
                                 CommonToast(displaymsg: 'Something went wrong'),
                             gravity: ToastGravity.BOTTOM,
-                            toastDuration: Duration(seconds: 2),
+                            toastDuration: const Duration(seconds: 2),
                           );
                         }
                       }
@@ -292,15 +293,12 @@ class _EventWishListScreenState extends State<EventWishListScreen> {
                             "0xFF${appBloc.uiSettingModel.appBGColor.substring(1, 7).toUpperCase()}")),
                         child: Center(
                           child: AbsorbPointer(
-                            child: SpinKitCircle(
-                              color: Colors.grey,
-                              size: 70,
-                            ),
+                            child: AppConstants().getLoaderWidget(iconSize: 70)
                           ),
                         ),
                       );
                     } else if (state.status == Status.COMPLETED) {
-                      return evntModuleBloc.eventWishlist.length == 0
+                      return evntModuleBloc.eventWishlist.isEmpty
                           ? noDataFound(true)
                           : Container(
                               color: Color(int.parse(
@@ -324,10 +322,7 @@ class _EventWishListScreenState extends State<EventWishListScreen> {
                 (state.status == Status.LOADING)
                     ? Center(
                         child: AbsorbPointer(
-                          child: SpinKitCircle(
-                            color: Colors.grey,
-                            size: 70,
-                          ),
+                          child: AppConstants().getLoaderWidget(iconSize: 70)
                         ),
                       )
                     : Container()
@@ -364,11 +359,11 @@ class _EventWishListScreenState extends State<EventWishListScreen> {
       isratingbarVissble = true;
     }
 
-    DateTime startTempDate = new DateFormat("yyyy-MM-ddThh:mm:ss")
+    DateTime startTempDate = DateFormat("yyyy-MM-ddThh:mm:ss")
         .parse(table2.eventstartdatedisplay);
 
     DateTime endTempDate =
-        new DateFormat("yyyy-MM-ddThh:mm:ss").parse(table2.eventenddatedisplay);
+        DateFormat("yyyy-MM-ddThh:mm:ss").parse(table2.eventenddatedisplay);
 
     String startDate =
         DateFormat("MM/dd/yyyy hh:mm:ss a").format(startTempDate);
@@ -400,11 +395,11 @@ class _EventWishListScreenState extends State<EventWishListScreen> {
                         child: Center(
                             heightFactor: ScreenUtil().setWidth(20),
                             widthFactor: ScreenUtil().setWidth(20),
-                            child: CircularProgressIndicator(
-                              valueColor: new AlwaysStoppedAnimation<Color>(
+                            child: const CircularProgressIndicator(
+                              valueColor: const AlwaysStoppedAnimation<Color>(
                                   Colors.orange),
                             ))),
-                    errorWidget: (context, url, error) => Icon(Icons.error),
+                    errorWidget: (context, url, error) => const Icon(Icons.error),
                     fit: BoxFit.fill,
                   ),
                 ),
@@ -460,14 +455,14 @@ class _EventWishListScreenState extends State<EventWishListScreen> {
                   ),
                   Row(
                     children: <Widget>[
-                      new Container(
+                      Container(
                           width: ScreenUtil().setWidth(20),
                           height: ScreenUtil().setWidth(20),
-                          decoration: new BoxDecoration(
+                          decoration: BoxDecoration(
                               shape: BoxShape.circle,
-                              image: new DecorationImage(
+                              image: DecorationImage(
                                   fit: BoxFit.fill,
-                                  image: new NetworkImage(imgUrl)))),
+                                  image: NetworkImage(imgUrl)))),
                       SizedBox(
                         width: ScreenUtil().setWidth(5),
                       ),
@@ -728,134 +723,132 @@ class _EventWishListScreenState extends State<EventWishListScreen> {
     showModalBottomSheet(
         context: context,
         builder: (BuildContext bc) {
-          return Container(
-            child: SingleChildScrollView(
-              child: new Column(
-                children: <Widget>[
-                  BottomSheetDragger(),
-                  menu0
-                      ? ListTile(
-                          title: Text(appBloc
-                              .localstr.eventsActionsheetRelatedcontentoption,
-                              style: TextStyle(
-                                  color: InsColor(appBloc).appTextColor)),
-                          leading: Icon(
-                            IconDataSolid(int.parse('0xf06e')),
-                            color: InsColor(appBloc).appIconColor,
-                          ),
-                        )
-                      : Container(),
-                  menu1
-                      ? ListTile(
-                          title: Text(menu1Title, style: TextStyle(
-                              color: InsColor(appBloc).appTextColor)),
-                          leading: Icon(
-                            Icons.add_circle,
-                            color: InsColor(appBloc).appIconColor,
-                          ),
-                          onTap: () {
-                            Navigator.of(context).pop();
-                            addToEnroll(table2);
-                          },
-                        )
-                      : Container(),
-                  menu2
-                      ? ListTile(
-                          title: Text(
-                              appBloc.localstr.eventsActionsheetBuynowoption,
-                              style: TextStyle(
-                                  color: InsColor(appBloc).appTextColor)),
-                          leading: Icon(
-                            IconDataSolid(int.parse('0xf144')),
-                            color: InsColor(appBloc).appIconColor,
-                          ),
-                        )
-                      : Container(),
-                  menu3
-                      ? ListTile(
-                          title: Text(
-                              appBloc.localstr.eventsActionsheetDetailsoption,
-                              style: TextStyle(
-                                  color: InsColor(appBloc).appTextColor)
-                          ),
-                          leading: Icon(
-                            IconDataSolid(int.parse('0xf570')),
-                            color: InsColor(appBloc).appIconColor,
-                          ),
-                          onTap: () {
-                            pos = i;
+          return SingleChildScrollView(
+            child: Column(
+              children: <Widget>[
+                const BottomSheetDragger(),
+                menu0
+                    ? ListTile(
+                        title: Text(appBloc
+                            .localstr.eventsActionsheetRelatedcontentoption,
+                            style: TextStyle(
+                                color: InsColor(appBloc).appTextColor)),
+                        leading: Icon(
+                          IconDataSolid(int.parse('0xf06e')),
+                          color: InsColor(appBloc).appIconColor,
+                        ),
+                      )
+                    : Container(),
+                menu1
+                    ? ListTile(
+                        title: Text(menu1Title, style: TextStyle(
+                            color: InsColor(appBloc).appTextColor)),
+                        leading: Icon(
+                          Icons.add_circle,
+                          color: InsColor(appBloc).appIconColor,
+                        ),
+                        onTap: () {
+                          Navigator.of(context).pop();
+                          addToEnroll(table2);
+                        },
+                      )
+                    : Container(),
+                menu2
+                    ? ListTile(
+                        title: Text(
+                            appBloc.localstr.eventsActionsheetBuynowoption,
+                            style: TextStyle(
+                                color: InsColor(appBloc).appTextColor)),
+                        leading: Icon(
+                          IconDataSolid(int.parse('0xf144')),
+                          color: InsColor(appBloc).appIconColor,
+                        ),
+                      )
+                    : Container(),
+                menu3
+                    ? ListTile(
+                        title: Text(
+                            appBloc.localstr.eventsActionsheetDetailsoption,
+                            style: TextStyle(
+                                color: InsColor(appBloc).appTextColor)
+                        ),
+                        leading: Icon(
+                          IconDataSolid(int.parse('0xf570')),
+                          color: InsColor(appBloc).appIconColor,
+                        ),
+                        onTap: () {
+                          pos = i;
 
-                            print('wishlistposss $pos $i');
-                            Navigator.of(context).pop();
-                            Navigator.of(context).push(MaterialPageRoute(
-                                builder: (context) => CommonDetailScreen(
-                                      screenType: ScreenType.Events,
-                                      //isWishlisted: true,
-                                      contentid: table2.contentid,
-                                      objtypeId: table2.objecttypeid,
-                                      detailsBloc: detailsBloc,
-                                      table2: table2,
-                                      isFromReschedule: false,
-                                    )));
-                          },
-                        )
-                      : Container(),
-                  menu4
-                      ? ListTile(
-                          onTap: () {
-                            Navigator.of(context).pop();
-                            if (table2.isbadcancellationenabled) {
-                              badCancelEnrollmentMethod(table2);
+                          print('wishlistposss $pos $i');
+                          Navigator.of(context).pop();
+                          Navigator.of(context).push(MaterialPageRoute(
+                              builder: (context) => CommonDetailScreen(
+                                    screenType: ScreenType.Events,
+                                    //isWishlisted: true,
+                                    contentid: table2.contentid,
+                                    objtypeId: table2.objecttypeid,
+                                    detailsBloc: detailsBloc,
+                                    table2: table2,
+                                    isFromReschedule: false,
+                                  )));
+                        },
+                      )
+                    : Container(),
+                menu4
+                    ? ListTile(
+                        onTap: () {
+                          Navigator.of(context).pop();
+                          if (table2.isbadcancellationenabled) {
+                            badCancelEnrollmentMethod(table2);
 
-                              // bad cancel
-                            } else {
-                              showCancelEnrollDialog(table2,
-                                  table2.isbadcancellationenabled.toString());
-                            }
-                          },
-                          title: Text(appBloc.localstr.eventsActionsheetCancelenrollmentoption,
-                              style: TextStyle(
-                                  color: InsColor(appBloc).appTextColor)
-                          ),
-                          leading: Icon(
-                            IconDataSolid(int.parse('0xf144')),
-                            color: InsColor(appBloc).appIconColor,
-                          ),
-                        )
-                      : Container(),
-                  menu5
-                      ? ListTile(
-                          title: Text(appBloc.localstr.catalogActionsheetWishlistoption,
-                              style: TextStyle(
-                                  color: InsColor(appBloc).appTextColor)),
-                          leading: Icon(
-                            IconDataSolid(int.parse('0xf144')),
-                            color: InsColor(appBloc).appIconColor,
-                          ),
-                          onTap: () {
-                            catalogBloc.add(AddToWishListEvent(
-                                contentId: table2.contentid));
-                            Navigator.of(context).pop();
-                          },
-                        )
-                      : Container(),
-                  menu6
-                      ? ListTile(
-                          title: Text(appBloc.localstr.catalogActionsheetRemovefromwishlistoption, style: TextStyle(
-                              color: InsColor(appBloc).appTextColor)),
-                          leading: Icon(
-                            Icons.favorite,
-                            color: InsColor(appBloc).appIconColor,
-                          ),
-                          onTap: () {
-                            catalogBloc.add(RemoveFromWishListEvent(
-                                contentId: table2.contentid));
-                            Navigator.of(context).pop();
-                          },
-                        )
-                      : Container(),
-                ],
-              ),
+                            // bad cancel
+                          } else {
+                            showCancelEnrollDialog(table2,
+                                table2.isbadcancellationenabled.toString());
+                          }
+                        },
+                        title: Text(appBloc.localstr.eventsActionsheetCancelenrollmentoption,
+                            style: TextStyle(
+                                color: InsColor(appBloc).appTextColor)
+                        ),
+                        leading: Icon(
+                          IconDataSolid(int.parse('0xf144')),
+                          color: InsColor(appBloc).appIconColor,
+                        ),
+                      )
+                    : Container(),
+                menu5
+                    ? ListTile(
+                        title: Text(appBloc.localstr.catalogActionsheetWishlistoption,
+                            style: TextStyle(
+                                color: InsColor(appBloc).appTextColor)),
+                        leading: Icon(
+                          IconDataSolid(int.parse('0xf144')),
+                          color: InsColor(appBloc).appIconColor,
+                        ),
+                        onTap: () {
+                          catalogBloc.add(AddToWishListEvent(
+                              contentId: table2.contentid));
+                          Navigator.of(context).pop();
+                        },
+                      )
+                    : Container(),
+                menu6
+                    ? ListTile(
+                        title: Text(appBloc.localstr.catalogActionsheetRemovefromwishlistoption, style: TextStyle(
+                            color: InsColor(appBloc).appTextColor)),
+                        leading: Icon(
+                          Icons.favorite,
+                          color: InsColor(appBloc).appIconColor,
+                        ),
+                        onTap: () {
+                          catalogBloc.add(RemoveFromWishListEvent(
+                              contentId: table2.contentid));
+                          Navigator.of(context).pop();
+                        },
+                      )
+                    : Container(),
+              ],
             ),
           );
         });
@@ -900,32 +893,32 @@ class _EventWishListScreenState extends State<EventWishListScreen> {
                 .eventdetailsenrollementAlertsubtitleEventenrollmentlimit;
             showDialog(
                 context: context,
-                builder: (BuildContext context) => new AlertDialog(
+                builder: (BuildContext context) => AlertDialog(
                       title: Text(
                         appBloc.localstr.eventsActionsheetEnrolloption,
-                        style: TextStyle(fontWeight: FontWeight.bold),
+                        style: const TextStyle(fontWeight: FontWeight.bold),
                       ),
                       content: Text(alertMessage),
                       backgroundColor: Colors.white,
                       shape: RoundedRectangleBorder(
-                          borderRadius: new BorderRadius.circular(5)),
+                          borderRadius: BorderRadius.circular(5)),
                       actions: <Widget>[
-                        new FlatButton(
-                          child: Text(appBloc
-                              .localstr.mylearningAlertbuttonCancelbutton),
+                        FlatButton(
                           textColor: Colors.blue,
                           onPressed: () async {
                             Navigator.of(context).pop();
                           },
+                          child: Text(appBloc
+                              .localstr.mylearningAlertbuttonCancelbutton),
                         ),
-                        new FlatButton(
-                          child: Text(
-                              appBloc.localstr.myskillAlerttitleStringconfirm),
+                        FlatButton(
                           textColor: Colors.blue,
                           onPressed: () async {
                             Navigator.of(context).pop();
                             addToWaitList(table2);
                           },
+                          child: Text(
+                              appBloc.localstr.myskillAlerttitleStringconfirm),
                         ),
                       ],
                     ));
@@ -954,7 +947,7 @@ class _EventWishListScreenState extends State<EventWishListScreen> {
 
     bool isCompleted = false;
 
-    DateFormat sdf = new DateFormat("yyyy-MM-dd HH:mm:ss");
+    DateFormat sdf = DateFormat("yyyy-MM-dd HH:mm:ss");
     DateTime? strDate;
     DateTime? currentdate;
 
@@ -963,7 +956,7 @@ class _EventWishListScreenState extends State<EventWishListScreen> {
     if (!isValidString(eventDate)) return false;
 
     try {
-      var temp = new DateFormat("yyyy-MM-dd").parse(eventDate.split("T")[0]);
+      var temp = DateFormat("yyyy-MM-dd").parse(eventDate.split("T")[0]);
       strDate = sdf.parse(temp.toString());
     } catch (e) {
       print("catch");
@@ -999,38 +992,38 @@ class _EventWishListScreenState extends State<EventWishListScreen> {
               ),
             ],
           )
-        : new Container();
+        : Container();
   }
 
   void showCancelEnrollDialog(
       DummyMyCatelogResponseTable2 table2, String isSuccess) {
     showDialog(
         context: context,
-        builder: (BuildContext context) => new AlertDialog(
+        builder: (BuildContext context) => AlertDialog(
               title: Text(
                 appBloc.localstr.mylearningAlerttitleStringareyousure,
-                style: TextStyle(fontWeight: FontWeight.bold),
+                style: const TextStyle(fontWeight: FontWeight.bold),
               ),
               content: Text(appBloc.localstr
                   .mylearningAlertsubtitleDoyouwanttocancelenrolledevent),
               backgroundColor: Colors.white,
               shape: RoundedRectangleBorder(
-                  borderRadius: new BorderRadius.circular(5)),
+                  borderRadius: BorderRadius.circular(5)),
               actions: <Widget>[
-                new FlatButton(
-                  child: Text(appBloc.localstr.catalogAlertbuttonCancelbutton),
+                FlatButton(
                   textColor: Colors.blue,
                   onPressed: () async {
                     Navigator.of(context).pop();
                   },
+                  child: Text(appBloc.localstr.catalogAlertbuttonCancelbutton),
                 ),
-                new FlatButton(
-                  child: Text(appBloc.localstr.eventsAlertbuttonOkbutton),
+                FlatButton(
                   textColor: Colors.blue,
                   onPressed: () async {
                     Navigator.of(context).pop();
                     cancelEnrollment(table2, isSuccess);
                   },
+                  child: Text(appBloc.localstr.eventsAlertbuttonOkbutton),
                 ),
               ],
             ));

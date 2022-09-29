@@ -4,6 +4,8 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:flutter_admin_web/framework/bloc/app/bloc/app_bloc.dart';
 
+import '../../configs/constants.dart';
+
 class RoundedSquareProgressIndicator extends StatelessWidget {
   const RoundedSquareProgressIndicator({Key? key}) : super(key: key);
 
@@ -19,10 +21,7 @@ class RoundedSquareProgressIndicator extends StatelessWidget {
         borderRadius: BorderRadius.circular(10),
         border: Border.all(color: Color(int.parse('0xFF${appBloc.uiSettingModel.appTextColor.substring(1, 7).toUpperCase()}'),)),
       ),
-      child: SpinKitCircle(
-        color: Color(int.parse('0xFF${appBloc.uiSettingModel.appTextColor.substring(1, 7).toUpperCase()}'),),
-        size: 50.h,
-      ),
+      child: AppConstants().getLoaderWidget(iconSize: 50),
     );
   }
 }

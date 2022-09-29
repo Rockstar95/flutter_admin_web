@@ -263,9 +263,9 @@ class _AddCommentState extends State<AddComment> with SingleTickerProviderStateM
               Padding(
                 padding: const EdgeInsets.only(
                     top: 20, left: 5.0, right: 10.0, bottom: 10.0),
-                child: Text(
-                  'Support Documents',
-                  style: TextStyle(
+                child: new Text(
+                  'Attachment',
+                  style: new TextStyle(
                     fontSize: 18.0,
                     color: Color(int.parse(
                         "0xFF${appBloc.uiSettingModel.appTextColor.substring(1, 7).toUpperCase()}")),

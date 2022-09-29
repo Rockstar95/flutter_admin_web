@@ -4,6 +4,8 @@
 
 import 'dart:convert';
 
+import '../../../helpers/parsing_helper.dart';
+
 ResTrackList resTrackListFromJson(String str) =>
     ResTrackList.fromJson(json.decode(str));
 
@@ -76,6 +78,8 @@ class Table5 {
     this.progress = "",
     this.actionviewqrcode,
     this.qrimagename,
+    this.allowednavigation = true,
+    this.wstatus = "",
   });
 
   String objectid = "";
@@ -125,6 +129,8 @@ class Table5 {
   String progress = "";
   dynamic actionviewqrcode;
   dynamic qrimagename;
+  bool allowednavigation = true;
+  String wstatus = "";
 
   factory Table5.fromJson(Map<String, dynamic> json) => Table5(
         objectid: json["objectid"] ?? "",
@@ -136,7 +142,7 @@ class Table5 {
         name: json["name"] ?? "",
         iconpath: json["iconpath"] ?? "",
         downloadable:
-            json["downloadable"] == null ? false : json["downloadable"],
+            json["downloadable"] ?? false,
         viewtype: json["viewtype"] ?? 0,
         saleprice: json["saleprice"],
         scoid: json["scoid"] ?? 0,
@@ -155,7 +161,7 @@ class Table5 {
             : DateTime.parse(json["createddate"]),
         eventstartdatetime: json["eventstartdatetime"],
         eventenddatetime: json["eventenddatetime"],
-        bit5: json["bit5"] == null ? false : json["bit5"],
+        bit5: json["bit5"] ?? false,
         participanturl: json["participanturl"],
         timezone: json["timezone"],
         eventfulllocation: json["eventfulllocation"],
@@ -177,58 +183,62 @@ class Table5 {
         progress: json["progress"] ?? "",
         actionviewqrcode: json["actionviewqrcode"],
         qrimagename: json["qrimagename"],
+        allowednavigation: ParsingHelper.parseBoolMethod(json["allowednavigation"]),
+        wstatus: ParsingHelper.parseStringMethod(json["wstatus"]),
       );
 
   Map<String, dynamic> toJson() => {
-        "objectid": objectid == null ? null : objectid,
-        "contentid": contentid == null ? null : contentid,
-        "objecttypeid": objecttypeid == null ? null : objecttypeid,
-        "mediatypeid": mediatypeid == null ? null : mediatypeid,
-        "folderpath": folderpath == null ? null : folderpath,
-        "startpage": startpage == null ? null : startpage,
-        "name": name == null ? null : name,
-        "iconpath": iconpath == null ? null : iconpath,
-        "downloadable": downloadable == null ? null : downloadable,
-        "viewtype": viewtype == null ? null : viewtype,
+        "objectid": objectid,
+        "contentid": contentid,
+        "objecttypeid": objecttypeid,
+        "mediatypeid": mediatypeid,
+        "folderpath": folderpath,
+        "startpage": startpage,
+        "name": name,
+        "iconpath": iconpath,
+        "downloadable": downloadable,
+        "viewtype": viewtype,
         "saleprice": saleprice,
-        "scoid": scoid == null ? null : scoid,
+        "scoid": scoid,
         "thumbnailimagepath":
-            thumbnailimagepath == null ? null : thumbnailimagepath,
+            thumbnailimagepath,
         "contenttypethumbnail":
-            contenttypethumbnail == null ? null : contenttypethumbnail,
-        "medianame": medianame == null ? null : medianame,
+            contenttypethumbnail,
+        "medianame": medianame,
         "version": version,
-        "author": author == null ? null : author,
-        "devicetypeid": devicetypeid == null ? null : devicetypeid,
+        "author": author,
+        "devicetypeid": devicetypeid,
         "listprice": listprice,
         "currency": currency,
-        "shortdescription": shortdescription == null ? null : shortdescription,
+        "shortdescription": shortdescription,
         "longdescription": longdescription,
         "createddate":
             createddate == null ? null : createddate?.toIso8601String(),
         "eventstartdatetime": eventstartdatetime,
         "eventenddatetime": eventenddatetime,
-        "bit5": bit5 == null ? null : bit5,
+        "bit5": bit5,
         "participanturl": participanturl,
         "timezone": timezone,
         "eventfulllocation": eventfulllocation,
-        "objectfolderid": objectfolderid == null ? null : objectfolderid,
+        "objectfolderid": objectfolderid,
         "parentid": parentid,
-        "sequencenumber": sequencenumber == null ? null : sequencenumber,
+        "sequencenumber": sequencenumber,
         "jwvideokey": jwvideokey,
         "cloudmediaplayerkey": cloudmediaplayerkey,
-        "ratingid": ratingid == null ? null : ratingid,
+        "ratingid": ratingid,
         "presentername": presentername,
-        "percentcompleted": percentcompleted == null ? null : percentcompleted,
-        "corelessonstatus": corelessonstatus == null ? null : corelessonstatus,
+        "percentcompleted": percentcompleted,
+        "corelessonstatus": corelessonstatus,
         "actualstatus": actualstatus,
-        "jwstartpage": jwstartpage == null ? null : jwstartpage,
+        "jwstartpage": jwstartpage,
         "eventid": eventid,
-        "eventtype": eventtype == null ? null : eventtype,
-        "typeofevent": typeofevent == null ? null : typeofevent,
-        "activityid": activityid == null ? null : activityid,
-        "progress": progress == null ? null : progress,
+        "eventtype": eventtype,
+        "typeofevent": typeofevent,
+        "activityid": activityid,
+        "progress": progress,
         "actionviewqrcode": actionviewqrcode,
         "qrimagename": qrimagename,
+        "allowednavigation": allowednavigation,
+        "wstatus": wstatus,
       };
 }

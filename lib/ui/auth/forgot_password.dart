@@ -13,6 +13,7 @@ import 'package:flutter_admin_web/framework/common/enums.dart';
 import 'package:flutter_admin_web/framework/repository/auth/provider/auth_repository_builder.dart';
 import 'package:flutter_admin_web/ui/common/common_toast.dart';
 
+import '../../configs/constants.dart';
 import '../common/app_colors.dart';
 
 class ForgotPassword extends StatefulWidget {
@@ -88,7 +89,7 @@ class _ForgotPasswordState extends State<ForgotPassword> {
             backgroundColor: AppColors.getAppHeaderColor(),
             leading: InkWell(
               onTap: () => Navigator.of(context).pop(),
-              child: Icon(
+              child: const Icon(
                 Icons.arrow_back,
                 color: Colors.grey,
               ),
@@ -121,7 +122,7 @@ class _ForgotPasswordState extends State<ForgotPassword> {
                             fontWeight: FontWeight.w500,
                             letterSpacing: .5
                         ),)),
-                    SizedBox(height: 5,),
+                    const SizedBox(height: 5,),
                     Form(
                       key: _formKey,
                       autovalidateMode: AutovalidateMode.disabled,
@@ -135,7 +136,7 @@ class _ForgotPasswordState extends State<ForgotPassword> {
                             hintText: appBloc.localstr.forgotpasswordTextfieldEmailtextfieldplaceholder,
                             hintStyle: TextStyle(
                                 color: state.themeData.primaryColorLight),
-                            contentPadding: EdgeInsets.symmetric(horizontal: 10),
+                            contentPadding: const EdgeInsets.symmetric(horizontal: 10),
                             border: OutlineInputBorder(borderSide: BorderSide(color: AppColors.getBorderColor().withOpacity(0.2))),
                             focusedBorder: OutlineInputBorder(borderSide: BorderSide(color: AppColors.getAppTextColor().withOpacity(0.7))),
                             enabledBorder: OutlineInputBorder(borderSide: BorderSide(color: AppColors.getBorderColor())),
@@ -169,13 +170,18 @@ class _ForgotPasswordState extends State<ForgotPassword> {
                     SizedBox(
                       height: 20.h,
                     ),
-                    Container(
+                    SizedBox(
                         width: MediaQuery.of(context).size.width,
                         height: 55.h,
                         child: MaterialButton(
                           disabledColor: AppColors.getAppButtonBGColor()
                               .withOpacity(0.5),
                           color: AppColors.getAppButtonBGColor(),
+                          onPressed: ctrEamil.text.isEmpty
+                              ? null
+                              : () {
+                                  validate();
+                                },
                           child: Text(
                               appBloc.localstr
                                   .forgotpasswordButtonResetpasswordbutton,
@@ -183,11 +189,6 @@ class _ForgotPasswordState extends State<ForgotPassword> {
                                   fontSize: 14.h,
                                   color: Color(int.parse(
                                       "0xFF${appBloc.uiSettingModel.appButtonTextColor.substring(1, 7).toUpperCase()}")))),
-                          onPressed: ctrEamil.text.isEmpty
-                              ? null
-                              : () {
-                                  validate();
-                                },
                         )),
                     SizedBox(
                       height: 55.h,
@@ -195,10 +196,7 @@ class _ForgotPasswordState extends State<ForgotPassword> {
                     Center(
                       child: stateVal.status == Status.LOADING
                           ? AbsorbPointer(
-                              child: SpinKitCircle(
-                                color: Colors.grey,
-                                size: 70.h,
-                              ),
+                              child: AppConstants().getLoaderWidget(iconSize: 70)
                             )
                           : Container(),
                     ),
@@ -218,9 +216,9 @@ class _ForgotPasswordState extends State<ForgotPassword> {
 
   String? validateEmail(String? value) {
     print(value);
-    regExp = new RegExp(pattern);
+    regExp = RegExp(pattern);
 
-    if (value?.length == 0) {
+    if (value!.isEmpty) {
       return appBloc.localstr.forgotpasswordAlertsubtitleEnterusernameoremail;
     } else if (!regExp!.hasMatch(value ?? "")) {
       return appBloc.localstr.forgotpasswordAlertsubtitleEmailenteredisinvalid;
@@ -249,7 +247,7 @@ class _ForgotPasswordState extends State<ForgotPassword> {
           displaymsg: appBloc.localstr
               .forgotpasswordAlertsubtitlePasswordresetlinksenttoyourregisteredemail),
       gravity: ToastGravity.BOTTOM,
-      toastDuration: Duration(seconds: 2),
+      toastDuration: const Duration(seconds: 2),
     );
     Navigator.of(context).pop();
   }
@@ -260,7 +258,7 @@ class _ForgotPasswordState extends State<ForgotPassword> {
         displaymsg: isActiveUser ? appBloc.localstr.forgotpasswordAlertsubtitleFaliedtosendresetlinkcontactsiteadmin : appBloc.localstr.forgotpasswordAlertsubtitleYouraccountisdeactivated,
       ),
       gravity: ToastGravity.BOTTOM,
-      toastDuration: Duration(seconds: 2),
+      toastDuration: const Duration(seconds: 2),
     );
   }
 }

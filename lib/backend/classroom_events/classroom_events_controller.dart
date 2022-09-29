@@ -26,23 +26,33 @@ import 'package:flutter_admin_web/utils/my_print.dart';
 import 'package:flutter_admin_web/utils/mytoast.dart';
 import 'package:intl/intl.dart';
 
+import '../../framework/repository/event_module/model/event_recording_resonse.dart';
+import '../../framework/repository/event_module/model/session_event_response.dart';
+import '../../framework/repository/event_module/model/waiting_list_response.dart';
+import '../../models/api_response_model.dart';
+
 class ClassroomEventsController extends ChangeNotifier {
   ClassroomEventsRepository eventModuleRepository;
+  Map<String, DummyMyCatelogResponseTable2> mainMapOfEvents = {};
 
   ClassroomEventsController({
     this.eventModuleRepository = const ClassroomEventsRepository(),
     String searchString = "",
+    required this.mainMapOfEvents,
   });
 
   List<GetPeopleTabListResponse> tabList = [];
-  List<DummyMyCatelogResponseTable2> mainEventsList = [], listOfEventsToShow = [];
+  Map<String, ClassroomEventsController> childControllers = <String, ClassroomEventsController>{};
+
+  List<String> mainEventsList = [], listOfEventsToShow = [];
+  List<DummyMyCatelogResponseTable2> eventWishlist = [];
   bool isFirstLoading = false, isLoadingTabs = false, isLoadingEvents = false, isLoading = false, hasMoreEvents = false;
   String searchEventString = "", calenderSelecteddates = "";
   int pageIndex = 1;
   AppErrorModel? appErrorModel;
-  Map<String, ClassroomEventsController> childControllers = <String, ClassroomEventsController>{};
 
-  Future<void> getPeopleListingTabEventHandler({bool isGetFromCache = false}) async {
+  //To Get Tabs List
+  Future<void> getPeopleListingTab({bool isGetFromCache = false}) async {
     MyPrint.printOnConsole("ClassroomEventsBloc called wit Event GetPeopleListingTabEvent");
 
     if(isGetFromCache && tabList.isNotEmpty) {
@@ -53,25 +63,25 @@ class ClassroomEventsController extends ChangeNotifier {
     isLoadingTabs = true;
     notifyListeners();
 
-    dynamic response = await eventModuleRepository.getPeopleTabList();
+    ApiResponseModel<List<GetPeopleTabListResponse>> response = await eventModuleRepository.getPeopleTabList();
 
-    if(response is List<GetPeopleTabListResponse>) {
+    if(response.data != null) {
       isFirstLoading = false;
       isLoadingTabs = false;
-      tabList = response;
+      tabList = response.data!;
 
       childControllers = {};
       tabList.forEach((element) {
-        childControllers[element.tabId] = ClassroomEventsController();
+        childControllers[element.tabId] = ClassroomEventsController(mainMapOfEvents: mainMapOfEvents);
       });
     }
-    else if(response is AppErrorModel) {
-      if(response.code == AppApiStatusCodes.TOKEN_EXPIRED) {
+    else if(response.appErrorModel != null) {
+      if(response.appErrorModel!.code == AppApiStatusCodes.TOKEN_EXPIRED) {
         NavigationController().sessionTimeOut();
         return;
       }
 
-      appErrorModel = response;
+      appErrorModel = response.appErrorModel;
       isFirstLoading = false;
       isLoadingTabs = false;
       tabList = [];
@@ -87,13 +97,34 @@ class ClassroomEventsController extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> getTabContentEventHandler({
-    String tabVal = "",
-    String searchString = "",
-    required MyLearningBloc myLearningBloc,
-    bool isRefresh = true,
-    String callenderSelectedDates = "",
-    bool isNotify = true,
+  //To Get View Link For Recording
+  Future<String> viewRecording({required String contentId}) async {
+    MyPrint.printOnConsole("ClassroomEventsBloc called wit Event viewRecordingEventHandler with contentId:$contentId");
+
+    ApiResponseModel<EventRecordingResponse> response = await eventModuleRepository.viewRecording(contentId: contentId);
+    if (response.data != null) {
+      EventRecordingResponse recordingResponse = response.data!;
+
+      return recordingResponse.viewLink;
+    }
+    else if (response.appErrorModel != null) {
+      if(response.appErrorModel!.code == AppApiStatusCodes.TOKEN_EXPIRED) {
+        NavigationController().sessionTimeOut();
+        return "";
+      }
+      else {
+        MyPrint.printOnConsole("Some Error Occurred in viewRecording:${response.appErrorModel!.stackTrace}");
+        return "";
+      }
+    }
+    else {
+      return "";
+    }
+  }
+
+  //To Get Events List for Particular Tab
+  Future<void> getTabContent({String tabVal = "", String searchString = "", required MyLearningBloc myLearningBloc, bool isRefresh = true,
+    String callenderSelectedDates = "", bool isNotify = true,
   }) async {
     MyPrint.printOnConsole("ClassroomEventsBloc called wit Event GetTabContentEvent");
 
@@ -117,7 +148,7 @@ class ClassroomEventsController extends ChangeNotifier {
 
     MyPrint.printOnConsole("Current Page Index:$pageIndex");
 
-    dynamic response = await eventModuleRepository.getTabContent(
+    ApiResponseModel<DummyMyCatelogResponseEntity> response = await eventModuleRepository.getTabContent(
       pageIndex: pageIndex,
       calenderSelecteddates: calenderSelecteddates,
       searchString: searchEventString,
@@ -125,15 +156,18 @@ class ClassroomEventsController extends ChangeNotifier {
       tabVal: tabVal,
     );
 
-    if(response is DummyMyCatelogResponseEntity) {
-      MyPrint.printOnConsole("Got ${response.table2.length} Events");
-      response.table2.forEach((DummyMyCatelogResponseTable2 element) {
-        print("In Bloc Id:${element.contentid}, isWishlist:${element.iswishlistcontent}");
-      });
-      setImageData(response.table2);
+    if(response.data != null) {
+      List<DummyMyCatelogResponseTable2> table2 = response.data!.table2;
 
-      List<DummyMyCatelogResponseTable2> newList = listOfEventsToShow.toList();
-      newList.addAll(response.table2);
+      MyPrint.printOnConsole("Got ${table2.length} Events");
+      table2.forEach((DummyMyCatelogResponseTable2 element) {
+        print("In Bloc Id:${element.contentid}, isWishlist:${element.iswishlistcontent}");
+        mainMapOfEvents[element.contentid] = element;
+      });
+      setImageData(table2);
+
+      List<String> newList = List.from(listOfEventsToShow);
+      newList = (newList..addAll(table2.map((e) => e.contentid).toSet())).toSet().toList();
       MyPrint.printOnConsole("Total Events:${newList.length}");
 
       isFirstLoading = false;
@@ -144,16 +178,12 @@ class ClassroomEventsController extends ChangeNotifier {
       //hasMoreEvents = response.table2.isNotEmpty;
 
       pageIndex++;
-      mainEventsList..clear()..addAll(newList);
       listOfEventsToShow..clear()..addAll(newList);
-
-      /*mainEventsList..clear()..addAll([]);
-      listOfEventsToShow..clear()..addAll([]);*/
 
       MyPrint.printOnConsole("New Page Index:$pageIndex");
     }
-    else if(response is AppErrorModel) {
-      appErrorModel = response;
+    else if(response.appErrorModel != null) {
+      appErrorModel = response.appErrorModel;
       isFirstLoading = false;
       isLoadingEvents = false;
       hasMoreEvents = false;
@@ -173,12 +203,153 @@ class ClassroomEventsController extends ChangeNotifier {
       searchEventString = "";
     }
     notifyListeners();
+
+    if(response.appErrorModel?.code == AppApiStatusCodes.TOKEN_EXPIRED) {
+      NavigationController().sessionTimeOut();
+    }
   }
 
-  Future<void> buyClassroomEventEventHandler({
-    required BuildContext context,
-    required DummyMyCatelogResponseTable2 product,
-  }) async {
+  //To Mark Event as Download Completed
+  Future<bool> downloadComplete({required String contentId, required int scoID}) async {
+    MyPrint.printOnConsole("ClassroomEventsBloc called wit Event downloadCompleteEventHandler with contentId:$contentId and scoID:$scoID");
+
+    ApiResponseModel<bool> response = await eventModuleRepository.downloadComplete(contentId: contentId, scoID: scoID);
+    if (response.data != null) {
+      return response.data!;
+    }
+    else if (response.appErrorModel != null) {
+      if(response.appErrorModel!.code == AppApiStatusCodes.TOKEN_EXPIRED) {
+        NavigationController().sessionTimeOut();
+        return false;
+      }
+      else {
+        MyPrint.printOnConsole("Some Error Occurred in downloadComplete:${response.appErrorModel!.stackTrace}");
+        return false;
+      }
+    }
+    else {
+      return false;
+    }
+  }
+
+  //To Get Event Wishlist Content
+  Future<List<DummyMyCatelogResponseTable2>> getEventwishlistContent({String tabVal = "",}) async {
+    MyPrint.printOnConsole("ClassroomEventsBloc called for getEventwishlistContent with tabVal:$tabVal");
+
+    eventWishlist.clear();
+
+    ApiResponseModel<DummyMyCatelogResponseEntity> response = await eventModuleRepository.getWishlistContent(tabVal: tabVal,);
+
+    if(response.data != null) {
+      List<DummyMyCatelogResponseTable2> table2 = response.data!.table2;
+
+      MyPrint.printOnConsole("Got ${table2.length} Events");
+      table2.forEach((DummyMyCatelogResponseTable2 element) {
+        print("In Bloc Id:${element.contentid}, isWishlist:${element.iswishlistcontent}");
+      });
+      setImageData(table2);
+
+      eventWishlist = table2;
+    }
+    else if(response.appErrorModel != null) {
+      if(response.appErrorModel!.code == AppApiStatusCodes.TOKEN_EXPIRED) {
+        NavigationController().sessionTimeOut();
+        return [];
+      }
+      else {
+        MyPrint.printOnConsole("Error in Getting Wishlist Content:${response.appErrorModel!.stackTrace}");
+      }
+    }
+
+    return eventWishlist;
+  }
+
+  //To Get Event Session Courses List
+  Future<List<CourseList>> getEventSessionCoursesList({required String contentId}) async {
+    MyPrint.printOnConsole("ClassroomEventsBloc called for getEventSessionCoursesList with contentId:$contentId");
+
+    ApiResponseModel<List<CourseList>> response = await eventModuleRepository.getEventSessionCoursesList(contentId: contentId);
+
+    if (response.data != null) {
+      return response.data!;
+    }
+    else if (response.appErrorModel != null) {
+      if(response.appErrorModel!.code == AppApiStatusCodes.TOKEN_EXPIRED) {
+        NavigationController().sessionTimeOut();
+        return [];
+      }
+      else {
+        MyPrint.printOnConsole("Some Error Occurred in getEventSessionCoursesList:${response.appErrorModel!.stackTrace}");
+        return [];
+      }
+    }
+    else {
+      return [];
+    }
+  }
+
+  //To Cancel Enrollment in events
+  Future<bool> cancelEventEnrollment({required String contentId}) async {
+    MyPrint.printOnConsole("ClassroomEventsBloc called for cancelEventEnrollment with contentId:$contentId");
+
+    isLoading = true;
+    notifyListeners();
+
+    ApiResponseModel<bool> response = await eventModuleRepository.cancelEventEnrollment(contentId: contentId);
+
+    isLoading = false;
+    notifyListeners();
+
+    if (response.data != null) {
+      return response.data!;
+    }
+    else if (response.appErrorModel != null) {
+      if(response.appErrorModel!.code == AppApiStatusCodes.TOKEN_EXPIRED) {
+        NavigationController().sessionTimeOut();
+        return false;
+      }
+      else {
+        MyPrint.printOnConsole("Some Error Occurred in cancelEventEnrollment:${response.appErrorModel!.stackTrace}");
+        return false;
+      }
+    }
+    else {
+      return false;
+    }
+  }
+
+  //To Cancel Enrollment in Track events
+  Future<bool> cancelTrackEventEnrollment({required String contentId, required String isBadCancel}) async {
+    MyPrint.printOnConsole("ClassroomEventsBloc called for cancelTrackEventEnrollment with contentId:$contentId");
+
+    isLoading = true;
+    notifyListeners();
+
+    ApiResponseModel<bool> response = await eventModuleRepository.cancelTrackEventEnrollment(contentId: contentId, isBadCancel: isBadCancel);
+
+    isLoading = false;
+    notifyListeners();
+
+    if (response.data != null) {
+      return response.data!;
+    }
+    else if (response.appErrorModel != null) {
+      if(response.appErrorModel!.code == AppApiStatusCodes.TOKEN_EXPIRED) {
+        NavigationController().sessionTimeOut();
+        return false;
+      }
+      else {
+        MyPrint.printOnConsole("Some Error Occurred in cancelTrackEventEnrollment:${response.appErrorModel!.stackTrace}");
+        return false;
+      }
+    }
+    else {
+      return false;
+    }
+  }
+
+  //To Buy Event
+  Future<void> buyClassroomEventEventHandler({required BuildContext context, required DummyMyCatelogResponseTable2 product,}) async {
     isLoading = true;
     notifyListeners();
 
@@ -284,19 +455,79 @@ class ClassroomEventsController extends ChangeNotifier {
     }
   }
 
+  //To Apply Filter on Events by Date
   void applyFilterOnEventsByDate({required String startDate}) {
     MyPrint.printOnConsole("applyFilterOnEventsByDate called with startDate:$startDate");
 
     listOfEventsToShow.clear();
-    print("select date ${startDate}");
+    print("select date $startDate");
     mainEventsList.forEach((element) {
-      print("select date ${element.eventstartdatedisplay.toString().split("T")[0]}");
-      if (startDate == element.eventstartdatedisplay.toString().split("T")[0]) {
-        listOfEventsToShow.add(element);
+      DummyMyCatelogResponseTable2? event = mainMapOfEvents[element];
+      if(event != null) {
+        print("select date ${event.eventstartdatedisplay.toString().split("T")[0]}");
+        if (startDate == event.eventstartdatedisplay.toString().split("T")[0]) {
+          listOfEventsToShow.add(event.contentid);
+        }
       }
     });
     notifyListeners();
   }
+
+  //To Add Expiry on Event
+  Future<bool> addExpiryEvents({required String contentId}) async {
+    MyPrint.printOnConsole("ClassroomEventsBloc called for addExpiryEvents with contentId:$contentId");
+
+    isLoading = true;
+    notifyListeners();
+
+    ApiResponseModel<bool> response = await eventModuleRepository.addExpiryEvents(strContentID: contentId);
+
+    isLoading = false;
+    notifyListeners();
+
+    if (response.data != null) {
+      return response.data!;
+    }
+    else if (response.appErrorModel != null) {
+      if(response.appErrorModel!.code == AppApiStatusCodes.TOKEN_EXPIRED) {
+        NavigationController().sessionTimeOut();
+        return false;
+      }
+      else {
+        MyPrint.printOnConsole("Some Error Occurred in expiryEvents:${response.appErrorModel!.stackTrace}");
+        return false;
+      }
+    }
+    else {
+      return false;
+    }
+  }
+
+  //To Add Event in Waiting List
+  Future<WaitingListResponse?> waitingList({required String contentId}) async {
+    MyPrint.printOnConsole("ClassroomEventsBloc called for waitingList with contentId:$contentId");
+
+    isLoading = true;
+    notifyListeners();
+
+    ApiResponseModel<WaitingListResponse> response = await eventModuleRepository.waitingList(strContentID: contentId);
+
+    isLoading = false;
+    notifyListeners();
+
+    if (response.data != null) {
+      return response.data!;
+    }
+    else if (response.appErrorModel != null) {
+      if(response.appErrorModel!.code == AppApiStatusCodes.TOKEN_EXPIRED) {
+        NavigationController().sessionTimeOut();
+      }
+      else {
+        MyPrint.printOnConsole("Some Error Occurred in waitingList:${response.appErrorModel!.stackTrace}");
+      }
+    }
+  }
+
 
   void setImageData(List<DummyMyCatelogResponseTable2> list) {
     for (DummyMyCatelogResponseTable2 table2 in list) {
@@ -304,9 +535,40 @@ class ClassroomEventsController extends ChangeNotifier {
     }
   }
 
+  static String getTabValue(String tabId) {
+    String tabValue = 'upcoming';
+
+    switch (tabId) {
+      case "Upcoming-Courses":
+      case "Calendar-Schedule":
+        tabValue = "upcoming";
+
+        break;
+      case "Calendar-View":
+        tabValue = "calendar";
+
+        break;
+      case "Past-Courses":
+        tabValue = "past";
+        break;
+      case "My-Events":
+        tabValue = "myevents";
+        break;
+      case "Additional-Program-Details":
+        tabValue = "upcoming";
+        break;
+    }
+
+    return tabValue;
+  }
+
   void clearControllersData() {
+    mainMapOfEvents = {};
+
     tabList = [];
+    mainEventsList = [];
     listOfEventsToShow = [];
+    eventWishlist = [];
     isFirstLoading = false;
     isLoadingTabs = false;
     isLoadingEvents = false;

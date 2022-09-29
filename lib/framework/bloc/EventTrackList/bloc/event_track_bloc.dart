@@ -646,6 +646,9 @@ class EventTrackBloc extends Bloc<EventTrackEvent, EventTrackState> {
             item.qrimagename = element.qrimagename;
             item.parentid = element.parentid;
 
+            item.allowednavigation = element.allowednavigation;
+            item.wstatus = element.wstatus;
+
             trackListData.add(item);
           });
         }
