@@ -876,7 +876,7 @@ class _ActBaseState extends State<ActBase> {
         default:
           return const Center(
             child: Text(
-              "Work in PROGRESS Drawer",
+              "Please click on the plus icon '+' to add a component",
               style: TextStyle(color: Colors.grey),
             ),
           );
