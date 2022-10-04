@@ -1,9 +1,5 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:flutter_spinkit/flutter_spinkit.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:flutter_admin_web/framework/bloc/app/bloc/app_bloc.dart';
 import 'package:flutter_admin_web/framework/bloc/event_module/bloc/event_module_bloc.dart';
 import 'package:flutter_admin_web/framework/bloc/event_module/event/event_module_event.dart';
@@ -16,6 +12,10 @@ import 'package:flutter_admin_web/framework/helpers/utils.dart';
 import 'package:flutter_admin_web/framework/repository/event_module/model/session_event_response.dart';
 import 'package:flutter_admin_web/framework/repository/event_module/provider/event_repository_builder.dart';
 import 'package:flutter_admin_web/ui/common/common_toast.dart';
+import 'package:flutter_admin_web/utils/my_utils.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 import '../../configs/constants.dart';
 
@@ -164,7 +164,7 @@ class _SessionEventState extends State<SessionEvent> {
                 Container(
                   height: ScreenUtil().setHeight(kCellThumbHeight),
                   child: CachedNetworkImage(
-                    imageUrl: table2.thumbnailImagePath.contains("http") || table2.thumbnailImagePath.contains("https") ? table2.thumbnailImagePath : ApiEndpoints.strSiteUrl + table2.thumbnailImagePath.trim(),
+                    imageUrl: MyUtils.getSecureUrl(table2.thumbnailImagePath.contains("http") || table2.thumbnailImagePath.contains("https") ? table2.thumbnailImagePath : ApiEndpoints.strSiteUrl + table2.thumbnailImagePath.trim()),
                     width: MediaQuery.of(context).size.width,
                     //placeholder: (context, url) => CircularProgressIndicator(),
                     placeholder: (context, url) => Container(

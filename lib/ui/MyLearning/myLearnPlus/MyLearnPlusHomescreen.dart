@@ -76,6 +76,7 @@ import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher_string.dart';
 
 import '../../../configs/constants.dart';
+import '../../../utils/my_utils.dart';
 import '../../common/app_colors.dart';
 import '../../common/bottomsheet_option_tile.dart';
 
@@ -2304,10 +2305,9 @@ class MyLearnPlusHome extends State<MyLearnPlusHomeScreen> with SingleTickerProv
                           SizedBox(
                             width: ScreenUtil().setHeight(200),
                             child: CachedNetworkImage(
-                              imageUrl: obj.thumbnailimagepath.startsWith('http')
+                              imageUrl: MyUtils.getSecureUrl(obj.thumbnailimagepath.startsWith('http')
                                   ? obj.thumbnailimagepath
-                                  : ApiEndpoints.strBaseUrl +
-                                      obj.thumbnailimagepath,
+                                  : ApiEndpoints.strBaseUrl + obj.thumbnailimagepath),
                               width: MediaQuery.of(context).size.width,
                               //placeholder: (context, url) => CircularProgressIndicator(),
                               placeholder: (context, url) => Image.asset(
@@ -2333,9 +2333,9 @@ class MyLearnPlusHome extends State<MyLearnPlusHomeScreen> with SingleTickerProv
                                       color: Colors.white,
                                       child: CachedNetworkImage(
                                         height: 30,
-                                        imageUrl: obj.thumbnailimagepath.isEmpty
+                                        imageUrl: MyUtils.getSecureUrl(obj.thumbnailimagepath.isEmpty
                                             ? imgUrl
-                                            : obj.thumbnailimagepath,
+                                            : obj.thumbnailimagepath),
                                         width: 30,
                                         fit: BoxFit.contain,
                                       )
@@ -2835,10 +2835,10 @@ class MyLearnPlusHome extends State<MyLearnPlusHomeScreen> with SingleTickerProv
                         SizedBox(
                           height: ScreenUtil().setHeight(kCellThumbHeight),
                           child: CachedNetworkImage(
-                            imageUrl: obj.thumbnailimagepath.startsWith('http')
+                            imageUrl: MyUtils.getSecureUrl(obj.thumbnailimagepath.startsWith('http')
                                 ? obj.thumbnailimagepath
                                 : ApiEndpoints.strBaseUrl +
-                                    obj.thumbnailimagepath,
+                                    obj.thumbnailimagepath),
                             width: MediaQuery.of(context).size.width,
                             //placeholder: (context, url) => CircularProgressIndicator(),
                             placeholder: (context, url) => Image.asset(
@@ -2864,9 +2864,9 @@ class MyLearnPlusHome extends State<MyLearnPlusHomeScreen> with SingleTickerProv
                                     color: Colors.white,
                                     child: CachedNetworkImage(
                                       height: 30,
-                                      imageUrl: obj.thumbnailimagepath.isEmpty
+                                      imageUrl: MyUtils.getSecureUrl(obj.thumbnailimagepath.isEmpty
                                           ? imgUrl
-                                          : obj.thumbnailimagepath,
+                                          : obj.thumbnailimagepath),
                                       width: 30,
                                       fit: BoxFit.contain,
                                     )
@@ -5013,12 +5013,12 @@ class MyLearnPlusHome extends State<MyLearnPlusHomeScreen> with SingleTickerProv
                         ),
                         ClipOval(
                           child: CachedNetworkImage(
-                            imageUrl: achievementResponse
+                            imageUrl: MyUtils.getSecureUrl(achievementResponse
                                         .userOverAllData?.userProfilePath !=
                                     null
                                 ? achievementResponse
                                     .userOverAllData!.userProfilePath
-                                : imgUrl,
+                                : imgUrl),
                             width: 50,
                             height: 50,
                             fit: BoxFit.cover,

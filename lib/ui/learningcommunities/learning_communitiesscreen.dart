@@ -1,9 +1,5 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:flutter_spinkit/flutter_spinkit.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:flutter_admin_web/framework/bloc/app/bloc/app_bloc.dart';
 import 'package:flutter_admin_web/framework/bloc/app/native_menu_model.dart';
 import 'package:flutter_admin_web/framework/bloc/learningcommunities/bloc/communities_bloc.dart';
@@ -20,6 +16,10 @@ import 'package:flutter_admin_web/ui/common/common_primary_secondary_button.dart
 import 'package:flutter_admin_web/ui/common/ins_search_textfield.dart';
 import 'package:flutter_admin_web/ui/splash/splash_screen.dart';
 import 'package:flutter_admin_web/utils/my_print.dart';
+import 'package:flutter_admin_web/utils/my_utils.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 import '../../configs/constants.dart';
 import '../common/app_colors.dart';
@@ -447,9 +447,9 @@ class _LearningCommunitiesScreenState extends State<LearningCommunitiesScreen> w
                   Container(
                     height: ScreenUtil().setHeight(150),
                     child: CachedNetworkImage(
-                      imageUrl: portallisting.picture.startsWith('http')
+                      imageUrl: MyUtils.getSecureUrl(portallisting.picture.startsWith('http')
                           ? portallisting.picture
-                          : portallisting.learnerSiteURL + portallisting.picture,
+                          : portallisting.learnerSiteURL + portallisting.picture),
                       width: MediaQuery.of(context).size.width,
                       //placeholder: (context, url) => CircularProgressIndicator(),
                       placeholder: (context, url) => Image.asset(

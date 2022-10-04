@@ -1,10 +1,6 @@
 import 'package:add_2_calendar/add_2_calendar.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:fluttertoast/fluttertoast.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:flutter_admin_web/framework/bloc/app/bloc/app_bloc.dart';
 import 'package:flutter_admin_web/framework/bloc/event_module/bloc/event_module_bloc.dart';
 import 'package:flutter_admin_web/framework/bloc/event_module/event/event_module_event.dart';
@@ -23,8 +19,12 @@ import 'package:flutter_admin_web/packages/smooth_star_rating.dart';
 import 'package:flutter_admin_web/ui/Events/event_main_page.dart';
 import 'package:flutter_admin_web/ui/MyLearning/myLearnPlus/models/EventResourcePlusResponse.dart';
 import 'package:flutter_admin_web/ui/common/common_toast.dart';
+import 'package:flutter_admin_web/utils/my_utils.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:intl/intl.dart';
-import 'package:provider/provider.dart';
 // import 'package:smooth_star_rating_null_safety/smooth_star_rating_null_safety.dart';
 import 'package:syncfusion_flutter_calendar/calendar.dart';
 // import 'package:syncfusion_flutter_calendar/calendar.dart';
@@ -1091,7 +1091,7 @@ class DashboardCalendar extends State<DashboardCalendarScreen> with TickerProvid
                       // }
                     },
                     child: CachedNetworkImage(
-                      imageUrl: thumbnailPath,
+                      imageUrl: MyUtils.getSecureUrl(thumbnailPath),
                       width: MediaQuery.of(context).size.width,
                       //placeholder: (context, url) => CircularProgressIndicator(),
                       placeholder: (context, url) => Container(
@@ -1122,7 +1122,7 @@ class DashboardCalendar extends State<DashboardCalendarScreen> with TickerProvid
                             color: Colors.white,
                             child: CachedNetworkImage(
                               height: 30,
-                              imageUrl: contentIconPath,
+                              imageUrl: MyUtils.getSecureUrl(contentIconPath),
                               width: 30,
                               fit: BoxFit.contain,
                             )),

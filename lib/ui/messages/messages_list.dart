@@ -1,8 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_admin_web/framework/bloc/app/bloc/app_bloc.dart';
 import 'package:flutter_admin_web/framework/bloc/messages/chat_message_response.dart';
 import 'package:flutter_admin_web/framework/bloc/messages/chat_user_response.dart';
@@ -18,6 +16,9 @@ import 'package:flutter_admin_web/framework/theme/ins_theme.dart';
 import 'package:flutter_admin_web/ui/common/app_colors.dart';
 import 'package:flutter_admin_web/ui/messages/send_icon.dart';
 import 'package:flutter_admin_web/ui/myConnections/connections_screen.dart';
+import 'package:flutter_admin_web/utils/my_utils.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../utils/my_print.dart';
 import 'message_input.dart';
@@ -218,9 +219,9 @@ class _MessagesListState extends State<MessagesList> {
   Widget getUserProfile(){
     return ClipOval(
       child: CachedNetworkImage(
-        imageUrl: widget.toUser.profPic.contains('http')
+        imageUrl: MyUtils.getSecureUrl(widget.toUser.profPic.contains('http')
             ? '${widget.toUser.profPic}'
-            : '${ApiEndpoints.mainSiteURL}${widget.toUser.profPic}',
+            : '${ApiEndpoints.mainSiteURL}${widget.toUser.profPic}'),
         width: 32.h,
         height: 32.h,
         fit: BoxFit.cover,

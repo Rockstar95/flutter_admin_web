@@ -1,9 +1,5 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_html/flutter_html.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:flutter_admin_web/framework/bloc/app/bloc/app_bloc.dart';
 import 'package:flutter_admin_web/framework/bloc/messages/chat_user_response.dart';
 import 'package:flutter_admin_web/framework/bloc/myConnections/model/connection_dynamic_tab_response.dart';
@@ -19,6 +15,10 @@ import 'package:flutter_admin_web/ui/common/bottomsheet_drager.dart';
 import 'package:flutter_admin_web/ui/common/ins_search_textfield.dart';
 import 'package:flutter_admin_web/ui/messages/messages_list.dart';
 import 'package:flutter_admin_web/ui/profile/profile_page.dart';
+import 'package:flutter_admin_web/utils/my_utils.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_html/flutter_html.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../configs/constants.dart';
 import '../common/bottomsheet_option_tile.dart';
@@ -1330,9 +1330,9 @@ class PeopleListCell extends StatelessWidget {
                     )
                   : ClipOval(
                       child: CachedNetworkImage(
-                        imageUrl: people.memberProfileImage.contains('http')
+                        imageUrl: MyUtils.getSecureUrl(people.memberProfileImage.contains('http')
                             ? '${people.memberProfileImage}'
-                            : '${ApiEndpoints.strSiteUrl}${people.memberProfileImage}',
+                            : '${ApiEndpoints.strSiteUrl}${people.memberProfileImage}'),
                         width: 50,
                         height: 50,
                         placeholder: (context, url) {
@@ -1536,10 +1536,9 @@ class PeopleGridCell extends StatelessWidget {
                               )
                             : ClipOval(
                                 child: CachedNetworkImage(
-                                  imageUrl: people.memberProfileImage
-                                          .contains('http')
+                                  imageUrl: MyUtils.getSecureUrl(people.memberProfileImage.contains('http')
                                       ? '${people.memberProfileImage}'
-                                      : '${ApiEndpoints.strSiteUrl}${people.memberProfileImage}',
+                                      : '${ApiEndpoints.strSiteUrl}${people.memberProfileImage}'),
                                   width: 60,
                                   height: 60,
                                   placeholder: (context, url) {

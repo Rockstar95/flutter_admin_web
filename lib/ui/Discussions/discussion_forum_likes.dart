@@ -1,5 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_admin_web/utils/my_utils.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
@@ -149,12 +150,12 @@ class _DiscussionForumLikesState extends State<DiscussionForumLikes>
                             children: [
                               ClipOval(
                                 child: CachedNetworkImage(
-                                  imageUrl: discussionMainHomeBloc
+                                  imageUrl: MyUtils.getSecureUrl(discussionMainHomeBloc
                                           .discussionForumLikeList[index]
                                           .userThumb
                                           .contains('http')
                                       ? '${discussionMainHomeBloc.discussionForumLikeList[index].userThumb}'
-                                      : '${ApiEndpoints.strSiteUrl}${discussionMainHomeBloc.discussionForumLikeList[index].userThumb}',
+                                      : '${ApiEndpoints.strSiteUrl}${discussionMainHomeBloc.discussionForumLikeList[index].userThumb}'),
                                   width: 60,
                                   height: 60,
                                   placeholder: (context, url) {

@@ -1,14 +1,13 @@
-import 'dart:io';
-
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_admin_web/framework/bloc/app/bloc/app_bloc.dart';
 import 'package:flutter_admin_web/framework/bloc/theme/bloc/change_theme_bloc.dart';
 import 'package:flutter_admin_web/framework/bloc/theme/states/change_theme_state.dart';
 import 'package:flutter_admin_web/ui/OnBoarding/helper/dots_indicator.dart';
 import 'package:flutter_admin_web/ui/auth/login_common_page.dart';
+import 'package:flutter_admin_web/utils/my_utils.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class OnBoardingScreen extends StatefulWidget {
   final List<String> imageList;
@@ -29,7 +28,7 @@ class _OnBoardingScreenState extends State<OnBoardingScreen> {
 
   @override
   void initState() {
-    _controller = new PageController();
+    _controller = PageController();
     super.initState();
   }
 
@@ -60,9 +59,7 @@ class _OnBoardingScreenState extends State<OnBoardingScreen> {
                       child: MaterialButton(
                         color: Color(int.parse("0xFF${appBloc.uiSettingModel.appButtonBgColor.substring(1, 7).toUpperCase()}")),
                         child: Text(
-                            appBloc.localstr.loginButtonSigninbutton != null
-                                ? appBloc.localstr.loginButtonSigninbutton
-                                : "SignIn",
+                            appBloc.localstr.loginButtonSigninbutton.isNotEmpty ? appBloc.localstr.loginButtonSigninbutton : "SignIn",
                             style: TextStyle(
                               fontSize: 14.h,
                               color: Color(int.parse(
@@ -80,25 +77,25 @@ class _OnBoardingScreenState extends State<OnBoardingScreen> {
                               child: Stack(
                             children: <Widget>[
                               PageView.builder(
-                                physics: new AlwaysScrollableScrollPhysics(),
+                                physics: const AlwaysScrollableScrollPhysics(),
                                 controller: _controller,
                                 itemBuilder: (context, position) {
                                   return Center(
                                     child: CachedNetworkImage(
-                                      imageUrl: widget.imageList[position],
+                                      imageUrl: MyUtils.getSecureUrl(widget.imageList[position]),
                                       fit: BoxFit.cover,
                                     ),
                                   );
                                 },
                                 itemCount: widget.imageList.length, // Can be null
                               ),
-                              new Positioned(
+                              Positioned(
                                 bottom: 0.0,
                                 left: 0.0,
                                 right: 0.0,
                                 child: Padding(
                                   padding: const EdgeInsets.all(16.0),
-                                  child: new Container(
+                                  child: Container(
                                     color: Colors.white,
                                     padding: const EdgeInsets.all(20.0),
                                     child: Center(
@@ -124,8 +121,8 @@ class _OnBoardingScreenState extends State<OnBoardingScreen> {
                           )),
                         ],
                       )
-                    : Center(
-                        child: Text("No image Available "),
+                    : const Center(
+                        child: const Text("No image Available "),
                       ),
               ),
             ),

@@ -6,12 +6,6 @@ import 'dart:io' show Platform;
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:flutter_spinkit/flutter_spinkit.dart';
-import 'package:fluttertoast/fluttertoast.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:in_app_purchase/in_app_purchase.dart';
 import 'package:flutter_admin_web/framework/bloc/app/bloc/app_bloc.dart';
 import 'package:flutter_admin_web/framework/bloc/app/events/app_event.dart';
 import 'package:flutter_admin_web/framework/bloc/app/native_menu_model.dart';
@@ -69,12 +63,18 @@ import 'package:flutter_admin_web/ui/home/ActBase.dart';
 import 'package:flutter_admin_web/ui/profile/profile_page.dart';
 import 'package:flutter_admin_web/utils/my_print.dart';
 import 'package:flutter_admin_web/utils/mytoast.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:in_app_purchase/in_app_purchase.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 
 import '../../configs/constants.dart';
 import '../../framework/helpers/providermodel.dart';
+import '../../utils/my_utils.dart';
 import '../common/bottomsheet_drager.dart';
 import '../common/bottomsheet_option_tile.dart';
 import '../global_search_screen.dart';
@@ -1945,9 +1945,9 @@ class _CatalogRefreshScreenState extends State<CatalogRefreshScreen> with Single
                   child: SizedBox(
                     height: ScreenUtil().setHeight(kCellThumbHeight),
                     child: CachedNetworkImage(
-                      imageUrl: table2.thumbnailimagepath.startsWith('http')
+                      imageUrl: MyUtils.getSecureUrl(table2.thumbnailimagepath.startsWith('http')
                           ? table2.thumbnailimagepath.trim()
-                          : table2.siteurl + table2.thumbnailimagepath.trim(),
+                          : table2.siteurl + table2.thumbnailimagepath.trim()),
                       width: MediaQuery.of(context).size.width,
                       //placeholder: (context, url) => CircularProgressIndicator(),
                       placeholder: (context, url) => Image.asset(
@@ -1976,7 +1976,7 @@ class _CatalogRefreshScreenState extends State<CatalogRefreshScreen> with Single
                       color: Colors.white,
                       child: CachedNetworkImage(
                         height: 30,
-                        imageUrl: contentIconPath,
+                        imageUrl: MyUtils.getSecureUrl(contentIconPath),
                         width: 30,
                         fit: BoxFit.contain,
                       ),

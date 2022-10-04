@@ -1,6 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_admin_web/utils/my_print.dart';
+import 'package:flutter_admin_web/utils/my_utils.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_admin_web/framework/bloc/app/bloc/app_bloc.dart';
@@ -130,9 +131,9 @@ class _DrawerHeaderWidgetState extends State<DrawerHeaderWidget> {
                             children: <Widget>[
                               ClipOval(
                                 child: CachedNetworkImage(
-                                  imageUrl: userimageUrl.isEmpty
+                                  imageUrl: MyUtils.getSecureUrl(userimageUrl.isEmpty
                                       ? imgUrl
-                                      : userimageUrl,
+                                      : userimageUrl),
                                   width: 50.h,
                                   height: 50.h,
                                   fit: BoxFit.cover,
@@ -265,7 +266,7 @@ class _DrawerHeaderWidgetState extends State<DrawerHeaderWidget> {
           children: <Widget>[
             ClipOval(
               child: CachedNetworkImage(
-                imageUrl: userimageUrl.isEmpty ? imgUrl : userimageUrl,
+                imageUrl: MyUtils.getSecureUrl(userimageUrl.isEmpty ? imgUrl : userimageUrl),
                 width: 50.h,
                 height: 50.h,
                 fit: BoxFit.cover,

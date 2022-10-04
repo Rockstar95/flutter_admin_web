@@ -2,9 +2,6 @@ import 'dart:io';
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_downloader/flutter_downloader.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_admin_web/framework/bloc/Splash/bloc/splash_bloc.dart';
 import 'package:flutter_admin_web/framework/bloc/Splash/event/splash_event.dart';
 import 'package:flutter_admin_web/framework/bloc/Splash/states/splash_state.dart';
@@ -22,6 +19,10 @@ import 'package:flutter_admin_web/ui/OnBoarding/on_boarding_screen.dart';
 import 'package:flutter_admin_web/ui/auth/login_common_page.dart';
 import 'package:flutter_admin_web/ui/home/ActBase.dart';
 import 'package:flutter_admin_web/utils/my_print.dart';
+import 'package:flutter_admin_web/utils/my_utils.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_downloader/flutter_downloader.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../configs/constants.dart';
 import '../appModule/app.dart';
@@ -364,7 +365,7 @@ class _SplashScreenState extends State<SplashScreen> {
                               errorWidget: (context, url, _) => Image.asset(
                                 kSplashLogo,
                               ),
-                              imageUrl: appLogoUrl,
+                              imageUrl: MyUtils.getSecureUrl(appLogoUrl),
                             ),
                           ),
                         )

@@ -3,12 +3,6 @@ import 'dart:io';
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:flutter_spinkit/flutter_spinkit.dart';
-import 'package:fluttertoast/fluttertoast.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:in_app_purchase/in_app_purchase.dart';
 import 'package:flutter_admin_web/framework/bloc/app/bloc/app_bloc.dart';
 import 'package:flutter_admin_web/framework/bloc/app/events/app_event.dart';
 import 'package:flutter_admin_web/framework/bloc/catalog/bloc/catalog_bloc.dart';
@@ -30,7 +24,13 @@ import 'package:flutter_admin_web/ui/MyLearning/common_detail_screen.dart';
 import 'package:flutter_admin_web/ui/MyLearning/helper/gotoCourseLaunch.dart';
 import 'package:flutter_admin_web/ui/common/common_toast.dart';
 import 'package:flutter_admin_web/ui/common/modal_progress_hud.dart';
+import 'package:flutter_admin_web/utils/my_utils.dart';
 import 'package:flutter_admin_web/utils/mytoast.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:in_app_purchase/in_app_purchase.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
@@ -509,9 +509,9 @@ class _WishListState extends State<WishList> {
                 child: Container(
                   height: ScreenUtil().setHeight(kCellThumbHeight),
                   child: CachedNetworkImage(
-                    imageUrl: table2.thumbnailimagepath.startsWith('https')
+                    imageUrl: MyUtils.getSecureUrl(table2.thumbnailimagepath.startsWith('https')
                         ? table2.thumbnailimagepath
-                        : table2.siteurl + table2.thumbnailimagepath,
+                        : table2.siteurl + table2.thumbnailimagepath),
                     width: MediaQuery.of(context).size.width,
                     //placeholder: (context, url) => CircularProgressIndicator(),
                     placeholder: (context, url) => Image.asset(
@@ -538,7 +538,7 @@ class _WishListState extends State<WishList> {
                         color: Colors.white,
                         child: CachedNetworkImage(
                           height: 30,
-                          imageUrl: contentIconPath,
+                          imageUrl: MyUtils.getSecureUrl(contentIconPath),
                           width: 30,
                           fit: BoxFit.contain,
                         ),

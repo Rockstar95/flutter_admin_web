@@ -1,10 +1,5 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:flutter_spinkit/flutter_spinkit.dart';
-import 'package:fluttertoast/fluttertoast.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:flutter_admin_web/framework/bloc/app/bloc/app_bloc.dart';
 import 'package:flutter_admin_web/framework/bloc/catalog/bloc/catalog_bloc.dart';
 import 'package:flutter_admin_web/framework/bloc/catalog/event/catalog_event.dart';
@@ -23,6 +18,11 @@ import 'package:flutter_admin_web/packages/smooth_star_rating.dart';
 import 'package:flutter_admin_web/ui/MyLearning/common_detail_screen.dart';
 import 'package:flutter_admin_web/ui/MyLearning/review_screen.dart';
 import 'package:flutter_admin_web/ui/common/common_toast.dart';
+import 'package:flutter_admin_web/utils/my_utils.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:intl/intl.dart';
 
 import '../../configs/constants.dart';
@@ -387,7 +387,7 @@ class _EventWishListScreenState extends State<EventWishListScreen> {
                       "0xFF${appBloc.uiSettingModel.appBGColor.substring(1, 7).toUpperCase()}")),
                   height: ScreenUtil().setHeight(100),
                   child: CachedNetworkImage(
-                    imageUrl: thumbnailPath,
+                    imageUrl: MyUtils.getSecureUrl(thumbnailPath),
                     width: MediaQuery.of(context).size.width,
                     //placeholder: (context, url) => CircularProgressIndicator(),
                     placeholder: (context, url) => Container(

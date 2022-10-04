@@ -3,10 +3,6 @@ import 'dart:typed_data';
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:fluttertoast/fluttertoast.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:flutter_admin_web/framework/bloc/app/bloc/app_bloc.dart';
 import 'package:flutter_admin_web/framework/bloc/app/events/app_event.dart';
 import 'package:flutter_admin_web/framework/bloc/profile/bloc/profile_bloc.dart';
@@ -20,6 +16,11 @@ import 'package:flutter_admin_web/framework/helpers/utils.dart';
 import 'package:flutter_admin_web/framework/theme/ins_theme.dart';
 import 'package:flutter_admin_web/ui/common/common_toast.dart';
 import 'package:flutter_admin_web/ui/profile/profile_edit.dart';
+import 'package:flutter_admin_web/utils/my_utils.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 
 import '../../configs/constants.dart';
@@ -195,10 +196,9 @@ class _ProfileInfoState extends State<ProfileInfo> {
                                                   "0xFF${appBloc.uiSettingModel.appButtonBgColor.substring(1, 7).toUpperCase()}")),
                                             )
                                           : CachedNetworkImage(
-                                              imageUrl:
-                                                  widget.profileImg != null
+                                              imageUrl: MyUtils.getSecureUrl(widget.profileImg != null
                                                       ? widget.profileImg
-                                                      : image,
+                                                      : image),
                                               width: 105.h,
                                               height: 105.h,
                                               fit: BoxFit.cover,

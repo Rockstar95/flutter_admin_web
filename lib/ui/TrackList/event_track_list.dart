@@ -5,14 +5,6 @@ import 'package:add_2_calendar/add_2_calendar.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_downloader/flutter_downloader.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:flutter_spinkit/flutter_spinkit.dart';
-import 'package:flutter_svg/flutter_svg.dart';
-import 'package:fluttertoast/fluttertoast.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:html/parser.dart';
 import 'package:flutter_admin_web/controllers/event_track_controller.dart';
 import 'package:flutter_admin_web/controllers/my_learning_download_controller.dart';
 import 'package:flutter_admin_web/controllers/navigation_controller.dart';
@@ -65,7 +57,14 @@ import 'package:flutter_admin_web/ui/common/common_toast.dart';
 import 'package:flutter_admin_web/ui/common/modal_progress_hud.dart';
 import 'package:flutter_admin_web/ui/myConnections/connections_screen.dart';
 import 'package:flutter_admin_web/utils/my_print.dart';
+import 'package:flutter_admin_web/utils/my_utils.dart';
 import 'package:flutter_admin_web/utils/snakbar.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_downloader/flutter_downloader.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:html/parser.dart';
 import 'package:intl/intl.dart';
 import 'package:logger/logger.dart';
 import 'package:path_provider/path_provider.dart';
@@ -4278,14 +4277,9 @@ class _EventTrackListState extends State<EventTrackList> with TickerProviderStat
                   children: <Widget>[
                     ClipOval(
                       child: CachedNetworkImage(
-                        imageUrl: eventTrackBloc
-                                .overviewResponse[0].profileImgPath
-                                .startsWith('http')
+                        imageUrl: MyUtils.getSecureUrl(eventTrackBloc.overviewResponse[0].profileImgPath.startsWith('http')
                             ? eventTrackBloc.overviewResponse[0].profileImgPath
-                            : ApiEndpoints.strSiteUrl +
-                                eventTrackBloc
-                                    .overviewResponse[0].profileImgPath
-                                    .trim(),
+                            : ApiEndpoints.strSiteUrl + eventTrackBloc.overviewResponse[0].profileImgPath.trim()),
                         width: 50.h,
                         height: 50.h,
                         fit: BoxFit.cover,
@@ -4565,11 +4559,9 @@ class _EventTrackListState extends State<EventTrackList> with TickerProviderStat
                       height: ScreenUtil().setHeight(thumbnailImgHeight),
                       fit: BoxFit.cover,
                     ),
-                    imageUrl: widget.myLearningModel.thumbnailimagepath
-                            .startsWith("http")
+                    imageUrl: MyUtils.getSecureUrl(widget.myLearningModel.thumbnailimagepath.startsWith("http")
                         ? widget.myLearningModel.thumbnailimagepath
-                        : ApiEndpoints.strSiteUrl +
-                            widget.myLearningModel.thumbnailimagepath,
+                        : ApiEndpoints.strSiteUrl + widget.myLearningModel.thumbnailimagepath),
                     height: ScreenUtil().setHeight(thumbnailImgHeight),
                     fit: BoxFit.cover,
                   ),
@@ -4583,7 +4575,7 @@ class _EventTrackListState extends State<EventTrackList> with TickerProviderStat
                                 color: Colors.white,
                                 child: CachedNetworkImage(
                                   height: 30,
-                                  imageUrl: contentIconPath,
+                                  imageUrl: MyUtils.getSecureUrl(contentIconPath),
                                   width: 30,
                                   fit: BoxFit.contain,
                                 )))),
@@ -4800,11 +4792,10 @@ class _EventTrackListState extends State<EventTrackList> with TickerProviderStat
                           height: ScreenUtil().setHeight(thumbnailImgHeight),
                           fit: BoxFit.cover,
                         ),
-                        imageUrl: widget.myLearningModel.thumbnailimagepath
-                            .startsWith("http")
+                        imageUrl: MyUtils.getSecureUrl(widget.myLearningModel.thumbnailimagepath.startsWith("http")
                             ? widget.myLearningModel.thumbnailimagepath
                             : ApiEndpoints.strSiteUrl +
-                            widget.myLearningModel.thumbnailimagepath,
+                            widget.myLearningModel.thumbnailimagepath),
                         fit: BoxFit.cover,
                       ),
                     ),

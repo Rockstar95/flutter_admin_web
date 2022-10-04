@@ -1,9 +1,5 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_breadcrumb/flutter_breadcrumb.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:flutter_admin_web/framework/bloc/app/bloc/app_bloc.dart';
 import 'package:flutter_admin_web/framework/bloc/app/native_menu_model.dart';
 import 'package:flutter_admin_web/framework/bloc/catalog/bloc/catalog_bloc.dart';
@@ -18,6 +14,10 @@ import 'package:flutter_admin_web/framework/helpers/ResponsiveWidget.dart';
 import 'package:flutter_admin_web/framework/theme/ins_theme.dart';
 import 'package:flutter_admin_web/ui/Catalog/catalog_sub_screen.dart';
 import 'package:flutter_admin_web/ui/common/app_colors.dart';
+import 'package:flutter_admin_web/utils/my_utils.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_breadcrumb/flutter_breadcrumb.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
 
 import '../../configs/constants.dart';
@@ -337,7 +337,7 @@ class _CatalogSubCategoryScreenState extends State<CatalogSubCategoryScreen> {
                                                         fit: BoxFit.cover,
                                                       )
                                                     : CachedNetworkImage(
-                                                        imageUrl: catalogBloc
+                                                        imageUrl: MyUtils.getSecureUrl(catalogBloc
                                                                 .subCategoryCatalogList[
                                                                     i]
                                                                 .categoryIcon
@@ -347,7 +347,7 @@ class _CatalogSubCategoryScreenState extends State<CatalogSubCategoryScreen> {
                                                                 .subCategoryCatalogList[
                                                                     i]
                                                                 .categoryIcon
-                                                            : "${ApiEndpoints.strSiteUrl}${catalogBloc.subCategoryCatalogList[i].categoryIcon}",
+                                                            : "${ApiEndpoints.strSiteUrl}${catalogBloc.subCategoryCatalogList[i].categoryIcon}"),
                                                         width: MediaQuery.of(
                                                                 context)
                                                             .size
@@ -479,7 +479,7 @@ class _CatalogSubCategoryScreenState extends State<CatalogSubCategoryScreen> {
                                                         fit: BoxFit.cover,
                                                       )
                                                     : CachedNetworkImage(
-                                                        imageUrl: catalogBloc
+                                                        imageUrl: MyUtils.getSecureUrl(catalogBloc
                                                                 .subCategoryCatalogList[
                                                                     i]
                                                                 .categoryIcon
@@ -489,7 +489,7 @@ class _CatalogSubCategoryScreenState extends State<CatalogSubCategoryScreen> {
                                                                 .subCategoryCatalogList[
                                                                     i]
                                                                 .categoryIcon
-                                                            : "${ApiEndpoints.strSiteUrl}${catalogBloc.subCategoryCatalogList[i].categoryIcon}",
+                                                            : "${ApiEndpoints.strSiteUrl}${catalogBloc.subCategoryCatalogList[i].categoryIcon}"),
                                                         width: MediaQuery.of(
                                                                 context)
                                                             .size
@@ -614,7 +614,7 @@ class _CatalogSubCategoryScreenState extends State<CatalogSubCategoryScreen> {
                                                   fit: BoxFit.cover,
                                                 )
                                                     : CachedNetworkImage(
-                                                  imageUrl: catalogBloc
+                                                  imageUrl: MyUtils.getSecureUrl(catalogBloc
                                                       .subCategoryCatalogList[
                                                   i]
                                                       .categoryIcon
@@ -624,7 +624,7 @@ class _CatalogSubCategoryScreenState extends State<CatalogSubCategoryScreen> {
                                                       .subCategoryCatalogList[
                                                   i]
                                                       .categoryIcon
-                                                      : "${ApiEndpoints.strSiteUrl}${catalogBloc.subCategoryCatalogList[i].categoryIcon}",
+                                                      : "${ApiEndpoints.strSiteUrl}${catalogBloc.subCategoryCatalogList[i].categoryIcon}"),
                                                   width: MediaQuery.of(
                                                       context)
                                                       .size

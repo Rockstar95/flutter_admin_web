@@ -8,6 +8,7 @@ import 'package:flutter_admin_web/framework/common/enums.dart';
 import 'package:flutter_admin_web/framework/helpers/ApiEndpoints.dart';
 import 'package:flutter_admin_web/ui/common/app_colors.dart';
 import 'package:flutter_admin_web/utils/my_print.dart';
+import 'package:flutter_admin_web/utils/my_utils.dart';
 import 'package:intl/intl.dart';
 import 'package:video_player/video_player.dart';
 import 'package:webviewx/webviewx.dart';
@@ -433,9 +434,9 @@ class AvatarIcon extends StatelessWidget {
               useOldImageOnUrlChange: true,
               fadeInDuration: const Duration(microseconds: 100),
               fadeOutDuration: const Duration(microseconds: 100),
-              imageUrl: user.profPic.contains('http')
+              imageUrl: MyUtils.getSecureUrl(user.profPic.contains('http')
                   ? user.profPic
-                  : '${ApiEndpoints.strSiteUrl}${user.profPic}',
+                  : '${ApiEndpoints.strSiteUrl}${user.profPic}'),
               placeholder: (context, url) => Opacity(
                     opacity: 0.3,
                     child: Icon(

@@ -1,8 +1,5 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:flutter_admin_web/framework/bloc/app/bloc/app_bloc.dart';
 import 'package:flutter_admin_web/framework/bloc/app/native_menu_model.dart';
 import 'package:flutter_admin_web/framework/bloc/catalog/bloc/catalog_bloc.dart';
@@ -15,6 +12,9 @@ import 'package:flutter_admin_web/framework/helpers/ApiEndpoints.dart';
 import 'package:flutter_admin_web/ui/Catalog/calalog_sub_category_screen.dart';
 import 'package:flutter_admin_web/ui/Catalog/catalog_sub_screen.dart';
 import 'package:flutter_admin_web/ui/auth/login_common_page.dart';
+import 'package:flutter_admin_web/utils/my_utils.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../configs/constants.dart';
 
@@ -185,7 +185,7 @@ class _CatalogMainScreenState extends State<CatalogMainScreen> {
                                                           fit: BoxFit.cover,
                                                         )
                                                       : CachedNetworkImage(
-                                                          imageUrl: catalogBloc
+                                                          imageUrl: MyUtils.getSecureUrl(catalogBloc
                                                                   .displayCatalogList[
                                                                       i]
                                                                   .subcategoryList[
@@ -199,7 +199,7 @@ class _CatalogMainScreenState extends State<CatalogMainScreen> {
                                                                   .subcategoryList[
                                                                       j]
                                                                   .categoryIcon
-                                                              : "${ApiEndpoints.strSiteUrl}${catalogBloc.displayCatalogList[i].subcategoryList[j].categoryIcon}",
+                                                              : "${ApiEndpoints.strSiteUrl}${catalogBloc.displayCatalogList[i].subcategoryList[j].categoryIcon}"),
                                                           width: MediaQuery.of(
                                                                   context)
                                                               .size

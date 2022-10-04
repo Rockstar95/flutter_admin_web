@@ -1,6 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_admin_web/utils/my_utils.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_admin_web/framework/bloc/app/bloc/app_bloc.dart';
@@ -285,10 +286,9 @@ class _ProfileState extends State<Profile> {
                                                                 "0xFF${appBloc.uiSettingModel.appButtonBgColor.substring(1, 7).toUpperCase()}")),
                                                       )
                                                     : CachedNetworkImage(
-                                                        imageUrl:
-                                                            imageurl != null
+                                                        imageUrl: MyUtils.getSecureUrl(imageurl != null
                                                                 ? imageurl
-                                                                : image,
+                                                                : image),
                                                         width: 90.h,
                                                         height: 90.h,
                                                         fit: BoxFit.cover,
@@ -348,10 +348,9 @@ class _ProfileState extends State<Profile> {
                                                                 "0xFF${appBloc.uiSettingModel.appButtonBgColor.substring(1, 7).toUpperCase()}")),
                                                       )
                                                     : CachedNetworkImage(
-                                                        imageUrl:
-                                                            imageurl != null
+                                                        imageUrl: MyUtils.getSecureUrl(imageurl != null
                                                                 ? imageurl
-                                                                : image,
+                                                                : image),
                                                         width: 90.h,
                                                         height: 90.h,
                                                         fit: BoxFit.cover,

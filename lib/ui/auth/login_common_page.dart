@@ -2,11 +2,6 @@ import 'dart:io';
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_html/flutter_html.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:flutter_spinkit/flutter_spinkit.dart';
-import 'package:google_sign_in/google_sign_in.dart';
 import 'package:flutter_admin_web/framework/bloc/app/bloc/app_bloc.dart';
 import 'package:flutter_admin_web/framework/bloc/auth/bloc/auth_bloc.dart';
 import 'package:flutter_admin_web/framework/bloc/auth/event/auth_event.dart';
@@ -24,6 +19,11 @@ import 'package:flutter_admin_web/ui/auth/dynamic_signup_page.dart';
 import 'package:flutter_admin_web/ui/auth/login_page.dart';
 import 'package:flutter_admin_web/ui/common/app_colors.dart';
 import 'package:flutter_admin_web/ui/home/ActBase.dart';
+import 'package:flutter_admin_web/utils/my_utils.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_html/flutter_html.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -246,9 +246,9 @@ class _LoginCommonPageState extends State<LoginCommonPage> {
           errorWidget: (context, url, _) => Image.asset(
             kSplashLogo,
           ),
-          imageUrl: isSwitched
+          imageUrl: MyUtils.getSecureUrl(isSwitched
               ? appBloc.uiSettingModel.appDarkLogoURl
-              : appBloc.uiSettingModel.appLogoURl,
+              : appBloc.uiSettingModel.appLogoURl),
       ),
     );
   }

@@ -64,6 +64,7 @@ import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 
 import '../../configs/constants.dart';
 import '../../framework/helpers/providermodel.dart';
+import '../../utils/my_utils.dart';
 import '../common/bottomsheet_option_tile.dart';
 import '../common/common_primary_secondary_button.dart';
 import '../global_search_screen.dart';
@@ -2050,11 +2051,10 @@ class _CatalogSubScreenState extends State<CatalogSubScreen> {
                   child: Container(
                     height: ScreenUtil().setHeight(kCellThumbHeight),
                     child: CachedNetworkImage(
-                      imageUrl:
-                          table2.thumbnailimagepath.trim().startsWith("http")
+                      imageUrl: MyUtils.getSecureUrl(table2.thumbnailimagepath.trim().startsWith("http")
                               ? table2.thumbnailimagepath.trim()
                               : table2.siteurl.trim() +
-                                  table2.thumbnailimagepath.trim(),
+                                  table2.thumbnailimagepath.trim()),
 
                       width: MediaQuery.of(context).size.width,
                       //placeholder: (context, url) => CircularProgressIndicator(),
@@ -2083,7 +2083,7 @@ class _CatalogSubScreenState extends State<CatalogSubScreen> {
                         color: Colors.white,
                         child: CachedNetworkImage(
                           height: 30,
-                          imageUrl: contentIconPath,
+                          imageUrl: MyUtils.getSecureUrl(contentIconPath),
                           width: 30,
                           fit: BoxFit.contain,
                         ),

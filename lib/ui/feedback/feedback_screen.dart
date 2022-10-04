@@ -1,13 +1,7 @@
-import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_admin_web/utils/my_print.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:fluttertoast/fluttertoast.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:flutter_admin_web/framework/bloc/app/bloc/app_bloc.dart';
 import 'package:flutter_admin_web/framework/bloc/feedback/bloc/feedback_bloc.dart';
 import 'package:flutter_admin_web/framework/bloc/feedback/event/feedback_event.dart';
@@ -19,12 +13,17 @@ import 'package:flutter_admin_web/framework/bloc/profile/events/profile_event.da
 import 'package:flutter_admin_web/framework/common/constants.dart';
 import 'package:flutter_admin_web/framework/common/enums.dart';
 import 'package:flutter_admin_web/framework/helpers/ApiEndpoints.dart';
-import 'package:flutter_admin_web/framework/helpers/utils.dart';
 import 'package:flutter_admin_web/framework/repository/feedback/feedback_repositry_builder.dart';
 import 'package:flutter_admin_web/framework/repository/profile/provider/profile_repository_builder.dart';
 import 'package:flutter_admin_web/framework/theme/ins_theme.dart';
 import 'package:flutter_admin_web/ui/common/app_colors.dart';
 import 'package:flutter_admin_web/ui/common/common_toast.dart';
+import 'package:flutter_admin_web/utils/my_print.dart';
+import 'package:flutter_admin_web/utils/my_utils.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:uuid/uuid.dart';
 
 class FeedbackScreen extends StatefulWidget {
@@ -660,7 +659,7 @@ class FeedbackCell extends StatelessWidget {
                 children: <Widget>[
                   ClipOval(
                     child: CachedNetworkImage(
-                      imageUrl: profImg,
+                      imageUrl: MyUtils.getSecureUrl(profImg),
                       width: 60,
                       height: 60,
                       fit: BoxFit.cover,
@@ -770,7 +769,7 @@ class FeedbackCell extends StatelessWidget {
                         width:
                             ScreenUtil().setHeight(useMobileLayout ? 200 : 280),
                         child: CachedNetworkImage(
-                          imageUrl: atachmentPath,
+                          imageUrl: MyUtils.getSecureUrl(atachmentPath),
                           width: MediaQuery.of(context).size.width,
                           placeholder: (context, url) => Image.asset(
                             'assets/cellimage.jpg',
@@ -808,7 +807,7 @@ class FeedbackCell extends StatelessWidget {
             padding: const EdgeInsets.all(10.0),
             height: 300,
             child: CachedNetworkImage(
-              imageUrl: atachmentPath,
+              imageUrl: MyUtils.getSecureUrl(atachmentPath),
               width: MediaQuery.of(context).size.width,
               placeholder: (context, url) => Image.asset(
                 'assets/cellimage.jpg',
