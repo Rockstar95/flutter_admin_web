@@ -1,5 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_admin_web/utils/my_utils.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -364,7 +365,7 @@ class _ClassroomEventCardState extends State<ClassroomEventCard> {
               }
             },
             child: CachedNetworkImage(
-              imageUrl: thumbnailPath,
+              imageUrl: MyUtils.getSecureUrl(thumbnailPath),
               width: MediaQuery.of(context).size.width,
               //placeholder: (context, url) => CircularProgressIndicator(),
               placeholder: (context, url) => Container(
@@ -395,7 +396,7 @@ class _ClassroomEventCardState extends State<ClassroomEventCard> {
                     color: Colors.white,
                     child: CachedNetworkImage(
                       height: 30,
-                      imageUrl: contentIconPath,
+                      imageUrl: MyUtils.getSecureUrl(contentIconPath),
                       width: 30,
                       fit: BoxFit.contain,
                     )),

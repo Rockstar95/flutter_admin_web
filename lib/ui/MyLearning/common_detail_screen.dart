@@ -2027,9 +2027,9 @@ class _CommonDetailScreenState extends State<CommonDetailScreen> with SingleTick
                   // imageUrl:
                   //     widget?.table2?.imageData ??
                   //         '',
-                  imageUrl: (widget.table2.thumbnailimagepath.startsWith('http'))
+                  imageUrl: MyUtils.getSecureUrl((widget.table2.thumbnailimagepath.startsWith('http'))
                     ? widget.table2.thumbnailimagepath
-                    : (widget.table2.siteurl.trim()) + (widget.table2.thumbnailimagepath.trim()),
+                    : (widget.table2.siteurl.trim()) + (widget.table2.thumbnailimagepath.trim())),
                   fit: BoxFit.cover,
                 ),
 //                                    Image.network(
@@ -2050,7 +2050,7 @@ class _CommonDetailScreenState extends State<CommonDetailScreen> with SingleTick
                   color: Colors.white,
                   child: CachedNetworkImage(
                     height: 30,
-                    imageUrl: contentIconPath,
+                    imageUrl: MyUtils.getSecureUrl(contentIconPath),
                     width: 30,
                     fit: BoxFit.contain,
                   ),
@@ -2372,7 +2372,7 @@ class _CommonDetailScreenState extends State<CommonDetailScreen> with SingleTick
                   Container(
                     height: ScreenUtil().setHeight(thumbnailImgHeight),
                     child: CachedNetworkImage(
-                      imageUrl: imgUrl,
+                      imageUrl: MyUtils.getSecureUrl(imgUrl),
                       width: MediaQuery.of(context).size.width,
                       //placeholder: (context, url) => CircularProgressIndicator(),
                       placeholder: (context, url) => Container(
@@ -2682,7 +2682,7 @@ class _CommonDetailScreenState extends State<CommonDetailScreen> with SingleTick
                   Container(
                     height: ScreenUtil().setHeight(thumbnailImgHeight),
                     child: CachedNetworkImage(
-                      imageUrl: imgUrl,
+                      imageUrl: MyUtils.getSecureUrl(imgUrl),
                       width: MediaQuery.of(context).size.width,
                       //placeholder: (context, url) => CircularProgressIndicator(),
                       placeholder: (context, url) => Container(

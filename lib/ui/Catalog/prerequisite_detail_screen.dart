@@ -44,6 +44,7 @@ import 'package:flutter_admin_web/ui/common/common_toast.dart';
 import 'package:intl/intl.dart';
 
 import '../../configs/constants.dart';
+import '../../utils/my_utils.dart';
 import '../common/bottomsheet_drager.dart';
 import '../common/bottomsheet_option_tile.dart';
 
@@ -321,9 +322,9 @@ class _PrerequisiteDetailScreenState extends State<PrerequisiteDetailScreen> {
                                         width: MediaQuery.of(context).size.width,
                                         child: !widget.isFromNotification && data != null
                                             ? CachedNetworkImage(
-                                                imageUrl: ApiEndpoints
+                                                imageUrl: MyUtils.getSecureUrl(ApiEndpoints
                                                         .strSiteUrl +
-                                                    data?.thumbnailImagePath,
+                                                    data?.thumbnailImagePath),
                                                 width: MediaQuery.of(context)
                                                     .size
                                                     .width,
@@ -349,9 +350,9 @@ class _PrerequisiteDetailScreenState extends State<PrerequisiteDetailScreen> {
                                               )
                                             : widget.table2.thumbnailImagePath != null
                                                 ? CachedNetworkImage(
-                                                    imageUrl: widget.table2.thumbnailImagePath.startsWith('http')
+                                                    imageUrl: MyUtils.getSecureUrl(widget.table2.thumbnailImagePath.startsWith('http')
                                                         ? widget.table2.thumbnailImagePath.trim()
-                                                        : ApiEndpoints.strSiteUrl + widget.table2.thumbnailImagePath.trim(),
+                                                        : ApiEndpoints.strSiteUrl + widget.table2.thumbnailImagePath.trim()),
                                                     width: MediaQuery.of(context).size.width,
                                                     //placeholder: (context, url) => CircularProgressIndicator(),
                                                     placeholder: (context, url) => Image.asset(

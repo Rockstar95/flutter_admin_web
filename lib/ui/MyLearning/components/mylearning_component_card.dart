@@ -1,8 +1,5 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_admin_web/configs/extensions.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_admin_web/framework/bloc/app/bloc/app_bloc.dart';
 import 'package:flutter_admin_web/framework/bloc/mylearning/model/dummy_my_catelog_response_entity.dart';
 import 'package:flutter_admin_web/framework/common/constants.dart';
@@ -14,6 +11,8 @@ import 'package:flutter_admin_web/providers/my_learning_download_provider.dart';
 import 'package:flutter_admin_web/ui/TrackList/event_track_list.dart';
 import 'package:flutter_admin_web/utils/my_print.dart';
 import 'package:flutter_admin_web/utils/my_utils.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
@@ -627,9 +626,9 @@ class _MyLearningComponentCardState extends State<MyLearningComponentCard> {
       child: Container(
         height: ScreenUtil().setHeight(kCellThumbHeight),
         child: CachedNetworkImage(
-          imageUrl: widget.table2.thumbnailimagepath.startsWith('http')
+          imageUrl: MyUtils.getSecureUrl(widget.table2.thumbnailimagepath.startsWith('http')
               ? widget.table2.thumbnailimagepath
-              : widget.table2.siteurl + widget.table2.thumbnailimagepath,
+              : widget.table2.siteurl + widget.table2.thumbnailimagepath),
           width: MediaQuery.of(context).size.width,
           //placeholder: (context, url) => CircularProgressIndicator(),
           placeholder: (context, url) => Image.asset(
@@ -676,7 +675,7 @@ class _MyLearningComponentCardState extends State<MyLearningComponentCard> {
               color: Colors.white,
               child: CachedNetworkImage(
                 height: 30,
-                imageUrl: contentIconPath,
+                imageUrl: MyUtils.getSecureUrl(contentIconPath),
                 width: 30,
                 fit: BoxFit.contain,
               )
@@ -916,9 +915,9 @@ class _MyLearningComponentCardState extends State<MyLearningComponentCard> {
                   }
                 },
                 child: CachedNetworkImage(
-                  imageUrl: widget.table2.thumbnailimagepath.startsWith('http')
+                  imageUrl: MyUtils.getSecureUrl(widget.table2.thumbnailimagepath.startsWith('http')
                       ? widget.table2.thumbnailimagepath
-                      : widget.table2.siteurl + widget.table2.thumbnailimagepath,
+                      : widget.table2.siteurl + widget.table2.thumbnailimagepath),
                   //placeholder: (context, url) => CircularProgressIndicator(),
                   placeholder: (context, url) => Image.asset(
                     'assets/cellimage.jpg',

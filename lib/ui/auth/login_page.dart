@@ -4,12 +4,6 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_admin_web/utils/my_print.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_html/flutter_html.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:flutter_spinkit/flutter_spinkit.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:flutter_admin_web/framework/bloc/app/bloc/app_bloc.dart';
 import 'package:flutter_admin_web/framework/bloc/app/states/app_state.dart';
 import 'package:flutter_admin_web/framework/bloc/auth/bloc/auth_bloc.dart';
@@ -29,6 +23,11 @@ import 'package:flutter_admin_web/ui/auth/dynamic_signup_page.dart';
 import 'package:flutter_admin_web/ui/auth/forgot_password.dart';
 import 'package:flutter_admin_web/ui/common/common_toast.dart';
 import 'package:flutter_admin_web/ui/home/ActBase.dart';
+import 'package:flutter_admin_web/utils/my_utils.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_html/flutter_html.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -380,12 +379,11 @@ class _LoginPageState extends State<LoginPage> {
                               height: 86.h,
                               width: 276.h,
                               child: CachedNetworkImage(
-                                  placeholder: (context, url) => Image.asset(
-                                        kSplashLogo,
-                                      ),
-                                  imageUrl: isSwitched
+                                  placeholder: (context, url) => Image.asset(kSplashLogo,),
+                                  imageUrl: MyUtils.getSecureUrl(isSwitched
                                       ? appBloc.uiSettingModel.appDarkLogoURl
                                       : appBloc.uiSettingModel.appLogoURl),
+                              ),
                             ),
                             SizedBox(
                               height: 55.h,

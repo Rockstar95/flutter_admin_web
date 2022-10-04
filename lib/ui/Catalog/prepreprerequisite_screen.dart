@@ -24,6 +24,7 @@ import 'package:flutter_admin_web/ui/Catalog/prerequisite_detail_screen.dart';
 import 'package:flutter_admin_web/ui/common/common_toast.dart';
 
 import '../../configs/constants.dart';
+import '../../utils/my_utils.dart';
 
 class PrerequisiteScreen extends StatefulWidget {
   final PrequisitePopupresponse prequisitePopupresponse;
@@ -224,10 +225,10 @@ class _PrerequisiteScreenState extends State<PrerequisiteScreen> {
                               Container(
                                 height: ScreenUtil().setHeight(120),
                                 child: CachedNetworkImage(
-                                  imageUrl: ApiEndpoints.strSiteUrl +
+                                  imageUrl: MyUtils.getSecureUrl(ApiEndpoints.strSiteUrl +
                                       catalogBloc.associatedContentResponse
                                           .parentcontent.thumbnailImagePath
-                                          .trim(),
+                                          .trim()),
                                   width: MediaQuery.of(context).size.width,
                                   //placeholder: (context, url) => CircularProgressIndicator(),
                                   placeholder: (context, url) => Image.asset(
@@ -548,12 +549,12 @@ class _PrerequisiteScreenState extends State<PrerequisiteScreen> {
                                         Container(
                                           height: ScreenUtil().setHeight(120),
                                           child: CachedNetworkImage(
-                                            imageUrl: ApiEndpoints.strSiteUrl +
+                                            imageUrl: MyUtils.getSecureUrl(ApiEndpoints.strSiteUrl +
                                                 catalogBloc
                                                     .prerequisiteModelArrayListRecommended[
                                                         index]
                                                     .thumbnailImagePath
-                                                    .trim(),
+                                                    .trim()),
                                             width: MediaQuery.of(context)
                                                 .size
                                                 .width,
@@ -863,12 +864,12 @@ class _PrerequisiteScreenState extends State<PrerequisiteScreen> {
                                         Container(
                                           height: ScreenUtil().setHeight(120),
                                           child: CachedNetworkImage(
-                                            imageUrl: ApiEndpoints.strSiteUrl +
+                                            imageUrl: MyUtils.getSecureUrl(ApiEndpoints.strSiteUrl +
                                                 catalogBloc
                                                     .prerequisiteModelArrayListRequired[
                                                         index]
                                                     .thumbnailImagePath
-                                                    .trim(),
+                                                    .trim()),
                                             width: MediaQuery.of(context)
                                                 .size
                                                 .width,
@@ -1178,12 +1179,12 @@ class _PrerequisiteScreenState extends State<PrerequisiteScreen> {
                                         Container(
                                           height: ScreenUtil().setHeight(120),
                                           child: CachedNetworkImage(
-                                            imageUrl: ApiEndpoints.strSiteUrl +
+                                            imageUrl: MyUtils.getSecureUrl(ApiEndpoints.strSiteUrl +
                                                 catalogBloc
                                                     .prerequisiteModelArrayListCompletion[
                                                         index]
                                                     .thumbnailImagePath
-                                                    .trim(),
+                                                    .trim()),
                                             width: MediaQuery.of(context)
                                                 .size
                                                 .width,

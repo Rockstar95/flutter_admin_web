@@ -1,11 +1,12 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_admin_web/framework/bloc/app/bloc/app_bloc.dart';
 import 'package:flutter_admin_web/framework/bloc/mydashboard/model/mydashboard_leaderboardresponse.dart';
 import 'package:flutter_admin_web/framework/bloc/mydashboard/model/mydashboard_userachivmentsresponse.dart';
 import 'package:flutter_admin_web/framework/bloc/mylearning/bloc/mylearning_bloc.dart';
 import 'package:flutter_admin_web/framework/helpers/ApiEndpoints.dart';
+import 'package:flutter_admin_web/utils/my_utils.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 
 class DashboardLeaderboardScreen extends StatefulWidget {
@@ -165,12 +166,7 @@ class DashboardLeaderboard extends State<DashboardLeaderboardScreen>
                                                             ClipOval(
                                                               child:
                                                                   CachedNetworkImage(
-                                                                imageUrl: leaderobj
-                                                                            .userPicturePath !=
-                                                                        null
-                                                                    ? leaderobj
-                                                                        .userPicturePath
-                                                                    : imgUrl,
+                                                                imageUrl: MyUtils.getSecureUrl(leaderobj.userPicturePath.isNotEmpty ? leaderobj.userPicturePath : imgUrl),
                                                                 width: 52,
                                                                 height: 52,
                                                                 fit: BoxFit.cover,
@@ -448,7 +444,7 @@ class DashboardLeaderboard extends State<DashboardLeaderboardScreen>
                                                     //     .setHeight(
                                                     //         kCellThumbHeight),
                                                     child: CachedNetworkImage(
-                                                      imageUrl: userbadges
+                                                      imageUrl: MyUtils.getSecureUrl(userbadges
                                                               .badgeImage
                                                               .startsWith(
                                                                   'http')
@@ -457,7 +453,7 @@ class DashboardLeaderboard extends State<DashboardLeaderboardScreen>
                                                           : ApiEndpoints
                                                                   .strBaseUrl +
                                                               userbadges
-                                                                  .badgeImage,
+                                                                  .badgeImage),
                                                       // width:
                                                       //     MediaQuery.of(context)
                                                       //         .size

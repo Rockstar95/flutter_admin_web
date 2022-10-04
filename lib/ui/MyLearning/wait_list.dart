@@ -1,7 +1,5 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_admin_web/framework/bloc/app/bloc/app_bloc.dart';
 import 'package:flutter_admin_web/framework/bloc/mylearning/bloc/mylearning_bloc.dart';
 import 'package:flutter_admin_web/framework/bloc/mylearning/events/mylearning_event.dart';
@@ -12,6 +10,9 @@ import 'package:flutter_admin_web/framework/common/enums.dart';
 import 'package:flutter_admin_web/framework/theme/ins_theme.dart';
 import 'package:flutter_admin_web/packages/smooth_star_rating.dart';
 import 'package:flutter_admin_web/ui/auth/login_common_page.dart';
+import 'package:flutter_admin_web/utils/my_utils.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../configs/constants.dart';
 
@@ -194,8 +195,8 @@ class _WaitListScreenState extends State<WaitListScreen> {
                   Container(
                     height: ScreenUtil().setHeight(100),
                     child: CachedNetworkImage(
-                      imageUrl: table2.siteurl.trim() +
-                          table2.thumbnailimagepath.trim(),
+                      imageUrl: MyUtils.getSecureUrl(table2.siteurl.trim() +
+                          table2.thumbnailimagepath.trim()),
                       width: MediaQuery.of(context).size.width,
                       //placeholder: (context, url) => CircularProgressIndicator(),
                       placeholder: (context, url) => Container(
@@ -221,7 +222,7 @@ class _WaitListScreenState extends State<WaitListScreen> {
                             color: Colors.white,
                             child: CachedNetworkImage(
                               height: 30,
-                              imageUrl: contentIconPath,
+                              imageUrl: MyUtils.getSecureUrl(contentIconPath),
                               width: 30,
                               fit: BoxFit.contain,
                             ),

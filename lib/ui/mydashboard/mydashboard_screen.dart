@@ -1,7 +1,5 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:flutter_admin_web/framework/bloc/app/bloc/app_bloc.dart';
 import 'package:flutter_admin_web/framework/bloc/app/native_menu_model.dart';
 import 'package:flutter_admin_web/framework/bloc/mydashboard/bloc/mydashboard_bloc.dart';
@@ -19,6 +17,8 @@ import 'package:flutter_admin_web/framework/repository/mylearning/mylearning_rep
 import 'package:flutter_admin_web/framework/theme/ins_theme.dart';
 import 'package:flutter_admin_web/ui/MyLearning/view_certificate.dart';
 import 'package:flutter_admin_web/ui/profile/profile_page.dart';
+import 'package:flutter_admin_web/utils/my_utils.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 
 import '../../configs/constants.dart';
@@ -86,32 +86,28 @@ class _MyDashBoardScreenState extends State<MyDashBoardScreen> with TickerProvid
 
       switch (_tabController.index) {
         case 0: // LeaderBoard
-          if (myDashBoardBloc.leaderBoardResponse.leaderBoardList != null &&
-              myDashBoardBloc.leaderBoardResponse.leaderBoardList.length > 6) {
+          if (myDashBoardBloc.leaderBoardResponse.leaderBoardList.length > 6) {
             myDashBoardBloc.fabButtonVisible = true;
           } else {
             myDashBoardBloc.fabButtonVisible = false;
           }
           break;
         case 1: // Points
-          if (myDashBoardBloc.userAchievementResponse.userPoints != null &&
-              myDashBoardBloc.userAchievementResponse.userPoints.length > 5) {
+          if (myDashBoardBloc.userAchievementResponse.userPoints.length > 5) {
             myDashBoardBloc.fabButtonVisible = true;
           } else {
             myDashBoardBloc.fabButtonVisible = false;
           }
           break;
         case 2: // Badges
-          if (myDashBoardBloc.userAchievementResponse.userBadges != null &&
-              myDashBoardBloc.userAchievementResponse.userBadges.length > 5) {
+          if (myDashBoardBloc.userAchievementResponse.userBadges.length > 5) {
             myDashBoardBloc.fabButtonVisible = true;
           } else {
             myDashBoardBloc.fabButtonVisible = false;
           }
           break;
         case 3: // Levels
-          if (myDashBoardBloc.userAchievementResponse.userLevel != null &&
-              myDashBoardBloc.userAchievementResponse.userLevel.length > 5) {
+          if (myDashBoardBloc.userAchievementResponse.userLevel.length > 5) {
             myDashBoardBloc.fabButtonVisible = true;
           } else {
             myDashBoardBloc.fabButtonVisible = false;
@@ -129,27 +125,22 @@ class _MyDashBoardScreenState extends State<MyDashBoardScreen> with TickerProvid
       text: 'Leaders',
     ));
 
-    if (myDashBoardBloc.userAchievementResponse != null) {
-      if (myDashBoardBloc.userAchievementResponse.showPointSection != null &&
-          myDashBoardBloc.userAchievementResponse.showPointSection) {
-        tabList.add(new Tab(
-          text: 'Points',
-        ));
-      }
+    if (myDashBoardBloc.userAchievementResponse.showPointSection) {
+      tabList.add(new Tab(
+        text: 'Points',
+      ));
+    }
 
-      if (myDashBoardBloc.userAchievementResponse.showBadgeSection != null &&
-          myDashBoardBloc.userAchievementResponse.showBadgeSection) {
-        tabList.add(new Tab(
-          text: 'Badges',
-        ));
-      }
+    if (myDashBoardBloc.userAchievementResponse.showBadgeSection) {
+      tabList.add(new Tab(
+        text: 'Badges',
+      ));
+    }
 
-      if (myDashBoardBloc.userAchievementResponse.showLevelSection != null &&
-          myDashBoardBloc.userAchievementResponse.showLevelSection) {
-        tabList.add(new Tab(
-          text: 'Levels',
-        ));
-      }
+    if (myDashBoardBloc.userAchievementResponse.showLevelSection) {
+      tabList.add(new Tab(
+        text: 'Levels',
+      ));
     }
 
     return tabList;
@@ -426,12 +417,9 @@ class _MyDashBoardScreenState extends State<MyDashBoardScreen> with TickerProvid
                   children: <Widget>[
                     ClipOval(
                       child: CachedNetworkImage(
-                        imageUrl: myDashBoardBloc
-                                    .userAchievementResponse.userOverAllData !=
-                                null
-                            ? myDashBoardBloc.userAchievementResponse
-                                .userOverAllData!.userProfilePath
-                            : "",
+                        imageUrl: MyUtils.getSecureUrl(myDashBoardBloc.userAchievementResponse.userOverAllData != null
+                            ? myDashBoardBloc.userAchievementResponse.userOverAllData!.userProfilePath
+                            : ""),
                         width: 60,
                         height: 60,
                         fit: BoxFit.cover,
@@ -625,9 +613,7 @@ class _MyDashBoardScreenState extends State<MyDashBoardScreen> with TickerProvid
                     ),
                   ],
                 ),
-                (_tabController != null &&
-                        tabList != null &&
-                        tabList.length > 0)
+                (tabList.length > 0)
                     ? new TabBar(
                         isScrollable: true,
                         controller: _tabController,
@@ -842,8 +828,7 @@ class _MyDashBoardScreenState extends State<MyDashBoardScreen> with TickerProvid
   }
 
   Widget returnCreditsAndCertificatesList() {
-    return (myDashBoardBloc.myCreditCertificateresponse.table != null &&
-            myDashBoardBloc.myCreditCertificateresponse.table.length > 0)
+    return (myDashBoardBloc.myCreditCertificateresponse.table.length > 0)
         ? Container(
             color: Color(int.parse(
                 "0xFF${appBloc.uiSettingModel.appBGColor.substring(1, 7).toUpperCase()}")),
@@ -910,8 +895,7 @@ class _MyDashBoardScreenState extends State<MyDashBoardScreen> with TickerProvid
               Padding(
                 padding: const EdgeInsets.fromLTRB(20, 10, 10, 10),
                 child: Text(
-                  (credits.creditdecimalvalue != null &&
-                          credits.creditdecimalvalue.isNotEmpty)
+                  (credits.creditdecimalvalue.isNotEmpty)
                       ? "${credits.creditdecimalvalue}"
                       : "0.0",
                   // style: TextStyle(
@@ -932,8 +916,7 @@ class _MyDashBoardScreenState extends State<MyDashBoardScreen> with TickerProvid
                   padding: const EdgeInsets.fromLTRB(20, 10, 10, 10),
                   child: InkWell(
                     onTap: () => {
-                      if (credits.certifyviewlink != null &&
-                          credits.certifyviewlink.isNotEmpty)
+                      if (credits.certifyviewlink.isNotEmpty)
                         {
                           detailsBloc.myLearningDetailsModel
                               .setcontentID(credits.contentID),
@@ -946,8 +929,7 @@ class _MyDashBoardScreenState extends State<MyDashBoardScreen> with TickerProvid
                                   ViewCertificate(detailsBloc: detailsBloc))),
                         }
                     },
-                    child: (credits.certifyviewlink != null &&
-                            credits.certifyviewlink.isNotEmpty)
+                    child: (credits.certifyviewlink.isNotEmpty)
                         ? Icon(
                             Icons.remove_red_eye,
                             color: Color(int.parse(
@@ -1405,12 +1387,12 @@ class _MyDashBoardScreenState extends State<MyDashBoardScreen> with TickerProvid
               children: <Widget>[
                 ClipOval(
                   child: CachedNetworkImage(
-                    imageUrl: leaderBoardList != null
+                    imageUrl: MyUtils.getSecureUrl(leaderBoardList != null
                         ? (leaderBoardList.userPicturePath.startsWith('http')
                             ? leaderBoardList.userPicturePath
                             : ApiEndpoints.mainSiteURL +
                                 leaderBoardList.userPicturePath)
-                        : "",
+                        : ""),
                     width: 60,
                     height: 60,
                     fit: BoxFit.cover,
@@ -1681,7 +1663,7 @@ class _MyDashBoardScreenState extends State<MyDashBoardScreen> with TickerProvid
               padding: new EdgeInsets.only(right: 15.0),
               child: ClipOval(
                 child: CachedNetworkImage(
-                  imageUrl: userBadges != null ? userBadges.badgeImage : "",
+                  imageUrl: MyUtils.getSecureUrl(userBadges != null ? userBadges.badgeImage : ""),
                   width: 100,
                   height: 100,
                   fit: BoxFit.fill,
